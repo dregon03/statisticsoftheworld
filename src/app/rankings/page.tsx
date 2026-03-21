@@ -34,7 +34,6 @@ function IndicatorsContent() {
   const [selectedIndicator, setSelectedIndicator] = useState(initialIndicator);
   const [data, setData] = useState<RankingEntry[]>([]);
   const [multiData, setMultiData] = useState<MultiSourceData | null>(null);
-  const [viewMode, setViewMode] = useState<'single' | 'multi'>('single');
   const [loading, setLoading] = useState(true);
   const [sortAsc, setSortAsc] = useState(false);
   const [searchIndicator, setSearchIndicator] = useState('');
@@ -129,49 +128,27 @@ function IndicatorsContent() {
 
           {/* Data table */}
           <div className="lg:col-span-3">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold">{selectedIndicator.label}</h2>
-                <div className="text-sm text-gray-400">{selectedIndicator.category} &middot; {data.length} countries</div>
-              </div>
-              <div className="flex items-center gap-2">
-                {hasMultiSource && multiData && (
-                  <div className="flex gap-1">
-                    <button
-                      onClick={() => setViewMode('single')}
-                      className={`px-3 py-2 rounded-lg text-xs transition ${viewMode === 'single' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                    >Single source</button>
-                    <button
-                      onClick={() => setViewMode('multi')}
-                      className={`px-3 py-2 rounded-lg text-xs transition ${viewMode === 'multi' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                    >Compare sources</button>
-                  </div>
-                )}
-                <button
-                  onClick={() => setSortAsc(!sortAsc)}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition"
-                >
-                  {sortAsc ? 'Lowest first' : 'Highest first'}
-                </button>
-              </div>
+            <div className="mb-4">
+              <h2 className="text-xl font-bold">{selectedIndicator.label}</h2>
+              <div className="text-sm text-gray-400">{selectedIndicator.category} &middot; {hasMultiSource && multiData ? multiData.countries.length : data.length} countries</div>
             </div>
 
             {loading ? (
               <div className="text-center py-20 text-gray-400">Loading data...</div>
-            ) : data.length === 0 ? (
-              <div className="text-center py-20 text-gray-400">No data available for this indicator.</div>
-            ) : viewMode === 'multi' && multiData ? (
+            ) : hasMultiSource && multiData && multiData.countries.length > 0 ? (
               /* Wikipedia-style multi-source table */
               <div className="border border-gray-100 rounded-xl overflow-hidden overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
-                      <th className="px-4 py-2.5 w-14">Rank</th>
-                      <th className="px-4 py-2.5">Country</th>
+                    <tr className="text-left text-xs border-b border-gray-100 bg-gray-50">
+                      <th className="px-4 py-2.5 w-10">
+                        <button onClick={() => setSortAsc(!sortAsc)} className="text-gray-400 hover:text-gray-700 transition" title={sortAsc ? 'Sort descending' : 'Sort ascending'}>
+                          {sortAsc ? '#\u2191' : '#\u2193'}
+                        </button>
+                      </th>
+                      <th className="px-4 py-2.5 text-gray-500">Country</th>
                       {multiData.sources.map(src => (
-                        <th key={src.id} className="px-4 py-2.5 text-right">
-                          <div className="font-semibold text-gray-600">{src.org}</div>
-                        </th>
+                        <th key={src.id} className="px-4 py-2.5 text-right text-gray-700 font-semibold">{src.org}</th>
                       ))}
                     </tr>
                   </thead>
@@ -192,12 +169,12 @@ function IndicatorsContent() {
                             return (
                               <td key={src.id} className="px-4 py-2 text-right font-mono text-sm">
                                 {d ? (
-                                  <span>
+                                  <>
                                     {formatValue(d.value, selectedIndicator.format, selectedIndicator.decimals)}
                                     <span className="text-gray-300 text-xs ml-1">{d.year}</span>
-                                  </span>
+                                  </>
                                 ) : (
-                                  <span className="text-gray-300">—</span>
+                                  <span className="text-gray-300">&mdash;</span>
                                 )}
                               </td>
                             );
@@ -208,17 +185,23 @@ function IndicatorsContent() {
                   </tbody>
                 </table>
               </div>
+            ) : data.length === 0 ? (
+              <div className="text-center py-20 text-gray-400">No data available for this indicator.</div>
             ) : (
               /* Single source table */
               <div className="border border-gray-100 rounded-xl overflow-hidden">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
-                      <th className="px-4 py-2.5 w-14">Rank</th>
-                      <th className="px-4 py-2.5">Country</th>
-                      <th className="px-4 py-2.5 text-right w-36">Value</th>
+                    <tr className="text-left text-xs border-b border-gray-100 bg-gray-50">
+                      <th className="px-4 py-2.5 w-10">
+                        <button onClick={() => setSortAsc(!sortAsc)} className="text-gray-400 hover:text-gray-700 transition" title={sortAsc ? 'Sort descending' : 'Sort ascending'}>
+                          {sortAsc ? '#\u2191' : '#\u2193'}
+                        </button>
+                      </th>
+                      <th className="px-4 py-2.5 text-gray-500">Country</th>
+                      <th className="px-4 py-2.5 text-right text-gray-500 w-36">Value</th>
                       <th className="px-4 py-2.5 w-56 hidden md:table-cell"></th>
-                      <th className="px-4 py-2.5 text-right w-14">Year</th>
+                      <th className="px-4 py-2.5 text-right text-gray-500 w-14">Year</th>
                     </tr>
                   </thead>
                   <tbody>

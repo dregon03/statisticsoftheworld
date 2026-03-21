@@ -67,7 +67,7 @@ export default function VisionPage() {
         {/* Phase 3 */}
         <section className="mb-16">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">FUTURE</span>
+            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">NEXT</span>
             <h2 className="text-2xl font-bold">The world&apos;s API</h2>
           </div>
           <p className="text-gray-600 leading-relaxed mb-4">

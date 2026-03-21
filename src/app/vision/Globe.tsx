@@ -143,7 +143,7 @@ export default function Globe() {
 
   return (
     <div className="relative w-full max-w-[650px] aspect-square mx-auto">
-      <div ref={containerRef} className="w-full h-full rounded-full overflow-hidden" />
+      <div ref={containerRef} className="w-full h-full" />
 
       {/* Centered country card */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 
 interface RankingEntry {
@@ -12,7 +13,18 @@ interface RankingEntry {
 }
 
 export default function IndicatorsPage() {
-  const [selectedIndicator, setSelectedIndicator] = useState(INDICATORS[0]);
+  return (
+    <Suspense>
+      <IndicatorsContent />
+    </Suspense>
+  );
+}
+
+function IndicatorsContent() {
+  const searchParams = useSearchParams();
+  const initialId = searchParams.get('id');
+  const initialIndicator = (initialId && INDICATORS.find(i => i.id === initialId)) || INDICATORS[0];
+  const [selectedIndicator, setSelectedIndicator] = useState(initialIndicator);
   const [data, setData] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortAsc, setSortAsc] = useState(false);

@@ -39,8 +39,8 @@ export default function CategorySection({
           <div key={ind.id}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-gray-900">{ind.label}</h3>
-              <Link href="/rankings" className="text-xs text-gray-400 hover:text-gray-600 transition">
-                All countries
+              <Link href={`/rankings?id=${encodeURIComponent(ind.id)}`} className="text-xs text-gray-400 hover:text-gray-600 transition">
+                All countries &rarr;
               </Link>
             </div>
             <div className="border border-gray-100 rounded-xl overflow-hidden">

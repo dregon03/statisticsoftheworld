@@ -85,7 +85,6 @@ export const INDICATORS: Indicator[] = [
   { id: 'GC.TAX.GSRV.RV.ZS', label: 'Taxes on Goods & Services (% of revenue)', category: 'Fiscal & Monetary', format: 'percent', decimals: 1 },
   { id: 'GC.TAX.INTT.RV.ZS', label: 'Taxes on International Trade (% of revenue)', category: 'Fiscal & Monetary', format: 'percent', decimals: 1 },
   { id: 'GC.TAX.YPKG.RV.ZS', label: 'Taxes on Income, Profits & Capital Gains (% of rev)', category: 'Fiscal & Monetary', format: 'percent', decimals: 1 },
-  { id: 'GC.BAL.CASH.GD.ZS', label: 'Cash Surplus/Deficit (% of GDP)', category: 'Fiscal & Monetary', format: 'percent', decimals: 1 },
   { id: 'GC.NFN.TOTL.GD.ZS', label: 'Net Investment in Nonfinancial Assets (% of GDP)', category: 'Fiscal & Monetary', format: 'percent', decimals: 1 },
   { id: 'FI.RES.TOTL.CD', label: 'Total Reserves incl. Gold (USD)', category: 'Fiscal & Monetary', format: 'currency' },
   { id: 'FI.RES.TOTL.MO', label: 'Total Reserves (months of imports)', category: 'Fiscal & Monetary', format: 'number', decimals: 1 },
@@ -114,10 +113,7 @@ export const INDICATORS: Indicator[] = [
   { id: 'DT.DOD.DECT.GN.ZS', label: 'External Debt (% of GNI)', category: 'External Debt', format: 'percent', decimals: 1 },
   { id: 'DT.DOD.DECT.CD', label: 'External Debt Stocks (USD)', category: 'External Debt', format: 'currency' },
   { id: 'DT.TDS.DECT.GN.ZS', label: 'Total Debt Service (% of GNI)', category: 'External Debt', format: 'percent', decimals: 1 },
-  { id: 'DT.DOD.DLTT.CD', label: 'Long-Term Debt (USD)', category: 'External Debt', format: 'currency' },
-  { id: 'DT.DOD.DSTT.CD', label: 'Short-Term Debt (USD)', category: 'External Debt', format: 'currency' },
   { id: 'DT.DOD.PVLX.CD', label: 'Present Value of External Debt (USD)', category: 'External Debt', format: 'currency' },
-  { id: 'DT.INT.DECT.GN.ZS', label: 'Interest Payments on External Debt (% of GNI)', category: 'External Debt', format: 'percent', decimals: 1 },
   { id: 'DT.DOD.DIMF.CD', label: 'Use of IMF Credit (USD)', category: 'External Debt', format: 'currency' },
   { id: 'DT.ODA.ODAT.GN.ZS', label: 'Net ODA Received (% of GNI)', category: 'External Debt', format: 'percent', decimals: 1 },
   { id: 'DT.ODA.ODAT.CD', label: 'Net ODA Received (USD)', category: 'External Debt', format: 'currency' },
@@ -135,22 +131,9 @@ export const INDICATORS: Indicator[] = [
   { id: 'FX.OWN.TOTL.FE.ZS', label: 'Account Ownership, Female (%)', category: 'Finance', format: 'percent', decimals: 1 },
   { id: 'FX.OWN.TOTL.MA.ZS', label: 'Account Ownership, Male (%)', category: 'Finance', format: 'percent', decimals: 1 },
   { id: 'IC.FRM.BNKS.ZS', label: 'Firms Using Banks to Finance Investment (%)', category: 'Finance', format: 'percent', decimals: 1 },
-  { id: 'IC.CRD.INFO.XQ', label: 'Depth of Credit Information Index (0-8)', category: 'Finance', format: 'index', decimals: 0 },
-  { id: 'IC.LGL.CRED.XQ', label: 'Strength of Legal Rights Index (0-12)', category: 'Finance', format: 'index', decimals: 0 },
 
   // ── BUSINESS ENVIRONMENT (12) ───────────────────────────────
-  { id: 'IC.BUS.EASE.XQ', label: 'Ease of Doing Business Score', category: 'Business Environment', format: 'number', decimals: 1 },
-  { id: 'IC.REG.DURS', label: 'Time to Start a Business (days)', category: 'Business Environment', format: 'number', decimals: 0 },
-  { id: 'IC.REG.PROC', label: 'Procedures to Start a Business', category: 'Business Environment', format: 'number', decimals: 0 },
-  { id: 'IC.REG.COST.PC.ZS', label: 'Cost of Business Start-Up (% of GNI/cap)', category: 'Business Environment', format: 'percent', decimals: 1 },
-  { id: 'IC.TAX.TOTL.CP.ZS', label: 'Total Tax & Contribution Rate (% of profit)', category: 'Business Environment', format: 'percent', decimals: 1 },
-  { id: 'IC.TAX.DURS', label: 'Time to Prepare & Pay Taxes (hours)', category: 'Business Environment', format: 'number', decimals: 0 },
-  { id: 'IC.TAX.PAYM', label: 'Tax Payments per Year', category: 'Business Environment', format: 'number', decimals: 0 },
-  { id: 'IC.EXP.DURS', label: 'Time to Export (days)', category: 'Business Environment', format: 'number', decimals: 0 },
-  { id: 'IC.IMP.DURS', label: 'Time to Import (days)', category: 'Business Environment', format: 'number', decimals: 0 },
-  { id: 'IC.PRP.DURS', label: 'Time to Register Property (days)', category: 'Business Environment', format: 'number', decimals: 0 },
   { id: 'IC.ELC.DURS', label: 'Time to Get Electricity (days)', category: 'Business Environment', format: 'number', decimals: 0 },
-  { id: 'IC.CNS.DURS', label: 'Time to Get Construction Permit (days)', category: 'Business Environment', format: 'number', decimals: 0 },
 
   // ── PEOPLE & DEMOGRAPHICS (25) ─────────────────────────────
   { id: 'SP.POP.TOTL', label: 'Population', category: 'People', format: 'number' },
@@ -174,8 +157,6 @@ export const INDICATORS: Indicator[] = [
   { id: 'SP.POP.DPND', label: 'Age Dependency Ratio (%)', category: 'People', format: 'percent', decimals: 1 },
   { id: 'SP.POP.DPND.OL', label: 'Old-Age Dependency Ratio (%)', category: 'People', format: 'percent', decimals: 1 },
   { id: 'SP.POP.DPND.YG', label: 'Youth Dependency Ratio (%)', category: 'People', format: 'percent', decimals: 1 },
-  { id: 'SM.POP.REFG', label: 'Refugee Population by Origin', category: 'People', format: 'number' },
-  { id: 'SM.POP.REFG.OR', label: 'Refugee Population by Asylum', category: 'People', format: 'number' },
   { id: 'SP.DYN.AMRT.MA', label: 'Mortality Rate, Adult Male (per 1,000)', category: 'People', format: 'number', decimals: 1 },
   { id: 'SP.DYN.AMRT.FE', label: 'Mortality Rate, Adult Female (per 1,000)', category: 'People', format: 'number', decimals: 1 },
 
@@ -188,7 +169,6 @@ export const INDICATORS: Indicator[] = [
   { id: 'SL.UEM.TOTL.FE.ZS', label: 'Female Unemployment (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.UEM.TOTL.MA.ZS', label: 'Male Unemployment (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.UEM.1524.ZS', label: 'Youth Unemployment (%)', category: 'Labor', format: 'percent', decimals: 1 },
-  { id: 'SL.UEM.LTRM.ZS', label: 'Long-Term Unemployment (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.AGR.EMPL.ZS', label: 'Employment in Agriculture (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.IND.EMPL.ZS', label: 'Employment in Industry (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.SRV.EMPL.ZS', label: 'Employment in Services (%)', category: 'Labor', format: 'percent', decimals: 1 },
@@ -247,9 +227,8 @@ export const INDICATORS: Indicator[] = [
   { id: 'SH.ALC.PCAP.LI', label: 'Alcohol Consumption (liters per capita)', category: 'Health', format: 'number', decimals: 1 },
 
   // ── ENERGY & ENVIRONMENT (20) ──────────────────────────────
-  { id: 'EN.ATM.CO2E.PC', label: 'CO₂ Emissions (tonnes per capita)', category: 'Energy & Environment', format: 'number', decimals: 1 },
-  { id: 'EN.ATM.CO2E.KT', label: 'CO₂ Emissions (total kilotonnes)', category: 'Energy & Environment', format: 'number', decimals: 0 },
-  { id: 'EN.ATM.CO2E.GD.PP.KD', label: 'CO₂ Emissions (kg per PPP $ of GDP)', category: 'Energy & Environment', format: 'number', decimals: 2 },
+  { id: 'EN.GHG.CO2.PC.CE.AR5', label: 'CO₂ Emissions (tonnes per capita)', category: 'Energy & Environment', format: 'number', decimals: 1 },
+  { id: 'EN.GHG.CO2.MT.CE.AR5', label: 'CO₂ Emissions (total kilotonnes)', category: 'Energy & Environment', format: 'number', decimals: 0 },
   { id: 'EG.USE.PCAP.KG.OE', label: 'Energy Use (kg oil eq. per capita)', category: 'Energy & Environment', format: 'number', decimals: 0 },
   { id: 'EG.USE.ELEC.KH.PC', label: 'Electric Power Consumption (kWh per capita)', category: 'Energy & Environment', format: 'number', decimals: 0 },
   { id: 'EG.ELC.RNEW.ZS', label: 'Renewable Electricity Output (%)', category: 'Energy & Environment', format: 'percent', decimals: 1 },
@@ -264,9 +243,6 @@ export const INDICATORS: Indicator[] = [
   { id: 'ER.MRN.PTMR.ZS', label: 'Marine Protected Areas (%)', category: 'Energy & Environment', format: 'percent', decimals: 1 },
   { id: 'SH.H2O.BASW.ZS', label: 'Access to Basic Drinking Water (%)', category: 'Energy & Environment', format: 'percent', decimals: 1 },
   { id: 'SH.STA.BASS.ZS', label: 'Access to Basic Sanitation (%)', category: 'Energy & Environment', format: 'percent', decimals: 1 },
-  { id: 'EN.ATM.METH.KT.CE', label: 'Methane Emissions (kt of CO₂ eq.)', category: 'Energy & Environment', format: 'number', decimals: 0 },
-  { id: 'EN.ATM.NOXE.KT.CE', label: 'Nitrous Oxide Emissions (kt of CO₂ eq.)', category: 'Energy & Environment', format: 'number', decimals: 0 },
-  { id: 'EN.ATM.GHGO.KT.CE', label: 'Total Greenhouse Gas Emissions (kt of CO₂ eq.)', category: 'Energy & Environment', format: 'number', decimals: 0 },
 
   // ── AGRICULTURE & FOOD (12) ─────────────────────────────────
   { id: 'AG.LND.AGRI.ZS', label: 'Agricultural Land (%)', category: 'Agriculture', format: 'percent', decimals: 1 },
@@ -278,7 +254,6 @@ export const INDICATORS: Indicator[] = [
   { id: 'ER.FSH.CAPT.MT', label: 'Total Fisheries Production (metric tonnes)', category: 'Agriculture', format: 'number', decimals: 0 },
   { id: 'AG.CON.FERT.ZS', label: 'Fertilizer Consumption (kg per hectare)', category: 'Agriculture', format: 'number', decimals: 1 },
   { id: 'SN.ITK.DEFC.ZS', label: 'Prevalence of Undernourishment (%)', category: 'Agriculture', format: 'percent', decimals: 1 },
-  { id: 'SN.ITK.DFCT', label: 'Depth of Food Deficit (kcal/person/day)', category: 'Agriculture', format: 'number', decimals: 0 },
   { id: 'AG.LND.IRIG.AG.ZS', label: 'Agricultural Irrigated Land (%)', category: 'Agriculture', format: 'percent', decimals: 1 },
   { id: 'ER.H2O.FWTL.ZS', label: 'Annual Freshwater Withdrawals (% of internal)', category: 'Agriculture', format: 'percent', decimals: 1 },
 
@@ -290,7 +265,6 @@ export const INDICATORS: Indicator[] = [
   { id: 'GB.XPD.RSDV.GD.ZS', label: 'R&D Spending (% of GDP)', category: 'Technology', format: 'percent', decimals: 2 },
   { id: 'IP.PAT.RESD', label: 'Patent Applications, Residents', category: 'Technology', format: 'number' },
   { id: 'IP.PAT.NRES', label: 'Patent Applications, Non-Residents', category: 'Technology', format: 'number' },
-  { id: 'IP.TMK.TOTL', label: 'Trademark Applications', category: 'Technology', format: 'number' },
   { id: 'IP.JRN.ARTC.SC', label: 'Scientific Journal Articles', category: 'Technology', format: 'number' },
   { id: 'TX.VAL.TECH.CD', label: 'High-Technology Exports (USD)', category: 'Technology', format: 'currency' },
   { id: 'BX.GSR.CCIS.ZS', label: 'ICT Service Exports (% of service exports)', category: 'Technology', format: 'percent', decimals: 1 },
@@ -305,9 +279,6 @@ export const INDICATORS: Indicator[] = [
   { id: 'IS.RRS.TOTL.KM', label: 'Rail Lines (total km)', category: 'Infrastructure', format: 'number', decimals: 0 },
   { id: 'IS.RRS.PASG.KM', label: 'Railways, Passengers (million km)', category: 'Infrastructure', format: 'number', decimals: 0 },
   { id: 'IS.RRS.GOOD.MT.K6', label: 'Railways, Goods (million ton-km)', category: 'Infrastructure', format: 'number', decimals: 0 },
-  { id: 'IS.VEH.NVEH.P3', label: 'Motor Vehicles (per 1,000 people)', category: 'Infrastructure', format: 'number', decimals: 0 },
-  { id: 'IS.ROD.TOTL.KM', label: 'Road Network (total km)', category: 'Infrastructure', format: 'number', decimals: 0 },
-  { id: 'IS.ROD.PAVE.ZS', label: 'Roads, Paved (% of total)', category: 'Infrastructure', format: 'percent', decimals: 1 },
   { id: 'LP.LPI.OVRL.XQ', label: 'Logistics Performance Index (1–5)', category: 'Infrastructure', format: 'index', decimals: 2 },
   { id: 'EG.ELC.PETR.ZS', label: 'Electricity from Oil (%)', category: 'Infrastructure', format: 'percent', decimals: 1 },
   { id: 'EG.ELC.NUCL.ZS', label: 'Electricity from Nuclear (%)', category: 'Infrastructure', format: 'percent', decimals: 1 },
@@ -316,13 +287,9 @@ export const INDICATORS: Indicator[] = [
   { id: 'SG.GEN.PARL.ZS', label: 'Women in Parliament (%)', category: 'Gender', format: 'percent', decimals: 1 },
   { id: 'SL.TLF.CACT.FE.NE.ZS', label: 'Female Labor Force Participation, 15+ (%)', category: 'Gender', format: 'percent', decimals: 1 },
   { id: 'SL.EMP.WORK.FE.ZS', label: 'Female Wage & Salaried Workers (%)', category: 'Gender', format: 'percent', decimals: 1 },
-  { id: 'SE.ENR.PRFM.FE.ZS', label: 'Female Share of STEM Graduates (%)', category: 'Gender', format: 'percent', decimals: 1 },
   { id: 'SE.PRM.GINT.FE.ZS', label: 'Girls Out-of-School Rate (%)', category: 'Gender', format: 'percent', decimals: 1 },
   { id: 'SP.ADO.TFRT', label: 'Adolescent Fertility Rate (per 1,000)', category: 'Gender', format: 'number', decimals: 1 },
-  { id: 'IC.REG.COST.PC.FE.ZS', label: 'Business Start-Up Cost, Female (% of GNI/cap)', category: 'Gender', format: 'percent', decimals: 1 },
   { id: 'SG.VAW.REAS.ZS', label: 'Women Who Believe Husband Can Beat Wife (%)', category: 'Gender', format: 'percent', decimals: 1 },
-  { id: 'SG.OWN.HOUS.FE.ZS', label: 'Women Who Own a House Alone (%)', category: 'Gender', format: 'percent', decimals: 1 },
-  { id: 'SG.LAW.NODC.HR', label: 'Women, Business & Law Index', category: 'Gender', format: 'index', decimals: 1 },
   { id: 'SE.PRM.GINT.ZS', label: 'Gender Parity Index, Primary', category: 'Gender', format: 'ratio', decimals: 2 },
   { id: 'SE.ENR.SECO.FM.ZS', label: 'Gender Parity Index, Secondary', category: 'Gender', format: 'ratio', decimals: 2 },
 
@@ -392,9 +359,7 @@ export const INDICATORS: Indicator[] = [
   { id: 'IC.FRM.CORR.ZS', label: 'Firms Expected to Pay Bribes (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
   { id: 'IC.FRM.FEMO.ZS', label: 'Firms with Female Top Manager (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
   { id: 'IC.FRM.FEMM.ZS', label: 'Firms with Female Participation in Ownership (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
-  { id: 'IC.FRM.ISOC.ZS', label: 'Firms Using Email (% of firms)', category: 'Private Sector', format: 'percent', decimals: 1 },
   { id: 'IC.FRM.TRNG.ZS', label: 'Firms Offering Training (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
-  { id: 'IC.FRM.INFM.ZS', label: 'Informal Competition (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
   { id: 'IC.FRM.DURS', label: 'Average Firm Age (years)', category: 'Private Sector', format: 'years', decimals: 0 },
   { id: 'IC.FRM.CMPU.ZS', label: 'Firms Using Computers (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
 ];
@@ -487,6 +452,33 @@ export async function getIndicatorForAllCountries(indicatorId: string): Promise<
     value: adjustValue(indicatorId, row.value),
     year: String(row.year),
   }));
+}
+
+export async function getTop10AllIndicators(): Promise<Record<string, { country: string; countryId: string; value: number; year: string }[]>> {
+  // Fetch all indicator data + country names in one query
+  const { data, error } = await supabase
+    .from('sotw_indicators')
+    .select('id, country_id, value, year, sotw_countries(name)')
+    .not('value', 'is', null)
+    .order('value', { ascending: false })
+    .limit(20000);
+  if (error || !data) return {};
+
+  // Group by indicator, take top 10 per indicator (by absolute value descending)
+  const grouped: Record<string, { country: string; countryId: string; value: number; year: string }[]> = {};
+  for (const row of data as any[]) {
+    const id = row.id;
+    if (!grouped[id]) grouped[id] = [];
+    if (grouped[id].length < 10) {
+      grouped[id].push({
+        country: row.sotw_countries?.name || row.country_id,
+        countryId: row.country_id,
+        value: adjustValue(id, row.value) as number,
+        year: String(row.year),
+      });
+    }
+  }
+  return grouped;
 }
 
 // ============================================================

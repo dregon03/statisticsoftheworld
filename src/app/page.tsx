@@ -1,56 +1,24 @@
 import Link from 'next/link';
-import { getCountries, getIndicatorForAllCountries, formatValue, INDICATORS, CATEGORIES } from '@/lib/data';
-
-// One featured indicator per category — the most important one
-const FEATURED: { id: string; label: string }[] = [
-  { id: 'IMF.NGDPD', label: 'GDP, Nominal (USD Billions)' },
-  { id: 'SP.POP.TOTL', label: 'Population, Total' },
-  { id: 'IMF.NGDPDPC', label: 'GDP per Capita (USD)' },
-  { id: 'IMF.NGDP_RPCH', label: 'Real GDP Growth (%)' },
-  { id: 'IMF.PCPIPCH', label: 'Inflation Rate, CPI (%)' },
-  { id: 'IMF.LUR', label: 'Unemployment Rate (%)' },
-  { id: 'IMF.GGXWDG_NGDP', label: 'Government Debt (% of GDP)' },
-  { id: 'SP.DYN.LE00.IN', label: 'Life Expectancy at Birth (Years)' },
-  { id: 'NE.TRD.GNFS.ZS', label: 'Trade (% of GDP)' },
-  { id: 'IMF.PPPPC', label: 'GDP per Capita, PPP (Intl $)' },
-  { id: 'SL.UEM.TOTL.ZS', label: 'Unemployment, ILO Estimate (%)' },
-  { id: 'EN.ATM.CO2E.PC', label: 'CO₂ Emissions (Tonnes per Capita)' },
-  { id: 'SH.XPD.CHEX.GD.ZS', label: 'Health Expenditure (% of GDP)' },
-  { id: 'SE.XPD.TOTL.GD.ZS', label: 'Education Expenditure (% of GDP)' },
-  { id: 'IT.NET.USER.ZS', label: 'Internet Users (% of Population)' },
-  { id: 'MS.MIL.XPND.GD.ZS', label: 'Military Expenditure (% of GDP)' },
-  { id: 'SI.POV.GINI', label: 'Gini Index (Income Inequality)' },
-  { id: 'SH.DYN.MORT', label: 'Infant Mortality (per 1,000)' },
-  { id: 'SP.DYN.TFRT.IN', label: 'Fertility Rate (Births per Woman)' },
-  { id: 'ST.INT.ARVL', label: 'International Tourism Arrivals' },
-  { id: 'GB.XPD.RSDV.GD.ZS', label: 'R&D Expenditure (% of GDP)' },
-  { id: 'CC.EST', label: 'Control of Corruption Index' },
-  { id: 'EG.ELC.RNEW.ZS', label: 'Renewable Electricity (% of Total)' },
-  { id: 'AG.YLD.CREL.KG', label: 'Cereal Yield (kg per Hectare)' },
-];
-
-async function getFeaturedData() {
-  const results = await Promise.all(
-    FEATURED.map(async (f) => {
-      const data = await getIndicatorForAllCountries(f.id);
-      const ind = INDICATORS.find(i => i.id === f.id);
-      return { ...f, data: data.slice(0, 10), format: ind?.format || 'number', decimals: ind?.decimals };
-    })
-  );
-  return results;
-}
+import { getCountries, getTop10AllIndicators, formatValue, INDICATORS, CATEGORIES } from '@/lib/data';
 
 export default async function Home() {
-  const [countries, featured] = await Promise.all([
+  const [countries, allTop10] = await Promise.all([
     getCountries(),
-    getFeaturedData(),
+    getTop10AllIndicators(),
   ]);
 
-  // Pair them up for side-by-side layout
-  const pairs: { left: typeof featured[0]; right?: typeof featured[0] }[] = [];
-  for (let i = 0; i < featured.length; i += 2) {
-    pairs.push({ left: featured[i], right: featured[i + 1] });
-  }
+  // Group indicators by category, only include ones with data
+  const categoriesWithData = CATEGORIES.map(category => {
+    const indicators = INDICATORS
+      .filter(ind => ind.category === category && allTop10[ind.id]?.length > 0)
+      .map(ind => ({
+        ...ind,
+        data: allTop10[ind.id] || [],
+      }));
+    return { category, indicators };
+  }).filter(c => c.indicators.length > 0);
+
+  const totalIndicatorsWithData = categoriesWithData.reduce((sum, c) => sum + c.indicators.length, 0);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -72,7 +40,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Nav */}
-      <header className="border-b border-gray-100">
+      <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-blue-600 rounded flex items-center justify-center font-bold text-xs text-white">SW</div>
@@ -93,7 +61,7 @@ export default async function Home() {
           <span className="text-blue-600">in one place.</span>
         </h1>
         <p className="text-lg text-gray-500 mt-4 max-w-xl">
-          {countries.length} countries. {INDICATORS.length} indicators. Sourced from IMF, World Bank, WHO, and UNESCO.
+          {countries.length} countries. {totalIndicatorsWithData} indicators. Sourced from IMF, World Bank, WHO, and UNESCO.
         </p>
         <div className="flex gap-3 mt-8">
           <Link href="/countries" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">
@@ -105,18 +73,41 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* All featured indicators — side by side */}
-      <section className="max-w-6xl mx-auto px-6 pb-16 space-y-8">
-        {pairs.map((pair, pairIdx) => (
-          <div key={pairIdx} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[pair.left, pair.right].filter(Boolean).map((f) => (
-              <div key={f!.id}>
+      {/* Category jump nav */}
+      <section className="max-w-6xl mx-auto px-6 pb-8">
+        <div className="flex flex-wrap gap-2">
+          {categoriesWithData.map(({ category, indicators }) => (
+            <a
+              key={category}
+              href={`#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+              className="px-3 py-1.5 border border-gray-200 rounded-full text-xs text-gray-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition"
+            >
+              {category} <span className="text-gray-300">({indicators.length})</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* All indicators by category */}
+      {categoriesWithData.map(({ category, indicators }) => (
+        <section
+          key={category}
+          id={category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}
+          className="max-w-6xl mx-auto px-6 pb-12"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <h2 className="text-xl font-bold text-gray-900">{category}</h2>
+            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{indicators.length} indicators</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {indicators.map((ind) => (
+              <div key={ind.id}>
                 <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-sm font-semibold text-gray-900">{f!.label}</h2>
+                  <h3 className="text-sm font-semibold text-gray-900">{ind.label}</h3>
                   <Link href="/rankings" className="text-xs text-gray-400 hover:text-gray-600 transition">All countries</Link>
                 </div>
                 <div className="border border-gray-100 rounded-xl overflow-hidden">
-                  {f!.data.map((d, i) => (
+                  {ind.data.map((d, i) => (
                     <Link
                       key={d.countryId}
                       href={`/country/${d.countryId}`}
@@ -125,16 +116,17 @@ export default async function Home() {
                       <span className="text-gray-300 text-xs w-5">{i + 1}</span>
                       <span className="flex-1 text-sm">{d.country}</span>
                       <span className="text-sm font-mono text-gray-500">
-                        {formatValue(d.value, f!.format, f!.decimals)}
+                        {formatValue(d.value, ind.format, ind.decimals)}
                       </span>
+                      <span className="text-xs text-gray-300 ml-2 w-8 text-right">{d.year}</span>
                     </Link>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-        ))}
-      </section>
+        </section>
+      ))}
 
       {/* Browse countries */}
       <section className="max-w-6xl mx-auto px-6 pb-20">

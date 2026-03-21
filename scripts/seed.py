@@ -34,45 +34,104 @@ IMF_INDICATORS = {
     "IMF.LUR": "LUR",
 }
 
-# World Bank indicators (all non-IMF ones from data.ts)
+# World Bank indicators — all 307 non-IMF indicators from data.ts
 WB_INDICATORS = [
     "NY.GNP.MKTP.CD","NY.GNP.PCAP.CD","NY.GNP.PCAP.PP.CD",
     "NV.IND.TOTL.ZS","NV.SRV.TOTL.ZS","NV.AGR.TOTL.ZS",
     "NE.CON.GOVT.ZS","NE.CON.PRVT.ZS","NE.GDI.TOTL.ZS",
     "NY.GNS.ICTR.ZS","NY.GDP.DEFL.KD.ZG","SL.GDP.PCAP.EM.KD",
-    "NV.IND.MANF.ZS","NY.ADJ.NNTY.PC.CD","NY.ADJ.SVNG.GN.ZS",
-    "NY.GDP.TOTL.RT.ZS","NY.GDP.PETR.RT.ZS","NV.IND.TOTL.CD",
+    "NV.IND.MANF.ZS","NV.MNF.TECH.ZS.UN","NY.ADJ.NNTY.PC.CD",
+    "NY.ADJ.SVNG.GN.ZS","NE.RSB.GNFS.ZS",
+    "NY.GDP.COAL.RT.ZS","NY.GDP.MINR.RT.ZS","NY.GDP.PETR.RT.ZS",
+    "NY.GDP.NGAS.RT.ZS","NY.GDP.TOTL.RT.ZS","NY.GDP.FRST.RT.ZS","NV.IND.TOTL.CD",
     "FP.CPI.TOTL.ZG","FR.INR.RINR","FR.INR.LEND","FR.INR.DPST",
     "GC.DOD.TOTL.GD.ZS","GC.REV.XGRT.GD.ZS","GC.XPN.TOTL.GD.ZS",
-    "GC.TAX.TOTL.GD.ZS","FI.RES.TOTL.CD","PA.NUS.FCRF","FM.LBL.BMNY.GD.ZS",
+    "GC.TAX.TOTL.GD.ZS","GC.TAX.GSRV.RV.ZS","GC.TAX.INTT.RV.ZS",
+    "GC.TAX.YPKG.RV.ZS","GC.BAL.CASH.GD.ZS","GC.NFN.TOTL.GD.ZS",
+    "FI.RES.TOTL.CD","FI.RES.TOTL.MO","PA.NUS.FCRF","PA.NUS.PPP","FM.LBL.BMNY.GD.ZS",
     "NE.TRD.GNFS.ZS","NE.EXP.GNFS.ZS","NE.IMP.GNFS.ZS",
-    "BX.KLT.DINV.WD.GD.ZS","BX.TRF.PWKR.CD.DT","TX.VAL.TECH.MF.ZS",
-    "BN.CAB.XOKA.GD.ZS","DT.DOD.DECT.GN.ZS","DT.DOD.DECT.CD",
-    "FS.AST.PRVT.GD.ZS","CM.MKT.LCAP.GD.ZS","FX.OWN.TOTL.ZS",
-    "SP.POP.TOTL","SP.POP.GROW","EN.POP.DNST","AG.SRF.TOTL.K2",
-    "SP.URB.TOTL.IN.ZS","SP.DYN.LE00.IN","SP.DYN.LE00.MA.IN","SP.DYN.LE00.FE.IN",
-    "SP.DYN.TFRT.IN","SP.DYN.CBRT.IN","SP.DYN.CDRT.IN",
+    "NE.EXP.GNFS.CD","NE.IMP.GNFS.CD","TX.VAL.MRCH.CD.WT","TM.VAL.MRCH.CD.WT",
+    "BX.KLT.DINV.WD.GD.ZS","BM.KLT.DINV.WD.GD.ZS","BX.KLT.DINV.CD.WD",
+    "BX.TRF.PWKR.CD.DT","BX.TRF.PWKR.DT.GD.ZS","TX.VAL.TECH.MF.ZS",
+    "BN.CAB.XOKA.GD.ZS","BN.CAB.XOKA.CD",
+    "DT.DOD.DECT.GN.ZS","DT.DOD.DECT.CD","DT.TDS.DECT.GN.ZS",
+    "DT.DOD.DLTT.CD","DT.DOD.DSTT.CD","DT.DOD.PVLX.CD",
+    "DT.INT.DECT.GN.ZS","DT.DOD.DIMF.CD","DT.ODA.ODAT.GN.ZS","DT.ODA.ODAT.CD",
+    "FS.AST.DOMS.GD.ZS","FS.AST.PRVT.GD.ZS","CM.MKT.LCAP.GD.ZS",
+    "CM.MKT.LCAP.CD","CM.MKT.TRAD.GD.ZS","CM.MKT.LDOM.NO",
+    "FB.BNK.CAPA.ZS","FB.AST.NPER.ZS",
+    "FX.OWN.TOTL.ZS","FX.OWN.TOTL.FE.ZS","FX.OWN.TOTL.MA.ZS",
+    "IC.FRM.BNKS.ZS","IC.CRD.INFO.XQ","IC.LGL.CRED.XQ",
+    "IC.BUS.EASE.XQ","IC.REG.DURS","IC.REG.PROC","IC.REG.COST.PC.ZS",
+    "IC.TAX.TOTL.CP.ZS","IC.TAX.DURS","IC.TAX.PAYM",
+    "IC.EXP.DURS","IC.IMP.DURS","IC.PRP.DURS","IC.ELC.DURS","IC.CNS.DURS",
+    "SP.POP.TOTL","SP.POP.GROW","EN.POP.DNST","AG.SRF.TOTL.K2","AG.LND.TOTL.K2",
+    "SP.URB.TOTL.IN.ZS","SP.URB.TOTL","SP.RUR.TOTL.ZS",
+    "SP.DYN.LE00.IN","SP.DYN.LE00.MA.IN","SP.DYN.LE00.FE.IN",
+    "SP.DYN.TFRT.IN","SP.DYN.CBRT.IN","SP.DYN.CDRT.IN","SM.POP.NETM",
     "SP.POP.0014.TO.ZS","SP.POP.1564.TO.ZS","SP.POP.65UP.TO.ZS",
-    "SL.TLF.TOTL.IN","SL.TLF.CACT.ZS","SL.UEM.TOTL.ZS","SL.UEM.1524.ZS",
+    "SP.POP.DPND","SP.POP.DPND.OL","SP.POP.DPND.YG",
+    "SM.POP.REFG","SM.POP.REFG.OR","SP.DYN.AMRT.MA","SP.DYN.AMRT.FE",
+    "SL.TLF.TOTL.IN","SL.TLF.CACT.ZS","SL.TLF.CACT.FE.ZS","SL.TLF.CACT.MA.ZS",
+    "SL.UEM.TOTL.ZS","SL.UEM.TOTL.FE.ZS","SL.UEM.TOTL.MA.ZS",
+    "SL.UEM.1524.ZS","SL.UEM.LTRM.ZS",
     "SL.AGR.EMPL.ZS","SL.IND.EMPL.ZS","SL.SRV.EMPL.ZS",
-    "SE.XPD.TOTL.GD.ZS","SE.ADT.LITR.ZS","SE.PRM.ENRR","SE.SEC.ENRR","SE.TER.ENRR",
-    "SH.XPD.CHEX.GD.ZS","SH.XPD.CHEX.PC.CD","SH.MED.PHYS.ZS","SH.MED.BEDS.ZS",
-    "SH.DYN.MORT","SH.STA.MMRT","SH.IMM.MEAS","SH.TBS.INCD",
+    "SL.TLF.CACT.NE.ZS","SL.EMP.VULN.ZS","SL.EMP.WORK.ZS",
+    "SL.TLF.PART.ZS","SL.EMP.MPYR.ZS","SL.TLF.TOTL.FE.ZS",
+    "SE.XPD.TOTL.GD.ZS","SE.XPD.TOTL.GB.ZS",
+    "SE.ADT.LITR.ZS","SE.ADT.LITR.FE.ZS","SE.ADT.LITR.MA.ZS","SE.ADT.1524.LT.ZS",
+    "SE.PRM.ENRR","SE.SEC.ENRR","SE.TER.ENRR",
+    "SE.PRM.CMPT.ZS","SE.SEC.CMPT.LO.ZS",
+    "SE.PRM.UNER","SE.PRM.UNER.FE","SE.PRM.TCHR","SE.SEC.TCHR",
+    "SE.PRM.ENRL.TC.ZS","SE.SEC.ENRL.TC.ZS","SE.XPD.PRIM.ZS",
+    "SH.XPD.CHEX.GD.ZS","SH.XPD.CHEX.PC.CD","SH.XPD.GHED.GD.ZS","SH.XPD.OOPC.CH.ZS",
+    "SH.MED.PHYS.ZS","SH.MED.NUMW.P3","SH.MED.BEDS.ZS",
+    "SH.DYN.MORT","SH.DYN.NMRT","SH.STA.MMRT","SH.DYN.MORT.FE","SH.DYN.MORT.MA",
+    "SH.DTH.COMM.ZS","SH.DTH.NCOM.ZS","SH.DTH.INJR.ZS",
+    "SH.IMM.MEAS","SH.IMM.IDPT","SH.HIV.INCD.TL.P3","SH.TBS.INCD",
+    "SH.STA.STNT.ZS","SH.STA.OWGH.ZS","SH.PRV.SMOK.MA","SH.PRV.SMOK.FE",
     "SH.STA.SUIC.P5","SH.ALC.PCAP.LI",
-    "EN.ATM.CO2E.PC","EN.ATM.CO2E.KT","EG.ELC.RNEW.ZS","EG.ELC.ACCS.ZS",
-    "EN.ATM.PM25.MC.M3","AG.LND.FRST.ZS","SH.H2O.BASW.ZS",
-    "AG.LND.AGRI.ZS","AG.YLD.CREL.KG","SN.ITK.DEFC.ZS",
-    "IT.NET.USER.ZS","IT.CEL.SETS.P2","IT.NET.BBND.P2",
-    "GB.XPD.RSDV.GD.ZS","IP.PAT.RESD","IP.JRN.ARTC.SC",
-    "IS.AIR.PSGR","LP.LPI.OVRL.XQ",
-    "SG.GEN.PARL.ZS","SP.ADO.TFRT",
+    "EN.GHG.CO2.PC.CE.AR5","EN.GHG.CO2.MT.CE.AR5","EN.ATM.CO2E.GD.PP.KD",
+    "EG.USE.PCAP.KG.OE","EG.USE.ELEC.KH.PC",
+    "EG.ELC.RNEW.ZS","EG.FEC.RNEW.ZS","EG.ELC.ACCS.ZS","EG.CFT.ACCS.ZS",
+    "EN.ATM.PM25.MC.M3","AG.LND.FRST.ZS","AG.LND.FRST.K2","AG.LND.ARBL.ZS",
+    "ER.PTD.TOTL.ZS","ER.MRN.PTMR.ZS",
+    "SH.H2O.BASW.ZS","SH.STA.BASS.ZS",
+    "EN.ATM.METH.KT.CE","EN.ATM.NOXE.KT.CE","EN.ATM.GHGO.KT.CE",
+    "AG.LND.AGRI.ZS","AG.YLD.CREL.KG",
+    "AG.PRD.FOOD.XD","AG.PRD.CROP.XD","AG.PRD.LVSK.XD",
+    "AG.LND.CREL.HA","ER.FSH.CAPT.MT","AG.CON.FERT.ZS",
+    "SN.ITK.DEFC.ZS","SN.ITK.DFCT","AG.LND.IRIG.AG.ZS","ER.H2O.FWTL.ZS",
+    "IT.NET.USER.ZS","IT.CEL.SETS.P2","IT.NET.BBND.P2","IT.NET.SECR.P6",
+    "GB.XPD.RSDV.GD.ZS","IP.PAT.RESD","IP.PAT.NRES","IP.TMK.TOTL",
+    "IP.JRN.ARTC.SC","TX.VAL.TECH.CD","BX.GSR.CCIS.ZS","BX.GSR.CCIS.CD",
+    "IP.IDS.RSCT","SP.POP.SCIE.RD.P6",
+    "IS.AIR.PSGR","IS.AIR.GOOD.MT.K1","IS.SHP.GOOD.TU",
+    "IS.RRS.TOTL.KM","IS.RRS.PASG.KM","IS.RRS.GOOD.MT.K6",
+    "IS.VEH.NVEH.P3","IS.ROD.TOTL.KM","IS.ROD.PAVE.ZS",
+    "LP.LPI.OVRL.XQ","EG.ELC.PETR.ZS","EG.ELC.NUCL.ZS",
+    "SG.GEN.PARL.ZS","SL.TLF.CACT.FE.NE.ZS","SL.EMP.WORK.FE.ZS",
+    "SE.ENR.PRFM.FE.ZS","SE.PRM.GINT.FE.ZS","SP.ADO.TFRT",
+    "IC.REG.COST.PC.FE.ZS","SG.VAW.REAS.ZS","SG.OWN.HOUS.FE.ZS",
+    "SG.LAW.NODC.HR","SE.PRM.GINT.ZS","SE.ENR.SECO.FM.ZS",
     "CC.EST","GE.EST","PV.EST","RQ.EST","RL.EST","VA.EST",
+    "CC.PER.RNK","GE.PER.RNK","RL.PER.RNK","PV.PER.RNK",
     "MS.MIL.XPND.GD.ZS","MS.MIL.XPND.CD","MS.MIL.TOTL.P1",
-    "SI.POV.DDAY","SI.POV.GINI","SI.DST.10TH.10",
-    "ST.INT.ARVL","ST.INT.RCPT.CD",
-    "HD.HCI.OVRL","HD.HCI.LAYS",
-    "IC.BUS.EASE.XQ","IC.REG.DURS","IC.TAX.TOTL.CP.ZS",
-    "VC.IHR.PSRC.P5",
+    "MS.MIL.TOTL.TF.ZS","MS.MIL.XPND.ZS","VC.IHR.PSRC.P5",
+    "SI.POV.DDAY","SI.POV.LMIC","SI.POV.UMIC","SI.POV.NAHC",
+    "SI.POV.GINI","SI.DST.10TH.10","SI.DST.FRST.10",
+    "SI.DST.05TH.20","SI.DST.FRST.20",
+    "SI.SPR.PCAP.ZG","SI.SPR.PCAP","SI.POV.GAPS",
+    "per_si_allsi.cov_pop_tot","per_sa_allsa.cov_pop_tot",
+    "per_lm_alllm.cov_pop_tot","per_allsp.cov_pop_tot",
+    "HD.HCI.OVRL","HD.HCI.OVRL.FE","HD.HCI.OVRL.MA","HD.HCI.LAYS",
+    "ST.INT.ARVL","ST.INT.DPRT","ST.INT.RCPT.CD",
+    "ST.INT.XPND.CD","ST.INT.RCPT.XP.ZS","ST.INT.TRNR.CD",
+    "SP.URB.GROW","EN.URB.LCTY","EN.URB.LCTY.UR.ZS",
+    "EN.URB.MCTY.TL.ZS","EN.POP.SLUM.UR.ZS","SP.RUR.TOTL.ZG",
+    "SH.H2O.SMDW.ZS","SH.STA.SMSS.ZS",
+    "IC.FRM.CORR.ZS","IC.FRM.FEMO.ZS","IC.FRM.FEMM.ZS",
+    "IC.FRM.ISOC.ZS","IC.FRM.TRNG.ZS","IC.FRM.INFM.ZS","IC.FRM.DURS","IC.FRM.CMPU.ZS",
 ]
 
 WB_AGGREGATES = {
@@ -130,28 +189,42 @@ def build_iso2_to_iso3():
 
 def seed_wb_indicator(cur, indicator_id, iso2_to_iso3):
     try:
-        data = fetch_json(f"{WB}/country/all/indicator/{indicator_id}?format=json&mrv=1&per_page=300")
-        if not data[1]:
-            return 0
+        # Fetch last 5 years of data to maximize coverage (mrv=1 misses countries with slightly older data)
+        pages_data = []
+        for page in [1, 2]:
+            data = fetch_json(f"{WB}/country/all/indicator/{indicator_id}?format=json&mrv=5&per_page=500&page={page}")
+            if data[1]:
+                pages_data.extend(data[1])
+            if not data[0] or data[0].get("pages", 1) <= page:
+                break
     except Exception as e:
         print(f"  SKIP {indicator_id}: {e}")
         return 0
 
-    count = 0
-    for d in data[1]:
+    if not pages_data:
+        return 0
+
+    # Keep only the most recent value per country
+    best: dict = {}  # iso3 -> (value, year)
+    for d in pages_data:
         iso2 = d["country"]["id"]
         if iso2 in WB_AGGREGATES or d["value"] is None:
             continue
-        # Map 2-letter to 3-letter code
         iso3 = iso2_to_iso3.get(iso2)
         if not iso3:
             continue
+        year = int(d["date"])
+        if iso3 not in best or year > best[iso3][1]:
+            best[iso3] = (d["value"], year)
+
+    count = 0
+    for iso3, (value, year) in best.items():
         cur.execute("""
             INSERT INTO sotw_indicators (id, country_id, value, year, source)
             VALUES (%s, %s, %s, %s, 'wb')
             ON CONFLICT (id, country_id) DO UPDATE SET
                 value = EXCLUDED.value, year = EXCLUDED.year, updated_at = NOW()
-        """, (indicator_id, iso3, d["value"], int(d["date"])))
+        """, (indicator_id, iso3, value, year))
         count += 1
     return count
 

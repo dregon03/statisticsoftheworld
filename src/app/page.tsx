@@ -2,30 +2,75 @@ import Link from 'next/link';
 import { getCountries, getTop10AllIndicators, formatValue, INDICATORS, CATEGORIES } from '@/lib/data';
 import CategorySection from './CategorySection';
 
-// 2 most important indicators per category — shown by default before expand
-const FEATURED: Record<string, [string, string]> = {
-  'Economy':              ['IMF.NGDPD',          'IMF.NGDPDPC'],
-  'Fiscal & Monetary':    ['IMF.PCPIPCH',        'IMF.LUR'],
-  'Trade':                ['NE.TRD.GNFS.ZS',     'BX.KLT.DINV.WD.GD.ZS'],
-  'External Debt':        ['DT.DOD.DECT.GN.ZS',  'DT.DOD.DECT.CD'],
-  'Finance':              ['CM.MKT.LCAP.GD.ZS',  'FS.AST.PRVT.GD.ZS'],
-  'Business Environment': ['IC.ELC.DURS',         'IC.ELC.DURS'],
-  'People':               ['SP.POP.TOTL',         'SP.DYN.LE00.IN'],
-  'Labor':                ['SL.UEM.TOTL.ZS',      'SL.TLF.CACT.ZS'],
-  'Education':            ['SE.ADT.LITR.ZS',      'SE.XPD.TOTL.GD.ZS'],
-  'Health':               ['SH.XPD.CHEX.GD.ZS',   'SH.DYN.MORT'],
-  'Energy & Environment': ['EN.GHG.CO2.PC.CE.AR5','EG.ELC.RNEW.ZS'],
-  'Agriculture':          ['AG.YLD.CREL.KG',      'SN.ITK.DEFC.ZS'],
-  'Technology':           ['IT.NET.USER.ZS',       'GB.XPD.RSDV.GD.ZS'],
-  'Infrastructure':       ['IS.AIR.PSGR',          'LP.LPI.OVRL.XQ'],
-  'Gender':               ['SG.GEN.PARL.ZS',      'SP.ADO.TFRT'],
-  'Governance':           ['CC.EST',               'RL.EST'],
-  'Military':             ['MS.MIL.XPND.GD.ZS',   'MS.MIL.TOTL.P1'],
-  'Poverty & Inequality': ['SI.POV.GINI',          'SI.POV.DDAY'],
-  'Social Protection':    ['HD.HCI.OVRL',          'HD.HCI.LAYS'],
-  'Tourism':              ['ST.INT.ARVL',           'ST.INT.RCPT.CD'],
-  'Urban Development':    ['SP.URB.GROW',           'EN.POP.SLUM.UR.ZS'],
-  'Private Sector':       ['IC.FRM.CORR.ZS',       'IC.FRM.TRNG.ZS'],
+// Key indicators shown by default per category (before "show more")
+const FEATURED: Record<string, string[]> = {
+  'Economy': [
+    'IMF.NGDPD', 'IMF.NGDPDPC', 'IMF.NGDP_RPCH',
+    'IMF.PPPGDP', 'IMF.PPPPC', 'IMF.PPPSH',
+  ],
+  'Fiscal & Monetary': [
+    'IMF.PCPIPCH', 'IMF.LUR', 'IMF.GGXWDG_NGDP', 'FI.RES.TOTL.CD',
+  ],
+  'Trade': [
+    'NE.TRD.GNFS.ZS', 'BX.KLT.DINV.WD.GD.ZS', 'TX.VAL.TECH.MF.ZS',
+  ],
+  'External Debt': [
+    'DT.DOD.DECT.GN.ZS', 'DT.DOD.DECT.CD',
+  ],
+  'Finance': [
+    'CM.MKT.LCAP.GD.ZS', 'FS.AST.PRVT.GD.ZS',
+  ],
+  'Business Environment': [
+    'IC.ELC.DURS',
+  ],
+  'People': [
+    'SP.POP.TOTL', 'SP.DYN.LE00.IN', 'SP.DYN.TFRT.IN', 'EN.POP.DNST',
+  ],
+  'Labor': [
+    'SL.UEM.TOTL.ZS', 'SL.TLF.CACT.ZS', 'SL.UEM.1524.ZS',
+  ],
+  'Education': [
+    'SE.ADT.LITR.ZS', 'SE.XPD.TOTL.GD.ZS', 'SE.TER.ENRR',
+  ],
+  'Health': [
+    'SH.XPD.CHEX.GD.ZS', 'SH.DYN.MORT', 'SH.MED.PHYS.ZS', 'SH.STA.MMRT',
+  ],
+  'Energy & Environment': [
+    'EN.GHG.CO2.PC.CE.AR5', 'EG.ELC.RNEW.ZS', 'EG.ELC.ACCS.ZS', 'EN.ATM.PM25.MC.M3',
+  ],
+  'Agriculture': [
+    'AG.YLD.CREL.KG', 'SN.ITK.DEFC.ZS',
+  ],
+  'Technology': [
+    'IT.NET.USER.ZS', 'GB.XPD.RSDV.GD.ZS', 'IT.CEL.SETS.P2',
+  ],
+  'Infrastructure': [
+    'IS.AIR.PSGR', 'LP.LPI.OVRL.XQ',
+  ],
+  'Gender': [
+    'SG.GEN.PARL.ZS', 'SP.ADO.TFRT',
+  ],
+  'Governance': [
+    'CC.EST', 'RL.EST', 'PV.EST', 'VA.EST',
+  ],
+  'Military': [
+    'MS.MIL.XPND.GD.ZS', 'MS.MIL.TOTL.P1', 'MS.MIL.XPND.CD',
+  ],
+  'Poverty & Inequality': [
+    'SI.POV.GINI', 'SI.POV.DDAY', 'SI.DST.10TH.10',
+  ],
+  'Social Protection': [
+    'HD.HCI.OVRL', 'HD.HCI.LAYS',
+  ],
+  'Tourism': [
+    'ST.INT.ARVL', 'ST.INT.RCPT.CD',
+  ],
+  'Urban Development': [
+    'SP.URB.GROW', 'EN.POP.SLUM.UR.ZS',
+  ],
+  'Private Sector': [
+    'IC.FRM.CORR.ZS', 'IC.FRM.TRNG.ZS',
+  ],
 };
 
 export default async function Home() {
@@ -52,7 +97,9 @@ export default async function Home() {
       if (bFeat !== -1) return 1;
       return 0;
     });
-    return { category, indicators };
+    // Count how many featured ones actually have data
+    const featuredCount = indicators.filter(ind => featured.includes(ind.id)).length;
+    return { category, indicators, featuredCount: Math.max(featuredCount, 2) };
   }).filter(c => c.indicators.length > 0);
 
   const totalIndicatorsWithData = categoriesWithData.reduce((sum, c) => sum + c.indicators.length, 0);
@@ -126,8 +173,8 @@ export default async function Home() {
       </section>
 
       {/* All indicators by category — top 2 shown, expandable */}
-      {categoriesWithData.map(({ category, indicators }) => (
-        <CategorySection key={category} category={category} indicators={indicators} />
+      {categoriesWithData.map(({ category, indicators, featuredCount }) => (
+        <CategorySection key={category} category={category} indicators={indicators} featuredCount={featuredCount} />
       ))}
 
       {/* Browse countries */}

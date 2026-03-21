@@ -16,13 +16,15 @@ interface IndicatorData {
 export default function CategorySection({
   category,
   indicators,
+  featuredCount = 2,
 }: {
   category: string;
   indicators: IndicatorData[];
+  featuredCount?: number;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const shown = expanded ? indicators : indicators.slice(0, 2);
-  const rest = indicators.slice(2);
+  const shown = expanded ? indicators : indicators.slice(0, featuredCount);
+  const rest = indicators.slice(featuredCount);
 
   return (
     <section

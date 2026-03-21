@@ -28,22 +28,23 @@ export default function VisionPage() {
       <section className="relative min-h-screen flex flex-col items-center justify-center -mt-16">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" />
         <Globe />
-        <div className="absolute bottom-16 left-0 right-0 text-center px-6">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-            <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-              Every country. Every indicator.
-            </span>
-          </h1>
-        </div>
+      </section>
+
+      {/* Title below globe */}
+      <section className="text-center px-6 -mt-8 mb-8">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+          <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+            Every country. Every indicator.
+          </span>
+        </h1>
       </section>
 
       {/* Stats bar */}
       <section className="border-y border-gray-200 bg-white/60">
-        <div className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-3 gap-8">
           {[
             { value: '217', label: 'Countries', color: 'text-blue-400' },
             { value: '285+', label: 'Indicators', color: 'text-cyan-400' },
-            { value: '3', label: 'Independent Sources', color: 'text-purple-400' },
             { value: '39K+', label: 'Data Points', color: 'text-emerald-400' },
           ].map(stat => (
             <div key={stat.label} className="text-center">

@@ -455,33 +455,35 @@ export async function getIndicatorForAllCountries(indicatorId: string): Promise<
 }
 
 export async function getTop10AllIndicators(): Promise<Record<string, { country: string; countryId: string; value: number; year: string }[]>> {
+  // Fetch country names first (fast, ~217 rows)
+  const countries = await getCountries();
+  const nameMap = new Map(countries.map(c => [c.id, c.name]));
+
   // Fetch all indicator data in pages (Supabase default limit is 1000)
-  const allRows: any[] = [];
+  const allRows: { id: string; country_id: string; value: number; year: number }[] = [];
   const pageSize = 1000;
   for (let offset = 0; ; offset += pageSize) {
     const { data, error } = await supabase
       .from('sotw_indicators')
-      .select('id, country_id, value, year, sotw_countries(name)')
+      .select('id, country_id, value, year')
       .not('value', 'is', null)
       .range(offset, offset + pageSize - 1);
     if (error || !data || data.length === 0) break;
-    allRows.push(...data);
+    allRows.push(...(data as any[]));
     if (data.length < pageSize) break;
   }
 
   // Group by indicator, sort each group by value descending, take top 10
   const grouped: Record<string, { country: string; countryId: string; value: number; year: string }[]> = {};
   for (const row of allRows) {
-    const id = row.id;
-    if (!grouped[id]) grouped[id] = [];
-    grouped[id].push({
-      country: row.sotw_countries?.name || row.country_id,
+    if (!grouped[row.id]) grouped[row.id] = [];
+    grouped[row.id].push({
+      country: nameMap.get(row.country_id) || row.country_id,
       countryId: row.country_id,
-      value: adjustValue(id, row.value) as number,
+      value: adjustValue(row.id, row.value) as number,
       year: String(row.year),
     });
   }
-  // Sort and truncate to top 10
   for (const id of Object.keys(grouped)) {
     grouped[id].sort((a, b) => (b.value || 0) - (a.value || 0));
     grouped[id] = grouped[id].slice(0, 10);

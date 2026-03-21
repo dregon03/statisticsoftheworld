@@ -25,8 +25,7 @@ export default function VisionPage() {
       </header>
 
       {/* Globe Hero */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center -mt-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" />
+      <section className="relative flex flex-col items-center justify-center pt-12 pb-4">
         <Globe />
       </section>
 

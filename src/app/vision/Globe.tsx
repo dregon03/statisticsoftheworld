@@ -48,7 +48,7 @@ export default function Globe() {
     // Scene
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.z = 2.0;
+    camera.position.z = 2.8;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -142,7 +142,7 @@ export default function Globe() {
   const country = COUNTRIES[activeIdx];
 
   return (
-    <div className="relative w-full max-w-[850px] aspect-square mx-auto">
+    <div className="relative w-full max-w-[600px] aspect-square mx-auto">
       <div ref={containerRef} className="w-full h-full" />
 
       {/* Centered country card */}

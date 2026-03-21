@@ -39,7 +39,9 @@ export default function CategorySection({
         {shown.map((ind) => (
           <div key={ind.id}>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-gray-900">{ind.label}</h3>
+              <Link href={`/rankings?id=${encodeURIComponent(ind.id)}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition">
+                {ind.label}
+              </Link>
               <Link href={`/rankings?id=${encodeURIComponent(ind.id)}`} className="text-xs text-gray-400 hover:text-gray-600 transition">
                 All countries &rarr;
               </Link>

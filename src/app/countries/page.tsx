@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { INDICATORS, formatValue } from '@/lib/data';
+import Flag from '../Flag';
 
 interface Country {
   id: string;
+  iso2: string;
   name: string;
   region: string;
   incomeLevel: string;
@@ -124,7 +126,10 @@ export default function CountriesPage() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="font-bold text-lg group-hover:text-blue-600 transition">{c.name}</h3>
+                      <h3 className="font-bold text-lg group-hover:text-blue-600 transition flex items-center gap-2">
+                      <Flag iso2={c.iso2} size={24} />
+                      {c.name}
+                    </h3>
                       <div className="text-xs text-gray-500">{c.capitalCity || 'N/A'}</div>
                     </div>
                     <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500">{c.id}</span>
@@ -175,7 +180,8 @@ export default function CountriesPage() {
                   return (
                     <tr key={c.id} className="border-b border-gray-100/50 hover:bg-gray-50 transition">
                       <td className="px-4 py-2.5">
-                        <Link href={`/country/${c.id}`} className="text-blue-600 hover:text-blue-800 text-sm transition">
+                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm transition">
+                          <Flag iso2={c.iso2} size={20} />
                           {c.name}
                         </Link>
                       </td>

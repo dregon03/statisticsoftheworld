@@ -513,6 +513,7 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
     sources: [
       { id: 'IMF.NGDPD', org: 'IMF' },
       { id: 'NY.GDP.MKTP.CD', org: 'World Bank' },
+      { id: 'UN.GDP', org: 'United Nations' },
     ],
   },
   'IMF.NGDPDPC': {
@@ -520,6 +521,7 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
     sources: [
       { id: 'IMF.NGDPDPC', org: 'IMF' },
       { id: 'NY.GDP.PCAP.CD', org: 'World Bank' },
+      { id: 'UN.GDPPC', org: 'United Nations' },
     ],
   },
   'IMF.NGDP_RPCH': {
@@ -527,6 +529,7 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
     sources: [
       { id: 'IMF.NGDP_RPCH', org: 'IMF' },
       { id: 'NY.GDP.MKTP.KD.ZG', org: 'World Bank' },
+      { id: 'UN.GDPGR', org: 'United Nations' },
     ],
   },
   'IMF.PCPIPCH': {

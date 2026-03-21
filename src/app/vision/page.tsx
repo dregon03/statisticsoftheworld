@@ -84,13 +84,13 @@ export default function VisionPage() {
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/vision-1.png" alt="Global data network visualization" className="rounded-2xl shadow-lg" />
+          <img src="/vision-1.jpg" alt="Global data network visualization" className="rounded-2xl shadow-lg" />
         </div>
 
         {/* 2 - Nowcasting */}
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/vision-2.png" alt="Nowcasting visualization" className="order-2 md:order-1 rounded-2xl shadow-lg" />
+          <img src="/vision-2.jpg" alt="Nowcasting visualization" className="order-2 md:order-1 rounded-2xl shadow-lg" />
           <div className="order-1 md:order-2">
             <span className="text-xs font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 tracking-wider">NEXT</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Know before the numbers drop</h2>
@@ -116,13 +116,13 @@ export default function VisionPage() {
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/vision-3.png" alt="AI data layer visualization" className="rounded-2xl shadow-lg" />
+          <img src="/vision-3.jpg" alt="AI data layer visualization" className="rounded-2xl shadow-lg" />
         </div>
 
         {/* 4 - AI Intelligence */}
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/vision-4.png" alt="AI intelligence interface" className="order-2 md:order-1 rounded-2xl shadow-lg" />
+          <img src="/vision-4.jpg" alt="AI intelligence interface" className="order-2 md:order-1 rounded-2xl shadow-lg" />
           <div className="order-1 md:order-2">
             <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20 tracking-wider">FUTURE</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Ask anything about any country</h2>
@@ -148,7 +148,7 @@ export default function VisionPage() {
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/vision-5.png" alt="Country scoring dashboard" className="rounded-2xl shadow-lg" />
+          <img src="/vision-5.jpg" alt="Country scoring dashboard" className="rounded-2xl shadow-lg" />
         </div>
 
       </section>

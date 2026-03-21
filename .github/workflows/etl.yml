@@ -1,0 +1,85 @@
+name: Monthly ETL Pipeline
+
+on:
+  schedule:
+    # 1st of every month at 6:00 AM UTC
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub UI
+    inputs:
+      source:
+        description: 'Data source to fetch'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - imf
+          - wb
+          - un
+
+jobs:
+  etl:
+    name: Fetch & Update Data
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install psycopg2-binary openpyxl
+
+      - name: Run ETL to staging
+        env:
+          SUPABASE_DB_HOST: db.seyrycaldytfjvvkqopu.supabase.co
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          python scripts/etl.py \
+            --source ${{ github.event.inputs.source || 'all' }} \
+            --table staging
+
+      - name: Verify staging data
+        env:
+          SUPABASE_DB_HOST: db.seyrycaldytfjvvkqopu.supabase.co
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          python -c "
+          import psycopg2, os
+          conn = psycopg2.connect(
+            host=os.environ['SUPABASE_DB_HOST'], port=5432,
+            dbname='postgres', user='postgres',
+            password=os.environ['SUPABASE_DB_PASSWORD'], sslmode='require'
+          )
+          cur = conn.cursor()
+          cur.execute('SELECT COUNT(*) FROM sotw_indicators_staging')
+          staging = cur.fetchone()[0]
+          cur.execute('SELECT COUNT(*) FROM sotw_indicators')
+          main = cur.fetchone()[0]
+          print(f'Staging: {staging} rows, Main: {main} rows')
+          # Safety: staging must have at least 50% of main
+          assert staging >= main * 0.5, f'Staging too small ({staging} vs {main}). Aborting.'
+          print('Verification passed.')
+          conn.close()
+          "
+
+      - name: Promote staging to main
+        env:
+          SUPABASE_DB_HOST: db.seyrycaldytfjvvkqopu.supabase.co
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: python scripts/etl.py --promote
+
+      - name: Trigger Vercel redeploy
+        if: success()
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_placeholder" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" || echo "Vercel redeploy skipped (no token)"

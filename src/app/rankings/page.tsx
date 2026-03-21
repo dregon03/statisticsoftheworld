@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { INDICATORS, CATEGORIES, formatValue, isIMFIndicator } from '@/lib/data';
+import { INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 
 interface RankingEntry {
   country: string;
@@ -20,82 +20,13 @@ export default function IndicatorsPage() {
 
   useEffect(() => {
     setLoading(true);
-
-    if (isIMFIndicator(selectedIndicator.id)) {
-      // Fetch from IMF
-      const imfId = selectedIndicator.id.replace('IMF.', '');
-      const year = new Date().getFullYear();
-      fetch(`https://www.imf.org/external/datamapper/api/v1/${imfId}?periods=${year},${year-1},${year-2}`)
-        .then(r => r.json())
-        .then(d => {
-          const values = d?.values?.[imfId] || {};
-          // Need country names — fetch from WB
-          fetch('https://api.worldbank.org/v2/country?format=json&per_page=300')
-            .then(r => r.json())
-            .then(countryData => {
-              const nameMap = new Map<string, string>();
-              if (countryData[1]) {
-                countryData[1]
-                  .filter((c: any) => c.region.id !== 'NA')
-                  .forEach((c: any) => nameMap.set(c.id, c.name));
-              }
-
-              const aggregates = new Set(['ADVEC','OEMDC','EURO','EU','G7','ASEAN5','MENA','SSA','CIS','MENAP','WEO','WORLD']);
-              const entries: RankingEntry[] = [];
-
-              for (const [code, yearData] of Object.entries(values)) {
-                if (aggregates.has(code)) continue;
-                const name = nameMap.get(code);
-                if (!name) continue;
-                const yd = yearData as Record<string, number>;
-                for (const yr of [year, year-1, year-2]) {
-                  if (yd[String(yr)] !== undefined && yd[String(yr)] !== null) {
-                    entries.push({ country: name, countryId: code, value: yd[String(yr)], year: String(yr) });
-                    break;
-                  }
-                }
-              }
-
-              entries.sort((a, b) => (b.value || 0) - (a.value || 0));
-              setData(entries);
-              setLoading(false);
-            });
-        })
-        .catch(() => { setData([]); setLoading(false); });
-    } else {
-      // Fetch from World Bank
-      fetch(`https://api.worldbank.org/v2/country/all/indicator/${selectedIndicator.id}?format=json&mrv=1&per_page=300`)
-        .then(r => r.json())
-        .then(d => {
-          if (d[1]) {
-            const aggregates = new Set([
-              '1A','1W','4E','7E','8S','B8','EU','F1','OE','S1','S2','S3','S4',
-              'T2','T3','T4','T5','T6','T7','V1','V2','V3','V4','XC','XD','XE',
-              'XF','XG','XH','XI','XJ','XL','XM','XN','XO','XP','XQ','XT','XU',
-              'XY','Z4','Z7','ZB','ZF','ZG','ZH','ZI','ZJ','ZQ','ZT',
-              'AFE','AFW','ARB','CEB','CSS','EAP','EAR','EAS','ECA','ECS',
-              'EMU','FCS','HIC','HPC','IBD','IBT','IDA','IDB','IDX','INX',
-              'LAC','LCN','LDC','LIC','LMC','LMY','LTE','MEA','MIC','MNA',
-              'NAC','OED','OSS','PRE','PSS','PST','SAS','SSA','SSF','SST',
-              'TEA','TEC','TLA','TMN','TSA','TSS','UMC','WLD',
-            ]);
-            const entries = d[1]
-              .filter((item: any) => item.value !== null && !aggregates.has(item.country.id))
-              .map((item: any) => ({
-                country: item.country.value,
-                countryId: item.country.id,
-                value: item.value,
-                year: item.date,
-              }))
-              .sort((a: RankingEntry, b: RankingEntry) => (b.value || 0) - (a.value || 0));
-            setData(entries);
-          } else {
-            setData([]);
-          }
-          setLoading(false);
-        })
-        .catch(() => { setData([]); setLoading(false); });
-    }
+    fetch(`/api/indicator?id=${encodeURIComponent(selectedIndicator.id)}`)
+      .then(r => r.json())
+      .then(entries => {
+        setData(entries);
+        setLoading(false);
+      })
+      .catch(() => { setData([]); setLoading(false); });
   }, [selectedIndicator]);
 
   const sorted = sortAsc ? [...data].reverse() : data;

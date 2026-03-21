@@ -52,8 +52,25 @@ export default async function Home() {
     pairs.push({ left: featured[i], right: featured[i + 1] });
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com',
+    description: `${countries.length} countries. ${INDICATORS.length} indicators. Free global statistics from IMF, World Bank, WHO, and UNESCO.`,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://statisticsoftheworld.com/countries?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <header className="border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">

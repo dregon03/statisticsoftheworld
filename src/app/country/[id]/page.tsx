@@ -1,23 +1,61 @@
 import Link from 'next/link';
-import { getCountries, getAllIndicatorsForCountry, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
+import { getCountry, getAllIndicatorsForCountry, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
-export async function generateStaticParams() {
-  const countries = await getCountries();
-  return countries.map((c) => ({ id: c.id }));
+type Props = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const country = await getCountry(id);
+  if (!country) return { title: 'Country Not Found' };
+
+  const indicators = await getAllIndicatorsForCountry(id);
+  const gdp = indicators['IMF.NGDPD'];
+  const pop = indicators['SP.POP.TOTL'];
+
+  const parts = [country.name];
+  if (gdp) parts.push(`GDP: ${formatValue(gdp.value, 'currency')}`);
+  if (pop) parts.push(`Population: ${formatValue(pop.value, 'number')}`);
+
+  return {
+    title: `${country.name} — Statistics & Data | Statistics of the World`,
+    description: `${parts.join(' | ')}. Explore ${country.name}'s economy, demographics, health, education, and 300+ indicators with data from IMF and World Bank.`,
+    openGraph: {
+      title: `${country.name} — Key Statistics`,
+      description: `${parts.join(' | ')}`,
+      siteName: 'Statistics of the World',
+    },
+  };
 }
 
-export default async function CountryPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CountryPage({ params }: Props) {
   const { id } = await params;
-  const countries = await getCountries();
-  const country = countries.find(c => c.id === id);
+  const country = await getCountry(id);
+  if (!country) notFound();
+
   const indicators = await getAllIndicatorsForCountry(id);
 
-  if (!country) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-500">Country not found</div>;
-  }
+  const gdp = indicators['IMF.NGDPD'];
+  const pop = indicators['SP.POP.TOTL'];
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Country',
+    name: country.name,
+    url: `https://statisticsoftheworld.com/country/${id}`,
+    ...(country.capitalCity && { containsPlace: { '@type': 'City', name: country.capitalCity } }),
+    additionalProperty: [
+      ...(gdp ? [{ '@type': 'PropertyValue', name: 'GDP (USD Billions)', value: gdp.value, unitCode: 'USD' }] : []),
+      ...(pop ? [{ '@type': 'PropertyValue', name: 'Population', value: pop.value }] : []),
+    ],
+  };
 
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

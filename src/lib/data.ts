@@ -25,18 +25,6 @@ export interface Indicator {
   description?: string;
 }
 
-// Known World Bank aggregate codes to EXCLUDE from country rankings
-const WB_AGGREGATES = new Set([
-  '1A','1W','4E','7E','8S','B8','EU','F1','OE','S1','S2','S3','S4',
-  'T2','T3','T4','T5','T6','T7','V1','V2','V3','V4','XC','XD','XE',
-  'XF','XG','XH','XI','XJ','XL','XM','XN','XO','XP','XQ','XT','XU',
-  'XY','Z4','Z7','ZB','ZF','ZG','ZH','ZI','ZJ','ZQ','ZT',
-  'AFE','AFW','ARB','CEB','CSS','EAP','EAR','EAS','ECA','ECS',
-  'EMU','FCS','HIC','HPC','IBD','IBT','IDA','IDB','IDX','INX',
-  'LAC','LCN','LDC','LIC','LMC','LMY','LTE','MEA','MIC','MNA',
-  'NAC','OED','OSS','PRE','PSS','PST','SAS','SSA','SSF','SST',
-  'TEA','TEC','TLA','TMN','TSA','TSS','UMC','WLD',
-]);
 
 // ============================================================
 // 400+ INDICATORS across 25 categories
@@ -422,215 +410,74 @@ export const CATEGORIES = [
 ];
 
 // ============================================================
-// DATA FETCHING — Multi-source: World Bank + IMF
-// Principle: use the org that owns the best data for each type
-//   - IMF: GDP, inflation, debt, fiscal, current account, unemployment
-//   - World Bank: everything else (aggregates WHO, UNESCO, ILO, FAO)
+// DATA FETCHING — All data from Supabase (seeded from IMF + World Bank)
+// Tables: sotw_countries, sotw_indicators
 // ============================================================
 
-const WB_BASE = 'https://api.worldbank.org/v2';
-const IMF_BASE = 'https://www.imf.org/external/datamapper/api/v1';
-
-// IMF indicator IDs — these use the IMF API instead of World Bank
-const IMF_INDICATORS: Record<string, string> = {
-  'IMF.NGDPD': 'NGDPD',                // GDP current prices (B USD)
-  'IMF.NGDP_RPCH': 'NGDP_RPCH',        // Real GDP growth %
-  'IMF.NGDPDPC': 'NGDPDPC',            // GDP per capita USD
-  'IMF.PPPGDP': 'PPPGDP',              // GDP PPP (B intl $)
-  'IMF.PPPPC': 'PPPPC',                // GDP per capita PPP
-  'IMF.PPPSH': 'PPPSH',                // Share of world GDP (PPP)
-  'IMF.PCPIPCH': 'PCPIPCH',            // Inflation %
-  'IMF.LUR': 'LUR',                     // Unemployment %
-  'IMF.LP': 'LP',                       // Population (M)
-  'IMF.GGXWDG_NGDP': 'GGXWDG_NGDP',   // Govt gross debt % GDP
-  'IMF.GGXCNL_NGDP': 'GGXCNL_NGDP',   // Fiscal balance % GDP
-  'IMF.BCA_NGDPD': 'BCA_NGDPD',        // Current account % GDP
-  'IMF.NI_GDP': 'NI_GDP',              // Total investment % GDP
-  'IMF.NGS_GDP': 'NGS_GDP',            // Gross national savings % GDP
-};
-
-// IMF uses different country codes than World Bank — map the common ones
-const WB_TO_IMF_COUNTRY: Record<string, string> = {
-  'USA': 'USA', 'CHN': 'CHN', 'JPN': 'JPN', 'DEU': 'DEU', 'GBR': 'GBR',
-  'FRA': 'FRA', 'IND': 'IND', 'ITA': 'ITA', 'BRA': 'BRA', 'CAN': 'CAN',
-  'RUS': 'RUS', 'KOR': 'KOR', 'AUS': 'AUS', 'ESP': 'ESP', 'MEX': 'MEX',
-  'IDN': 'IDN', 'NLD': 'NLD', 'SAU': 'SAU', 'TUR': 'TUR', 'CHE': 'CHE',
-  'POL': 'POL', 'SWE': 'SWE', 'BEL': 'BEL', 'ARG': 'ARG', 'NOR': 'NOR',
-  'AUT': 'AUT', 'ARE': 'ARE', 'ISR': 'ISR', 'IRL': 'IRL', 'SGP': 'SGP',
-  'NGA': 'NGA', 'ZAF': 'ZAF', 'DNK': 'DNK', 'PHL': 'PHL', 'MYS': 'MYS',
-  'HKG': 'HKG', 'COL': 'COL', 'EGY': 'EGY', 'CHL': 'CHL', 'FIN': 'FIN',
-  'BGD': 'BGD', 'VNM': 'VNM', 'CZE': 'CZE', 'ROU': 'ROU', 'PRT': 'PRT',
-  'NZL': 'NZL', 'PER': 'PER', 'GRC': 'GRC', 'IRQ': 'IRQ', 'QAT': 'QAT',
-  'DZA': 'DZA', 'KWT': 'KWT', 'HUN': 'HUN', 'KAZ': 'KAZ', 'ETH': 'ETH',
-  'MAR': 'MAR', 'UKR': 'UKR', 'ECU': 'ECU', 'DOM': 'DOM', 'KEN': 'KEN',
-  'GTM': 'GTM', 'OMN': 'OMN', 'LKA': 'LKA', 'MMR': 'MMR', 'LUX': 'LUX',
-  'BGR': 'BGR', 'GHA': 'GHA', 'TZA': 'TZA', 'TUN': 'TUN', 'THA': 'THA',
-  'PAK': 'PAK', 'IRN': 'IRN', 'AGO': 'AGO', 'CRI': 'CRI', 'URY': 'URY',
-  'PAN': 'PAN', 'SVK': 'SVK', 'HRV': 'HRV', 'LTU': 'LTU', 'SVN': 'SVN',
-  'SRB': 'SRB', 'LVA': 'LVA', 'EST': 'EST', 'ISL': 'ISL', 'PRY': 'PRY',
-  'BOL': 'BOL', 'TTO': 'TTO', 'BHR': 'BHR', 'GEO': 'GEO', 'JOR': 'JOR',
-  'ALB': 'ALB', 'BWA': 'BWA', 'UGA': 'UGA', 'JAM': 'JAM', 'CMR': 'CMR',
-  'CIV': 'CIV', 'SEN': 'SEN', 'ZMB': 'ZMB', 'NAM': 'NAM', 'MOZ': 'MOZ',
-  'MUS': 'MUS', 'MNG': 'MNG', 'BRN': 'BRN', 'RWA': 'RWA', 'HTI': 'HTI',
-  'KHM': 'KHM', 'NIC': 'NIC', 'MLI': 'MLI', 'BFA': 'BFA', 'MDG': 'MDG',
-  'TCD': 'TCD', 'NER': 'NER', 'MWI': 'MWI', 'COD': 'COD', 'SOM': 'SOM',
-  'LBN': 'LBN', 'HND': 'HND', 'SLV': 'SLV', 'BEN': 'BEN', 'TGO': 'TGO',
-  'LAO': 'LAO', 'KGZ': 'KGZ', 'TJK': 'TJK', 'ARM': 'ARM', 'MDA': 'MDA',
-};
-
-// IMF aggregate codes to exclude
-const IMF_AGGREGATES = new Set([
-  'ADVEC', 'OEMDC', 'EURO', 'EU', 'G7', 'ASEAN5', 'MENA', 'SSA',
-  'CIS', 'MENAP', 'WEO', 'WORLD', 'LIC', 'MIC', 'EDA', 'EDC',
-]);
-
-// Cache for IMF data (fetched once per indicator per request cycle)
-const imfCache: Record<string, Record<string, Record<string, number>>> = {};
-
-async function fetchIMFIndicator(imfId: string): Promise<Record<string, Record<string, number>>> {
-  if (imfCache[imfId]) return imfCache[imfId];
-
-  try {
-    const currentYear = new Date().getFullYear();
-    const res = await fetch(
-      `${IMF_BASE}/${imfId}?periods=${currentYear},${currentYear - 1},${currentYear - 2}`,
-      { next: { revalidate: 86400 } }
-    );
-    const data = await res.json();
-    const values = data?.values?.[imfId] || {};
-    imfCache[imfId] = values;
-    return values;
-  } catch {
-    return {};
-  }
-}
-
-export function isIMFIndicator(indicatorId: string): boolean {
-  return indicatorId.startsWith('IMF.');
-}
+import { supabase } from './supabase';
 
 export async function getCountries(): Promise<CountryData[]> {
-  const res = await fetch(`${WB_BASE}/country?format=json&per_page=300`, { next: { revalidate: 86400 } });
-  const data = await res.json();
-  return data[1]
-    .filter((c: any) => c.region.id !== 'NA') // filter out aggregates
-    .map((c: any) => ({
-      id: c.id,
-      name: c.name,
-      region: c.region.value,
-      incomeLevel: c.incomeLevel.value,
-      capitalCity: c.capitalCity,
-      longitude: c.longitude,
-      latitude: c.latitude,
-    }));
+  const { data, error } = await supabase
+    .from('sotw_countries')
+    .select('id, name, region, income_level, capital_city, longitude, latitude')
+    .order('name');
+  if (error || !data) return [];
+  return data.map((c) => ({
+    id: c.id,
+    name: c.name,
+    region: c.region,
+    incomeLevel: c.income_level,
+    capitalCity: c.capital_city,
+    longitude: c.longitude ? String(c.longitude) : '',
+    latitude: c.latitude ? String(c.latitude) : '',
+  }));
 }
 
-export function isAggregate(countryId: string): boolean {
-  return WB_AGGREGATES.has(countryId);
-}
-
-export async function getIndicatorForCountry(countryId: string, indicatorId: string, years: number = 10): Promise<{ year: string; value: number | null }[]> {
-  const currentYear = new Date().getFullYear();
-  const res = await fetch(
-    `${WB_BASE}/country/${countryId}/indicator/${indicatorId}?format=json&date=${currentYear - years}:${currentYear}&per_page=50`,
-    { next: { revalidate: 86400 } }
-  );
-  const data = await res.json();
-  if (!data[1]) return [];
-  return data[1]
-    .map((d: any) => ({ year: d.date, value: d.value }))
-    .reverse();
-}
-
-export async function getLatestIndicator(countryId: string, indicatorId: string): Promise<{ year: string; value: number | null } | null> {
-  // IMF indicators
-  if (isIMFIndicator(indicatorId)) {
-    const imfId = IMF_INDICATORS[indicatorId];
-    if (!imfId) return null;
-    const imfCountry = WB_TO_IMF_COUNTRY[countryId] || countryId;
-    const data = await fetchIMFIndicator(imfId);
-    const countryData = data[imfCountry];
-    if (!countryData) return null;
-    // Get most recent year with data
-    const currentYear = new Date().getFullYear();
-    for (const yr of [currentYear, currentYear - 1, currentYear - 2]) {
-      const val = countryData[String(yr)];
-      if (val !== undefined && val !== null) {
-        return { year: String(yr), value: val };
-      }
-    }
-    return null;
-  }
-
-  // World Bank indicators
-  const res = await fetch(
-    `${WB_BASE}/country/${countryId}/indicator/${indicatorId}?format=json&mrv=1`,
-    { next: { revalidate: 86400 } }
-  );
-  const data = await res.json();
-  if (!data[1] || data[1].length === 0) return null;
-  return { year: data[1][0].date, value: data[1][0].value };
+export async function getCountry(id: string): Promise<CountryData | null> {
+  const { data, error } = await supabase
+    .from('sotw_countries')
+    .select('id, name, region, income_level, capital_city, longitude, latitude')
+    .eq('id', id)
+    .single();
+  if (error || !data) return null;
+  return {
+    id: data.id,
+    name: data.name,
+    region: data.region,
+    incomeLevel: data.income_level,
+    capitalCity: data.capital_city,
+    longitude: data.longitude ? String(data.longitude) : '',
+    latitude: data.latitude ? String(data.latitude) : '',
+  };
 }
 
 export async function getAllIndicatorsForCountry(countryId: string): Promise<Record<string, { year: string; value: number | null }>> {
+  const { data, error } = await supabase
+    .from('sotw_indicators')
+    .select('id, value, year')
+    .eq('country_id', countryId);
+  if (error || !data) return {};
   const results: Record<string, { year: string; value: number | null }> = {};
-  const promises = INDICATORS.map(async (ind) => {
-    try {
-      const data = await getLatestIndicator(countryId, ind.id);
-      if (data && data.value !== null) results[ind.id] = data;
-    } catch {}
-  });
-  await Promise.all(promises);
+  for (const row of data) {
+    results[row.id] = { year: String(row.year), value: row.value };
+  }
   return results;
 }
 
 export async function getIndicatorForAllCountries(indicatorId: string): Promise<{ country: string; countryId: string; value: number | null; year: string }[]> {
-  // IMF indicators
-  if (isIMFIndicator(indicatorId)) {
-    const imfId = IMF_INDICATORS[indicatorId];
-    if (!imfId) return [];
-    const data = await fetchIMFIndicator(imfId);
-    const countries = await getCountries();
-    const countryNameMap = new Map(countries.map(c => [c.id, c.name]));
-    // Also build reverse IMF→WB map
-    const imfToWb = new Map(Object.entries(WB_TO_IMF_COUNTRY).map(([wb, imf]) => [imf, wb]));
-    const currentYear = new Date().getFullYear();
-
-    const results: { country: string; countryId: string; value: number | null; year: string }[] = [];
-    for (const [imfCode, yearData] of Object.entries(data)) {
-      if (IMF_AGGREGATES.has(imfCode)) continue;
-      const wbCode = imfToWb.get(imfCode) || imfCode;
-      const countryName = countryNameMap.get(wbCode);
-      if (!countryName) continue; // Skip if not a real country
-
-      for (const yr of [currentYear, currentYear - 1, currentYear - 2]) {
-        const val = (yearData as Record<string, number>)[String(yr)];
-        if (val !== undefined && val !== null) {
-          results.push({ country: countryName, countryId: wbCode, value: val, year: String(yr) });
-          break;
-        }
-      }
-    }
-
-    return results.sort((a, b) => (b.value || 0) - (a.value || 0));
-  }
-
-  // World Bank indicators
-  const res = await fetch(
-    `${WB_BASE}/country/all/indicator/${indicatorId}?format=json&mrv=1&per_page=300`,
-    { next: { revalidate: 86400 } }
-  );
-  const data = await res.json();
-  if (!data[1]) return [];
-  return data[1]
-    .filter((d: any) => d.value !== null && !isAggregate(d.country.id))
-    .map((d: any) => ({
-      country: d.country.value,
-      countryId: d.country.id,
-      value: d.value,
-      year: d.date,
-    }))
-    .sort((a: any, b: any) => (b.value || 0) - (a.value || 0));
+  const { data, error } = await supabase
+    .from('sotw_indicators')
+    .select('country_id, value, year, sotw_countries(name)')
+    .eq('id', indicatorId)
+    .not('value', 'is', null)
+    .order('value', { ascending: false });
+  if (error || !data) return [];
+  return data.map((row: any) => ({
+    country: row.sotw_countries?.name || row.country_id,
+    countryId: row.country_id,
+    value: row.value,
+    year: String(row.year),
+  }));
 }
 
 // ============================================================
@@ -665,9 +512,3 @@ export function formatValue(value: number | null, format: string, decimals: numb
   }
 }
 
-// Major countries to highlight
-export const MAJOR_COUNTRIES = [
-  'USA', 'CHN', 'JPN', 'DEU', 'IND', 'GBR', 'FRA', 'BRA', 'CAN', 'AUS',
-  'KOR', 'RUS', 'MEX', 'IDN', 'TUR', 'SAU', 'NLD', 'CHE', 'POL', 'SWE',
-  'NOR', 'ISR', 'SGP', 'NGA', 'ZAF', 'EGY', 'ARG', 'COL', 'PHL', 'VNM',
-];

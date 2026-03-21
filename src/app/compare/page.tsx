@@ -28,14 +28,10 @@ export default function ComparePage() {
 
   // Fetch country list
   useEffect(() => {
-    fetch('https://api.worldbank.org/v2/country?format=json&per_page=300')
+    fetch('/api/countries')
       .then(r => r.json())
-      .then(d => {
-        const list = d[1]
-          .filter((c: any) => c.region.id !== 'NA')
-          .map((c: any) => ({ id: c.id, name: c.name, region: c.region.value }))
-          .sort((a: any, b: any) => a.name.localeCompare(b.name));
-        setCountries(list);
+      .then(({ countries: list }) => {
+        setCountries(list.map((c: any) => ({ id: c.id, name: c.name, region: c.region })));
       });
   }, []);
 
@@ -43,34 +39,13 @@ export default function ComparePage() {
   useEffect(() => {
     if (selected.length < 2) return;
     setLoading(true);
-
-    const fetchData = async () => {
-      const result: ComparisonData = {};
-
-      await Promise.all(
-        INDICATORS.map(async (ind) => {
-          result[ind.id] = {};
-          await Promise.all(
-            selected.map(async (countryId) => {
-              try {
-                const res = await fetch(
-                  `https://api.worldbank.org/v2/country/${countryId}/indicator/${ind.id}?format=json&mrv=1`
-                );
-                const d = await res.json();
-                if (d[1] && d[1].length > 0) {
-                  result[ind.id][countryId] = { value: d[1][0].value, year: d[1][0].date };
-                }
-              } catch {}
-            })
-          );
-        })
-      );
-
-      setData(result);
-      setLoading(false);
-    };
-
-    fetchData();
+    fetch(`/api/compare?countries=${selected.join(',')}`)
+      .then(r => r.json())
+      .then(result => {
+        setData(result);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [selected]);
 
   const addCountry = (id: string) => {

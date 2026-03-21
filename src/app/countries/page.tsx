@@ -31,49 +31,15 @@ export default function CountriesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://api.worldbank.org/v2/country?format=json&per_page=300')
+    fetch('/api/countries')
       .then(r => r.json())
-      .then(d => {
-        const list = d[1]
-          .filter((c: any) => c.region.id !== 'NA')
-          .map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            region: c.region.value,
-            incomeLevel: c.incomeLevel.value,
-            capitalCity: c.capitalCity,
-          }))
-          .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-        setCountries(list);
+      .then(({ countries: list, stats: s }) => {
+        const sorted = list.sort((a: Country, b: Country) => a.name.localeCompare(b.name));
+        setCountries(sorted);
+        setStats(s);
         setLoading(false);
-      });
-
-    // Fetch key stats for all countries
-    const fetchStats = async () => {
-      const indicators = ['NY.GDP.MKTP.CD', 'SP.POP.TOTL', 'NY.GDP.PCAP.CD', 'SP.DYN.LE00.IN'];
-      const result: CountryStats = {};
-
-      await Promise.all(indicators.map(async (indId) => {
-        try {
-          const res = await fetch(`https://api.worldbank.org/v2/country/all/indicator/${indId}?format=json&mrv=1&per_page=300`);
-          const d = await res.json();
-          if (d[1]) {
-            d[1].forEach((item: any) => {
-              if (item.value !== null && item.country.id.length <= 3) {
-                if (!result[item.country.id]) result[item.country.id] = {};
-                if (indId === 'NY.GDP.MKTP.CD') result[item.country.id].gdp = item.value;
-                if (indId === 'SP.POP.TOTL') result[item.country.id].population = item.value;
-                if (indId === 'NY.GDP.PCAP.CD') result[item.country.id].gdpPerCapita = item.value;
-                if (indId === 'SP.DYN.LE00.IN') result[item.country.id].lifeExpectancy = item.value;
-              }
-            });
-          }
-        } catch {}
-      }));
-
-      setStats(result);
-    };
-    fetchStats();
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const regions = [...new Set(countries.map(c => c.region))].sort();

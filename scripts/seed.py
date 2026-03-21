@@ -118,7 +118,17 @@ def seed_countries(cur):
     print(f"  {len(countries)} countries upserted")
 
 
-def seed_wb_indicator(cur, indicator_id):
+def build_iso2_to_iso3():
+    """WB indicator API returns 2-letter codes, but our DB uses 3-letter codes."""
+    data = fetch_json(f"{WB}/country?format=json&per_page=300")
+    mapping = {}
+    for c in data[1]:
+        if c["region"]["id"] != "NA":
+            mapping[c["iso2Code"]] = c["id"]  # e.g. "US" -> "USA"
+    return mapping
+
+
+def seed_wb_indicator(cur, indicator_id, iso2_to_iso3):
     try:
         data = fetch_json(f"{WB}/country/all/indicator/{indicator_id}?format=json&mrv=1&per_page=300")
         if not data[1]:
@@ -129,19 +139,19 @@ def seed_wb_indicator(cur, indicator_id):
 
     count = 0
     for d in data[1]:
-        cid = d["country"]["id"]
-        if cid in WB_AGGREGATES or d["value"] is None:
+        iso2 = d["country"]["id"]
+        if iso2 in WB_AGGREGATES or d["value"] is None:
             continue
-        # Skip if country not in our table (handles 2-letter vs 3-letter mismatch)
-        cur.execute("SELECT 1 FROM sotw_countries WHERE id = %s", (cid,))
-        if not cur.fetchone():
+        # Map 2-letter to 3-letter code
+        iso3 = iso2_to_iso3.get(iso2)
+        if not iso3:
             continue
         cur.execute("""
             INSERT INTO sotw_indicators (id, country_id, value, year, source)
             VALUES (%s, %s, %s, %s, 'wb')
             ON CONFLICT (id, country_id) DO UPDATE SET
                 value = EXCLUDED.value, year = EXCLUDED.year, updated_at = NOW()
-        """, (indicator_id, cid, d["value"], int(d["date"])))
+        """, (indicator_id, iso3, d["value"], int(d["date"])))
         count += 1
     return count
 
@@ -193,10 +203,14 @@ def main():
     seed_imf_indicators(cur)
     conn.commit()
 
+    print("Building ISO2->ISO3 mapping...")
+    iso2_to_iso3 = build_iso2_to_iso3()
+    print(f"  {len(iso2_to_iso3)} country mappings")
+
     print("Seeding World Bank indicators...")
     total = 0
     for i, ind_id in enumerate(WB_INDICATORS):
-        count = seed_wb_indicator(cur, ind_id)
+        count = seed_wb_indicator(cur, ind_id, iso2_to_iso3)
         total += count
         if (i + 1) % 10 == 0:
             conn.commit()

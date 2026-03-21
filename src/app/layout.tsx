@@ -13,8 +13,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Statistics of the World — Every Country, Every Statistic",
-  description: "150+ indicators across 16 categories for 200+ countries. Compare, rank, and explore authoritative global data from the World Bank, WHO, UNESCO, ILO, and FAO.",
+  title: {
+    default: 'Statistics of the World — Every Country, Every Indicator',
+    template: '%s | Statistics of the World',
+  },
+  description: '320+ indicators across 22 categories for 217 countries. GDP, population, health, education, environment — authoritative global data from IMF, World Bank, WHO, UNESCO, and ILO.',
+  metadataBase: new URL('https://statisticsoftheworld.com'),
+  openGraph: {
+    type: 'website',
+    siteName: 'Statistics of the World',
+    title: 'Statistics of the World — Every Country, Every Indicator',
+    description: '320+ indicators for 217 countries. Explore global data from IMF, World Bank, and more.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Statistics of the World',
+    description: '320+ indicators for 217 countries. Free global statistics reference.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

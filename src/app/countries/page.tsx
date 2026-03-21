@@ -59,7 +59,7 @@ export default function CountriesPage() {
       <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-blue-600 rounded flex items-center justify-center font-bold text-xs text-white">SW</div>
+            <img src="/icon-192.png" alt="SOTW" width={28} height={28} className="rounded" />
             <span className="font-semibold">Statistics of the World</span>
           </Link>
           <nav className="flex gap-6 text-sm text-gray-500">

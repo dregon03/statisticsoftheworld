@@ -141,10 +141,19 @@ function IndicatorsContent() {
               /* Wikipedia-style multi-source table */
               (() => {
                 const activeSrc = sortBySource || multiData.sources[0].id;
+                const srcIds = multiData.sources.map(s => s.id);
+                const getBestValue = (row: typeof multiData.countries[0]) => {
+                  // Use active source if available, otherwise fall back to other sources
+                  if (row.values[activeSrc]?.value != null) return row.values[activeSrc].value as number;
+                  for (const sid of srcIds) {
+                    if (row.values[sid]?.value != null) return row.values[sid].value as number;
+                  }
+                  return -Infinity;
+                };
                 const sorted = [...multiData.countries].sort((a, b) => {
-                  const aVal = a.values[activeSrc]?.value ?? -Infinity;
-                  const bVal = b.values[activeSrc]?.value ?? -Infinity;
-                  return sortAsc ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+                  const aVal = getBestValue(a);
+                  const bVal = getBestValue(b);
+                  return sortAsc ? aVal - bVal : bVal - aVal;
                 });
                 return (
               <div className="border border-gray-100 rounded-xl overflow-hidden overflow-x-auto">

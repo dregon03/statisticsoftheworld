@@ -83,51 +83,14 @@ export default function VisionPage() {
               This is what Wikipedia does for GDP. We do it for 285 indicators &mdash; health, education, trade, governance, environment &mdash; automatically, always current.
             </p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-3">
-            {[
-              { rank: 1, flag: 'us', name: 'United States', imf: '$31.82T', wb: '$28.75T', un: '$29.30T' },
-              { rank: 2, flag: 'cn', name: 'China', imf: '$20.65T', wb: '$18.74T', un: '$18.74T' },
-              { rank: 3, flag: 'de', name: 'Germany', imf: '$5.33T', wb: '$4.69T', un: '$4.66T' },
-              { rank: 4, flag: 'in', name: 'India', imf: '$4.51T', wb: '$3.91T', un: '$3.95T' },
-              { rank: 5, flag: 'jp', name: 'Japan', imf: '$4.46T', wb: '$4.03T', un: '$4.03T' },
-            ].map(row => (
-              <div key={row.rank} className="flex items-center gap-3 text-sm">
-                <span className="text-gray-600 w-4">{row.rank}</span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`https://flagcdn.com/w20/${row.flag}.png`} width={20} alt="" className="shrink-0" />
-                <span className="flex-1 text-gray-700">{row.name}</span>
-                <span className="font-mono text-blue-400 text-xs">{row.imf}</span>
-                <span className="font-mono text-gray-500 text-xs">{row.wb}</span>
-                <span className="font-mono text-gray-600 text-xs">{row.un}</span>
-              </div>
-            ))}
-            <div className="flex justify-end gap-6 text-[10px] text-gray-600 pt-2 border-t border-gray-200">
-              <span>IMF</span><span>World Bank</span><span>United Nations</span>
-            </div>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/vision-1.png" alt="Global data network visualization" className="rounded-2xl shadow-lg" />
         </div>
 
         {/* 2 - Nowcasting */}
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-            <div className="flex items-end gap-1 h-40 px-4">
-              {[40, 42, 38, 45, 50, 48, 55, 52, 58, 62, 60, 65].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col justify-end items-center">
-                  <div
-                    className={`w-full rounded-t ${i >= 9 ? 'bg-cyan-500/60 border border-cyan-500/40' : 'bg-blue-500/30'}`}
-                    style={{ height: `${h}%` }}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-between text-[10px] text-gray-600 mt-2 px-4">
-              <span>Jan</span><span>Mar</span><span>Jun</span><span>Sep</span><span className="text-cyan-400">Now</span>
-            </div>
-            <div className="flex items-center gap-4 mt-4 text-xs text-gray-500">
-              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded bg-blue-500/30" /> Official</div>
-              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded bg-cyan-500/60 border border-cyan-500/40" /> Nowcast</div>
-            </div>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/vision-2.png" alt="Nowcasting visualization" className="order-2 md:order-1 rounded-2xl shadow-lg" />
           <div className="order-1 md:order-2">
             <span className="text-xs font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 tracking-wider">NEXT</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Know before the numbers drop</h2>
@@ -152,38 +115,14 @@ export default function VisionPage() {
               REST APIs. Model Context Protocol. Tool-use for Claude, GPT, Gemini. We become the Stripe of country intelligence &mdash; one integration, every country, every metric.
             </p>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-sm p-6 font-mono text-sm">
-            <div className="text-gray-500 mb-3">// Any agent, any framework</div>
-            <div className="mb-4">
-              <span className="text-cyan-400">GET</span>{' '}
-              <span className="text-gray-400">/api/v1/country/</span>
-              <span className="text-white">NGA</span>
-              <span className="text-gray-400">/gdp</span>
-            </div>
-            <div className="bg-gray-900/50 rounded-lg p-4 text-xs leading-relaxed">
-              <div className="text-gray-600">{`{`}</div>
-              <div className="ml-3"><span className="text-blue-400">&quot;imf&quot;</span>: {`{`} <span className="text-emerald-400">472.6B</span>, <span className="text-gray-500">2026</span> {`}`},</div>
-              <div className="ml-3"><span className="text-gray-400">&quot;world_bank&quot;</span>: {`{`} <span className="text-emerald-400">362.8B</span>, <span className="text-gray-500">2024</span> {`}`},</div>
-              <div className="ml-3"><span className="text-gray-400">&quot;united_nations&quot;</span>: {`{`} <span className="text-emerald-400">362.9B</span>, <span className="text-gray-500">2024</span> {`}`}</div>
-              <div className="text-gray-600">{`}`}</div>
-            </div>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/vision-3.png" alt="AI data layer visualization" className="rounded-2xl shadow-lg" />
         </div>
 
         {/* 4 - AI Intelligence */}
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 space-y-3">
-            {[
-              'Which Sub-Saharan countries grew fastest while reducing inequality?',
-              'Compare healthcare outcomes: countries spending >8% vs <4% of GDP on health.',
-              'Which countries are most likely to face a debt crisis in 2 years?',
-            ].map((q, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-4 text-gray-600 text-lg italic relative">
-                <span className="absolute -left-3 top-4 w-1.5 h-1.5 rounded-full bg-purple-500" />
-                &ldquo;{q}&rdquo;
-              </div>
-            ))}
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/vision-4.png" alt="AI intelligence interface" className="order-2 md:order-1 rounded-2xl shadow-lg" />
           <div className="order-1 md:order-2">
             <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20 tracking-wider">FUTURE</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Ask anything about any country</h2>
@@ -208,25 +147,8 @@ export default function VisionPage() {
               We compute country scores from hundreds of public indicators &mdash; development trajectory, governance quality, innovation capacity, sustainability &mdash; with fully transparent methodology. When a country improves, the score updates. No phone calls. No politics.
             </p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
-            {[
-              { label: 'Development', score: 82, color: 'bg-emerald-500' },
-              { label: 'Innovation', score: 71, color: 'bg-blue-500' },
-              { label: 'Sustainability', score: 45, color: 'bg-amber-500' },
-              { label: 'Governance', score: 68, color: 'bg-purple-500' },
-              { label: 'Human Capital', score: 77, color: 'bg-cyan-500' },
-            ].map(item => (
-              <div key={item.label}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">{item.label}</span>
-                  <span className="text-gray-900 font-mono">{item.score}</span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div className={`${item.color} h-2 rounded-full`} style={{ width: `${item.score}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/vision-5.png" alt="Country scoring dashboard" className="rounded-2xl shadow-lg" />
         </div>
 
       </section>

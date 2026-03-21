@@ -137,40 +137,20 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-16">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-          The world&apos;s data,
-          <br />
-          <span className="text-blue-600">in one place.</span>
-        </h1>
-        <p className="text-lg text-gray-500 mt-4 max-w-xl">
-          {countries.length} countries. {totalIndicatorsWithData} indicators. Sourced from IMF, World Bank, WHO, and UNESCO.
-        </p>
-        <div className="flex gap-3 mt-8">
-          <Link href="/countries" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">
-            Explore Countries
-          </Link>
-          <Link href="/rankings" className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition">
-            Browse Indicators
-          </Link>
-        </div>
-      </section>
-
-      {/* Category jump nav */}
-      <section className="max-w-6xl mx-auto px-6 pb-8">
-        <div className="flex flex-wrap gap-2">
-          {categoriesWithData.map(({ category, indicators }) => (
-            <a
-              key={category}
-              href={`#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-              className="px-3 py-1.5 border border-gray-200 rounded-full text-xs text-gray-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition"
-            >
-              {category} <span className="text-gray-300">({indicators.length})</span>
-            </a>
-          ))}
-        </div>
-      </section>
+      {/* Category nav — compact, right under header */}
+      <nav className="max-w-6xl mx-auto px-6 py-3 flex items-center gap-4 overflow-x-auto text-sm border-b border-gray-50">
+        {['Economy', 'People', 'Health', 'Trade', 'Technology', 'Energy & Environment', 'Governance'].map(cat => (
+          <a
+            key={cat}
+            href={`#${cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+            className="text-gray-400 hover:text-gray-900 transition whitespace-nowrap"
+          >
+            {cat}
+          </a>
+        ))}
+        <span className="text-gray-200">|</span>
+        <a href="#military" className="text-gray-400 hover:text-gray-900 transition whitespace-nowrap">All categories</a>
+      </nav>
 
       {/* All indicators by category — top 2 shown, expandable */}
       {categoriesWithData.map(({ category, indicators, featuredCount }) => (

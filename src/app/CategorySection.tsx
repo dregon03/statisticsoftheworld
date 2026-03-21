@@ -65,9 +65,9 @@ export default function CategorySection({
       {rest.length > 0 && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="mt-4 px-4 py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition"
+          className="mt-4 px-4 py-2 text-sm border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 rounded-lg transition"
         >
-          {expanded ? 'Show less' : `Show all ${indicators.length} indicators`}
+          {expanded ? 'Show less' : `+ ${rest.length} more indicators`}
         </button>
       )}
     </section>

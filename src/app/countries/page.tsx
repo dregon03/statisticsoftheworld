@@ -54,21 +54,20 @@ export default function CountriesPage() {
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
-      <header className="border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-50">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-sm">SW</div>
-            <span className="font-semibold text-lg">Statistics of the World</span>
+            <div className="w-7 h-7 bg-blue-600 rounded flex items-center justify-center font-bold text-xs text-white">SW</div>
+            <span className="font-semibold">Statistics of the World</span>
           </Link>
           <nav className="flex gap-6 text-sm text-gray-500">
             <Link href="/countries" className="text-gray-900 font-medium">Countries</Link>
-
             <Link href="/rankings" className="hover:text-gray-900 transition">Indicators</Link>
           </nav>
         </div>
       </header>
 
-      <section className="max-w-7xl mx-auto px-6 py-12">
+      <section className="max-w-6xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold mb-2">All Countries</h1>
         <p className="text-gray-500 mb-8">{countries.length} countries and territories with {INDICATORS.length} indicators each.</p>
 
@@ -100,11 +99,11 @@ export default function CountriesPage() {
           <div className="flex gap-1 ml-auto">
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-2 rounded-lg text-sm transition ${viewMode === 'grid' ? 'bg-blue-600' : 'bg-gray-100 hover:bg-gray-100'}`}
+              className={`px-3 py-2 rounded-lg text-sm transition ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
             >Grid</button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 py-2 rounded-lg text-sm transition ${viewMode === 'table' ? 'bg-blue-600' : 'bg-gray-100 hover:bg-gray-100'}`}
+              className={`px-3 py-2 rounded-lg text-sm transition ${viewMode === 'table' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
             >Table</button>
           </div>
         </div>
@@ -137,7 +136,7 @@ export default function CountriesPage() {
                     </div>
                     <div>
                       <div className="text-gray-500 text-xs">Population</div>
-                      <div className="font-mono text-green-400">{s.population ? formatValue(s.population, 'number') : '-'}</div>
+                      <div className="font-mono text-gray-900">{s.population ? formatValue(s.population, 'number') : '-'}</div>
                     </div>
                     <div>
                       <div className="text-gray-500 text-xs">GDP/Capita</div>
@@ -176,7 +175,7 @@ export default function CountriesPage() {
                   return (
                     <tr key={c.id} className="border-b border-gray-100/50 hover:bg-gray-50 transition">
                       <td className="px-4 py-2.5">
-                        <Link href={`/country/${c.id}`} className="text-blue-600 hover:text-blue-300 text-sm transition">
+                        <Link href={`/country/${c.id}`} className="text-blue-600 hover:text-blue-800 text-sm transition">
                           {c.name}
                         </Link>
                       </td>
@@ -196,7 +195,7 @@ export default function CountriesPage() {
       </section>
 
       <footer className="border-t border-gray-100 mt-16">
-        <div className="max-w-7xl mx-auto px-6 py-8 text-sm text-gray-500">
+        <div className="max-w-6xl mx-auto px-6 py-8 text-sm text-gray-500">
           <p>Data sourced from World Bank, WHO, UNESCO, ILO, FAO, and international organizations.</p>
           <p className="mt-1">Statistics of the World 2026. {INDICATORS.length} indicators. {countries.length} countries.</p>
         </div>

@@ -56,7 +56,7 @@ export default async function CountryPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <header className="border-b border-gray-100">
+      <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-blue-600 rounded flex items-center justify-center font-bold text-xs text-white">SW</div>
@@ -120,7 +120,7 @@ export default async function CountryPage({ params }: Props) {
 
             return (
               <div key={category}>
-                <h2 className="text-lg font-semibold mb-3 text-blue-600">{category}</h2>
+                <h2 className="text-lg font-semibold mb-3 text-gray-900">{category}</h2>
                 <div className="border border-gray-100 rounded-xl overflow-hidden">
                   <table className="w-full">
                     <thead>

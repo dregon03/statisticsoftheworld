@@ -30,7 +30,7 @@ export default function VisionPage() {
       </section>
 
       {/* Title below globe */}
-      <section className="text-center px-6 -mt-8 mb-8">
+      <section className="text-center px-6 mt-4 mb-8">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
           <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
             Every country. Every indicator.

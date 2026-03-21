@@ -34,9 +34,6 @@ export default function VisionPage() {
               Every country. Every indicator.
             </span>
           </h1>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            The intelligence layer for 217 countries &mdash; for humans and the AI agents that serve them.
-          </p>
         </div>
       </section>
 

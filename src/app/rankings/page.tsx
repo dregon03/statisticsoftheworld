@@ -36,6 +36,7 @@ function IndicatorsContent() {
   const [multiData, setMultiData] = useState<MultiSourceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [sortAsc, setSortAsc] = useState(false);
+  const [sortBySource, setSortBySource] = useState<string | null>(null); // null = primary source
   const [searchIndicator, setSearchIndicator] = useState('');
 
   const hasMultiSource = !!MULTI_SOURCE[selectedIndicator.id];
@@ -43,6 +44,7 @@ function IndicatorsContent() {
   useEffect(() => {
     setLoading(true);
     setMultiData(null);
+    setSortBySource(null);
     fetch(`/api/indicator?id=${encodeURIComponent(selectedIndicator.id)}`)
       .then(r => r.json())
       .then(entries => {
@@ -137,6 +139,14 @@ function IndicatorsContent() {
               <div className="text-center py-20 text-gray-400">Loading data...</div>
             ) : hasMultiSource && multiData && multiData.countries.length > 0 ? (
               /* Wikipedia-style multi-source table */
+              (() => {
+                const activeSrc = sortBySource || multiData.sources[0].id;
+                const sorted = [...multiData.countries].sort((a, b) => {
+                  const aVal = a.values[activeSrc]?.value ?? -Infinity;
+                  const bVal = b.values[activeSrc]?.value ?? -Infinity;
+                  return sortAsc ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+                });
+                return (
               <div className="border border-gray-100 rounded-xl overflow-hidden overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -147,14 +157,25 @@ function IndicatorsContent() {
                         </button>
                       </th>
                       <th className="px-4 py-2.5 text-gray-500">Country</th>
-                      {multiData.sources.map(src => (
-                        <th key={src.id} className="px-4 py-2.5 text-right text-gray-700 font-semibold">{src.org}</th>
-                      ))}
+                      {multiData.sources.map(src => {
+                        const isActive = src.id === activeSrc;
+                        return (
+                          <th key={src.id} className="px-4 py-2.5 text-right">
+                            <button
+                              onClick={() => setSortBySource(src.id)}
+                              className={`font-semibold transition ${isActive ? 'text-blue-600' : 'text-gray-400 hover:text-gray-700'}`}
+                              title={`Rank by ${src.org}`}
+                            >
+                              {src.org}{isActive ? ' \u25BC' : ''}
+                            </button>
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody>
-                    {(sortAsc ? [...multiData.countries].reverse() : multiData.countries).map((row, i) => {
-                      const rank = sortAsc ? multiData.countries.length - i : i + 1;
+                    {sorted.map((row, i) => {
+                      const rank = i + 1;
                       return (
                         <tr key={row.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
                           <td className="px-4 py-2 text-gray-300 text-sm">{rank}</td>
@@ -185,10 +206,17 @@ function IndicatorsContent() {
                   </tbody>
                 </table>
               </div>
+                );
+              })()
             ) : data.length === 0 ? (
               <div className="text-center py-20 text-gray-400">No data available for this indicator.</div>
             ) : (
               /* Single source table */
+              (() => {
+                const sourceName = selectedIndicator.id.startsWith('IMF.') ? 'IMF'
+                  : selectedIndicator.id.startsWith('UN.') ? 'United Nations'
+                  : 'World Bank';
+                return (
               <div className="border border-gray-100 rounded-xl overflow-hidden">
                 <table className="w-full">
                   <thead>
@@ -199,7 +227,7 @@ function IndicatorsContent() {
                         </button>
                       </th>
                       <th className="px-4 py-2.5 text-gray-500">Country</th>
-                      <th className="px-4 py-2.5 text-right text-gray-500 w-36">Value</th>
+                      <th className="px-4 py-2.5 text-right text-gray-700 font-semibold w-36">{sourceName}</th>
                       <th className="px-4 py-2.5 w-56 hidden md:table-cell"></th>
                       <th className="px-4 py-2.5 text-right text-gray-500 w-14">Year</th>
                     </tr>
@@ -235,6 +263,8 @@ function IndicatorsContent() {
                   </tbody>
                 </table>
               </div>
+                );
+              })()
             )}
           </div>
         </div>

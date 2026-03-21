@@ -55,19 +55,32 @@ export default function VisionPage() {
         </div>
       </section>
 
+      {/* The Problem */}
+      <section className="max-w-3xl mx-auto px-6 pt-24 pb-16">
+        <p className="text-2xl md:text-3xl text-gray-900 font-bold leading-snug mb-6">
+          $110 trillion in global GDP. 8 billion lives. 217 sovereign nations. And the world still can&apos;t agree on the numbers.
+        </p>
+        <p className="text-lg text-gray-500 leading-relaxed mb-4">
+          The IMF says US GDP is $31.8 trillion. The World Bank says $28.7 trillion. The UN says $29.3 trillion. All three are &ldquo;right&rdquo; &mdash; they just measure at different times, with different methods. Multiply that confusion across 300 indicators and 217 countries and you get the state of global data today: fragmented, delayed, and inaccessible.
+        </p>
+        <p className="text-lg text-gray-500 leading-relaxed">
+          Policy gets made on stale numbers. Investors trade on incomplete pictures. Journalists cite whichever source they found first. AI systems hallucinate because there&apos;s no single authoritative endpoint. This is a solvable problem.
+        </p>
+      </section>
+
       {/* Vision sections */}
-      <section className="max-w-5xl mx-auto px-6 py-24 space-y-32">
+      <section className="max-w-5xl mx-auto px-6 py-16 space-y-32">
 
         {/* 1 - Canonical Source */}
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 tracking-wider">LIVE</span>
-            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">The canonical source</h2>
-            <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              When anyone asks &ldquo;What&apos;s the GDP of Nigeria?&rdquo; &mdash; the answer comes from here. IMF, World Bank, and United Nations data in one table. No PDFs, no spreadsheets, no waiting.
+            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">One table. Every source.</h2>
+            <p className="text-gray-600 leading-relaxed text-lg mb-4">
+              We put IMF, World Bank, and United Nations estimates side by side for every country &mdash; so you see the full picture, not just one organization&apos;s version. The same indicator, three independent measurements, compared in seconds.
             </p>
             <p className="text-gray-500 leading-relaxed">
-              Updated automatically. Compared across sources. Free and open.
+              This is what Wikipedia does for GDP. We do it for 285 indicators &mdash; health, education, trade, governance, environment &mdash; automatically, always current.
             </p>
           </div>
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-3">
@@ -82,7 +95,7 @@ export default function VisionPage() {
                 <span className="text-gray-600 w-4">{row.rank}</span>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={`https://flagcdn.com/w20/${row.flag}.png`} width={20} alt="" className="shrink-0" />
-                <span className="flex-1 text-gray-300">{row.name}</span>
+                <span className="flex-1 text-gray-700">{row.name}</span>
                 <span className="font-mono text-blue-400 text-xs">{row.imf}</span>
                 <span className="font-mono text-gray-500 text-xs">{row.wb}</span>
                 <span className="font-mono text-gray-600 text-xs">{row.un}</span>
@@ -117,12 +130,12 @@ export default function VisionPage() {
           </div>
           <div className="order-1 md:order-2">
             <span className="text-xs font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 tracking-wider">NEXT</span>
-            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Nowcast everything</h2>
-            <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              Official GDP numbers arrive months late. We estimate economic indicators <em className="text-gray-900 not-italic font-medium">before</em> official releases &mdash; using satellite imagery, shipping data, electricity consumption, and real-time transactions.
+            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Know before the numbers drop</h2>
+            <p className="text-gray-600 leading-relaxed text-lg mb-4">
+              Canada&apos;s GDP report comes out 60 days after the quarter ends. By then, the economy has already moved. What if you could see the trajectory <em className="text-gray-900 not-italic font-medium">now</em> &mdash; from satellite nightlights, container shipping volumes, electricity grids, and real-time payment flows?
             </p>
             <p className="text-gray-500 leading-relaxed">
-              Starting with US &amp; Canada. Then G20. Then everywhere.
+              Nowcasting turns lagging indicators into leading ones. Hedge funds pay millions for this. We&apos;re building it for every country, starting with the US and Canada.
             </p>
           </div>
         </div>
@@ -131,12 +144,12 @@ export default function VisionPage() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <span className="text-xs font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 tracking-wider">NEXT</span>
-            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">The world&apos;s API</h2>
-            <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              The biggest consumer of country data won&apos;t be humans &mdash; it will be <em className="text-gray-900 not-italic font-medium">AI agents</em>. Autonomous systems making decisions, writing reports, answering questions.
+            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">The data layer for the AI era</h2>
+            <p className="text-gray-600 leading-relaxed text-lg mb-4">
+              A billion AI agents are about to be deployed &mdash; trading, analyzing, writing policy, advising governments. Every one of them will need to answer: &ldquo;How is this country doing?&rdquo; They need a source they can trust, call in milliseconds, and cite with confidence.
             </p>
             <p className="text-gray-500 leading-relaxed">
-              REST APIs. Model Context Protocol. Tool-use endpoints. Whatever protocol AI speaks next &mdash; we&apos;re the data layer.
+              REST APIs. Model Context Protocol. Tool-use for Claude, GPT, Gemini. We become the Stripe of country intelligence &mdash; one integration, every country, every metric.
             </p>
           </div>
           <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-sm p-6 font-mono text-sm">
@@ -165,7 +178,7 @@ export default function VisionPage() {
               'Compare healthcare outcomes: countries spending >8% vs <4% of GDP on health.',
               'Which countries are most likely to face a debt crisis in 2 years?',
             ].map((q, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-4 text-gray-300 text-lg italic relative">
+              <div key={i} className="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-4 text-gray-600 text-lg italic relative">
                 <span className="absolute -left-3 top-4 w-1.5 h-1.5 rounded-full bg-purple-500" />
                 &ldquo;{q}&rdquo;
               </div>
@@ -173,12 +186,12 @@ export default function VisionPage() {
           </div>
           <div className="order-1 md:order-2">
             <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20 tracking-wider">FUTURE</span>
-            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">AI-native intelligence</h2>
-            <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              Natural language across 300+ indicators, 217 countries, 50 years of history. With sources, methodology, and confidence levels.
+            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Ask anything about any country</h2>
+            <p className="text-gray-600 leading-relaxed text-lg mb-4">
+              McKinsey charges $500K for a country market entry report. A PhD student spends months assembling data for a single research question. Both are doing the same thing &mdash; connecting dots across hundreds of indicators. That should take seconds.
             </p>
             <p className="text-gray-500 leading-relaxed">
-              The analyst that never sleeps. For every country on Earth.
+              Natural language queries across 50 years of history, 217 countries, every source. With citations, confidence intervals, and methodology transparency that no consultant can match.
             </p>
           </div>
         </div>
@@ -187,12 +200,12 @@ export default function VisionPage() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20 tracking-wider">FUTURE</span>
-            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Country scores</h2>
-            <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              Moody&apos;s scores countries behind closed doors. We score them on <em className="text-gray-900 not-italic font-medium">everything</em> &mdash; transparently, from hundreds of indicators.
+            <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">The open Moody&apos;s</h2>
+            <p className="text-gray-600 leading-relaxed text-lg mb-4">
+              Three companies &mdash; Moody&apos;s, S&amp;P, Fitch &mdash; rate the creditworthiness of nations behind closed doors. Their downgrades move billions. Their methodology is proprietary. Their track record includes missing the 2008 crisis entirely.
             </p>
             <p className="text-gray-500 leading-relaxed">
-              Open methodology. Open data. Accountable to the data, not politics.
+              We compute country scores from hundreds of public indicators &mdash; development trajectory, governance quality, innovation capacity, sustainability &mdash; with fully transparent methodology. When a country improves, the score updates. No phone calls. No politics.
             </p>
           </div>
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
@@ -222,10 +235,10 @@ export default function VisionPage() {
       <section className="border-t border-gray-200">
         <div className="max-w-3xl mx-auto px-6 py-24 text-center">
           <p className="text-3xl md:text-4xl text-gray-900 font-bold leading-snug mb-4">
-            The world is drowning in data about itself but starving for understanding.
+            Every country deserves to be understood.
           </p>
           <p className="text-lg text-gray-500 mb-10">
-            We&apos;re building the layer that turns it into clarity &mdash; for every human, every agent, every decision.
+            Not just the G7. Not just the ones that make the news. All 217 &mdash; measured fairly, compared honestly, updated continuously. That&apos;s what we&apos;re building.
           </p>
           <div className="flex justify-center gap-4">
             <Link href="/" className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition">

@@ -7,9 +7,9 @@ export default function Flag({ iso2, size = 20 }: { iso2: string; size?: number 
       src={`https://flagcdn.com/w${w}/${iso2}.png`}
       srcSet={`https://flagcdn.com/w${Math.min(w * 2, 320)}/${iso2}.png 2x`}
       width={size}
-      height={Math.round(size * 0.75)}
       alt=""
-      className="inline-block rounded-sm shrink-0"
+      className="inline-block shrink-0 object-contain"
+      style={{ height: 'auto' }}
       loading="lazy"
     />
   );

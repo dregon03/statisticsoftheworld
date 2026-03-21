@@ -9,28 +9,28 @@ export const metadata: Metadata = {
 
 export default function VisionPage() {
   return (
-    <main className="min-h-screen bg-gray-950 text-white overflow-hidden">
+    <main className="min-h-screen bg-sky-50 text-gray-900 overflow-hidden">
       {/* Nav */}
-      <header className="border-b border-white/5 sticky top-0 bg-gray-950/90 backdrop-blur z-50">
+      <header className="border-b border-gray-200 sticky top-0 bg-sky-50/90 backdrop-blur z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-blue-500 rounded flex items-center justify-center font-bold text-xs text-white">SW</div>
-            <span className="font-semibold text-white">Statistics of the World</span>
+            <span className="font-semibold text-gray-900">Statistics of the World</span>
           </Link>
           <nav className="flex gap-6 text-sm text-gray-500">
-            <Link href="/countries" className="hover:text-white transition">Countries</Link>
-            <Link href="/rankings" className="hover:text-white transition">Indicators</Link>
+            <Link href="/countries" className="hover:text-gray-900 transition">Countries</Link>
+            <Link href="/rankings" className="hover:text-gray-900 transition">Indicators</Link>
           </nav>
         </div>
       </header>
 
       {/* Globe Hero */}
       <section className="relative min-h-screen flex flex-col items-center justify-center -mt-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-600/5 via-transparent to-gray-950" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-100/50 via-transparent to-transparent" />
         <Globe />
         <div className="absolute bottom-16 left-0 right-0 text-center px-6">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-            <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
               Every country. Every indicator.
             </span>
           </h1>
@@ -38,7 +38,7 @@ export default function VisionPage() {
       </section>
 
       {/* Stats bar */}
-      <section className="border-y border-white/5 bg-white/[0.02]">
+      <section className="border-y border-gray-200 bg-white/60">
         <div className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             { value: '217', label: 'Countries', color: 'text-blue-400' },
@@ -69,7 +69,7 @@ export default function VisionPage() {
               Updated automatically. Compared across sources. Free and open.
             </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-3">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-3">
             {[
               { rank: 1, flag: 'us', name: 'United States', imf: '$31.82T', wb: '$28.75T', un: '$29.30T' },
               { rank: 2, flag: 'cn', name: 'China', imf: '$20.65T', wb: '$18.74T', un: '$18.74T' },
@@ -87,7 +87,7 @@ export default function VisionPage() {
                 <span className="font-mono text-gray-600 text-xs">{row.un}</span>
               </div>
             ))}
-            <div className="flex justify-end gap-6 text-[10px] text-gray-600 pt-2 border-t border-white/5">
+            <div className="flex justify-end gap-6 text-[10px] text-gray-600 pt-2 border-t border-gray-200">
               <span>IMF</span><span>World Bank</span><span>United Nations</span>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function VisionPage() {
 
         {/* 2 - Nowcasting */}
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 bg-white/5 border border-white/10 rounded-2xl p-6">
+          <div className="order-2 md:order-1 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
             <div className="flex items-end gap-1 h-40 px-4">
               {[40, 42, 38, 45, 50, 48, 55, 52, 58, 62, 60, 65].map((h, i) => (
                 <div key={i} className="flex-1 flex flex-col justify-end items-center">
@@ -118,7 +118,7 @@ export default function VisionPage() {
             <span className="text-xs font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 tracking-wider">NEXT</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Nowcast everything</h2>
             <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              Official GDP numbers arrive months late. We estimate economic indicators <em className="text-white not-italic font-medium">before</em> official releases &mdash; using satellite imagery, shipping data, electricity consumption, and real-time transactions.
+              Official GDP numbers arrive months late. We estimate economic indicators <em className="text-gray-900 not-italic font-medium">before</em> official releases &mdash; using satellite imagery, shipping data, electricity consumption, and real-time transactions.
             </p>
             <p className="text-gray-500 leading-relaxed">
               Starting with US &amp; Canada. Then G20. Then everywhere.
@@ -132,14 +132,14 @@ export default function VisionPage() {
             <span className="text-xs font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 tracking-wider">NEXT</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">The world&apos;s API</h2>
             <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              The biggest consumer of country data won&apos;t be humans &mdash; it will be <em className="text-white not-italic font-medium">AI agents</em>. Autonomous systems making decisions, writing reports, answering questions.
+              The biggest consumer of country data won&apos;t be humans &mdash; it will be <em className="text-gray-900 not-italic font-medium">AI agents</em>. Autonomous systems making decisions, writing reports, answering questions.
             </p>
             <p className="text-gray-500 leading-relaxed">
               REST APIs. Model Context Protocol. Tool-use endpoints. Whatever protocol AI speaks next &mdash; we&apos;re the data layer.
             </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 font-mono text-sm">
-            <div className="text-gray-600 mb-3">// Any agent, any framework</div>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-sm p-6 font-mono text-sm">
+            <div className="text-gray-500 mb-3">// Any agent, any framework</div>
             <div className="mb-4">
               <span className="text-cyan-400">GET</span>{' '}
               <span className="text-gray-400">/api/v1/country/</span>
@@ -164,7 +164,7 @@ export default function VisionPage() {
               'Compare healthcare outcomes: countries spending >8% vs <4% of GDP on health.',
               'Which countries are most likely to face a debt crisis in 2 years?',
             ].map((q, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-gray-300 text-lg italic relative">
+              <div key={i} className="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-4 text-gray-300 text-lg italic relative">
                 <span className="absolute -left-3 top-4 w-1.5 h-1.5 rounded-full bg-purple-500" />
                 &ldquo;{q}&rdquo;
               </div>
@@ -188,13 +188,13 @@ export default function VisionPage() {
             <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20 tracking-wider">FUTURE</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">Country scores</h2>
             <p className="text-gray-400 leading-relaxed text-lg mb-4">
-              Moody&apos;s scores countries behind closed doors. We score them on <em className="text-white not-italic font-medium">everything</em> &mdash; transparently, from hundreds of indicators.
+              Moody&apos;s scores countries behind closed doors. We score them on <em className="text-gray-900 not-italic font-medium">everything</em> &mdash; transparently, from hundreds of indicators.
             </p>
             <p className="text-gray-500 leading-relaxed">
               Open methodology. Open data. Accountable to the data, not politics.
             </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
             {[
               { label: 'Development', score: 82, color: 'bg-emerald-500' },
               { label: 'Innovation', score: 71, color: 'bg-blue-500' },
@@ -205,9 +205,9 @@ export default function VisionPage() {
               <div key={item.label}>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-gray-400">{item.label}</span>
-                  <span className="text-white font-mono">{item.score}</span>
+                  <span className="text-gray-900 font-mono">{item.score}</span>
                 </div>
-                <div className="w-full bg-white/5 rounded-full h-2">
+                <div className="w-full bg-gray-100 rounded-full h-2">
                   <div className={`${item.color} h-2 rounded-full`} style={{ width: `${item.score}%` }} />
                 </div>
               </div>
@@ -218,9 +218,9 @@ export default function VisionPage() {
       </section>
 
       {/* Closing */}
-      <section className="border-t border-white/5">
+      <section className="border-t border-gray-200">
         <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-          <p className="text-3xl md:text-4xl text-white font-bold leading-snug mb-4">
+          <p className="text-3xl md:text-4xl text-gray-900 font-bold leading-snug mb-4">
             The world is drowning in data about itself but starving for understanding.
           </p>
           <p className="text-lg text-gray-500 mb-10">
@@ -230,7 +230,7 @@ export default function VisionPage() {
             <Link href="/" className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition">
               Explore the data
             </Link>
-            <Link href="/countries" className="px-6 py-3 bg-white/10 hover:bg-white/15 text-white rounded-lg text-sm font-medium transition border border-white/10">
+            <Link href="/countries" className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg text-sm font-medium transition">
               Browse countries
             </Link>
           </div>

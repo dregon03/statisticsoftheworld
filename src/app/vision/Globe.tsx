@@ -156,7 +156,7 @@ export default function Globe() {
       </div>
 
       {/* Bottom fade */}
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-950 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-sky-50 to-transparent pointer-events-none" />
     </div>
   );
 }

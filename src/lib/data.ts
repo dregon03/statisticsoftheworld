@@ -498,6 +498,118 @@ export async function getTop10AllIndicators(): Promise<Record<string, { country:
 }
 
 // ============================================================
+// MULTI-SOURCE INDICATORS
+// Same metric reported by different organizations
+// ============================================================
+
+export interface MultiSourceGroup {
+  label: string;
+  sources: { id: string; org: string; year?: string }[];
+}
+
+export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
+  'IMF.NGDPD': {
+    label: 'GDP (Nominal)',
+    sources: [
+      { id: 'IMF.NGDPD', org: 'IMF' },
+      { id: 'NY.GDP.MKTP.CD', org: 'World Bank' },
+    ],
+  },
+  'IMF.NGDPDPC': {
+    label: 'GDP per Capita',
+    sources: [
+      { id: 'IMF.NGDPDPC', org: 'IMF' },
+      { id: 'NY.GDP.PCAP.CD', org: 'World Bank' },
+    ],
+  },
+  'IMF.NGDP_RPCH': {
+    label: 'Real GDP Growth',
+    sources: [
+      { id: 'IMF.NGDP_RPCH', org: 'IMF' },
+      { id: 'NY.GDP.MKTP.KD.ZG', org: 'World Bank' },
+    ],
+  },
+  'IMF.PCPIPCH': {
+    label: 'Inflation (CPI)',
+    sources: [
+      { id: 'IMF.PCPIPCH', org: 'IMF' },
+      { id: 'FP.CPI.TOTL.ZG', org: 'World Bank' },
+    ],
+  },
+  'IMF.LUR': {
+    label: 'Unemployment Rate',
+    sources: [
+      { id: 'IMF.LUR', org: 'IMF' },
+      { id: 'SL.UEM.TOTL.ZS', org: 'World Bank (ILO)' },
+    ],
+  },
+  'IMF.GGXWDG_NGDP': {
+    label: 'Government Debt (% of GDP)',
+    sources: [
+      { id: 'IMF.GGXWDG_NGDP', org: 'IMF' },
+      { id: 'GC.DOD.TOTL.GD.ZS', org: 'World Bank' },
+    ],
+  },
+};
+
+// Also map WB equivalents back to their group
+for (const [key, group] of Object.entries(MULTI_SOURCE)) {
+  for (const src of group.sources) {
+    if (src.id !== key && !MULTI_SOURCE[src.id]) {
+      MULTI_SOURCE[src.id] = group;
+    }
+  }
+}
+
+export async function getMultiSourceData(groupKey: string): Promise<{
+  sources: { id: string; org: string }[];
+  countries: { countryId: string; country: string; iso2: string; values: Record<string, { value: number | null; year: string }> }[];
+}> {
+  const group = MULTI_SOURCE[groupKey];
+  if (!group) return { sources: [], countries: [] };
+
+  const countries = await getCountries();
+  const countryMap = new Map(countries.map(c => [c.id, { name: c.name, iso2: c.iso2 }]));
+
+  // Fetch data for all sources
+  const allData: Record<string, Record<string, { value: number | null; year: string }>> = {};
+  for (const src of group.sources) {
+    const { data } = await supabase
+      .from('sotw_indicators')
+      .select('country_id, value, year')
+      .eq('id', src.id)
+      .not('value', 'is', null);
+    if (data) {
+      for (const row of data) {
+        if (!allData[row.country_id]) allData[row.country_id] = {};
+        allData[row.country_id][src.id] = {
+          value: adjustValue(src.id, row.value),
+          year: String(row.year),
+        };
+      }
+    }
+  }
+
+  // Build country rows, sorted by first source value
+  const primaryId = group.sources[0].id;
+  const rows = Object.entries(allData)
+    .filter(([cid]) => countryMap.has(cid))
+    .map(([cid, values]) => ({
+      countryId: cid,
+      country: countryMap.get(cid)!.name,
+      iso2: countryMap.get(cid)!.iso2,
+      values,
+    }))
+    .sort((a, b) => {
+      const aVal = a.values[primaryId]?.value ?? -Infinity;
+      const bVal = b.values[primaryId]?.value ?? -Infinity;
+      return (bVal as number) - (aVal as number);
+    });
+
+  return { sources: group.sources, countries: rows };
+}
+
+// ============================================================
 // FORMATTING
 // ============================================================
 

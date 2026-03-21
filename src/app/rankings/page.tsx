@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
+import { INDICATORS, CATEGORIES, formatValue, MULTI_SOURCE } from '@/lib/data';
 import Flag from '../Flag';
 
 interface RankingEntry {
@@ -12,6 +12,11 @@ interface RankingEntry {
   iso2: string;
   value: number | null;
   year: string;
+}
+
+interface MultiSourceData {
+  sources: { id: string; org: string }[];
+  countries: { countryId: string; country: string; iso2: string; values: Record<string, { value: number | null; year: string }> }[];
 }
 
 export default function IndicatorsPage() {
@@ -28,12 +33,17 @@ function IndicatorsContent() {
   const initialIndicator = (initialId && INDICATORS.find(i => i.id === initialId)) || INDICATORS[0];
   const [selectedIndicator, setSelectedIndicator] = useState(initialIndicator);
   const [data, setData] = useState<RankingEntry[]>([]);
+  const [multiData, setMultiData] = useState<MultiSourceData | null>(null);
+  const [viewMode, setViewMode] = useState<'single' | 'multi'>('single');
   const [loading, setLoading] = useState(true);
   const [sortAsc, setSortAsc] = useState(false);
   const [searchIndicator, setSearchIndicator] = useState('');
 
+  const hasMultiSource = !!MULTI_SOURCE[selectedIndicator.id];
+
   useEffect(() => {
     setLoading(true);
+    setMultiData(null);
     fetch(`/api/indicator?id=${encodeURIComponent(selectedIndicator.id)}`)
       .then(r => r.json())
       .then(entries => {
@@ -41,6 +51,14 @@ function IndicatorsContent() {
         setLoading(false);
       })
       .catch(() => { setData([]); setLoading(false); });
+
+    // Also fetch multi-source data if available
+    if (MULTI_SOURCE[selectedIndicator.id]) {
+      fetch(`/api/multisource?id=${encodeURIComponent(selectedIndicator.id)}`)
+        .then(r => r.json())
+        .then(ms => setMultiData(ms))
+        .catch(() => {});
+    }
   }, [selectedIndicator]);
 
   const sorted = sortAsc ? [...data].reverse() : data;
@@ -116,19 +134,82 @@ function IndicatorsContent() {
                 <h2 className="text-xl font-bold">{selectedIndicator.label}</h2>
                 <div className="text-sm text-gray-400">{selectedIndicator.category} &middot; {data.length} countries</div>
               </div>
-              <button
-                onClick={() => setSortAsc(!sortAsc)}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition"
-              >
-                {sortAsc ? 'Lowest first' : 'Highest first'}
-              </button>
+              <div className="flex items-center gap-2">
+                {hasMultiSource && multiData && (
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => setViewMode('single')}
+                      className={`px-3 py-2 rounded-lg text-xs transition ${viewMode === 'single' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                    >Single source</button>
+                    <button
+                      onClick={() => setViewMode('multi')}
+                      className={`px-3 py-2 rounded-lg text-xs transition ${viewMode === 'multi' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                    >Compare sources</button>
+                  </div>
+                )}
+                <button
+                  onClick={() => setSortAsc(!sortAsc)}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition"
+                >
+                  {sortAsc ? 'Lowest first' : 'Highest first'}
+                </button>
+              </div>
             </div>
 
             {loading ? (
               <div className="text-center py-20 text-gray-400">Loading data...</div>
             ) : data.length === 0 ? (
               <div className="text-center py-20 text-gray-400">No data available for this indicator.</div>
+            ) : viewMode === 'multi' && multiData ? (
+              /* Wikipedia-style multi-source table */
+              <div className="border border-gray-100 rounded-xl overflow-hidden overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                      <th className="px-4 py-2.5 w-14">Rank</th>
+                      <th className="px-4 py-2.5">Country</th>
+                      {multiData.sources.map(src => (
+                        <th key={src.id} className="px-4 py-2.5 text-right">
+                          <div className="font-semibold text-gray-600">{src.org}</div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(sortAsc ? [...multiData.countries].reverse() : multiData.countries).map((row, i) => {
+                      const rank = sortAsc ? multiData.countries.length - i : i + 1;
+                      return (
+                        <tr key={row.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
+                          <td className="px-4 py-2 text-gray-300 text-sm">{rank}</td>
+                          <td className="px-4 py-2">
+                            <Link href={`/country/${row.countryId}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition text-sm">
+                              <Flag iso2={row.iso2} size={24} />
+                              {row.country}
+                            </Link>
+                          </td>
+                          {multiData.sources.map(src => {
+                            const d = row.values[src.id];
+                            return (
+                              <td key={src.id} className="px-4 py-2 text-right font-mono text-sm">
+                                {d ? (
+                                  <span>
+                                    {formatValue(d.value, selectedIndicator.format, selectedIndicator.decimals)}
+                                    <span className="text-gray-300 text-xs ml-1">{d.year}</span>
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-300">—</span>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             ) : (
+              /* Single source table */
               <div className="border border-gray-100 rounded-xl overflow-hidden">
                 <table className="w-full">
                   <thead>

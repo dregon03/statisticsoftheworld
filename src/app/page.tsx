@@ -2,20 +2,56 @@ import Link from 'next/link';
 import { getCountries, getTop10AllIndicators, formatValue, INDICATORS, CATEGORIES } from '@/lib/data';
 import CategorySection from './CategorySection';
 
+// 2 most important indicators per category — shown by default before expand
+const FEATURED: Record<string, [string, string]> = {
+  'Economy':              ['IMF.NGDPD',          'IMF.NGDPDPC'],
+  'Fiscal & Monetary':    ['IMF.PCPIPCH',        'IMF.LUR'],
+  'Trade':                ['NE.TRD.GNFS.ZS',     'BX.KLT.DINV.WD.GD.ZS'],
+  'External Debt':        ['DT.DOD.DECT.GN.ZS',  'DT.DOD.DECT.CD'],
+  'Finance':              ['CM.MKT.LCAP.GD.ZS',  'FS.AST.PRVT.GD.ZS'],
+  'Business Environment': ['IC.ELC.DURS',         'IC.ELC.DURS'],
+  'People':               ['SP.POP.TOTL',         'SP.DYN.LE00.IN'],
+  'Labor':                ['SL.UEM.TOTL.ZS',      'SL.TLF.CACT.ZS'],
+  'Education':            ['SE.ADT.LITR.ZS',      'SE.XPD.TOTL.GD.ZS'],
+  'Health':               ['SH.XPD.CHEX.GD.ZS',   'SH.DYN.MORT'],
+  'Energy & Environment': ['EN.GHG.CO2.PC.CE.AR5','EG.ELC.RNEW.ZS'],
+  'Agriculture':          ['AG.YLD.CREL.KG',      'SN.ITK.DEFC.ZS'],
+  'Technology':           ['IT.NET.USER.ZS',       'GB.XPD.RSDV.GD.ZS'],
+  'Infrastructure':       ['IS.AIR.PSGR',          'LP.LPI.OVRL.XQ'],
+  'Gender':               ['SG.GEN.PARL.ZS',      'SP.ADO.TFRT'],
+  'Governance':           ['CC.EST',               'RL.EST'],
+  'Military':             ['MS.MIL.XPND.GD.ZS',   'MS.MIL.TOTL.P1'],
+  'Poverty & Inequality': ['SI.POV.GINI',          'SI.POV.DDAY'],
+  'Social Protection':    ['HD.HCI.OVRL',          'HD.HCI.LAYS'],
+  'Tourism':              ['ST.INT.ARVL',           'ST.INT.RCPT.CD'],
+  'Urban Development':    ['SP.URB.GROW',           'EN.POP.SLUM.UR.ZS'],
+  'Private Sector':       ['IC.FRM.CORR.ZS',       'IC.FRM.TRNG.ZS'],
+};
+
 export default async function Home() {
   const [countries, allTop10] = await Promise.all([
     getCountries(),
     getTop10AllIndicators(),
   ]);
 
-  // Group indicators by category, only include ones with data
+  // Group indicators by category, featured ones first
   const categoriesWithData = CATEGORIES.map(category => {
+    const featured = FEATURED[category] || [];
     const indicators = INDICATORS
       .filter(ind => ind.category === category && allTop10[ind.id]?.length > 0)
       .map(ind => ({
         ...ind,
         data: allTop10[ind.id] || [],
       }));
+    // Sort: featured first, rest in original order
+    indicators.sort((a, b) => {
+      const aFeat = featured.indexOf(a.id);
+      const bFeat = featured.indexOf(b.id);
+      if (aFeat !== -1 && bFeat !== -1) return aFeat - bFeat;
+      if (aFeat !== -1) return -1;
+      if (bFeat !== -1) return 1;
+      return 0;
+    });
     return { category, indicators };
   }).filter(c => c.indicators.length > 0);
 

@@ -20,9 +20,8 @@ export default function CategorySection({
   indicators: IndicatorData[];
 }) {
   const [expanded, setExpanded] = useState(false);
-  const preview = indicators.slice(0, 2);
+  const shown = expanded ? indicators : indicators.slice(0, 2);
   const rest = indicators.slice(2);
-  const shown = expanded ? indicators : preview;
 
   return (
     <section

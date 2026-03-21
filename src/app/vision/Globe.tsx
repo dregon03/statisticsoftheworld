@@ -1,77 +1,92 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import createGlobe from 'cobe';
 
 const COUNTRIES = [
-  { name: 'United States', flag: 'us', gdp: '$31.82T', pop: '340M', growth: '2.1%', pos: { top: '20%', left: '8%' } },
-  { name: 'China', flag: 'cn', gdp: '$20.65T', pop: '1.41B', growth: '4.5%', pos: { top: '30%', right: '5%' } },
-  { name: 'India', flag: 'in', gdp: '$4.51T', pop: '1.45B', growth: '6.5%', pos: { bottom: '35%', right: '8%' } },
-  { name: 'Germany', flag: 'de', gdp: '$5.33T', pop: '84M', growth: '0.3%', pos: { top: '15%', right: '15%' } },
-  { name: 'Japan', flag: 'jp', gdp: '$4.46T', pop: '124M', growth: '0.6%', pos: { top: '25%', left: '5%' } },
-  { name: 'Brazil', flag: 'br', gdp: '$2.33T', pop: '216M', growth: '2.2%', pos: { bottom: '25%', left: '5%' } },
-  { name: 'Nigeria', flag: 'ng', gdp: '$473B', pop: '224M', growth: '3.0%', pos: { bottom: '30%', left: '15%' } },
-  { name: 'United Kingdom', flag: 'gb', gdp: '$4.23T', pop: '68M', growth: '1.1%', pos: { top: '18%', left: '20%' } },
-  { name: 'South Korea', flag: 'kr', gdp: '$1.87T', pop: '52M', growth: '2.0%', pos: { top: '32%', right: '12%' } },
-  { name: 'Australia', flag: 'au', gdp: '$1.80T', pop: '27M', growth: '1.5%', pos: { bottom: '20%', right: '5%' } },
+  { name: 'United States', flag: 'us', gdp: '$31.82T', gdppc: '$93K', life: '78.4y', pop: '340M', lat: 38, lng: -97 },
+  { name: 'China', flag: 'cn', gdp: '$20.65T', gdppc: '$15K', life: '78.6y', pop: '1.41B', lat: 35, lng: 105 },
+  { name: 'India', flag: 'in', gdp: '$4.51T', gdppc: '$3K', life: '72.0y', pop: '1.45B', lat: 20, lng: 77 },
+  { name: 'Germany', flag: 'de', gdp: '$5.33T', gdppc: '$63K', life: '80.6y', pop: '84M', lat: 51, lng: 10 },
+  { name: 'Japan', flag: 'jp', gdp: '$4.46T', gdppc: '$36K', life: '84.0y', pop: '124M', lat: 36, lng: 138 },
+  { name: 'Brazil', flag: 'br', gdp: '$2.33T', gdppc: '$11K', life: '76.0y', pop: '216M', lat: -15, lng: -47 },
+  { name: 'Nigeria', flag: 'ng', gdp: '$473B', gdppc: '$2K', life: '53.9y', pop: '224M', lat: 9, lng: 8 },
+  { name: 'United Kingdom', flag: 'gb', gdp: '$4.23T', gdppc: '$62K', life: '80.7y', pop: '68M', lat: 54, lng: -2 },
+  { name: 'South Korea', flag: 'kr', gdp: '$1.87T', gdppc: '$36K', life: '83.7y', pop: '52M', lat: 36, lng: 128 },
+  { name: 'Australia', flag: 'au', gdp: '$1.80T', gdppc: '$65K', life: '83.3y', pop: '27M', lat: -25, lng: 134 },
+  { name: 'France', flag: 'fr', gdp: '$3.56T', gdppc: '$52K', life: '82.3y', pop: '68M', lat: 46, lng: 2 },
+  { name: 'Mexico', flag: 'mx', gdp: '$1.79T', gdppc: '$14K', life: '75.1y', pop: '129M', lat: 23, lng: -102 },
+  { name: 'Indonesia', flag: 'id', gdp: '$1.47T', gdppc: '$5K', life: '68.6y', pop: '278M', lat: -5, lng: 120 },
+  { name: 'Saudi Arabia', flag: 'sa', gdp: '$1.07T', gdppc: '$29K', life: '77.6y', pop: '37M', lat: 24, lng: 45 },
+  { name: 'Egypt', flag: 'eg', gdp: '$398B', gdppc: '$4K', life: '71.5y', pop: '111M', lat: 27, lng: 31 },
 ];
 
-function CountryCard({ country, visible }: { country: typeof COUNTRIES[0]; visible: boolean }) {
-  return (
-    <div
-      className={`absolute transition-all duration-1000 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-      style={country.pos as React.CSSProperties}
-    >
-      <div className="bg-gray-900/80 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3 shadow-2xl shadow-blue-500/5 min-w-[160px]">
-        <div className="flex items-center gap-2 mb-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`https://flagcdn.com/w20/${country.flag}.png`} width={18} alt="" className="shrink-0" />
-          <span className="text-white text-sm font-semibold">{country.name}</span>
-        </div>
-        <div className="grid grid-cols-3 gap-2 text-[11px]">
-          <div>
-            <div className="text-gray-500">GDP</div>
-            <div className="text-blue-400 font-mono">{country.gdp}</div>
-          </div>
-          <div>
-            <div className="text-gray-500">Pop</div>
-            <div className="text-cyan-400 font-mono">{country.pop}</div>
-          </div>
-          <div>
-            <div className="text-gray-500">Growth</div>
-            <div className="text-emerald-400 font-mono">{country.growth}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+interface CardPosition {
+  x: number;
+  y: number;
+  visible: boolean;
+}
+
+function projectToScreen(lat: number, lng: number, phi: number, theta: number, size: number): CardPosition {
+  const latRad = (lat * Math.PI) / 180;
+  const lngRad = (lng * Math.PI) / 180;
+
+  // 3D point on unit sphere
+  const cosLat = Math.cos(latRad);
+  const sinLat = Math.sin(latRad);
+  const cosLng = Math.cos(lngRad - phi);
+  const sinLng = Math.sin(lngRad - phi);
+  const cosTheta = Math.cos(theta);
+  const sinTheta = Math.sin(theta);
+
+  // Rotate by theta (tilt)
+  const x = cosLat * sinLng;
+  const y = -(sinLat * cosTheta - cosLat * cosLng * sinTheta);
+  const z = sinLat * sinTheta + cosLat * cosLng * cosTheta;
+
+  const center = size / 2;
+  const radius = size * 0.42; // globe visual radius
+
+  return {
+    x: center + x * radius,
+    y: center + y * radius,
+    visible: z > 0.15, // only show when clearly facing viewer
+  };
 }
 
 export default function Globe() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [visibleCards, setVisibleCards] = useState<number[]>([0, 1]);
+  const phiRef = useRef(0);
+  const [cards, setCards] = useState<(CardPosition & { idx: number })[]>([]);
+  const sizeRef = useRef(600);
 
-  // Cycle country cards
-  useEffect(() => {
-    let idx = 2;
-    const interval = setInterval(() => {
-      setVisibleCards(prev => {
-        const next = [...prev];
-        // Replace the oldest card
-        const replaceIdx = idx % 2 === 0 ? 0 : 1;
-        next[replaceIdx] = idx % COUNTRIES.length;
-        return next;
-      });
-      idx++;
-    }, 3000);
-    return () => clearInterval(interval);
+  const updateCards = useCallback(() => {
+    const theta = 0.3;
+    const size = sizeRef.current;
+    const positions = COUNTRIES.map((c, i) => ({
+      ...projectToScreen(c.lat, c.lng, phiRef.current, theta, size),
+      idx: i,
+    }));
+
+    // Show only the top 3 visible cards (closest to viewer = highest z)
+    const visible = positions
+      .filter(p => p.visible)
+      .sort((a, b) => {
+        // Prefer cards nearer center of globe
+        const aDist = Math.hypot(a.x - size / 2, a.y - size / 2);
+        const bDist = Math.hypot(b.x - size / 2, b.y - size / 2);
+        return aDist - bDist;
+      })
+      .slice(0, 3);
+
+    setCards(visible);
   }, []);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    let phi = 0;
     const width = canvasRef.current.offsetWidth;
+    sizeRef.current = width;
 
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: 2,
@@ -82,41 +97,33 @@ export default function Globe() {
       dark: 1,
       diffuse: 3,
       mapSamples: 16000,
-      mapBrightness: 1.2,
-      baseColor: [0.1, 0.1, 0.15],
-      markerColor: [0.4, 0.6, 1],
-      glowColor: [0.08, 0.08, 0.15],
-      markers: [
-        { location: [40.7128, -74.006], size: 0.06 },
-        { location: [51.5074, -0.1278], size: 0.06 },
-        { location: [35.6762, 139.6503], size: 0.06 },
-        { location: [31.2304, 121.4737], size: 0.06 },
-        { location: [28.6139, 77.209], size: 0.05 },
-        { location: [-23.5505, -46.6333], size: 0.05 },
-        { location: [6.5244, 3.3792], size: 0.04 },
-        { location: [55.7558, 37.6173], size: 0.05 },
-        { location: [-33.8688, 151.2093], size: 0.04 },
-        { location: [48.8566, 2.3522], size: 0.05 },
-        { location: [1.3521, 103.8198], size: 0.04 },
-        { location: [-1.2921, 36.8219], size: 0.03 },
-        { location: [19.4326, -99.1332], size: 0.04 },
-        { location: [37.5665, 126.978], size: 0.05 },
-        { location: [30.0444, 31.2357], size: 0.04 },
-      ],
+      mapBrightness: 2,
+      baseColor: [0.15, 0.15, 0.2],
+      markerColor: [0.3, 0.5, 1],
+      glowColor: [0.1, 0.1, 0.2],
+      markers: COUNTRIES.map(c => ({
+        location: [c.lat, c.lng] as [number, number],
+        size: 0.05,
+      })),
     });
 
+    let frameId: number;
     const frame = () => {
-      phi += 0.003;
-      globe.update({ phi });
-      requestAnimationFrame(frame);
+      phiRef.current += 0.003;
+      globe.update({ phi: phiRef.current });
+      frameId = requestAnimationFrame(frame);
     };
-    const raf = requestAnimationFrame(frame);
+    frameId = requestAnimationFrame(frame);
+
+    // Update card positions at lower frequency
+    const cardInterval = setInterval(updateCards, 200);
 
     return () => {
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(frameId);
+      clearInterval(cardInterval);
       globe.destroy();
     };
-  }, []);
+  }, [updateCards]);
 
   return (
     <div className="relative w-full max-w-[700px] aspect-square mx-auto">
@@ -125,10 +132,55 @@ export default function Globe() {
         className="w-full h-full"
         style={{ contain: 'layout paint size' }}
       />
-      {/* Floating country cards */}
-      {COUNTRIES.map((country, i) => (
-        <CountryCard key={country.name} country={country} visible={visibleCards.includes(i)} />
-      ))}
+      {/* Country cards projected onto globe positions */}
+      {cards.map(card => {
+        const country = COUNTRIES[card.idx];
+        const size = sizeRef.current;
+        // Convert pixel position to percentage
+        const leftPct = (card.x / size) * 100;
+        const topPct = (card.y / size) * 100;
+
+        return (
+          <div
+            key={country.name}
+            className="absolute pointer-events-none transition-all duration-500 ease-out"
+            style={{
+              left: `${leftPct}%`,
+              top: `${topPct}%`,
+              transform: 'translate(-50%, -120%)',
+            }}
+          >
+            {/* Connector line */}
+            <div className="absolute left-1/2 bottom-0 w-px h-4 bg-gradient-to-t from-blue-500/60 to-transparent -translate-x-1/2 translate-y-full" />
+            {/* Card */}
+            <div className="bg-gray-900/85 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 shadow-xl shadow-blue-500/5 whitespace-nowrap animate-in fade-in duration-500">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`https://flagcdn.com/w20/${country.flag}.png`} width={14} alt="" className="shrink-0" />
+                <span className="text-white text-xs font-semibold">{country.name}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                <div>
+                  <span className="text-gray-500">GDP </span>
+                  <span className="text-blue-400 font-mono">{country.gdp}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Pop </span>
+                  <span className="text-gray-300 font-mono">{country.pop}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">GDP/cap </span>
+                  <span className="text-cyan-400 font-mono">{country.gdppc}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Life </span>
+                  <span className="text-emerald-400 font-mono">{country.life}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
       {/* Bottom fade */}
       <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent pointer-events-none" />
     </div>

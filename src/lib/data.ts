@@ -455,28 +455,36 @@ export async function getIndicatorForAllCountries(indicatorId: string): Promise<
 }
 
 export async function getTop10AllIndicators(): Promise<Record<string, { country: string; countryId: string; value: number; year: string }[]>> {
-  // Fetch all indicator data + country names in one query
-  const { data, error } = await supabase
-    .from('sotw_indicators')
-    .select('id, country_id, value, year, sotw_countries(name)')
-    .not('value', 'is', null)
-    .order('value', { ascending: false })
-    .limit(20000);
-  if (error || !data) return {};
+  // Fetch all indicator data in pages (Supabase default limit is 1000)
+  const allRows: any[] = [];
+  const pageSize = 1000;
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await supabase
+      .from('sotw_indicators')
+      .select('id, country_id, value, year, sotw_countries(name)')
+      .not('value', 'is', null)
+      .range(offset, offset + pageSize - 1);
+    if (error || !data || data.length === 0) break;
+    allRows.push(...data);
+    if (data.length < pageSize) break;
+  }
 
-  // Group by indicator, take top 10 per indicator (by absolute value descending)
+  // Group by indicator, sort each group by value descending, take top 10
   const grouped: Record<string, { country: string; countryId: string; value: number; year: string }[]> = {};
-  for (const row of data as any[]) {
+  for (const row of allRows) {
     const id = row.id;
     if (!grouped[id]) grouped[id] = [];
-    if (grouped[id].length < 10) {
-      grouped[id].push({
-        country: row.sotw_countries?.name || row.country_id,
-        countryId: row.country_id,
-        value: adjustValue(id, row.value) as number,
-        year: String(row.year),
-      });
-    }
+    grouped[id].push({
+      country: row.sotw_countries?.name || row.country_id,
+      countryId: row.country_id,
+      value: adjustValue(id, row.value) as number,
+      year: String(row.year),
+    });
+  }
+  // Sort and truncate to top 10
+  for (const id of Object.keys(grouped)) {
+    grouped[id].sort((a, b) => (b.value || 0) - (a.value || 0));
+    grouped[id] = grouped[id].slice(0, 10);
   }
   return grouped;
 }

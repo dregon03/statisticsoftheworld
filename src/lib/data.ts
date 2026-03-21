@@ -508,6 +508,7 @@ export interface MultiSourceGroup {
 }
 
 export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
+  // === GDP & NATIONAL ACCOUNTS (IMF forecasts vs WB/UN actuals) ===
   'IMF.NGDPD': {
     label: 'GDP (Nominal)',
     sources: [
@@ -532,6 +533,36 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
       { id: 'UN.GDPGR', org: 'United Nations' },
     ],
   },
+  'IMF.PPPGDP': {
+    label: 'GDP, PPP',
+    sources: [
+      { id: 'IMF.PPPGDP', org: 'IMF' },
+      { id: 'NY.GDP.MKTP.PP.CD', org: 'World Bank' },
+    ],
+  },
+  'IMF.PPPPC': {
+    label: 'GDP per Capita, PPP',
+    sources: [
+      { id: 'IMF.PPPPC', org: 'IMF' },
+      { id: 'NY.GDP.PCAP.PP.CD', org: 'World Bank' },
+    ],
+  },
+  // === GNI (WB vs UN) ===
+  'NY.GNP.MKTP.CD': {
+    label: 'GNI (Current USD)',
+    sources: [
+      { id: 'NY.GNP.MKTP.CD', org: 'World Bank' },
+      { id: 'UN.GNI', org: 'United Nations' },
+    ],
+  },
+  'NY.GNP.PCAP.CD': {
+    label: 'GNI per Capita',
+    sources: [
+      { id: 'NY.GNP.PCAP.CD', org: 'World Bank' },
+      { id: 'UN.GNIPC', org: 'United Nations' },
+    ],
+  },
+  // === FISCAL & MONETARY ===
   'IMF.PCPIPCH': {
     label: 'Inflation (CPI)',
     sources: [
@@ -551,6 +582,27 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
     sources: [
       { id: 'IMF.GGXWDG_NGDP', org: 'IMF' },
       { id: 'GC.DOD.TOTL.GD.ZS', org: 'World Bank' },
+    ],
+  },
+  'IMF.BCA_NGDPD': {
+    label: 'Current Account Balance',
+    sources: [
+      { id: 'IMF.BCA_NGDPD', org: 'IMF' },
+      { id: 'BN.CAB.XOKA.GD.ZS', org: 'World Bank' },
+    ],
+  },
+  'IMF.NI_GDP': {
+    label: 'Total Investment (% of GDP)',
+    sources: [
+      { id: 'IMF.NI_GDP', org: 'IMF' },
+      { id: 'NE.GDI.TOTL.ZS', org: 'World Bank' },
+    ],
+  },
+  'IMF.NGS_GDP': {
+    label: 'Gross National Savings',
+    sources: [
+      { id: 'IMF.NGS_GDP', org: 'IMF' },
+      { id: 'NY.GNS.ICTR.ZS', org: 'World Bank' },
     ],
   },
 };

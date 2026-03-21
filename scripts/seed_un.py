@@ -23,13 +23,23 @@ UN_FILES = {
     },
     9: {  # Per Capita GDP in USD
         "indicator_id": "UN.GDPPC",
-        "row_name": "Per capita GDP at current prices - US dollars",
+        "row_name": None,  # 2-column format, every row is the indicator
         "filename": "un_gdp_percap.xlsx",
     },
     16: {  # Growth Rate of GDP
         "indicator_id": "UN.GDPGR",
         "row_name": "Gross Domestic Product (GDP)",
         "filename": "un_gdp_growth.xlsx",
+    },
+    24: {  # GNI in USD
+        "indicator_id": "UN.GNI",
+        "row_name": None,  # 2-column format
+        "filename": "un_gni_usd.xlsx",
+    },
+    27: {  # Per Capita GNI in USD
+        "indicator_id": "UN.GNIPC",
+        "row_name": None,  # 2-column format
+        "filename": "un_gnipc.xlsx",
     },
 }
 

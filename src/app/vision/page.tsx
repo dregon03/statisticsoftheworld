@@ -71,10 +71,13 @@ export default function VisionPage() {
             <h2 className="text-2xl font-bold">The world&apos;s API</h2>
           </div>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Every newsroom writing about a country&apos;s economy. Every research paper citing development statistics. Every app showing country comparisons. Every AI agent that needs to know how a country is doing. They all need the same thing: reliable, structured, up-to-date country data through a simple API.
+            Every newsroom writing about a country&apos;s economy. Every research paper citing development statistics. Every app showing country comparisons. They all need the same thing: reliable, structured, up-to-date country data through a simple API.
+          </p>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            But the biggest consumer of country data won&apos;t be humans &mdash; it will be AI. Autonomous agents making investment decisions, writing policy briefs, generating reports, answering questions. When an AI agent needs to know the inflation rate in Turkey or the debt-to-GDP ratio of Argentina, it needs a machine-readable, authoritative source it can call in milliseconds. REST APIs. MCPs. Tool-use endpoints. Whatever protocol AI systems speak next &mdash; we&apos;ll be the data layer they connect to.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Stripe became the API for payments. Twilio became the API for communications. We&apos;re becoming the API for country intelligence.
+            Stripe became the API for payments. Twilio became the API for communications. We&apos;re becoming the API for country intelligence &mdash; for both humans and the AI agents that serve them.
           </p>
         </section>
 

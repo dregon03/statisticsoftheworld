@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import createGlobe from 'cobe';
+import * as THREE from 'three';
 
 const COUNTRIES = [
   { name: 'United States', flag: 'us', gdp: '$31.82T', gdppc: '$93K', life: '78.4', pop: '340M' },
@@ -22,7 +22,7 @@ const COUNTRIES = [
 ];
 
 export default function Globe() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const [fade, setFade] = useState(true);
 
@@ -39,90 +39,115 @@ export default function Globe() {
   }, []);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!containerRef.current) return;
 
-    let phi = 0;
-    const width = canvasRef.current.offsetWidth;
+    const container = containerRef.current;
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
 
-    // City lights as red markers scattered globally
-    const cityLights: { location: [number, number]; size: number }[] = [
-      // North America
-      { location: [40.71, -74.01], size: 0.04 }, { location: [34.05, -118.24], size: 0.03 },
-      { location: [41.88, -87.63], size: 0.03 }, { location: [43.65, -79.38], size: 0.02 },
-      { location: [19.43, -99.13], size: 0.03 }, { location: [29.76, -95.37], size: 0.02 },
-      { location: [33.45, -112.07], size: 0.02 }, { location: [49.28, -123.12], size: 0.02 },
-      // Europe
-      { location: [51.51, -0.13], size: 0.04 }, { location: [48.86, 2.35], size: 0.03 },
-      { location: [52.52, 13.40], size: 0.03 }, { location: [41.39, 2.17], size: 0.02 },
-      { location: [55.76, 37.62], size: 0.04 }, { location: [59.33, 18.07], size: 0.02 },
-      { location: [45.46, 9.19], size: 0.02 }, { location: [50.08, 14.44], size: 0.02 },
-      { location: [47.50, 19.04], size: 0.02 }, { location: [38.72, -9.14], size: 0.02 },
-      // Asia
-      { location: [35.68, 139.65], size: 0.04 }, { location: [31.23, 121.47], size: 0.04 },
-      { location: [39.90, 116.40], size: 0.04 }, { location: [22.32, 114.17], size: 0.03 },
-      { location: [37.57, 126.98], size: 0.03 }, { location: [1.35, 103.82], size: 0.03 },
-      { location: [28.61, 77.21], size: 0.04 }, { location: [19.08, 72.88], size: 0.03 },
-      { location: [13.76, 100.50], size: 0.02 }, { location: [25.20, 55.27], size: 0.03 },
-      { location: [24.47, 54.37], size: 0.02 }, { location: [41.01, 28.98], size: 0.03 },
-      { location: [33.68, 73.05], size: 0.02 }, { location: [23.81, 90.41], size: 0.02 },
-      // Africa
-      { location: [6.52, 3.38], size: 0.03 }, { location: [30.04, 31.24], size: 0.03 },
-      { location: [-33.93, 18.42], size: 0.03 }, { location: [-1.29, 36.82], size: 0.02 },
-      { location: [33.59, -7.59], size: 0.02 }, { location: [5.56, -0.19], size: 0.02 },
-      // South America
-      { location: [-23.55, -46.63], size: 0.04 }, { location: [-22.91, -43.17], size: 0.03 },
-      { location: [-34.60, -58.38], size: 0.03 }, { location: [-33.45, -70.67], size: 0.02 },
-      { location: [4.71, -74.07], size: 0.02 }, { location: [-12.05, -77.04], size: 0.02 },
-      // Oceania
-      { location: [-33.87, 151.21], size: 0.03 }, { location: [-37.81, 144.96], size: 0.02 },
-      { location: [-36.85, 174.76], size: 0.02 },
-    ];
+    // Scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.z = 2.5;
 
-    const globe = createGlobe(canvasRef.current, {
-      devicePixelRatio: 2,
-      width: width * 2,
-      height: width * 2,
-      phi: 0,
-      theta: 0.25,
-      dark: 1,
-      diffuse: 1.2,
-      mapSamples: 20000,
-      mapBrightness: 6,
-      baseColor: [0.05, 0.05, 0.08],
-      markerColor: [1, 0.3, 0.2],
-      glowColor: [0.05, 0.05, 0.1],
-    markers: cityLights,
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Earth sphere with night texture
+    const textureLoader = new THREE.TextureLoader();
+    const earthTexture = textureLoader.load('/earth-night.jpg');
+    earthTexture.colorSpace = THREE.SRGBColorSpace;
+
+    const geometry = new THREE.SphereGeometry(1, 64, 64);
+    const material = new THREE.MeshBasicMaterial({
+      map: earthTexture,
     });
+    const earth = new THREE.Mesh(geometry, material);
+    scene.add(earth);
 
-    let frameId: number;
-    const frame = () => {
-      phi += 0.002;
-      globe.update({ phi });
-      frameId = requestAnimationFrame(frame);
+    // Atmosphere glow
+    const atmosphereGeometry = new THREE.SphereGeometry(1.02, 64, 64);
+    const atmosphereMaterial = new THREE.ShaderMaterial({
+      vertexShader: `
+        varying vec3 vNormal;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vNormal;
+        void main() {
+          float intensity = pow(0.65 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+          gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity * 0.6;
+        }
+      `,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide,
+      transparent: true,
+    });
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    scene.add(atmosphere);
+
+    // Stars
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 2000;
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i++) {
+      starPositions[i] = (Math.random() - 0.5) * 100;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05, sizeAttenuation: true });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    // Animate
+    let animId: number;
+    const animate = () => {
+      earth.rotation.y += 0.001;
+      atmosphere.rotation.y += 0.001;
+      renderer.render(scene, camera);
+      animId = requestAnimationFrame(animate);
     };
-    frameId = requestAnimationFrame(frame);
+    animId = requestAnimationFrame(animate);
+
+    // Resize
+    const onResize = () => {
+      const w = container.offsetWidth;
+      const h = container.offsetHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+    window.addEventListener('resize', onResize);
 
     return () => {
-      cancelAnimationFrame(frameId);
-      globe.destroy();
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', onResize);
+      renderer.dispose();
+      geometry.dispose();
+      material.dispose();
+      atmosphereGeometry.dispose();
+      atmosphereMaterial.dispose();
+      starGeometry.dispose();
+      starMaterial.dispose();
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
     };
   }, []);
 
   const country = COUNTRIES[activeIdx];
 
   return (
-    <div className="relative w-full max-w-[650px] aspect-square mx-auto">
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full"
-        style={{ contain: 'layout paint size' }}
-      />
+    <div className="relative w-full max-w-[700px] aspect-square mx-auto">
+      <div ref={containerRef} className="w-full h-full" />
 
       {/* Centered country card */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div
-          className={`transition-all duration-400 ${fade ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-        >
+        <div className={`transition-all duration-400 ${fade ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
           <div className="bg-gray-950/70 backdrop-blur-md border border-white/10 rounded-xl px-5 py-4 shadow-2xl">
             <div className="flex items-center gap-2.5 mb-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getCountries, getTop10AllIndicators, formatValue, INDICATORS, CATEGORIES } from '@/lib/data';
+import CategorySection from './CategorySection';
 
 export default async function Home() {
   const [countries, allTop10] = await Promise.all([
@@ -88,44 +89,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* All indicators by category */}
+      {/* All indicators by category — top 2 shown, expandable */}
       {categoriesWithData.map(({ category, indicators }) => (
-        <section
-          key={category}
-          id={category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}
-          className="max-w-6xl mx-auto px-6 pb-12"
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <h2 className="text-xl font-bold text-gray-900">{category}</h2>
-            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{indicators.length} indicators</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {indicators.map((ind) => (
-              <div key={ind.id}>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-semibold text-gray-900">{ind.label}</h3>
-                  <Link href="/rankings" className="text-xs text-gray-400 hover:text-gray-600 transition">All countries</Link>
-                </div>
-                <div className="border border-gray-100 rounded-xl overflow-hidden">
-                  {ind.data.map((d, i) => (
-                    <Link
-                      key={d.countryId}
-                      href={`/country/${d.countryId}`}
-                      className="flex items-center px-4 py-2 hover:bg-gray-50 transition border-b border-gray-50 last:border-0"
-                    >
-                      <span className="text-gray-300 text-xs w-5">{i + 1}</span>
-                      <span className="flex-1 text-sm">{d.country}</span>
-                      <span className="text-sm font-mono text-gray-500">
-                        {formatValue(d.value, ind.format, ind.decimals)}
-                      </span>
-                      <span className="text-xs text-gray-300 ml-2 w-8 text-right">{d.year}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <CategorySection key={category} category={category} indicators={indicators} />
       ))}
 
       {/* Browse countries */}

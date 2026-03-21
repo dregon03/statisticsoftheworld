@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getCountry, getAllIndicatorsForCountry, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Flag from '../../Flag';
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -80,7 +81,10 @@ export default async function CountryPage({ params }: Props) {
 
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{country.name}</h1>
+            <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+              <Flag iso2={country.iso2} size={32} />
+              {country.name}
+            </h1>
             <div className="flex gap-4 text-sm text-gray-400">
               {country.capitalCity && <span>Capital: {country.capitalCity}</span>}
               <span>Region: {country.region}</span>

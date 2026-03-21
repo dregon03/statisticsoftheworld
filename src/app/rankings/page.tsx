@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
+import Flag from '../Flag';
 
 interface RankingEntry {
   country: string;
   countryId: string;
+  iso2: string;
   value: number | null;
   year: string;
 }
@@ -146,7 +148,8 @@ function IndicatorsContent() {
                         <tr key={entry.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
                           <td className="px-4 py-2 text-gray-300 text-sm">{rank}</td>
                           <td className="px-4 py-2">
-                            <Link href={`/country/${entry.countryId}`} className="text-blue-600 hover:text-blue-800 transition text-sm">
+                            <Link href={`/country/${entry.countryId}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition text-sm">
+                              <Flag iso2={entry.iso2} size={16} />
                               {entry.country}
                             </Link>
                           </td>

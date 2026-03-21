@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { formatValue } from '@/lib/data';
+import Flag from './Flag';
 
 interface IndicatorData {
   id: string;
   label: string;
   format: string;
   decimals?: number;
-  data: { country: string; countryId: string; value: number; year: string }[];
+  data: { country: string; countryId: string; iso2: string; value: number; year: string }[];
 }
 
 export default function CategorySection({
@@ -51,7 +52,8 @@ export default function CategorySection({
                   className="flex items-center px-4 py-2 hover:bg-gray-50 transition border-b border-gray-50 last:border-0"
                 >
                   <span className="text-gray-300 text-xs w-5">{i + 1}</span>
-                  <span className="flex-1 text-sm">{d.country}</span>
+                  <Flag iso2={d.iso2} size={16} />
+                  <span className="flex-1 text-sm ml-2">{d.country}</span>
                   <span className="text-sm font-mono text-gray-500">
                     {formatValue(d.value, ind.format, ind.decimals)}
                   </span>

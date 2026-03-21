@@ -7,6 +7,7 @@
 
 export interface CountryData {
   id: string;
+  iso2: string;
   name: string;
   region: string;
   incomeLevel: string;
@@ -393,11 +394,12 @@ function adjustValue(indicatorId: string, value: number | null): number | null {
 export async function getCountries(): Promise<CountryData[]> {
   const { data, error } = await supabase
     .from('sotw_countries')
-    .select('id, name, region, income_level, capital_city, longitude, latitude')
+    .select('id, iso2, name, region, income_level, capital_city, longitude, latitude')
     .order('name');
   if (error || !data) return [];
   return data.map((c) => ({
     id: c.id,
+    iso2: c.iso2 || c.id.toLowerCase().slice(0, 2),
     name: c.name,
     region: c.region,
     incomeLevel: c.income_level,
@@ -410,12 +412,13 @@ export async function getCountries(): Promise<CountryData[]> {
 export async function getCountry(id: string): Promise<CountryData | null> {
   const { data, error } = await supabase
     .from('sotw_countries')
-    .select('id, name, region, income_level, capital_city, longitude, latitude')
+    .select('id, iso2, name, region, income_level, capital_city, longitude, latitude')
     .eq('id', id)
     .single();
   if (error || !data) return null;
   return {
     id: data.id,
+    iso2: data.iso2 || data.id.toLowerCase().slice(0, 2),
     name: data.name,
     region: data.region,
     incomeLevel: data.income_level,
@@ -441,7 +444,7 @@ export async function getAllIndicatorsForCountry(countryId: string): Promise<Rec
 export async function getIndicatorForAllCountries(indicatorId: string): Promise<{ country: string; countryId: string; value: number | null; year: string }[]> {
   const { data, error } = await supabase
     .from('sotw_indicators')
-    .select('country_id, value, year, sotw_countries(name)')
+    .select('country_id, value, year, sotw_countries(name, iso2)')
     .eq('id', indicatorId)
     .not('value', 'is', null)
     .order('value', { ascending: false });
@@ -449,15 +452,16 @@ export async function getIndicatorForAllCountries(indicatorId: string): Promise<
   return data.map((row: any) => ({
     country: row.sotw_countries?.name || row.country_id,
     countryId: row.country_id,
+    iso2: row.sotw_countries?.iso2 || row.country_id.toLowerCase().slice(0, 2),
     value: adjustValue(indicatorId, row.value),
     year: String(row.year),
   }));
 }
 
-export async function getTop10AllIndicators(): Promise<Record<string, { country: string; countryId: string; value: number; year: string }[]>> {
-  // Fetch country names first (fast, ~217 rows)
+export async function getTop10AllIndicators(): Promise<Record<string, { country: string; countryId: string; iso2: string; value: number; year: string }[]>> {
+  // Fetch country names + iso2 first (fast, ~217 rows)
   const countries = await getCountries();
-  const nameMap = new Map(countries.map(c => [c.id, c.name]));
+  const countryMap = new Map(countries.map(c => [c.id, { name: c.name, iso2: c.iso2 }]));
 
   // Fetch all indicator data in pages (Supabase default limit is 1000)
   const allRows: { id: string; country_id: string; value: number; year: number }[] = [];
@@ -474,12 +478,14 @@ export async function getTop10AllIndicators(): Promise<Record<string, { country:
   }
 
   // Group by indicator, sort each group by value descending, take top 10
-  const grouped: Record<string, { country: string; countryId: string; value: number; year: string }[]> = {};
+  const grouped: Record<string, { country: string; countryId: string; iso2: string; value: number; year: string }[]> = {};
   for (const row of allRows) {
     if (!grouped[row.id]) grouped[row.id] = [];
+    const c = countryMap.get(row.country_id);
     grouped[row.id].push({
-      country: nameMap.get(row.country_id) || row.country_id,
+      country: c?.name || row.country_id,
       countryId: row.country_id,
+      iso2: c?.iso2 || row.country_id.toLowerCase().slice(0, 2),
       value: adjustValue(row.id, row.value) as number,
       year: String(row.year),
     });

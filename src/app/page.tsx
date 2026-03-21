@@ -34,7 +34,7 @@ async function getFeaturedData() {
     FEATURED.map(async (f) => {
       const data = await getIndicatorForAllCountries(f.id);
       const ind = INDICATORS.find(i => i.id === f.id);
-      return { ...f, data: data.slice(0, 10), format: ind?.format || 'number', decimals: ind?.decimals, isIMFBillions: f.id === 'IMF.NGDPD' || f.id === 'IMF.PPPGDP' };
+      return { ...f, data: data.slice(0, 10), format: ind?.format || 'number', decimals: ind?.decimals };
     })
   );
   return results;
@@ -125,9 +125,7 @@ export default async function Home() {
                       <span className="text-gray-300 text-xs w-5">{i + 1}</span>
                       <span className="flex-1 text-sm">{d.country}</span>
                       <span className="text-sm font-mono text-gray-500">
-                        {f!.isIMFBillions
-                          ? formatValue((d.value || 0) * 1e9, f!.format, f!.decimals)
-                          : formatValue(d.value, f!.format, f!.decimals)}
+                        {formatValue(d.value, f!.format, f!.decimals)}
                       </span>
                     </Link>
                   ))}

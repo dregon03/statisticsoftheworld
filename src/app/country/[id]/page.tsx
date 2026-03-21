@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (pop) parts.push(`Population: ${formatValue(pop.value, 'number')}`);
 
   return {
-    title: `${country.name} — Statistics & Data | Statistics of the World`,
+    title: `${country.name} — Statistics & Data`,
     description: `${parts.join(' | ')}. Explore ${country.name}'s economy, demographics, health, education, and 300+ indicators with data from IMF and World Bank.`,
     openGraph: {
       title: `${country.name} — Key Statistics`,

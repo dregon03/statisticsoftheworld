@@ -416,6 +416,15 @@ export const CATEGORIES = [
 
 import { supabase } from './supabase';
 
+// IMF stores GDP in billions — multiply by 1e9 for proper formatting
+const IMF_BILLIONS = new Set(['IMF.NGDPD', 'IMF.PPPGDP']);
+
+function adjustValue(indicatorId: string, value: number | null): number | null {
+  if (value === null) return null;
+  if (IMF_BILLIONS.has(indicatorId)) return value * 1e9;
+  return value;
+}
+
 export async function getCountries(): Promise<CountryData[]> {
   const { data, error } = await supabase
     .from('sotw_countries')
@@ -459,7 +468,7 @@ export async function getAllIndicatorsForCountry(countryId: string): Promise<Rec
   if (error || !data) return {};
   const results: Record<string, { year: string; value: number | null }> = {};
   for (const row of data) {
-    results[row.id] = { year: String(row.year), value: row.value };
+    results[row.id] = { year: String(row.year), value: adjustValue(row.id, row.value) };
   }
   return results;
 }
@@ -475,7 +484,7 @@ export async function getIndicatorForAllCountries(indicatorId: string): Promise<
   return data.map((row: any) => ({
     country: row.sotw_countries?.name || row.country_id,
     countryId: row.country_id,
-    value: row.value,
+    value: adjustValue(indicatorId, row.value),
     year: String(row.year),
   }));
 }

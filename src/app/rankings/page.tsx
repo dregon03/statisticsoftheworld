@@ -149,7 +149,7 @@ function IndicatorsContent() {
                           <td className="px-4 py-2 text-gray-300 text-sm">{rank}</td>
                           <td className="px-4 py-2">
                             <Link href={`/country/${entry.countryId}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition text-sm">
-                              <Flag iso2={entry.iso2} size={16} />
+                              <Flag iso2={entry.iso2} size={24} />
                               {entry.country}
                             </Link>
                           </td>

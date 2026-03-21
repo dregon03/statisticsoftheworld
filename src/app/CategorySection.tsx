@@ -54,7 +54,7 @@ export default function CategorySection({
                   className="flex items-center px-4 py-2 hover:bg-gray-50 transition border-b border-gray-50 last:border-0"
                 >
                   <span className="text-gray-300 text-xs w-5">{i + 1}</span>
-                  <Flag iso2={d.iso2} size={16} />
+                  <Flag iso2={d.iso2} size={24} />
                   <span className="flex-1 text-sm ml-2">{d.country}</span>
                   <span className="text-sm font-mono text-gray-500">
                     {formatValue(d.value, ind.format, ind.decimals)}

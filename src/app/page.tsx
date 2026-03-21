@@ -137,19 +137,17 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* Category nav — compact, right under header */}
-      <nav className="max-w-6xl mx-auto px-6 py-3 flex items-center gap-4 overflow-x-auto text-sm border-b border-gray-50">
-        {['Economy', 'People', 'Health', 'Trade', 'Technology', 'Energy & Environment', 'Governance'].map(cat => (
+      {/* Category nav — all categories, right under header */}
+      <nav className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm border-b border-gray-50">
+        {categoriesWithData.map(({ category }) => (
           <a
-            key={cat}
-            href={`#${cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+            key={category}
+            href={`#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
             className="text-gray-400 hover:text-gray-900 transition whitespace-nowrap"
           >
-            {cat}
+            {category}
           </a>
         ))}
-        <span className="text-gray-200">|</span>
-        <a href="#military" className="text-gray-400 hover:text-gray-900 transition whitespace-nowrap">All categories</a>
       </nav>
 
       {/* All indicators by category — top 2 shown, expandable */}

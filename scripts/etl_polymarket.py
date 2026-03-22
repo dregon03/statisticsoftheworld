@@ -253,13 +253,37 @@ def main():
         except Exception as e:
             print(f"  ⚠ Upsert error for {market['market_id']}: {e}")
 
-    # Mark stale markets as inactive
+    # ── 5. Cleanup expired & stale markets ─────────────
+    # Delete markets whose end_date has passed
+    cur.execute("""
+        DELETE FROM sotw_predictions
+        WHERE end_date IS NOT NULL
+        AND end_date < NOW()
+    """)
+    expired_count = cur.rowcount
+    if expired_count:
+        print(f"  Deleted {expired_count} expired markets (past end_date)")
+
+    # Mark markets not refreshed in this run as inactive
     cur.execute("""
         UPDATE sotw_predictions
         SET active = FALSE
-        WHERE updated_at < NOW() - INTERVAL '1 hour'
+        WHERE updated_at < NOW() - INTERVAL '2 hours'
         AND active = TRUE
     """)
+    stale_count = cur.rowcount
+    if stale_count:
+        print(f"  Marked {stale_count} stale markets inactive")
+
+    # Delete inactive markets older than 7 days (no longer on Polymarket)
+    cur.execute("""
+        DELETE FROM sotw_predictions
+        WHERE active = FALSE
+        AND updated_at < NOW() - INTERVAL '7 days'
+    """)
+    purged_count = cur.rowcount
+    if purged_count:
+        print(f"  Purged {purged_count} inactive markets (>7 days old)")
 
     # Category counts
     cur.execute("""

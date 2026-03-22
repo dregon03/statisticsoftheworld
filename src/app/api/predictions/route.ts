@@ -29,6 +29,7 @@ export async function GET(request: Request) {
       .from('sotw_predictions')
       .select('*')
       .eq('active', true)
+      .or(`end_date.is.null,end_date.gt.${new Date().toISOString()}`)
       .order('volume', { ascending: false });
 
     if (category) {

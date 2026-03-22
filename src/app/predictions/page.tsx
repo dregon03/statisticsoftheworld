@@ -110,7 +110,7 @@ export default function PredictionsPage() {
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/predictions')
+    fetch('/api/predictions?limit=500')
       .then(r => r.json())
       .then(data => {
         setMarkets(data.markets || []);

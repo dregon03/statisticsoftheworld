@@ -173,53 +173,16 @@ jobs:
   calendar:
     name: "Daily: Calendar Warm"
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     if: >
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'calendar'
     steps:
-      - name: Warm calendar cache (next 90 days)
+      - name: Warm calendar + summaries
         run: |
-          echo "Warming calendar cache..."
-          curl -sf "https://statisticsoftheworld.com/api/calendar" | python3 -c "
-          import json, sys
-          d = json.load(sys.stdin)
-          events = d.get('events', [])
-          print(f'Calendar: {len(events)} events loaded')
-          econ = sum(1 for e in events if e.get('type') == 'economic')
-          earn = sum(1 for e in events if e.get('type') == 'earnings')
-          print(f'  Economic: {econ}, Earnings: {earn}')
-          "
-      - name: Generate AI summaries for past events
-        run: |
-          echo "Generating summaries for past events..."
-          TODAY=$(date -u +%Y-%m-%d)
-          PAST_START=$(date -u -d "14 days ago" +%Y-%m-%d)
-          # Fetch past 2 weeks of events
-          EVENTS=$(curl -sf "https://statisticsoftheworld.com/api/calendar?from=${PAST_START}&to=${TODAY}")
-          # Filter past events and send for summary generation
-          echo "$EVENTS" | python3 -c "
-          import json, sys
-          from urllib.request import Request, urlopen
-          d = json.load(sys.stdin)
-          events = d.get('events', [])
-          today = '${TODAY}'
-          past = [e for e in events if e['date'] < today]
-          print(f'Past events to summarize: {len(past)}')
-          # Send in batches of 10
-          for i in range(0, len(past), 10):
-              batch = past[i:i+10]
-              payload = json.dumps({'events': [{'date': e['date'], 'name': e['name'], 'type': e.get('type','economic'), 'symbol': e.get('symbol','')} for e in batch]}).encode()
-              req = Request('https://statisticsoftheworld.com/api/calendar/summaries', data=payload, headers={'Content-Type': 'application/json'}, method='POST')
-              try:
-                  resp = urlopen(req, timeout=30)
-                  result = json.loads(resp.read())
-                  summaries = result.get('summaries', {})
-                  print(f'  Batch {i//10+1}: {len(summaries)} summaries generated')
-              except Exception as ex:
-                  print(f'  Batch {i//10+1}: error - {ex}')
-          "
+          curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar cache warmed"
+          curl -sf "https://statisticsoftheworld.com/calendar" -o /dev/null && echo "Calendar page hit (triggers summary fetch)"
 
   # ════════════════════════════════════════════════════════════
   # DAILY: Data quality audit (after daily ETL jobs)

@@ -29,6 +29,30 @@ interface ChartPoint {
   value: number;
 }
 
+interface PredictionMarket {
+  id: string;
+  question: string;
+  slug: string;
+  probability: number;
+  outcomes: string[];
+  outcomePrices: number[];
+  volume: number;
+  liquidity: number;
+  endDate: string;
+  category: string;
+  url: string;
+}
+
+// Keywords to match Polymarket markets to commodity sections
+const SECTION_KEYWORDS: Record<string, string[]> = {
+  'Energy': ['oil', 'crude', 'natural gas', 'energy', 'opec', 'petroleum', 'gasoline', 'fuel'],
+  'Precious Metals': ['gold', 'silver', 'platinum', 'palladium', 'precious metal'],
+  'Industrial Metals': ['copper', 'aluminum', 'steel', 'iron', 'lithium', 'nickel', 'zinc'],
+  'Agriculture': ['wheat', 'corn', 'soybean', 'coffee', 'cotton', 'sugar', 'cocoa', 'grain', 'food', 'crop', 'agriculture', 'farm'],
+  'Crypto': ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'hype'],
+  'Trade & Tariffs': ['tariff', 'trade war', 'sanctions', 'import', 'export', 'customs'],
+};
+
 const RANGES = [
   { key: '1mo', label: '1M' },
   { key: '3mo', label: '3M' },
@@ -75,6 +99,63 @@ const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string }[
     ],
   },
 ];
+
+function PredictionCard({ market }: { market: PredictionMarket }) {
+  const pct = Math.round(market.probability * 100);
+  const vol = market.volume >= 1e6 ? `$${(market.volume / 1e6).toFixed(1)}M` : market.volume >= 1e3 ? `$${(market.volume / 1e3).toFixed(0)}K` : `$${market.volume.toFixed(0)}`;
+  const end = market.endDate ? new Date(market.endDate).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '';
+
+  return (
+    <a
+      href={market.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#e8e8e8] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group"
+    >
+      <div className="flex-1 min-w-0">
+        <div className="text-[12px] text-[#333] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">
+          {market.question}
+        </div>
+        <div className="text-[10px] text-[#999] mt-0.5">
+          Vol: {vol}{end ? ` · Resolves ${end}` : ''}
+        </div>
+      </div>
+      <div className="shrink-0 flex items-center gap-2">
+        <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full"
+            style={{ width: `${pct}%`, backgroundColor: pct >= 50 ? '#16a34a' : '#dc2626' }}
+          />
+        </div>
+        <span className="text-[13px] font-bold tabular-nums" style={{ color: pct >= 50 ? '#16a34a' : '#dc2626', minWidth: 36, textAlign: 'right' }}>
+          {pct}%
+        </span>
+      </div>
+    </a>
+  );
+}
+
+function SectionPredictions({ sectionTitle, markets }: { sectionTitle: string; markets: PredictionMarket[] }) {
+  const keywords = SECTION_KEYWORDS[sectionTitle] || [];
+  const matched = markets.filter(m => {
+    const q = m.question.toLowerCase();
+    return keywords.some(kw => q.includes(kw));
+  });
+
+  if (matched.length === 0) return null;
+
+  return (
+    <div className="mt-3 mb-1">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-[#7c3aed]">&#x1F52E; Market Predictions</span>
+        <span className="text-[10px] text-[#ccc]">Polymarket</span>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        {matched.slice(0, 4).map(m => <PredictionCard key={m.id} market={m} />)}
+      </div>
+    </div>
+  );
+}
 
 function CommodityChart({ id, label }: { id: string; label: string }) {
   const [range, setRange] = useState('1y');
@@ -216,6 +297,7 @@ export default function CommoditiesPage() {
   const [data, setData] = useState<Record<string, CommodityData>>({});
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [predictions, setPredictions] = useState<PredictionMarket[]>([]);
 
   useEffect(() => {
     const allIds = COMMODITY_SECTIONS.flatMap(s => s.items.map(i => i.id));
@@ -242,6 +324,12 @@ export default function CommoditiesPage() {
       setData(d);
       setLoading(false);
     });
+
+    // Fetch prediction markets
+    fetch('/api/predictions?limit=200')
+      .then(r => r.json())
+      .then(d => setPredictions(d.markets || []))
+      .catch(() => {});
   }, []);
 
   return (
@@ -320,8 +408,38 @@ export default function CommoditiesPage() {
                     </tbody>
                   </table>
                 </div>
+                <SectionPredictions sectionTitle={section.title} markets={predictions} />
               </div>
             ))}
+
+            {/* Crypto & Trade prediction markets */}
+            {predictions.length > 0 && (
+              <>
+                {(() => {
+                  const cryptoKeywords = SECTION_KEYWORDS['Crypto'] || [];
+                  const tradeKeywords = SECTION_KEYWORDS['Trade & Tariffs'] || [];
+                  const allKw = [...cryptoKeywords, ...tradeKeywords];
+                  const matched = predictions.filter(m => {
+                    const q = m.question.toLowerCase();
+                    return allKw.some(kw => q.includes(kw));
+                  });
+                  if (matched.length === 0) return null;
+                  return (
+                    <div>
+                      <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">
+                        &#x1F52E; Crypto & Trade Predictions
+                      </h2>
+                      <p className="text-[12px] text-[#999] mb-3">
+                        Live prediction market odds from <a href="https://polymarket.com" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Polymarket</a>. Real-money forecasts on crypto prices, tariffs, and trade.
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {matched.slice(0, 8).map(m => <PredictionCard key={m.id} market={m} />)}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
           </div>
         )}
       </div>

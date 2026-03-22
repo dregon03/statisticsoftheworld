@@ -1,524 +1,377 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-// ============================================================
-// LIVE ECONOMIC EVENTS (from Yahoo Finance)
-// ============================================================
-
-interface LiveEvent {
-  event: string;
-  countryCode: string;
-  eventTime: number;
-  period: string;
-  actual: string;
-  estimate: string;
-  prior: string;
-  description: string;
+interface CalendarEvent {
+  date: string;
+  releaseId: number;
+  name: string;
+  country: string;
+  impact: 'high' | 'medium' | 'low';
+  category: string;
+  type: 'economic' | 'earnings';
+  sotwIndicators?: string[];
+  symbol?: string;
+  epsEstimate?: number | null;
+  revenueEstimate?: number | null;
 }
 
-// ISO2 country code to ISO3 mapping for linking
-const ISO2_TO_ISO3: Record<string, string> = {
-  US: 'USA', CA: 'CAN', GB: 'GBR', DE: 'DEU', FR: 'FRA', JP: 'JPN', CN: 'CHN',
-  AU: 'AUS', NZ: 'NZL', CH: 'CHE', SE: 'SWE', NO: 'NOR', DK: 'DNK', FI: 'FIN',
-  IT: 'ITA', ES: 'ESP', NL: 'NLD', BE: 'BEL', AT: 'AUT', PT: 'PRT', IE: 'IRL',
-  KR: 'KOR', IN: 'IND', BR: 'BRA', MX: 'MEX', ZA: 'ZAF', TR: 'TUR', PL: 'POL',
-  RU: 'RUS', IL: 'ISR', SA: 'SAU', SG: 'SGP', HK: 'HKG', TW: 'TWN', ID: 'IDN',
-  TH: 'THA', MY: 'MYS', PH: 'PHL', CL: 'CHL', AR: 'ARG', CO: 'COL', EG: 'EGY',
+const IMPACT_STYLES = {
+  high: { dot: 'bg-red-500', badge: 'bg-red-50 text-red-700 border-red-200', label: 'High' },
+  medium: { dot: 'bg-amber-400', badge: 'bg-amber-50 text-amber-700 border-amber-200', label: 'Medium' },
+  low: { dot: 'bg-gray-300', badge: 'bg-gray-50 text-gray-500 border-gray-200', label: 'Low' },
 };
 
-function LiveEventsTab() {
-  const [events, setEvents] = useState<LiveEvent[]>([]);
+const COUNTRY_FLAGS: Record<string, string> = {
+  US: '🇺🇸', EU: '🇪🇺', Global: '🌍', UK: '🇬🇧', JP: '🇯🇵', CN: '🇨🇳', CA: '🇨🇦', AU: '🇦🇺',
+  KR: '🇰🇷', IN: '🇮🇳', BR: '🇧🇷', MX: '🇲🇽', CH: '🇨🇭',
+};
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function getWeekDates(offset: number): { from: string; to: string; dates: Date[] } {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0=Sun
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7) + offset * 7);
+
+  const dates: Date[] = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    dates.push(d);
+  }
+
+  return {
+    from: dates[0].toISOString().slice(0, 10),
+    to: dates[6].toISOString().slice(0, 10),
+    dates,
+  };
+}
+
+function formatDateHeader(d: Date): string {
+  return d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function formatWeekRange(dates: Date[]): string {
+  const from = dates[0];
+  const to = dates[6];
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  if (from.getMonth() === to.getMonth()) {
+    return `${from.toLocaleDateString('en', { month: 'long', day: 'numeric' })} – ${to.getDate()}, ${to.getFullYear()}`;
+  }
+  return `${from.toLocaleDateString('en', opts)} – ${to.toLocaleDateString('en', opts)}, ${to.getFullYear()}`;
+}
+
+export default function CalendarPage() {
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [weekOffset, setWeekOffset] = useState(0);
   const [filterCountry, setFilterCountry] = useState('');
+  const [filterImpact, setFilterImpact] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [summaries, setSummaries] = useState<Record<string, string>>({});
+
+  const week = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
 
   useEffect(() => {
-    fetch('/api/calendar')
+    setLoading(true);
+    // Fetch 4 weeks of data to allow navigation
+    const extFrom = new Date(new Date(week.from).getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const extTo = new Date(new Date(week.to).getTime() + 21 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+    fetch(`/api/calendar?from=${extFrom}&to=${extTo}`)
       .then(r => r.json())
       .then(data => {
-        if (Array.isArray(data)) setEvents(data);
+        setEvents(data.events || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [weekOffset, week.from, week.to]);
 
-  const countries = [...new Set(events.map(e => e.countryCode))].sort();
+  // Fetch AI summaries for past events
+  const fetchSummaries = useCallback(async (evts: CalendarEvent[]) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const pastEvents = evts
+      .filter(e => e.date < today)
+      .map(e => ({ date: e.date, name: e.name, type: e.type, symbol: e.symbol }));
 
-  const filtered = filterCountry
-    ? events.filter(e => e.countryCode === filterCountry)
-    : events;
+    if (pastEvents.length === 0) return;
 
-  if (loading) return <div className="text-center py-16 text-[#999]">Loading economic events...</div>;
-  if (events.length === 0) return <div className="text-center py-16 text-[#999]">No events available. Try again later.</div>;
+    // Check which ones we already have
+    const needed = pastEvents.filter(e => {
+      const key = `${e.date}|${e.name}|${e.symbol || ''}`;
+      return !summaries[key];
+    });
 
-  return (
-    <div>
-      <div className="flex gap-3 mb-4">
-        <select
-          value={filterCountry}
-          onChange={e => setFilterCountry(e.target.value)}
-          className="border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[12px] outline-none"
-        >
-          <option value="">All Countries ({events.length} events)</option>
-          {countries.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
-      </div>
+    if (needed.length === 0) return;
 
-      <div className="border border-[#e8e8e8] rounded-xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-[11px] text-[#999] uppercase border-b border-[#e8e8e8] bg-[#f8f9fa]">
-              <th className="px-4 py-2.5 text-left">Time</th>
-              <th className="px-4 py-2.5 text-left w-10">Country</th>
-              <th className="px-4 py-2.5 text-left">Event</th>
-              <th className="px-4 py-2.5 text-left">Period</th>
-              <th className="px-4 py-2.5 text-right">Actual</th>
-              <th className="px-4 py-2.5 text-right">Forecast</th>
-              <th className="px-4 py-2.5 text-right">Previous</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((event, i) => {
-              const time = event.eventTime ? new Date(event.eventTime) : null;
-              const iso3 = ISO2_TO_ISO3[event.countryCode];
-              const hasSurprise = event.actual && event.estimate &&
-                parseFloat(event.actual) !== parseFloat(event.estimate);
-              const isPositiveSurprise = hasSurprise &&
-                parseFloat(event.actual) > parseFloat(event.estimate);
+    try {
+      const resp = await fetch('/api/calendar/summaries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ events: needed }),
+      });
+      const data = await resp.json();
+      if (data.summaries) {
+        setSummaries(prev => ({ ...prev, ...data.summaries }));
+      }
+    } catch { /* silent */ }
+  }, [summaries]);
 
-              return (
-                <tr key={i} className="border-b border-[#f0f0f0] hover:bg-[#f8f9fa] transition" title={event.description}>
-                  <td className="px-4 py-2 text-[12px] text-[#999] whitespace-nowrap">
-                    {time ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
-                  </td>
-                  <td className="px-4 py-2 text-[12px]">
-                    {iso3 ? (
-                      <Link href={`/country/${iso3}`} className="text-[#0066cc] hover:underline font-medium">
-                        {event.countryCode}
-                      </Link>
-                    ) : (
-                      <span className="font-medium">{event.countryCode}</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-2 text-[13px] text-[#333]">{event.event}</td>
-                  <td className="px-4 py-2 text-[12px] text-[#999]">{event.period}</td>
-                  <td className={`px-4 py-2 text-right font-mono text-[12px] font-semibold ${
-                    hasSurprise ? (isPositiveSurprise ? 'text-[#2ecc40]' : 'text-[#e74c3c]') : 'text-[#333]'
-                  }`}>
-                    {event.actual || '—'}
-                  </td>
-                  <td className="px-4 py-2 text-right font-mono text-[12px] text-[#666]">
-                    {event.estimate || '—'}
-                  </td>
-                  <td className="px-4 py-2 text-right font-mono text-[12px] text-[#999]">
-                    {event.prior || '—'}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+  useEffect(() => {
+    if (events.length > 0) {
+      fetchSummaries(events);
+    }
+  }, [events, fetchSummaries]);
 
-      <div className="mt-3 text-[11px] text-[#999]">
-        Data sourced from Yahoo Finance. Updated every 15 minutes. Green = beat forecast, Red = missed forecast.
-      </div>
-    </div>
-  );
-}
+  const countries = useMemo(() => [...new Set(events.map(e => e.country))].sort(), [events]);
+  const categories = useMemo(() => [...new Set(events.map(e => e.category))].sort(), [events]);
 
-// Known release schedules for major international org data
-// These are recurring releases that SOTW users care about
-interface CalendarEvent {
-  name: string;
-  org: string;
-  frequency: string;
-  description: string;
-  url: string;
-  months: number[]; // which months this typically releases (1-12)
-  indicators: string[]; // related SOTW indicator IDs
-  importance: 'high' | 'medium' | 'low';
-}
+  const filtered = useMemo(() => {
+    return events.filter(e => {
+      if (filterCountry && e.country !== filterCountry) return false;
+      if (filterImpact && e.impact !== filterImpact) return false;
+      if (filterCategory && e.category !== filterCategory) return false;
+      return true;
+    });
+  }, [events, filterCountry, filterImpact, filterCategory]);
 
-const CALENDAR_EVENTS: CalendarEvent[] = [
-  // IMF
-  {
-    name: 'IMF World Economic Outlook',
-    org: 'IMF',
-    frequency: 'Biannual (April & October)',
-    description: 'GDP, inflation, unemployment, and fiscal forecasts for 196 countries. Includes 5-year projections. The most influential macroeconomic forecast publication globally.',
-    url: 'https://www.imf.org/en/publications/weo',
-    months: [4, 10],
-    indicators: ['IMF.NGDPD', 'IMF.NGDP_RPCH', 'IMF.PCPIPCH', 'IMF.LUR', 'IMF.GGXWDG_NGDP'],
-    importance: 'high',
-  },
-  {
-    name: 'IMF WEO Update',
-    org: 'IMF',
-    frequency: 'Biannual (January & July)',
-    description: 'Interim update to the WEO with revised GDP growth and inflation projections. Shorter than the full WEO but often market-moving.',
-    url: 'https://www.imf.org/en/publications/weo',
-    months: [1, 7],
-    indicators: ['IMF.NGDPD', 'IMF.NGDP_RPCH', 'IMF.PCPIPCH'],
-    importance: 'high',
-  },
-  {
-    name: 'IMF Global Financial Stability Report',
-    org: 'IMF',
-    frequency: 'Biannual (April & October)',
-    description: 'Analysis of global financial market conditions, risks, and vulnerabilities. Released alongside the WEO.',
-    url: 'https://www.imf.org/en/publications/gfsr',
-    months: [4, 10],
-    indicators: [],
-    importance: 'medium',
-  },
-  {
-    name: 'IMF Fiscal Monitor',
-    org: 'IMF',
-    frequency: 'Biannual (April & October)',
-    description: 'Analysis of global fiscal policy developments, including government debt and deficit projections.',
-    url: 'https://www.imf.org/en/publications/fm',
-    months: [4, 10],
-    indicators: ['IMF.GGXWDG_NGDP', 'IMF.GGXCNL_NGDP'],
-    importance: 'medium',
-  },
-  // World Bank
-  {
-    name: 'World Bank World Development Indicators Update',
-    org: 'World Bank',
-    frequency: 'Quarterly (latest by mid-year)',
-    description: 'Comprehensive update to 1,600+ indicators for 217 countries. The largest freely available development data compilation.',
-    url: 'https://datatopics.worldbank.org/world-development-indicators/',
-    months: [3, 6, 9, 12],
-    indicators: ['SP.POP.TOTL', 'SP.DYN.LE00.IN', 'NY.GDP.MKTP.CD'],
-    importance: 'high',
-  },
-  {
-    name: 'World Bank Global Economic Prospects',
-    org: 'World Bank',
-    frequency: 'Biannual (January & June)',
-    description: 'GDP growth forecasts and analysis of global economic trends, with focus on emerging and developing economies.',
-    url: 'https://www.worldbank.org/en/publication/global-economic-prospects',
-    months: [1, 6],
-    indicators: ['IMF.NGDP_RPCH'],
-    importance: 'high',
-  },
-  {
-    name: 'World Bank Poverty & Shared Prosperity Report',
-    org: 'World Bank',
-    frequency: 'Biennial (even years, October)',
-    description: 'Flagship poverty report with updated poverty headcounts and inequality measures.',
-    url: 'https://www.worldbank.org/en/publication/poverty-and-shared-prosperity',
-    months: [10],
-    indicators: ['SI.POV.DDAY', 'SI.POV.GINI'],
-    importance: 'medium',
-  },
-  // UN
-  {
-    name: 'UN World Population Prospects',
-    org: 'United Nations',
-    frequency: 'Biennial (odd years, July)',
-    description: 'Demographic estimates and projections for all countries: population, fertility, mortality, migration.',
-    url: 'https://population.un.org/wpp/',
-    months: [7],
-    indicators: ['SP.POP.TOTL', 'SP.DYN.TFRT.IN', 'SP.DYN.LE00.IN'],
-    importance: 'high',
-  },
-  {
-    name: 'UN Human Development Report',
-    org: 'United Nations (UNDP)',
-    frequency: 'Annual (varies, typically Q4)',
-    description: 'Human Development Index rankings and analysis of human development trends.',
-    url: 'https://hdr.undp.org/',
-    months: [9, 10, 11],
-    indicators: [],
-    importance: 'medium',
-  },
-  {
-    name: 'UNCTAD World Investment Report',
-    org: 'UNCTAD',
-    frequency: 'Annual (June)',
-    description: 'Analysis of global FDI trends, with country-level data on investment flows.',
-    url: 'https://unctad.org/topic/investment/world-investment-report',
-    months: [6],
-    indicators: ['BX.KLT.DINV.WD.GD.ZS'],
-    importance: 'medium',
-  },
-  // ILO
-  {
-    name: 'ILO World Employment & Social Outlook',
-    org: 'ILO',
-    frequency: 'Annual (January)',
-    description: 'Global employment trends, unemployment projections, and analysis of labor market challenges.',
-    url: 'https://www.ilo.org/global/research/global-reports/weso',
-    months: [1],
-    indicators: ['SL.UEM.TOTL.ZS', 'SL.TLF.CACT.ZS'],
-    importance: 'medium',
-  },
-  // WHO
-  {
-    name: 'WHO World Health Statistics',
-    org: 'WHO',
-    frequency: 'Annual (May)',
-    description: 'Health statistics for WHO member states: life expectancy, disease burden, health system resources.',
-    url: 'https://www.who.int/data/gho/publications/world-health-statistics',
-    months: [5],
-    indicators: ['SH.XPD.CHEX.GD.ZS', 'SH.DYN.MORT', 'SP.DYN.LE00.IN'],
-    importance: 'medium',
-  },
-  // FRED/US
-  {
-    name: 'US Bureau of Labor Statistics — Jobs Report',
-    org: 'BLS (US)',
-    frequency: 'Monthly (first Friday)',
-    description: 'Nonfarm payrolls, unemployment rate, and labor force participation. The most market-moving US economic release.',
-    url: 'https://www.bls.gov/news.release/empsit.nr0.htm',
-    months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-    indicators: ['FRED.UNRATE', 'FRED.PAYEMS'],
-    importance: 'high',
-  },
-  {
-    name: 'US Bureau of Labor Statistics — CPI Report',
-    org: 'BLS (US)',
-    frequency: 'Monthly (mid-month)',
-    description: 'Consumer Price Index measuring US inflation. Key input for Federal Reserve policy decisions.',
-    url: 'https://www.bls.gov/cpi/',
-    months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-    indicators: ['FRED.CPIAUCSL'],
-    importance: 'high',
-  },
-  {
-    name: 'US Federal Reserve — FOMC Meeting',
-    org: 'Federal Reserve',
-    frequency: '8 times/year',
-    description: 'Federal Open Market Committee sets the federal funds rate and releases economic projections.',
-    url: 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm',
-    months: [1, 3, 5, 6, 7, 9, 11, 12],
-    indicators: ['FRED.FEDFUNDS'],
-    importance: 'high',
-  },
-  // ECB
-  {
-    name: 'ECB Monetary Policy Decision',
-    org: 'ECB',
-    frequency: '6 times/year',
-    description: 'European Central Bank interest rate decisions and macroeconomic projections for the euro area.',
-    url: 'https://www.ecb.europa.eu/mopo/decisions/html/index.en.html',
-    months: [1, 3, 4, 6, 9, 10, 12],
-    indicators: ['FRED.CBRATE'],
-    importance: 'high',
-  },
-  // UNESCO
-  {
-    name: 'UNESCO Global Education Monitoring Report',
-    org: 'UNESCO',
-    frequency: 'Annual (varies)',
-    description: 'Tracks progress toward SDG 4 (Education) with global enrollment, literacy, and spending data.',
-    url: 'https://www.unesco.org/gem-report/',
-    months: [7, 10],
-    indicators: ['SE.ADT.LITR.ZS', 'SE.XPD.TOTL.GD.ZS'],
-    importance: 'medium',
-  },
-];
+  // Group events by date for the current week
+  const eventsByDate = useMemo(() => {
+    const map: Record<string, CalendarEvent[]> = {};
+    for (const d of week.dates) {
+      map[d.toISOString().slice(0, 10)] = [];
+    }
+    for (const e of filtered) {
+      if (map[e.date]) {
+        map[e.date].push(e);
+      }
+    }
+    // Sort within each day: high first, then medium, then low
+    const order = { high: 0, medium: 1, low: 2 };
+    for (const date of Object.keys(map)) {
+      map[date].sort((a, b) => order[a.impact] - order[b.impact]);
+    }
+    return map;
+  }, [filtered, week.dates]);
 
-const ORGS = [...new Set(CALENDAR_EVENTS.map(e => e.org))].sort();
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const todayStr = new Date().toISOString().slice(0, 10);
 
-const IMPORTANCE_COLORS = {
-  high: 'bg-red-50 text-red-700 border-red-200',
-  medium: 'bg-amber-50 text-amber-700 border-amber-200',
-  low: 'bg-gray-50 text-gray-600 border-gray-200',
-};
-
-export default function CalendarPage() {
-  const [tab, setTab] = useState<'live' | 'schedule'>('live');
-  const [filterOrg, setFilterOrg] = useState('');
-  const [filterImportance, setFilterImportance] = useState('');
-  const [view, setView] = useState<'timeline' | 'list'>('timeline');
-
-  const currentMonth = new Date().getMonth() + 1; // 1-12
-
-  const filtered = CALENDAR_EVENTS.filter(e => {
-    if (filterOrg && e.org !== filterOrg) return false;
-    if (filterImportance && e.importance !== filterImportance) return false;
-    return true;
-  });
+  const totalThisWeek = week.dates.reduce((sum, d) => sum + (eventsByDate[d.toISOString().slice(0, 10)]?.length || 0), 0);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white text-[#333]">
       <Nav />
 
       <section className="max-w-[1200px] mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-[28px] font-bold mb-1">Economic Calendar</h1>
           <p className="text-[13px] text-[#999]">
-            Live economic data releases and international organization publication schedules.
+            Upcoming economic data releases from the Federal Reserve, BLS, Census Bureau, and international organizations.
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-[#f0f0f0] rounded-lg p-0.5 w-fit">
-          <button
-            onClick={() => setTab('live')}
-            className={`px-4 py-1.5 rounded text-[13px] transition ${tab === 'live' ? 'bg-white shadow-sm font-medium' : 'text-[#666]'}`}
-          >
-            Live Events
-          </button>
-          <button
-            onClick={() => setTab('schedule')}
-            className={`px-4 py-1.5 rounded text-[13px] transition ${tab === 'schedule' ? 'bg-white shadow-sm font-medium' : 'text-[#666]'}`}
-          >
-            Publication Schedule
-          </button>
-        </div>
-
-        {tab === 'live' ? (
-          <LiveEventsTab />
-        ) : (
-        <>
-
-        {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-6">
-          <select
-            value={filterOrg}
-            onChange={e => setFilterOrg(e.target.value)}
-            className="border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[12px] outline-none"
-          >
-            <option value="">All Organizations</option>
-            {ORGS.map(o => <option key={o} value={o}>{o}</option>)}
-          </select>
-          <select
-            value={filterImportance}
-            onChange={e => setFilterImportance(e.target.value)}
-            className="border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[12px] outline-none"
-          >
-            <option value="">All Importance</option>
-            <option value="high">High Impact</option>
-            <option value="medium">Medium Impact</option>
-          </select>
-          <div className="flex gap-1 ml-auto bg-[#f0f0f0] rounded-lg p-0.5">
+        {/* Week navigation */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => setView('timeline')}
-              className={`px-3 py-1 rounded text-[12px] transition ${view === 'timeline' ? 'bg-white shadow-sm font-medium' : 'text-[#666]'}`}
-            >Timeline</button>
+              onClick={() => setWeekOffset(w => w - 1)}
+              className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg text-[12px] hover:bg-[#f5f7fa] transition"
+            >
+              ← Prev
+            </button>
             <button
-              onClick={() => setView('list')}
-              className={`px-3 py-1 rounded text-[12px] transition ${view === 'list' ? 'bg-white shadow-sm font-medium' : 'text-[#666]'}`}
-            >List</button>
+              onClick={() => setWeekOffset(0)}
+              className={`px-3 py-1.5 border rounded-lg text-[12px] transition ${
+                weekOffset === 0 ? 'bg-[#0066cc] text-white border-[#0066cc]' : 'border-[#e8e8e8] hover:bg-[#f5f7fa]'
+              }`}
+            >
+              This Week
+            </button>
+            <button
+              onClick={() => setWeekOffset(w => w + 1)}
+              className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg text-[12px] hover:bg-[#f5f7fa] transition"
+            >
+              Next →
+            </button>
+          </div>
+          <div className="text-[14px] font-semibold text-[#333]">
+            {formatWeekRange(week.dates)}
           </div>
         </div>
 
-        {view === 'timeline' ? (
-          /* Monthly timeline view */
-          <div className="space-y-6">
-            {MONTHS.map((monthName, i) => {
-              const monthNum = i + 1;
-              const monthEvents = filtered.filter(e => e.months.includes(monthNum));
-              if (monthEvents.length === 0) return null;
-              const isCurrent = monthNum === currentMonth;
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2 mb-5">
+          <select
+            value={filterCountry}
+            onChange={e => setFilterCountry(e.target.value)}
+            className="border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[12px] outline-none"
+          >
+            <option value="">All Countries</option>
+            {countries.map(c => (
+              <option key={c} value={c}>{COUNTRY_FLAGS[c] || ''} {c}</option>
+            ))}
+          </select>
+          <select
+            value={filterImpact}
+            onChange={e => setFilterImpact(e.target.value)}
+            className="border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[12px] outline-none"
+          >
+            <option value="">All Impact</option>
+            <option value="high">High Impact</option>
+            <option value="medium">Medium Impact</option>
+            <option value="low">Low Impact</option>
+          </select>
+          <select
+            value={filterCategory}
+            onChange={e => setFilterCategory(e.target.value)}
+            className="border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[12px] outline-none"
+          >
+            <option value="">All Categories</option>
+            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <div className="ml-auto text-[12px] text-[#999] self-center">
+            {totalThisWeek} events this week
+          </div>
+        </div>
+
+        {/* Calendar grid */}
+        {loading ? (
+          <div className="text-center py-20 text-[#999]">Loading calendar...</div>
+        ) : (
+          <div className="border border-[#e8e8e8] rounded-xl overflow-hidden">
+            {week.dates.map(d => {
+              const dateStr = d.toISOString().slice(0, 10);
+              const dayEvents = eventsByDate[dateStr] || [];
+              const isToday = dateStr === todayStr;
+              const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+
+              if (isWeekend && dayEvents.length === 0) return null;
 
               return (
-                <div key={monthNum} className={`border rounded-xl overflow-hidden ${isCurrent ? 'border-[#0066cc] ring-1 ring-[#0066cc]/20' : 'border-[#e8e8e8]'}`}>
-                  <div className={`px-4 py-2.5 flex items-center justify-between ${isCurrent ? 'bg-[#f0f7ff]' : 'bg-[#f8f9fa]'}`}>
+                <div key={dateStr} className={`${isToday ? 'bg-[#f0f7ff]' : ''}`}>
+                  {/* Day header */}
+                  <div className={`px-4 py-2 border-b border-[#e8e8e8] flex items-center justify-between ${
+                    isToday ? 'bg-[#e8f0fe]' : 'bg-[#f8f9fa]'
+                  }`}>
                     <div className="flex items-center gap-2">
-                      <span className={`text-[14px] font-semibold ${isCurrent ? 'text-[#0066cc]' : 'text-[#333]'}`}>{monthName}</span>
-                      {isCurrent && <span className="text-[10px] bg-[#0066cc] text-white px-1.5 py-0.5 rounded">Current</span>}
+                      <span className={`text-[13px] font-semibold ${isToday ? 'text-[#0066cc]' : 'text-[#333]'}`}>
+                        {formatDateHeader(d)}
+                      </span>
+                      {isToday && (
+                        <span className="text-[10px] bg-[#0066cc] text-white px-1.5 py-0.5 rounded font-medium">Today</span>
+                      )}
                     </div>
-                    <span className="text-[11px] text-[#999]">{monthEvents.length} releases</span>
+                    <span className="text-[11px] text-[#999]">
+                      {dayEvents.length > 0 ? `${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}` : ''}
+                    </span>
                   </div>
-                  <div className="divide-y divide-[#f0f0f0]">
-                    {monthEvents.map((event, j) => (
-                      <div key={j} className="px-4 py-3 hover:bg-[#f8f9fa] transition">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <a href={event.url} target="_blank" rel="noopener noreferrer" className="text-[13px] font-medium text-[#0066cc] hover:underline">
-                                {event.name}
-                              </a>
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded border ${IMPORTANCE_COLORS[event.importance]}`}>
-                                {event.importance}
+
+                  {/* Events */}
+                  {dayEvents.length === 0 ? (
+                    <div className="px-4 py-3 text-[12px] text-[#ccc] border-b border-[#f0f0f0]">
+                      No scheduled releases
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-[#f0f0f0] border-b border-[#e8e8e8]">
+                      {dayEvents.map((event, i) => {
+                        const style = IMPACT_STYLES[event.impact];
+                        const isEarnings = event.type === 'earnings';
+                        const isPast = event.date < todayStr;
+                        const summaryKey = `${event.date}|${event.name}|${event.symbol || ''}`;
+                        const summary = summaries[summaryKey];
+                        return (
+                          <div key={`${event.releaseId}-${event.symbol || ''}-${i}`} className="flex items-center px-4 py-2.5 hover:bg-[#f8f9fa] transition gap-3">
+                            {/* Impact dot */}
+                            <div className={`w-2 h-2 rounded-full shrink-0 ${isEarnings ? 'bg-purple-500' : style.dot}`} title={isEarnings ? 'Earnings' : `${style.label} impact`} />
+
+                            {/* Country / Symbol */}
+                            <span className="text-[14px] w-7 shrink-0" title={event.country}>
+                              {isEarnings ? '📊' : (COUNTRY_FLAGS[event.country] || event.country)}
+                            </span>
+
+                            {/* Event name + AI summary */}
+                            <div className="flex-1 min-w-0">
+                              <span className={`text-[13px] font-medium ${isEarnings ? 'text-purple-700' : 'text-[#333]'}`}>
+                                {isEarnings && event.symbol ? (
+                                  <>
+                                    <span className="font-bold">{event.symbol}</span>
+                                    <span className="font-normal text-[#666]"> Earnings Report</span>
+                                  </>
+                                ) : event.name}
                               </span>
+                              {isPast && summary && (
+                                <div className="text-[11px] text-[#888] mt-0.5 truncate" title={summary}>
+                                  {summary}
+                                </div>
+                              )}
                             </div>
-                            <div className="text-[12px] text-[#666] mb-1">{event.description}</div>
-                            <div className="flex items-center gap-3 text-[11px] text-[#999]">
-                              <span>{event.org}</span>
-                              <span>{event.frequency}</span>
-                            </div>
-                            {event.indicators.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {event.indicators.slice(0, 4).map(indId => (
+
+                            {/* Earnings estimates */}
+                            {isEarnings && (
+                              <span className="text-[11px] text-[#666] font-mono hidden sm:inline">
+                                {event.epsEstimate != null && `EPS est $${event.epsEstimate.toFixed(2)}`}
+                                {event.revenueEstimate != null && event.revenueEstimate > 0 && (
+                                  <> · Rev {event.revenueEstimate >= 1e9 ? `$${(event.revenueEstimate / 1e9).toFixed(1)}B` : `$${(event.revenueEstimate / 1e6).toFixed(0)}M`}</>
+                                )}
+                              </span>
+                            )}
+
+                            {/* Category */}
+                            {!isEarnings && (
+                              <span className="text-[11px] text-[#999] hidden sm:inline">
+                                {event.category}
+                              </span>
+                            )}
+
+                            {/* Impact badge */}
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded border shrink-0 hidden md:inline ${
+                              isEarnings ? 'bg-purple-50 text-purple-700 border-purple-200' : style.badge
+                            }`}>
+                              {isEarnings ? 'Earnings' : style.label}
+                            </span>
+
+                            {/* SOTW indicator links */}
+                            {event.sotwIndicators && event.sotwIndicators.length > 0 && (
+                              <div className="flex gap-1 shrink-0">
+                                {event.sotwIndicators.map(indId => (
                                   <Link
                                     key={indId}
-                                    href={`/rankings?id=${encodeURIComponent(indId)}`}
-                                    className="text-[10px] bg-[#f0f0f0] px-2 py-0.5 rounded hover:bg-[#e0e0e0] transition text-[#666]"
+                                    href={`/indicators?id=${encodeURIComponent(indId)}`}
+                                    className="text-[10px] bg-[#f0f0f0] px-1.5 py-0.5 rounded hover:bg-[#e0e0e0] transition text-[#666]"
+                                    title={`View ${indId} data`}
                                   >
-                                    {indId}
+                                    SOTW →
                                   </Link>
                                 ))}
                               </div>
                             )}
                           </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
-        ) : (
-          /* List view */
-          <div className="border border-[#e8e8e8] rounded-xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="text-[11px] text-[#999] uppercase border-b border-[#e8e8e8] bg-[#f8f9fa]">
-                  <th className="px-4 py-2.5 text-left">Publication</th>
-                  <th className="px-4 py-2.5 text-left">Organization</th>
-                  <th className="px-4 py-2.5 text-left">Frequency</th>
-                  <th className="px-4 py-2.5 text-center">Months</th>
-                  <th className="px-4 py-2.5 text-center">Impact</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((event, i) => (
-                  <tr key={i} className="border-b border-[#f0f0f0] hover:bg-[#f8f9fa] transition">
-                    <td className="px-4 py-2.5">
-                      <a href={event.url} target="_blank" rel="noopener noreferrer" className="text-[13px] text-[#0066cc] hover:underline">
-                        {event.name}
-                      </a>
-                    </td>
-                    <td className="px-4 py-2.5 text-[12px] text-[#666]">{event.org}</td>
-                    <td className="px-4 py-2.5 text-[12px] text-[#666]">{event.frequency}</td>
-                    <td className="px-4 py-2.5 text-center text-[11px] text-[#999]">
-                      {event.months.map(m => MONTHS[m - 1].slice(0, 3)).join(', ')}
-                    </td>
-                    <td className="px-4 py-2.5 text-center">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded border ${IMPORTANCE_COLORS[event.importance]}`}>
-                        {event.importance}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         )}
 
-        {/* About section */}
-        <div className="mt-8 border border-[#e8e8e8] rounded-xl p-5 bg-[#f8f9fa]">
-          <h3 className="text-[14px] font-semibold mb-2">About This Calendar</h3>
-          <p className="text-[12px] text-[#666] leading-relaxed">
-            This calendar tracks major data publications from international organizations and central banks that update the indicators on Statistics of the World.
-            Unlike trading-focused economic calendars that track individual data releases (monthly CPI, weekly jobless claims), this calendar focuses on
-            <strong> research-grade publications</strong> — the comprehensive reports that provide the deepest, most authoritative data available for cross-country comparison.
-            When these organizations publish, we update our database accordingly.
-          </p>
+        {/* Legend + source */}
+        <div className="mt-4 flex flex-wrap items-center justify-between text-[11px] text-[#999]">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> High Impact</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400 inline-block" /> Medium Impact</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500 inline-block" /> Major Earnings</span>
+          </div>
+          <div>
+            Sources: <a href="https://fred.stlouisfed.org/releases/calendar" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">FRED</a> + <a href="https://finnhub.io" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Finnhub</a>
+          </div>
         </div>
-        </>
-        )}
       </section>
 
       <Footer />

@@ -3,6 +3,7 @@ import { getCountries, getTop10AllIndicators, formatValue, INDICATORS, CATEGORIE
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import CategorySection from './CategorySection';
+import LiveCounters from '@/components/LiveCounter';
 
 // Key indicators shown by default per category
 const FEATURED: Record<string, string[]> = {
@@ -66,10 +67,10 @@ export default async function Home() {
       {/* Hero */}
       <section className="border-b border-[#e8e8e8]">
         <div className="max-w-[1200px] mx-auto px-4 py-12 text-center">
-          <h1 className="text-[32px] font-bold mb-2">Statistics of the World</h1>
-          <p className="text-[15px] text-[#666] mb-6">
-            {totalIndicators} indicators &middot; {countries.length} countries &middot; 7 data sources
-          </p>
+          <h1 className="text-[32px] font-bold mb-4">Statistics of the World</h1>
+          <div className="mb-8">
+            <LiveCounters />
+          </div>
           <div className="flex flex-wrap justify-center gap-3 text-[13px]">
             <Link href="/countries" className="px-4 py-2 bg-[#0066cc] text-white rounded-lg hover:bg-[#0055aa] transition">
               Browse Countries
@@ -83,7 +84,7 @@ export default async function Home() {
             <Link href="/markets" className="px-4 py-2 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">
               Markets
             </Link>
-            <Link href="/rankings" className="px-4 py-2 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">
+            <Link href="/indicators" className="px-4 py-2 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">
               Indicators
             </Link>
             <Link href="/api-docs" className="px-4 py-2 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">
@@ -93,8 +94,33 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Popular Rankings — SEO links */}
+      <section className="max-w-[1200px] mx-auto px-4 pt-8 pb-4">
+        <h2 className="text-[16px] font-semibold mb-3">Popular Rankings</h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { slug: 'gdp', label: 'GDP' },
+            { slug: 'gdp-growth', label: 'GDP Growth' },
+            { slug: 'gdp-per-capita', label: 'GDP per Capita' },
+            { slug: 'inflation-rate', label: 'Inflation Rate' },
+            { slug: 'unemployment-rate', label: 'Unemployment' },
+            { slug: 'population', label: 'Population' },
+            { slug: 'life-expectancy', label: 'Life Expectancy' },
+            { slug: 'government-debt', label: 'Govt Debt' },
+            { slug: 'co2-emissions', label: 'CO2 Emissions' },
+            { slug: 'gini-index', label: 'Inequality' },
+            { slug: 'trade-openness', label: 'Trade Openness' },
+            { slug: 'military-spending', label: 'Military Spending' },
+          ].map(r => (
+            <Link key={r.slug} href={`/ranking/${r.slug}`} className="px-3 py-1.5 text-[12px] border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] hover:border-[#ccc] transition text-[#555]">
+              {r.label}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Analysis tools grid */}
-      <section className="max-w-[1200px] mx-auto px-4 py-8">
+      <section className="max-w-[1200px] mx-auto px-4 py-6">
         <h2 className="text-[16px] font-semibold mb-4">Free Analysis Tools</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Link href="/compare" className="border border-[#e8e8e8] rounded-xl p-4 hover:border-[#0066cc] hover:bg-[#f8fbff] transition group">
@@ -117,6 +143,52 @@ export default async function Home() {
             <div className="text-[14px] font-semibold group-hover:text-[#0066cc] transition">Regional Analysis</div>
             <div className="text-[12px] text-[#999] mt-1">Compare world regions and income groups. Average, median, totals.</div>
           </Link>
+          <Link href="/heatmap" className="border border-[#e8e8e8] rounded-xl p-4 hover:border-[#0066cc] hover:bg-[#f8fbff] transition group">
+            <div className="text-[20px] mb-2">&#x25A6;</div>
+            <div className="text-[14px] font-semibold group-hover:text-[#0066cc] transition">Heatmap</div>
+            <div className="text-[12px] text-[#999] mt-1">Country-by-indicator matrix. G7, G20, BRICS color-coded at a glance.</div>
+          </Link>
+          <Link href="/calendar" className="border border-[#e8e8e8] rounded-xl p-4 hover:border-[#0066cc] hover:bg-[#f8fbff] transition group">
+            <div className="text-[20px] mb-2">&#x1F4C5;</div>
+            <div className="text-[14px] font-semibold group-hover:text-[#0066cc] transition">Economic Calendar</div>
+            <div className="text-[12px] text-[#999] mt-1">Data releases, central bank meetings, earnings. FRED + Finnhub powered.</div>
+          </Link>
+          <Link href="/forecasts" className="border border-[#e8e8e8] rounded-xl p-4 hover:border-[#0066cc] hover:bg-[#f8fbff] transition group">
+            <div className="text-[20px] mb-2">&#x1F4C8;</div>
+            <div className="text-[14px] font-semibold group-hover:text-[#0066cc] transition">IMF Forecasts</div>
+            <div className="text-[12px] text-[#999] mt-1">Free 2-year projections for GDP, inflation, unemployment. TE charges for this.</div>
+          </Link>
+          <Link href="/trade" className="border border-[#e8e8e8] rounded-xl p-4 hover:border-[#0066cc] hover:bg-[#f8fbff] transition group">
+            <div className="text-[20px] mb-2">&#x1F6A2;</div>
+            <div className="text-[14px] font-semibold group-hover:text-[#0066cc] transition">Trade Explorer</div>
+            <div className="text-[12px] text-[#999] mt-1">Top exports, imports, and trading partners from UN COMTRADE.</div>
+          </Link>
+        </div>
+      </section>
+
+      {/* AI-Powered section */}
+      <section className="max-w-[1200px] mx-auto px-4 py-6">
+        <div className="border border-[#e8e8e8] rounded-xl p-5 bg-gradient-to-r from-[#f8fbff] to-white">
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-[16px] font-semibold mb-1">AI-Powered Data Access</h2>
+              <p className="text-[12px] text-[#999] mb-3">
+                First global statistics platform built for AI agents. Query our data via MCP, OpenAPI, or natural language.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/ai" className="px-3 py-1.5 text-[12px] bg-[#0066cc] text-white rounded-lg hover:bg-[#0055aa] transition">
+                  MCP Server + API Docs
+                </Link>
+                <Link href="/api-docs" className="px-3 py-1.5 text-[12px] border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">
+                  Free REST API
+                </Link>
+                <span className="px-3 py-1.5 text-[12px] text-[#999] border border-[#e8e8e8] rounded-lg">
+                  llms.txt &middot; OpenAPI &middot; GPT Actions
+                </span>
+              </div>
+            </div>
+            <div className="text-[32px] hidden md:block">&#x1F916;</div>
+          </div>
         </div>
       </section>
 

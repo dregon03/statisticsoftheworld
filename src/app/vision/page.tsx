@@ -19,7 +19,7 @@ export default function VisionPage() {
           </Link>
           <nav className="flex gap-6 text-sm text-gray-500">
             <Link href="/countries" className="hover:text-gray-900 transition">Countries</Link>
-            <Link href="/rankings" className="hover:text-gray-900 transition">Indicators</Link>
+            <Link href="/indicators" className="hover:text-gray-900 transition">Indicators</Link>
           </nav>
         </div>
       </header>

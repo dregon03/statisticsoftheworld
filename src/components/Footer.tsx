@@ -11,7 +11,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-wrap gap-4">
             <Link href="/countries" className="hover:text-[#333] transition">Countries</Link>
-            <Link href="/rankings" className="hover:text-[#333] transition">Indicators</Link>
+            <Link href="/indicators" className="hover:text-[#333] transition">Indicators</Link>
             <Link href="/compare" className="hover:text-[#333] transition">Compare</Link>
             <Link href="/map" className="hover:text-[#333] transition">Map</Link>
             <Link href="/scatter" className="hover:text-[#333] transition">Scatter</Link>

@@ -69,7 +69,7 @@ function MapContent() {
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <h1 className="text-[28px] font-bold">World Map</h1>
-            <Link href={`/rankings?id=${encodeURIComponent(selectedIndicator.id)}`} className="text-[12px] text-[#0066cc] hover:underline ml-2">
+            <Link href={`/indicators?id=${encodeURIComponent(selectedIndicator.id)}`} className="text-[12px] text-[#0066cc] hover:underline ml-2">
               View as table &rarr;
             </Link>
           </div>

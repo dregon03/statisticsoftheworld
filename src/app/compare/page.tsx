@@ -374,7 +374,7 @@ function CompareContent() {
                     {tableIndicators.map((ind, i) => (
                       <tr key={ind.id} className={`border-b border-[#f0f0f0] hover:bg-[#f8f9fa] transition ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}>
                         <td className="px-4 py-2.5 text-[13px] sticky left-0 bg-inherit z-10">
-                          <Link href={`/rankings?id=${encodeURIComponent(ind.id)}`} className="text-[#333] hover:text-[#0066cc] transition">
+                          <Link href={`/indicators?id=${encodeURIComponent(ind.id)}`} className="text-[#333] hover:text-[#0066cc] transition">
                             {ind.label}
                           </Link>
                         </td>

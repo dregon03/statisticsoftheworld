@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Flag from '../../Flag';
 import CountryCharts from './CountryCharts';
+import CountryNarrative from './CountryNarrative';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
@@ -99,6 +100,28 @@ export default async function CountryPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Sub-navigation */}
+        <div className="flex gap-1 mb-6 border-b border-gray-100">
+          <span className="px-4 py-2 text-[13px] font-medium text-[#0066cc] border-b-2 border-[#0066cc]">
+            Overview
+          </span>
+          <Link href={`/country/${id}/forecast`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+            Forecasts
+          </Link>
+          <Link href={`/country/${id}/trade-data`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+            Trade
+          </Link>
+          <Link href={`/calendar`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+            Calendar
+          </Link>
+          <Link href={`/indicators`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+            All Indicators
+          </Link>
+        </div>
+
+        {/* AI-generated country profile */}
+        <CountryNarrative countryId={id} />
 
         {/* Key stats cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">

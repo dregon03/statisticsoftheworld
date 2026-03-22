@@ -42,14 +42,14 @@ export default function CategorySection({
           <div key={ind.id}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <Link href={`/rankings?id=${encodeURIComponent(ind.id)}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition">
+                <Link href={`/indicators?id=${encodeURIComponent(ind.id)}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition">
                   {ind.label}
                 </Link>
                 <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
                   {ind.id.startsWith('IMF.') ? 'IMF' : ind.id.startsWith('UN.') ? 'UN' : 'World Bank'}
                 </span>
               </div>
-              <Link href={`/rankings?id=${encodeURIComponent(ind.id)}`} className="text-xs text-gray-400 hover:text-gray-600 transition shrink-0">
+              <Link href={`/indicators?id=${encodeURIComponent(ind.id)}`} className="text-xs text-gray-400 hover:text-gray-600 transition shrink-0">
                 All countries &rarr;
               </Link>
             </div>

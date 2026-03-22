@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AskSOTW from '@/components/AskSOTW';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,7 +48,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen" suppressHydrationWarning>{children}</body>
+      <body className="min-h-screen" suppressHydrationWarning>
+        {children}
+        <AskSOTW />
+      </body>
     </html>
   );
 }

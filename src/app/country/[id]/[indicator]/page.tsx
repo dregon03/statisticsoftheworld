@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import StatsRow from '@/components/StatsRow';
 import HistoryExportButton from '@/components/HistoryExportButton';
 import EmbedButton from '@/components/EmbedButton';
+import IndicatorContext from './IndicatorContext';
 
 type Props = { params: Promise<{ id: string; indicator: string }> };
 
@@ -189,6 +190,9 @@ export default async function IndicatorDetailPage({ params }: Props) {
           </div>
         )}
 
+        {/* AI-generated context */}
+        <IndicatorContext countryId={id} indicatorId={indicatorId} />
+
         {/* Chart */}
         <IndicatorDetailCharts
           history={validHistory as { year: number; value: number }[]}
@@ -196,6 +200,8 @@ export default async function IndicatorDetailPage({ params }: Props) {
           decimals={ind.decimals}
           sourceName={sourceName}
           forecastStartYear={forecastStartYear}
+          indicatorId={indicatorId}
+          countryId={id}
         />
 
         {/* Historical data table */}
@@ -330,7 +336,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
                 </tbody>
               </table>
               <Link
-                href={`/rankings?id=${encodeURIComponent(indicatorId)}`}
+                href={`/indicators?id=${encodeURIComponent(indicatorId)}`}
                 className="block px-5 py-3 text-sm text-blue-600 hover:bg-gray-50 transition text-center border-t border-gray-100"
               >
                 View all {totalCountries} countries →

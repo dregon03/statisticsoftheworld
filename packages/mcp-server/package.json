@@ -1,0 +1,22 @@
+{
+  "name": "@sotw/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Statistics of the World — 443 indicators for 218 countries",
+  "main": "dist/index.js",
+  "bin": {
+    "sotw-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": ["mcp", "statistics", "world", "economy", "data", "imf", "worldbank"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

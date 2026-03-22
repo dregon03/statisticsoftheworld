@@ -1,11 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { formatValue } from '@/lib/data';
 import SparklineChart from '@/components/charts/SparklineChart';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from 'recharts';
 
 interface CommodityData {
   id: string;
@@ -14,6 +23,19 @@ interface CommodityData {
   year: string;
   history: { year: number; value: number | null }[];
 }
+
+interface ChartPoint {
+  date: string;
+  value: number;
+}
+
+const RANGES = [
+  { key: '1mo', label: '1M' },
+  { key: '3mo', label: '3M' },
+  { key: '6mo', label: '6M' },
+  { key: '1y', label: '1Y' },
+  { key: '5y', label: '5Y' },
+] as const;
 
 const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string }[] }[] = [
   {
@@ -54,14 +76,150 @@ const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string }[
   },
 ];
 
+function CommodityChart({ id, label }: { id: string; label: string }) {
+  const [range, setRange] = useState('1y');
+  const [points, setPoints] = useState<ChartPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchChart = useCallback(async (r: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/commodity-chart?id=${encodeURIComponent(id)}&range=${r}`);
+      const data = await res.json();
+      setPoints(data.points || []);
+    } catch {
+      setPoints([]);
+    }
+    setLoading(false);
+  }, [id]);
+
+  useEffect(() => {
+    fetchChart(range);
+  }, [range, fetchChart]);
+
+  const first = points[0]?.value;
+  const last = points[points.length - 1]?.value;
+  const changeAmt = first && last ? last - first : 0;
+  const changePct = first ? ((last - first) / first) * 100 : 0;
+  const isUp = changeAmt >= 0;
+  const color = isUp ? '#16a34a' : '#dc2626';
+
+  // Format tick labels based on range
+  const formatXTick = (date: string) => {
+    const d = new Date(date);
+    if (range === '5y') return d.toLocaleDateString('en', { year: '2-digit', month: 'short' });
+    if (range === '1y' || range === '6mo') return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+    return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+  };
+
+  return (
+    <div className="border-t border-[#e8e8e8] bg-[#fafbfc] px-4 py-4">
+      {/* Range selector */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-[#333]">{label}</span>
+          {points.length > 1 && (
+            <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+              {isUp ? '+' : ''}{changeAmt.toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
+            </span>
+          )}
+        </div>
+        <div className="flex gap-1">
+          {RANGES.map(r => (
+            <button
+              key={r.key}
+              onClick={() => setRange(r.key)}
+              className={`px-2 py-0.5 text-[11px] rounded ${
+                range === r.key
+                  ? 'bg-[#0066cc] text-white'
+                  : 'bg-white border border-[#ddd] text-[#666] hover:bg-[#f0f0f0]'
+              }`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Chart */}
+      {loading ? (
+        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">
+          Loading chart...
+        </div>
+      ) : points.length < 2 ? (
+        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">
+          No chart data available
+        </div>
+      ) : (
+        <div className="h-[200px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={points} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+              <defs>
+                <linearGradient id={`grad-${id}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={color} stopOpacity={0.15} />
+                  <stop offset="95%" stopColor={color} stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis
+                dataKey="date"
+                tickFormatter={formatXTick}
+                tick={{ fontSize: 10, fill: '#999' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e8e8e8' }}
+                interval="preserveStartEnd"
+                minTickGap={50}
+              />
+              <YAxis
+                domain={['auto', 'auto']}
+                tick={{ fontSize: 10, fill: '#999' }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(v: number) => v.toLocaleString()}
+                width={60}
+              />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (!active || !payload?.[0]) return null;
+                  const p = payload[0].payload as ChartPoint;
+                  const d = new Date(p.date);
+                  return (
+                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                      <div className="text-[#999] mb-0.5">
+                        {d.toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      </div>
+                      <div className="font-mono font-semibold text-[14px]">
+                        ${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  );
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={color}
+                strokeWidth={1.5}
+                fill={`url(#grad-${id})`}
+                dot={false}
+                activeDot={{ r: 3, fill: color, strokeWidth: 0 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CommoditiesPage() {
   const [data, setData] = useState<Record<string, CommodityData>>({});
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     const allIds = COMMODITY_SECTIONS.flatMap(s => s.items.map(i => i.id));
 
-    // Fetch latest values and history for each commodity
     Promise.all(
       allIds.map(async id => {
         const [latest, history] = await Promise.all([
@@ -92,7 +250,9 @@ export default function CommoditiesPage() {
 
       <div className="max-w-[1200px] mx-auto px-4 py-8">
         <h1 className="text-[24px] font-bold mb-1">Commodities</h1>
-        <p className="text-[13px] text-[#999] mb-6">Energy, metals, and agricultural commodity prices.</p>
+        <p className="text-[13px] text-[#999] mb-6">
+          Energy, metals, and agricultural commodity prices. Click any row to view interactive daily chart.
+        </p>
 
         {loading ? (
           <div className="text-center py-20 text-[#999]">Loading commodity prices...</div>
@@ -114,25 +274,47 @@ export default function CommoditiesPage() {
                     <tbody>
                       {section.items.map(item => {
                         const d = data[item.id];
+                        const isExpanded = expanded === item.id;
                         return (
-                          <tr key={item.id} className="border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px]">
-                            <td className="px-3 py-2">
-                              <Link href={`/country/WLD/${encodeURIComponent(item.id)}`} className="text-[#0066cc] hover:underline font-medium">
-                                {item.label}
-                              </Link>
-                            </td>
-                            <td className="px-3 py-2 text-right font-mono">
-                              {d?.value ? formatValue(d.value, 'currency', 2) : '—'}
-                            </td>
-                            <td className="px-3 py-2 text-right hidden md:table-cell">
-                              {d?.history && d.history.length > 2 && (
-                                <div className="flex justify-end">
-                                  <SparklineChart data={d.history} width={80} height={24} />
-                                </div>
-                              )}
-                            </td>
-                            <td className="px-3 py-2 text-right text-[#999]">{d?.year || '—'}</td>
-                          </tr>
+                          <React.Fragment key={item.id}>
+                            <tr
+                              className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px] cursor-pointer ${
+                                isExpanded ? 'bg-[#f5f7fa]' : ''
+                              }`}
+                              onClick={() => setExpanded(isExpanded ? null : item.id)}
+                            >
+                              <td className="px-3 py-2">
+                                <span className="flex items-center gap-1.5">
+                                  <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>▶</span>
+                                  <Link
+                                    href={`/country/WLD/${encodeURIComponent(item.id)}`}
+                                    className="text-[#0066cc] hover:underline font-medium"
+                                    onClick={e => e.stopPropagation()}
+                                  >
+                                    {item.label}
+                                  </Link>
+                                </span>
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono">
+                                {d?.value ? formatValue(d.value, 'currency', 2) : '—'}
+                              </td>
+                              <td className="px-3 py-2 text-right hidden md:table-cell">
+                                {d?.history && d.history.length > 2 && (
+                                  <div className="flex justify-end">
+                                    <SparklineChart data={d.history} width={80} height={24} />
+                                  </div>
+                                )}
+                              </td>
+                              <td className="px-3 py-2 text-right text-[#999]">{d?.year || '—'}</td>
+                            </tr>
+                            {isExpanded && (
+                              <tr>
+                                <td colSpan={4} className="p-0">
+                                  <CommodityChart id={item.id} label={item.label} />
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
                         );
                       })}
                     </tbody>

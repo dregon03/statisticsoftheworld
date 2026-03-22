@@ -527,54 +527,20 @@ export const INDICATORS: Indicator[] = [
   { id: 'WHO.HEALTH_SPEND_GDP', label: 'Health Expenditure (% of GDP, WHO)', category: 'Health', format: 'percent', decimals: 1 },
 
   // ── ADDITIONAL LABOR (via World Bank / ILO) (11) ───────────
-  { id: 'SL.TLF.TOTL.IN', label: 'Total Labor Force', category: 'Labor', format: 'number' },
-  { id: 'SL.TLF.TOTL.FE.ZS', label: 'Female Labor Force Participation (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.EMP.TOTL.SP.ZS', label: 'Employment to Population Ratio (%)', category: 'Labor', format: 'percent', decimals: 1 },
-  { id: 'SL.EMP.VULN.ZS', label: 'Vulnerable Employment (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.EMP.SELF.ZS', label: 'Self-Employed (% of total)', category: 'Labor', format: 'percent', decimals: 1 },
-  { id: 'SL.EMP.WORK.ZS', label: 'Wage Workers (% of total)', category: 'Labor', format: 'percent', decimals: 1 },
-  { id: 'SL.AGR.EMPL.ZS', label: 'Employment in Agriculture (%)', category: 'Labor', format: 'percent', decimals: 1 },
-  { id: 'SL.IND.EMPL.ZS', label: 'Employment in Industry (%)', category: 'Labor', format: 'percent', decimals: 1 },
-  { id: 'SL.SRV.EMPL.ZS', label: 'Employment in Services (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.UEM.LTRM.ZS', label: 'Long-term Unemployment (%)', category: 'Labor', format: 'percent', decimals: 1 },
   { id: 'SL.UEM.NEET.ZS', label: 'NEET Youth (% not in education/employment)', category: 'Labor', format: 'percent', decimals: 1 },
 
   // ── AGRICULTURE (8) ────────────────────────────────────────
-  { id: 'AG.LND.ARBL.ZS', label: 'Arable Land (% of land area)', category: 'Agriculture', format: 'percent', decimals: 1 },
-  { id: 'AG.LND.AGRI.ZS', label: 'Agricultural Land (% of land area)', category: 'Agriculture', format: 'percent', decimals: 1 },
-  { id: 'AG.LND.FRST.ZS', label: 'Forest Area (% of land area)', category: 'Agriculture', format: 'percent', decimals: 1 },
   { id: 'AG.PRD.CREL.MT', label: 'Cereal Production (metric tons)', category: 'Agriculture', format: 'number' },
-  { id: 'AG.YLD.CREL.KG', label: 'Cereal Yield (kg/hectare)', category: 'Agriculture', format: 'number' },
-  { id: 'AG.PRD.FOOD.XD', label: 'Food Production Index', category: 'Agriculture', format: 'index', decimals: 1 },
-  { id: 'AG.PRD.LVSK.XD', label: 'Livestock Production Index', category: 'Agriculture', format: 'index', decimals: 1 },
-  { id: 'AG.CON.FERT.ZS', label: 'Fertilizer Consumption (kg/hectare)', category: 'Agriculture', format: 'number', decimals: 1 },
 
-  // ── INFRASTRUCTURE & TRANSPORT (5) ─────────────────────────
-  { id: 'IS.RRS.TOTL.KM', label: 'Rail Lines (total km)', category: 'Infrastructure', format: 'number' },
-  { id: 'IS.RRS.GOOD.MT.K6', label: 'Rail Freight (million ton-km)', category: 'Infrastructure', format: 'number' },
-  { id: 'IS.SHP.GOOD.TU', label: 'Container Port Traffic (TEU)', category: 'Infrastructure', format: 'number' },
-  { id: 'IS.AIR.PSGR', label: 'Air Passengers Carried', category: 'Infrastructure', format: 'number' },
-  { id: 'IS.AIR.GOOD.MT.K1', label: 'Air Freight (million ton-km)', category: 'Infrastructure', format: 'number' },
-
-  // ── ADDITIONAL TECHNOLOGY (2) ──────────────────────────────
-  { id: 'IT.NET.BBND.P2', label: 'Fixed Broadband Subscriptions (per 100)', category: 'Technology', format: 'number', decimals: 1 },
-  { id: 'IT.NET.SECR.P6', label: 'Secure Internet Servers (per million)', category: 'Technology', format: 'number', decimals: 1 },
-
-  // ── ADDITIONAL GENDER (4) ──────────────────────────────────
-  { id: 'SG.GEN.PARL.ZS', label: 'Women in Parliament (%)', category: 'Gender', format: 'percent', decimals: 1 },
+  // ── ADDITIONAL GENDER ──────────────────────────────────────
   { id: 'SG.LAW.NODC.HR', label: 'Nondiscrimination Laws (score)', category: 'Gender', format: 'number', decimals: 0 },
   { id: 'SE.ENR.PRIM.FM.ZS', label: 'Gender Parity in Primary Education', category: 'Gender', format: 'ratio', decimals: 2 },
-  { id: 'SE.ENR.SECO.FM.ZS', label: 'Gender Parity in Secondary Education', category: 'Gender', format: 'ratio', decimals: 2 },
 
   // ── ADDITIONAL EDUCATION (10) ──────────────────────────────
-  { id: 'SE.PRM.ENRR', label: 'Primary School Enrollment (gross %)', category: 'Education', format: 'percent', decimals: 1 },
-  { id: 'SE.SEC.ENRR', label: 'Secondary School Enrollment (gross %)', category: 'Education', format: 'percent', decimals: 1 },
-  { id: 'SE.PRM.CMPT.ZS', label: 'Primary Completion Rate (%)', category: 'Education', format: 'percent', decimals: 1 },
-  { id: 'SE.SEC.CMPT.LO.ZS', label: 'Lower Secondary Completion Rate (%)', category: 'Education', format: 'percent', decimals: 1 },
-  { id: 'SE.PRM.TCHR', label: 'Primary School Teachers', category: 'Education', format: 'number' },
-  { id: 'SE.SEC.TCHR', label: 'Secondary School Teachers', category: 'Education', format: 'number' },
   { id: 'SE.PRM.PRSL.ZS', label: 'Pupil-Teacher Ratio (Primary)', category: 'Education', format: 'ratio', decimals: 1 },
-  { id: 'SE.XPD.PRIM.ZS', label: 'Education Spending, Primary (% of govt)', category: 'Education', format: 'percent', decimals: 1 },
   { id: 'SE.XPD.SECO.ZS', label: 'Education Spending, Secondary (% of govt)', category: 'Education', format: 'percent', decimals: 1 },
   { id: 'SE.XPD.TERT.ZS', label: 'Education Spending, Tertiary (% of govt)', category: 'Education', format: 'percent', decimals: 1 },
 ];
@@ -656,7 +622,7 @@ export async function getAllIndicatorsForCountry(countryId: string): Promise<Rec
   return results;
 }
 
-export async function getIndicatorForAllCountries(indicatorId: string): Promise<{ country: string; countryId: string; value: number | null; year: string }[]> {
+export async function getIndicatorForAllCountries(indicatorId: string): Promise<{ country: string; countryId: string; iso2: string; value: number | null; year: string }[]> {
   const { data, error } = await supabase
     .from('sotw_indicators')
     .select('country_id, value, year, sotw_countries(name, iso2)')
@@ -727,7 +693,6 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
   'IMF.NGDPD': {
     label: 'GDP (Nominal)',
     sources: [
-      { id: 'IMF.NGDPD', org: 'IMF' },
       { id: 'NY.GDP.MKTP.CD', org: 'World Bank' },
       { id: 'UN.GDP', org: 'United Nations' },
     ],
@@ -735,7 +700,6 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
   'IMF.NGDPDPC': {
     label: 'GDP per Capita',
     sources: [
-      { id: 'IMF.NGDPDPC', org: 'IMF' },
       { id: 'NY.GDP.PCAP.CD', org: 'World Bank' },
       { id: 'UN.GDPPC', org: 'United Nations' },
     ],
@@ -743,7 +707,6 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
   'IMF.NGDP_RPCH': {
     label: 'Real GDP Growth',
     sources: [
-      { id: 'IMF.NGDP_RPCH', org: 'IMF' },
       { id: 'NY.GDP.MKTP.KD.ZG', org: 'World Bank' },
       { id: 'UN.GDPGR', org: 'United Nations' },
     ],
@@ -751,14 +714,12 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
   'IMF.PPPGDP': {
     label: 'GDP, PPP',
     sources: [
-      { id: 'IMF.PPPGDP', org: 'IMF' },
       { id: 'NY.GDP.MKTP.PP.CD', org: 'World Bank' },
     ],
   },
   'IMF.PPPPC': {
     label: 'GDP per Capita, PPP',
     sources: [
-      { id: 'IMF.PPPPC', org: 'IMF' },
       { id: 'NY.GDP.PCAP.PP.CD', org: 'World Bank' },
     ],
   },
@@ -766,14 +727,12 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
   'NY.GNP.MKTP.CD': {
     label: 'GNI (Current USD)',
     sources: [
-      { id: 'NY.GNP.MKTP.CD', org: 'World Bank' },
       { id: 'UN.GNI', org: 'United Nations' },
     ],
   },
   'NY.GNP.PCAP.CD': {
     label: 'GNI per Capita',
     sources: [
-      { id: 'NY.GNP.PCAP.CD', org: 'World Bank' },
       { id: 'UN.GNIPC', org: 'United Nations' },
     ],
   },
@@ -781,42 +740,36 @@ export const MULTI_SOURCE: Record<string, MultiSourceGroup> = {
   'IMF.PCPIPCH': {
     label: 'Inflation (CPI)',
     sources: [
-      { id: 'IMF.PCPIPCH', org: 'IMF' },
       { id: 'FP.CPI.TOTL.ZG', org: 'World Bank' },
     ],
   },
   'IMF.LUR': {
     label: 'Unemployment Rate',
     sources: [
-      { id: 'IMF.LUR', org: 'IMF' },
       { id: 'SL.UEM.TOTL.ZS', org: 'World Bank (ILO)' },
     ],
   },
   'IMF.GGXWDG_NGDP': {
     label: 'Government Debt (% of GDP)',
     sources: [
-      { id: 'IMF.GGXWDG_NGDP', org: 'IMF' },
       { id: 'GC.DOD.TOTL.GD.ZS', org: 'World Bank' },
     ],
   },
   'IMF.BCA_NGDPD': {
     label: 'Current Account Balance',
     sources: [
-      { id: 'IMF.BCA_NGDPD', org: 'IMF' },
       { id: 'BN.CAB.XOKA.GD.ZS', org: 'World Bank' },
     ],
   },
   'IMF.NI_GDP': {
     label: 'Total Investment (% of GDP)',
     sources: [
-      { id: 'IMF.NI_GDP', org: 'IMF' },
       { id: 'NE.GDI.TOTL.ZS', org: 'World Bank' },
     ],
   },
   'IMF.NGS_GDP': {
     label: 'Gross National Savings',
     sources: [
-      { id: 'IMF.NGS_GDP', org: 'IMF' },
       { id: 'NY.GNS.ICTR.ZS', org: 'World Bank' },
     ],
   },
@@ -838,12 +791,18 @@ export async function getMultiSourceData(groupKey: string): Promise<{
   const group = MULTI_SOURCE[groupKey];
   if (!group) return { sources: [], countries: [] };
 
+  // Include the primary indicator as the first source
+  const primaryOrg = groupKey.startsWith('IMF.') ? 'IMF'
+    : groupKey.startsWith('UN.') ? 'United Nations'
+    : 'World Bank';
+  const allSources = [{ id: groupKey, org: primaryOrg }, ...group.sources];
+
   const countries = await getCountries();
   const countryMap = new Map(countries.map(c => [c.id, { name: c.name, iso2: c.iso2 }]));
 
-  // Fetch data for all sources
+  // Fetch data for all sources (primary + alternatives)
   const allData: Record<string, Record<string, { value: number | null; year: string }>> = {};
-  for (const src of group.sources) {
+  for (const src of allSources) {
     const { data } = await supabase
       .from('sotw_indicators')
       .select('country_id, value, year')
@@ -860,8 +819,8 @@ export async function getMultiSourceData(groupKey: string): Promise<{
     }
   }
 
-  // Build country rows, sorted by first source value
-  const primaryId = group.sources[0].id;
+  // Build country rows, sorted by primary source value
+  const primaryId = allSources[0].id;
   const rows = Object.entries(allData)
     .filter(([cid]) => countryMap.has(cid))
     .map(([cid, values]) => ({
@@ -876,7 +835,7 @@ export async function getMultiSourceData(groupKey: string): Promise<{
       return (bVal as number) - (aVal as number);
     });
 
-  return { sources: group.sources, countries: rows };
+  return { sources: allSources, countries: rows };
 }
 
 // ============================================================

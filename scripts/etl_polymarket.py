@@ -91,7 +91,13 @@ def fetch_page(offset: int, order: str = "volume") -> list:
         return []
 
 
-def parse_market(m: dict) -> dict | None:
+def parse_market(m: dict, event_slug: str | None = None) -> dict | None:
+    """Parse a Polymarket market object.
+
+    event_slug: if this market came from an /events response, pass the
+                parent event's slug so the URL resolves correctly on
+                polymarket.com. Individual market slugs often 404.
+    """
     if not m or not m.get("question") or m.get("closed"):
         return None
 
@@ -118,6 +124,9 @@ def parse_market(m: dict) -> dict | None:
     if liquidity < 50:
         return None
 
+    # Use event slug for URL (market slugs often 404 on polymarket.com)
+    url_slug = event_slug or m.get("slug", "")
+
     return {
         "market_id": str(m.get("id", m.get("slug", ""))),
         "question": m["question"],
@@ -131,7 +140,7 @@ def parse_market(m: dict) -> dict | None:
         "end_date": m.get("endDate"),
         "category": category,
         "image": m.get("image", ""),
-        "url": f"https://polymarket.com/event/{m.get('slug', '')}",
+        "url": f"https://polymarket.com/event/{url_slug}",
     }
 
 
@@ -213,19 +222,36 @@ def main():
     print(f"  Fetched {liq_fetched} by liquidity → {len(all_markets)} relevant total")
 
     # ── 3. Fetch events (for nested markets) ─────────────
+    # Event slug is what polymarket.com/event/{slug} resolves to.
+    # Individual market slugs within a grouped event often 404.
     print("Fetching events...")
+    event_slug_map = {}  # market_id → event_slug
     try:
-        url = f"{GAMMA_API}/events?active=true&closed=false&limit=100&order=volume&ascending=false"
-        req = urllib.request.Request(url, headers={"Accept": "application/json"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            events = json.loads(resp.read())
-            for event in (events if isinstance(events, list) else []):
-                for m in (event.get("markets") or []):
-                    parsed = parse_market(m)
-                    if parsed:
-                        all_markets[parsed["market_id"]] = parsed
+        for evt_offset in range(0, 500, 100):
+            url = f"{GAMMA_API}/events?active=true&closed=false&limit=100&offset={evt_offset}&order=volume&ascending=false"
+            req = urllib.request.Request(url, headers={"Accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                events = json.loads(resp.read())
+                if not isinstance(events, list) or len(events) == 0:
+                    break
+                for event in events:
+                    evt_slug = event.get("slug", "")
+                    for m in (event.get("markets") or []):
+                        mid = str(m.get("id", m.get("slug", "")))
+                        event_slug_map[mid] = evt_slug
+                        parsed = parse_market(m, event_slug=evt_slug)
+                        if parsed:
+                            all_markets[parsed["market_id"]] = parsed
+                if len(events) < 100:
+                    break
     except Exception as e:
         print(f"  ⚠ Events fetch error: {e}")
+
+    # Fix URLs for markets that were fetched from /markets but
+    # also appear in events — replace with the correct event slug
+    for mid, evt_slug in event_slug_map.items():
+        if mid in all_markets and evt_slug:
+            all_markets[mid]["url"] = f"https://polymarket.com/event/{evt_slug}"
 
     print(f"  Total relevant markets: {len(all_markets)}")
 

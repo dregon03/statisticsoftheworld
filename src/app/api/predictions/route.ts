@@ -125,6 +125,22 @@ function categorizeLive(question: string): string | null {
 
 async function fetchLiveFallback(category: string | null, q: string | null | undefined, limit: number) {
   const allMarkets = new Map<string, PredictionMarket>();
+  const eventSlugMap = new Map<string, string>(); // market_id → event_slug
+
+  // Fetch events first to build slug map
+  const eventsData = await fetch(
+    `${GAMMA_API}/events?active=true&closed=false&limit=100&order=volume&ascending=false`
+  ).then(r => r.json()).catch(() => []);
+
+  if (Array.isArray(eventsData)) {
+    for (const event of eventsData) {
+      const evtSlug = event.slug || '';
+      for (const m of (event.markets || [])) {
+        const mid = String(m.id || m.slug);
+        eventSlugMap.set(mid, evtSlug);
+      }
+    }
+  }
 
   // Fetch 500 markets by volume
   const promises = [];
@@ -160,8 +176,12 @@ async function fetchLiveFallback(category: string | null, q: string | null | und
       const liquidity = parseFloat(m.liquidity) || 0;
       if (liquidity < 100) continue;
 
+      const mid = String(m.id || m.slug);
+      // Use event slug if available, otherwise fall back to market slug
+      const urlSlug = eventSlugMap.get(mid) || m.slug || '';
+
       const parsed: PredictionMarket = {
-        id: String(m.id || m.slug),
+        id: mid,
         question: m.question,
         slug: m.slug || '',
         probability: outcomePrices[0] || 0,
@@ -172,7 +192,7 @@ async function fetchLiveFallback(category: string | null, q: string | null | und
         liquidity,
         endDate: m.endDate || '',
         category: cat,
-        url: `https://polymarket.com/event/${m.slug}`,
+        url: `https://polymarket.com/event/${urlSlug}`,
       };
       allMarkets.set(parsed.id, parsed);
     }

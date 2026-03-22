@@ -124,6 +124,15 @@ def parse_market(m: dict, event_slug: str | None = None) -> dict | None:
     if liquidity < 50:
         return None
 
+    probability = outcome_prices[0] if outcome_prices else 0
+
+    # Filter out noise: sub-markets at extreme probabilities are uninteresting
+    # "11 Fed rate cuts" at 0.5% or "Will X happen" at 99.5% are not useful
+    # Exception: very high volume markets (>$1M) are interesting even at extremes
+    if volume < 1_000_000:
+        if probability < 0.03 or probability > 0.97:
+            return None
+
     # Use event slug for URL (market slugs often 404 on polymarket.com)
     url_slug = event_slug or m.get("slug", "")
 

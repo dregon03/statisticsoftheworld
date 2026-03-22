@@ -29,6 +29,8 @@ export async function GET(request: Request) {
       .from('sotw_predictions')
       .select('*')
       .eq('active', true)
+      .gt('probability', 0.03)
+      .lt('probability', 0.97)
       .or(`end_date.is.null,end_date.gt.${new Date().toISOString()}`)
       .order('volume', { ascending: false });
 
@@ -175,6 +177,16 @@ async function fetchLiveFallback(category: string | null, q: string | null | und
 
       const liquidity = parseFloat(m.liquidity) || 0;
       if (liquidity < 100) continue;
+
+      const probability = outcomePrices[0] || 0;
+      const volume = parseFloat(m.volume) || 0;
+
+      // Filter noise: extreme probabilities are uninteresting sub-markets
+      // (e.g., "11 Fed rate cuts" at 0.5%, or already-resolved at 99%)
+      // Exception: very high volume markets are interesting even at extremes
+      if (volume < 1_000_000) {
+        if (probability < 0.03 || probability > 0.97) continue;
+      }
 
       const mid = String(m.id || m.slug);
       // Use event slug if available, otherwise fall back to market slug

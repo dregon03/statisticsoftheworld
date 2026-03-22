@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { href: '/heatmap', label: 'Heatmap' },
   { href: '/calendar', label: 'Calendar' },
   { href: '/forecasts', label: 'Forecasts' },
+  { href: '/predictions', label: 'Predictions' },
   { href: '/ai', label: 'AI' },
 ];
 

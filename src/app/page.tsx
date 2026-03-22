@@ -163,6 +163,11 @@ export default async function Home() {
             <div className="text-[14px] font-semibold group-hover:text-[#0066cc] transition">Trade Explorer</div>
             <div className="text-[12px] text-[#999] mt-1">Top exports, imports, and trading partners from UN COMTRADE.</div>
           </Link>
+          <Link href="/predictions" className="border border-[#e8e8e8] rounded-xl p-4 hover:border-[#7c3aed] hover:bg-[#faf5ff] transition group">
+            <div className="text-[20px] mb-2">&#x1F52E;</div>
+            <div className="text-[14px] font-semibold group-hover:text-[#7c3aed] transition">Prediction Markets</div>
+            <div className="text-[12px] text-[#999] mt-1">Live Polymarket odds on elections, Fed rates, geopolitics. Real-money forecasts.</div>
+          </Link>
         </div>
       </section>
 

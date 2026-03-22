@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { INDICATORS, formatValue } from '@/lib/data';
 import Flag from '../Flag';
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
 
 interface Country {
   id: string;
@@ -55,19 +57,8 @@ export default function CountriesPage() {
   });
 
   return (
-    <main className="min-h-screen bg-white text-gray-900">
-      <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/icon-192.png" alt="SOTW" width={28} height={28} className="rounded" />
-            <span className="font-semibold">Statistics of the World</span>
-          </Link>
-          <nav className="flex gap-6 text-sm text-gray-500">
-            <Link href="/countries" className="text-gray-900 font-medium">Countries</Link>
-            <Link href="/rankings" className="hover:text-gray-900 transition">Indicators</Link>
-          </nav>
-        </div>
-      </header>
+    <main className="min-h-screen bg-white text-[#333]">
+      <Nav />
 
       <section className="max-w-6xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold mb-2">All Countries</h1>
@@ -200,12 +191,7 @@ export default function CountriesPage() {
         )}
       </section>
 
-      <footer className="border-t border-gray-100 mt-16">
-        <div className="max-w-6xl mx-auto px-6 py-8 text-sm text-gray-500">
-          <p>Data sourced from World Bank, WHO, UNESCO, ILO, FAO, and international organizations.</p>
-          <p className="mt-1">Statistics of the World 2026. {INDICATORS.length} indicators. {countries.length} countries.</p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

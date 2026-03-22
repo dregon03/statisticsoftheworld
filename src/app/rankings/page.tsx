@@ -5,6 +5,10 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { INDICATORS, CATEGORIES, formatValue, MULTI_SOURCE } from '@/lib/data';
 import Flag from '../Flag';
+import BarRankingChart from '@/components/charts/BarRankingChart';
+import ExportButton from '@/components/ExportButton';
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
 
 interface RankingEntry {
   country: string;
@@ -73,18 +77,7 @@ function IndicatorsContent() {
 
   return (
     <main className="min-h-screen">
-      <header className="border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/icon-192.png" alt="SOTW" width={28} height={28} className="rounded" />
-            <span className="font-semibold">Statistics of the World</span>
-          </Link>
-          <nav className="flex gap-6 text-sm text-gray-500">
-            <Link href="/countries" className="hover:text-gray-900 transition">Countries</Link>
-            <Link href="/rankings" className="text-gray-900 font-medium">Indicators</Link>
-          </nav>
-        </div>
-      </header>
+      <Nav />
 
       <section className="max-w-6xl mx-auto px-6 py-10">
         <h1 className="text-3xl font-bold mb-1">Indicators</h1>
@@ -131,8 +124,27 @@ function IndicatorsContent() {
           {/* Data table */}
           <div className="lg:col-span-3">
             <div className="mb-4">
-              <h2 className="text-xl font-bold">{selectedIndicator.label}</h2>
-              <div className="text-sm text-gray-400">{selectedIndicator.category} &middot; {hasMultiSource && multiData ? multiData.countries.length : data.length} countries</div>
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-bold">{selectedIndicator.label}</h2>
+                  <div className="text-sm text-gray-400">{selectedIndicator.category} &middot; {hasMultiSource && multiData ? multiData.countries.length : data.length} countries</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Link href={`/map?id=${encodeURIComponent(selectedIndicator.id)}`} className="text-[12px] text-[#0066cc] hover:underline">
+                    View on Map
+                  </Link>
+                  <ExportButton
+                    filename={`sotw-${selectedIndicator.id.replace(/\./g, '-')}`}
+                    getData={() => ({
+                      headers: ['Rank', 'Country', 'Country Code', 'Value', 'Year'],
+                      rows: (sortAsc ? [...data].reverse() : data).map((d, i) => [
+                        i + 1, d.country, d.countryId,
+                        d.value, d.year,
+                      ]),
+                    })}
+                  />
+                </div>
+              </div>
             </div>
 
             {loading ? (
@@ -189,7 +201,7 @@ function IndicatorsContent() {
                         <tr key={row.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
                           <td className="px-4 py-2 text-gray-300 text-sm">{rank}</td>
                           <td className="px-4 py-2">
-                            <Link href={`/country/${row.countryId}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition text-sm">
+                            <Link href={`/country/${row.countryId}/${encodeURIComponent(selectedIndicator.id)}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition text-sm">
                               <Flag iso2={row.iso2} size={24} />
                               {row.country}
                             </Link>
@@ -225,7 +237,20 @@ function IndicatorsContent() {
                 const sourceName = selectedIndicator.id.startsWith('IMF.') ? 'IMF'
                   : selectedIndicator.id.startsWith('UN.') ? 'United Nations'
                   : 'World Bank';
+                const top15 = sorted.slice(0, 15).filter(d => d.value != null) as { country: string; countryId: string; iso2: string; value: number; year: string }[];
                 return (
+              <>
+              {top15.length > 0 && (
+                <div className="mb-6 border border-gray-100 rounded-xl p-4">
+                  <BarRankingChart
+                    data={top15}
+                    format={selectedIndicator.format}
+                    decimals={selectedIndicator.decimals}
+                    maxItems={15}
+                    label={`Top 15 — ${selectedIndicator.label}`}
+                  />
+                </div>
+              )}
               <div className="border border-gray-100 rounded-xl overflow-hidden">
                 <table className="w-full">
                   <thead>
@@ -249,7 +274,7 @@ function IndicatorsContent() {
                         <tr key={entry.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
                           <td className="px-4 py-2 text-gray-300 text-sm">{rank}</td>
                           <td className="px-4 py-2">
-                            <Link href={`/country/${entry.countryId}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition text-sm">
+                            <Link href={`/country/${entry.countryId}/${encodeURIComponent(selectedIndicator.id)}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition text-sm">
                               <Flag iso2={entry.iso2} size={24} />
                               {entry.country}
                             </Link>
@@ -272,6 +297,7 @@ function IndicatorsContent() {
                   </tbody>
                 </table>
               </div>
+              </>
                 );
               })()
             )}
@@ -279,12 +305,7 @@ function IndicatorsContent() {
         </div>
       </section>
 
-      <footer className="border-t border-gray-100 mt-16">
-        <div className="max-w-6xl mx-auto px-6 py-6 text-xs text-gray-400">
-          <p>Data from IMF, World Bank, WHO, UNESCO, ILO, and FAO.</p>
-          <p className="mt-1">Statistics of the World 2026</p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

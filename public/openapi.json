@@ -1,0 +1,245 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Statistics of the World API",
+    "description": "Free REST API for global statistics. 500+ indicators across 218 countries from IMF, World Bank, WHO, FRED, and more. No authentication required for basic access.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Statistics of the World",
+      "url": "https://statisticsoftheworld.com/api-docs"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://statisticsoftheworld.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/api/v1/countries": {
+      "get": {
+        "summary": "List all countries",
+        "description": "Returns all 218 countries with metadata (name, region, income level, capital city, coordinates).",
+        "operationId": "listCountries",
+        "responses": {
+          "200": {
+            "description": "List of countries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Country" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/countries/{id}": {
+      "get": {
+        "summary": "Get country details",
+        "description": "Returns a single country with all latest indicator values.",
+        "operationId": "getCountry",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ISO 3166-1 alpha-3 country code (e.g., USA, CAN, GBR)",
+            "schema": { "type": "string", "example": "USA" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Country with indicators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "country": { "$ref": "#/components/schemas/Country" },
+                    "indicators": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/IndicatorValue" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/indicators": {
+      "get": {
+        "summary": "List all indicators",
+        "description": "Returns all 500+ indicators with categories and metadata.",
+        "operationId": "listIndicators",
+        "responses": {
+          "200": {
+            "description": "List of indicators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": { "type": "integer" },
+                    "categories": { "type": "array", "items": { "type": "string" } },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Indicator" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/indicators/{id}": {
+      "get": {
+        "summary": "Get indicator rankings",
+        "description": "Returns ranked list of all countries for a specific indicator.",
+        "operationId": "getIndicatorRankings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Indicator ID (e.g., IMF.NGDPD, SP.POP.TOTL)",
+            "schema": { "type": "string", "example": "IMF.NGDPD" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ranked countries for indicator"
+          }
+        }
+      }
+    },
+    "/api/v1/history/{indicator}/{country}": {
+      "get": {
+        "summary": "Get historical data",
+        "description": "Returns 20+ years of historical data for an indicator-country pair.",
+        "operationId": "getHistory",
+        "parameters": [
+          {
+            "name": "indicator",
+            "in": "path",
+            "required": true,
+            "description": "Indicator ID",
+            "schema": { "type": "string", "example": "IMF.NGDPD" }
+          },
+          {
+            "name": "country",
+            "in": "path",
+            "required": true,
+            "description": "ISO3 country code",
+            "schema": { "type": "string", "example": "CAN" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Historical time series",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "indicator": { "$ref": "#/components/schemas/Indicator" },
+                    "country": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "year": { "type": "integer" },
+                          "value": { "type": "number", "nullable": true }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rankings/{indicator}": {
+      "get": {
+        "summary": "Get indicator rankings",
+        "description": "Ranked list of countries for an indicator. Supports ?limit=N parameter.",
+        "operationId": "getRankings",
+        "parameters": [
+          {
+            "name": "indicator",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "example": "SP.POP.TOTL" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Limit number of results",
+            "schema": { "type": "integer", "default": 200 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ranked countries"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Country": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "ISO 3166-1 alpha-3 code", "example": "USA" },
+          "name": { "type": "string", "example": "United States" },
+          "region": { "type": "string", "example": "North America" },
+          "incomeLevel": { "type": "string", "example": "High income" },
+          "capitalCity": { "type": "string", "example": "Washington D.C." },
+          "iso2": { "type": "string", "example": "US" }
+        }
+      },
+      "Indicator": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "IMF.NGDPD" },
+          "label": { "type": "string", "example": "GDP (Current USD, Billions)" },
+          "category": { "type": "string", "example": "Economy" },
+          "format": { "type": "string", "enum": ["number", "percent", "currency", "years", "ratio", "index"] }
+        }
+      },
+      "IndicatorValue": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "value": { "type": "number", "nullable": true },
+          "year": { "type": "integer" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Optional API key for higher rate limits (10,000 req/day vs 100 req/day)"
+      }
+    }
+  }
+}

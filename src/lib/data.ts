@@ -356,6 +356,130 @@ export const INDICATORS: Indicator[] = [
   { id: 'SH.H2O.SMDW.ZS', label: 'Access to Safely Managed Drinking Water (%)', category: 'Urban Development', format: 'percent', decimals: 1 },
   { id: 'SH.STA.SMSS.ZS', label: 'Access to Safely Managed Sanitation (%)', category: 'Urban Development', format: 'percent', decimals: 1 },
 
+  // ── FINANCIAL MARKETS (FRED) ────────────────────────────────
+  { id: 'FRED.BOND10Y', label: '10-Year Government Bond Yield (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb', description: 'FRED / OECD' },
+  { id: 'FRED.CBRATE', label: 'Central Bank Policy Rate (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb', description: 'FRED / Central Banks' },
+  { id: 'FRED.DGS10', label: 'US 10-Year Treasury Yield (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb' },
+  { id: 'FRED.DGS2', label: 'US 2-Year Treasury Yield (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb' },
+  { id: 'FRED.T10Y2Y', label: 'US 10Y-2Y Treasury Spread (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb' },
+  { id: 'FRED.FEDFUNDS', label: 'US Federal Funds Rate (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb' },
+  { id: 'FRED.SP500', label: 'S&P 500 Index', category: 'Financial Markets', format: 'number', decimals: 0, source: 'wb' },
+  { id: 'FRED.DJIA', label: 'Dow Jones Industrial Average', category: 'Financial Markets', format: 'number', decimals: 0, source: 'wb' },
+  { id: 'FRED.NASDAQCOM', label: 'NASDAQ Composite', category: 'Financial Markets', format: 'number', decimals: 0, source: 'wb' },
+  { id: 'FRED.VIXCLS', label: 'VIX Volatility Index', category: 'Financial Markets', format: 'number', decimals: 1, source: 'wb' },
+  { id: 'FRED.DCOILWTICO', label: 'WTI Crude Oil Price (USD/barrel)', category: 'Financial Markets', format: 'currency', decimals: 2, source: 'wb' },
+  { id: 'FRED.GOLDAMGBD228NLBM', label: 'Gold Price (USD/troy oz)', category: 'Financial Markets', format: 'currency', decimals: 0, source: 'wb' },
+  { id: 'FRED.BAMLH0A0HYM2', label: 'US High Yield Corporate Bond Spread (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb' },
+  { id: 'FRED.MORTGAGE30US', label: 'US 30-Year Mortgage Rate (%)', category: 'Financial Markets', format: 'percent', decimals: 2, source: 'wb' },
+  { id: 'FRED.DTWEXBGS', label: 'US Dollar Index (Trade Weighted)', category: 'Financial Markets', format: 'index', decimals: 1, source: 'wb' },
+  { id: 'FX.USD', label: 'Exchange Rate (per USD)', category: 'Financial Markets', format: 'number', decimals: 2 },
+  { id: 'ECB.EXRATE', label: 'Exchange Rate (per EUR)', category: 'Financial Markets', format: 'number', decimals: 2 },
+
+  // ── US ECONOMY (FRED) ────────────────────────────────────────
+  { id: 'FRED.CPIAUCSL', label: 'US Consumer Price Index', category: 'US Economy', format: 'index', decimals: 1, source: 'wb' },
+  { id: 'FRED.UNRATE', label: 'US Unemployment Rate (%)', category: 'US Economy', format: 'percent', decimals: 1, source: 'wb' },
+  { id: 'FRED.PAYEMS', label: 'US Nonfarm Payrolls (Thousands)', category: 'US Economy', format: 'number', decimals: 0, source: 'wb' },
+  { id: 'FRED.M2SL', label: 'US M2 Money Supply (Billions USD)', category: 'US Economy', format: 'currency', decimals: 0, source: 'wb' },
+  { id: 'FRED.WALCL', label: 'US Fed Total Assets (Millions USD)', category: 'US Economy', format: 'currency', decimals: 0, source: 'wb' },
+  { id: 'FRED.GDP', label: 'US GDP Quarterly (Billions USD)', category: 'US Economy', format: 'currency', decimals: 1, source: 'wb' },
+  { id: 'FRED.GDPC1', label: 'US Real GDP (Billions Chained 2017 USD)', category: 'US Economy', format: 'currency', decimals: 1, source: 'wb' },
+  { id: 'FRED.HOUST', label: 'US Housing Starts (Thousands)', category: 'US Economy', format: 'number', decimals: 0, source: 'wb' },
+  { id: 'FRED.RETAILSALES', label: 'US Retail Sales (Millions USD)', category: 'US Economy', format: 'currency', decimals: 0, source: 'wb' },
+  { id: 'FRED.INDPRO', label: 'US Industrial Production Index', category: 'US Economy', format: 'index', decimals: 1, source: 'wb' },
+  { id: 'FRED.UMCSENT', label: 'US Consumer Sentiment (UMich)', category: 'US Economy', format: 'index', decimals: 1, source: 'wb' },
+
+  // ── STOCK MARKET INDICES (Yahoo Finance) ────────────────────
+  { id: 'YF.IDX.USA', label: 'S&P 500', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.GBR', label: 'FTSE 100', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.DEU', label: 'DAX', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.FRA', label: 'CAC 40', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.JPN', label: 'Nikkei 225', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.CHN', label: 'Shanghai Composite', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.HKG', label: 'Hang Seng', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.IND', label: 'BSE Sensex', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.KOR', label: 'KOSPI', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.CAN', label: 'S&P/TSX Composite', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.AUS', label: 'S&P/ASX 200', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.BRA', label: 'Bovespa', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.MEX', label: 'IPC Mexico', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.ARG', label: 'MERVAL', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.ESP', label: 'IBEX 35', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.ITA', label: 'FTSE MIB', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.CHE', label: 'Swiss Market Index', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.NLD', label: 'AEX (Amsterdam)', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.SWE', label: 'OMX Stockholm 30', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.DNK', label: 'OMX Copenhagen 25', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.FIN', label: 'OMX Helsinki 25', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.NOR', label: 'Oslo All Share', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.AUT', label: 'ATX (Vienna)', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.BEL', label: 'BEL 20', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.PRT', label: 'PSI 20', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.IRL', label: 'ISEQ Overall', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.POL', label: 'WIG 20', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.NZL', label: 'NZX 50', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.SGP', label: 'Straits Times Index', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.IDN', label: 'Jakarta Composite', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.THA', label: 'SET Index', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.MYS', label: 'KLCI', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.PHL', label: 'PSEi', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.ISR', label: 'TA-125', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.SAU', label: 'Tadawul All Share', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.ZAF', label: 'JSE All Share', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.EGY', label: 'EGX 30', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.CHL', label: 'S&P CLX IPSA', category: 'Stock Markets', format: 'number', decimals: 0 },
+
+  // ── COMMODITIES (Yahoo Finance + Alpha Vantage) ────────────
+  { id: 'YF.GOLD', label: 'Gold (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'YF.SILVER', label: 'Silver (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.CRUDE_OIL', label: 'WTI Crude Oil (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.BRENT', label: 'Brent Crude Oil (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.NATGAS', label: 'Natural Gas (USD/MMBtu)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.COPPER', label: 'Copper (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.PLATINUM', label: 'Platinum (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'YF.PALLADIUM', label: 'Palladium (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'YF.WHEAT', label: 'Wheat (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.CORN', label: 'Corn (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.SOYBEANS', label: 'Soybeans (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.COFFEE', label: 'Coffee (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.COTTON', label: 'Cotton (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.SUGAR', label: 'Sugar (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.COCOA', label: 'Cocoa (USD/tonne)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'AV.WTI', label: 'WTI Crude Oil — AV (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.BRENT', label: 'Brent Crude Oil — AV (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.NATGAS', label: 'Natural Gas — AV (USD/MMBtu)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.COPPER', label: 'Copper — AV (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.ALUMINUM', label: 'Aluminum (USD/tonne)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'AV.WHEAT', label: 'Wheat — AV (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.CORN', label: 'Corn — AV (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.COTTON', label: 'Cotton — AV (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.SUGAR', label: 'Sugar — AV (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'AV.COFFEE', label: 'Coffee — AV (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
+
+  // ── FOREX (Yahoo Finance) ─────────────────────────────────
+  { id: 'YF.FX.EUR', label: 'EUR/USD', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.GBP', label: 'GBP/USD', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.JPY', label: 'USD/JPY', category: 'Currencies', format: 'number', decimals: 2 },
+  { id: 'YF.FX.CAD', label: 'USD/CAD', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.AUD', label: 'AUD/USD', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.CHF', label: 'USD/CHF', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.CNY', label: 'USD/CNY', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.INR', label: 'USD/INR', category: 'Currencies', format: 'number', decimals: 2 },
+  { id: 'YF.FX.KRW', label: 'USD/KRW', category: 'Currencies', format: 'number', decimals: 2 },
+  { id: 'YF.FX.BRL', label: 'USD/BRL', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.MXN', label: 'USD/MXN', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.ZAR', label: 'USD/ZAR', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.SEK', label: 'USD/SEK', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.NOK', label: 'USD/NOK', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.SGD', label: 'USD/SGD', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.IDR', label: 'USD/IDR', category: 'Currencies', format: 'number', decimals: 0 },
+  { id: 'YF.FX.TRY', label: 'USD/TRY', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.PLN', label: 'USD/PLN', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.HKD', label: 'USD/HKD', category: 'Currencies', format: 'number', decimals: 4 },
+  { id: 'YF.FX.THB', label: 'USD/THB', category: 'Currencies', format: 'number', decimals: 4 },
+
+  // ── QUARTERLY GDP (OECD) ────────────────────────────────────
+  { id: 'OECD.QGDP', label: 'Quarterly GDP (Seasonally Adjusted)', category: 'Economy', format: 'currency', decimals: 0 },
+
   // ── PRIVATE SECTOR & ENTERPRISE (8) ────────────────────────
   { id: 'IC.FRM.CORR.ZS', label: 'Firms Expected to Pay Bribes (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
   { id: 'IC.FRM.FEMO.ZS', label: 'Firms with Female Top Manager (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
@@ -363,11 +487,102 @@ export const INDICATORS: Indicator[] = [
   { id: 'IC.FRM.TRNG.ZS', label: 'Firms Offering Training (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
   { id: 'IC.FRM.DURS', label: 'Average Firm Age (years)', category: 'Private Sector', format: 'years', decimals: 0 },
   { id: 'IC.FRM.CMPU.ZS', label: 'Firms Using Computers (%)', category: 'Private Sector', format: 'percent', decimals: 1 },
+
+  // ── WHO HEALTH INDICATORS (35) ─────────────────────────────
+  { id: 'WHO.LIFE_EXP', label: 'Life Expectancy at Birth (WHO)', category: 'Health', format: 'years', decimals: 1 },
+  { id: 'WHO.LIFE_EXP_60', label: 'Life Expectancy at Age 60 (WHO)', category: 'Health', format: 'years', decimals: 1 },
+  { id: 'WHO.HALE', label: 'Healthy Life Expectancy (HALE)', category: 'Health', format: 'years', decimals: 1 },
+  { id: 'WHO.IMR', label: 'Infant Mortality Rate (WHO)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.U5MR', label: 'Under-5 Mortality Rate (WHO)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.NEONATAL_MR', label: 'Neonatal Mortality Rate', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.MATERNAL_DEATHS', label: 'Maternal Deaths', category: 'Health', format: 'number' },
+  { id: 'WHO.TB_INCIDENCE', label: 'Tuberculosis Incidence (per 100K)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.TB_MORTALITY', label: 'Tuberculosis Mortality (per 100K)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.HIV_PREVALENCE', label: 'People Living with HIV', category: 'Health', format: 'number' },
+  { id: 'WHO.MALARIA_DEATHS', label: 'Malaria Deaths (estimated)', category: 'Health', format: 'number' },
+  { id: 'WHO.MALARIA_INCIDENCE', label: 'Malaria Incidence (per 1K at risk)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.OBESITY', label: 'Obesity Prevalence (BMI >= 30)', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.HYPERTENSION', label: 'Hypertension Prevalence', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.DIABETES', label: 'Diabetes Prevalence', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.DTP3', label: 'DTP3 Immunization Coverage (%)', category: 'Health', format: 'percent', decimals: 0 },
+  { id: 'WHO.MEASLES_VAX', label: 'Measles Immunization Coverage (%)', category: 'Health', format: 'percent', decimals: 0 },
+  { id: 'WHO.HBV3', label: 'Hepatitis B Immunization Coverage (%)', category: 'Health', format: 'percent', decimals: 0 },
+  { id: 'WHO.PHYSICIANS', label: 'Physicians (total)', category: 'Health', format: 'number' },
+  { id: 'WHO.NURSES', label: 'Nursing & Midwifery Personnel', category: 'Health', format: 'number' },
+  { id: 'WHO.DENTISTS', label: 'Dentists (total)', category: 'Health', format: 'number' },
+  { id: 'WHO.PHARMACISTS', label: 'Pharmacists (total)', category: 'Health', format: 'number' },
+  { id: 'WHO.TOBACCO', label: 'Tobacco Use Prevalence (%)', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.ALCOHOL', label: 'Alcohol Consumption (liters per capita)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.BASIC_WATER', label: 'Basic Drinking Water Services (%)', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.BASIC_SANITATION', label: 'Basic Sanitation Services (%)', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.PM25', label: 'PM2.5 Air Pollution (WHO)', category: 'Energy & Environment', format: 'number', decimals: 1 },
+  { id: 'WHO.AIR_DEATHS', label: 'Deaths from Air Pollution (per 100K)', category: 'Energy & Environment', format: 'number', decimals: 1 },
+  { id: 'WHO.CHILD_WASTING', label: 'Child Wasting (<5 years, %)', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.CHILD_STUNTING', label: 'Child Stunting (<5 years, %)', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.CHILD_UNDERWEIGHT', label: 'Child Underweight (<5 years, %)', category: 'Health', format: 'percent', decimals: 1 },
+  { id: 'WHO.SUICIDE_RATE', label: 'Suicide Rate (per 100K)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.UHC_INDEX', label: 'Universal Health Coverage Index', category: 'Health', format: 'index', decimals: 0 },
+  { id: 'WHO.ROAD_DEATHS', label: 'Road Traffic Death Rate (per 100K)', category: 'Health', format: 'number', decimals: 1 },
+  { id: 'WHO.HEALTH_SPEND_PC', label: 'Health Expenditure per Capita (WHO, USD)', category: 'Health', format: 'currency', decimals: 0 },
+  { id: 'WHO.HEALTH_SPEND_GDP', label: 'Health Expenditure (% of GDP, WHO)', category: 'Health', format: 'percent', decimals: 1 },
+
+  // ── ADDITIONAL LABOR (via World Bank / ILO) (11) ───────────
+  { id: 'SL.TLF.TOTL.IN', label: 'Total Labor Force', category: 'Labor', format: 'number' },
+  { id: 'SL.TLF.TOTL.FE.ZS', label: 'Female Labor Force Participation (%)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.EMP.TOTL.SP.ZS', label: 'Employment to Population Ratio (%)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.EMP.VULN.ZS', label: 'Vulnerable Employment (%)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.EMP.SELF.ZS', label: 'Self-Employed (% of total)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.EMP.WORK.ZS', label: 'Wage Workers (% of total)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.AGR.EMPL.ZS', label: 'Employment in Agriculture (%)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.IND.EMPL.ZS', label: 'Employment in Industry (%)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.SRV.EMPL.ZS', label: 'Employment in Services (%)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.UEM.LTRM.ZS', label: 'Long-term Unemployment (%)', category: 'Labor', format: 'percent', decimals: 1 },
+  { id: 'SL.UEM.NEET.ZS', label: 'NEET Youth (% not in education/employment)', category: 'Labor', format: 'percent', decimals: 1 },
+
+  // ── AGRICULTURE (8) ────────────────────────────────────────
+  { id: 'AG.LND.ARBL.ZS', label: 'Arable Land (% of land area)', category: 'Agriculture', format: 'percent', decimals: 1 },
+  { id: 'AG.LND.AGRI.ZS', label: 'Agricultural Land (% of land area)', category: 'Agriculture', format: 'percent', decimals: 1 },
+  { id: 'AG.LND.FRST.ZS', label: 'Forest Area (% of land area)', category: 'Agriculture', format: 'percent', decimals: 1 },
+  { id: 'AG.PRD.CREL.MT', label: 'Cereal Production (metric tons)', category: 'Agriculture', format: 'number' },
+  { id: 'AG.YLD.CREL.KG', label: 'Cereal Yield (kg/hectare)', category: 'Agriculture', format: 'number' },
+  { id: 'AG.PRD.FOOD.XD', label: 'Food Production Index', category: 'Agriculture', format: 'index', decimals: 1 },
+  { id: 'AG.PRD.LVSK.XD', label: 'Livestock Production Index', category: 'Agriculture', format: 'index', decimals: 1 },
+  { id: 'AG.CON.FERT.ZS', label: 'Fertilizer Consumption (kg/hectare)', category: 'Agriculture', format: 'number', decimals: 1 },
+
+  // ── INFRASTRUCTURE & TRANSPORT (5) ─────────────────────────
+  { id: 'IS.RRS.TOTL.KM', label: 'Rail Lines (total km)', category: 'Infrastructure', format: 'number' },
+  { id: 'IS.RRS.GOOD.MT.K6', label: 'Rail Freight (million ton-km)', category: 'Infrastructure', format: 'number' },
+  { id: 'IS.SHP.GOOD.TU', label: 'Container Port Traffic (TEU)', category: 'Infrastructure', format: 'number' },
+  { id: 'IS.AIR.PSGR', label: 'Air Passengers Carried', category: 'Infrastructure', format: 'number' },
+  { id: 'IS.AIR.GOOD.MT.K1', label: 'Air Freight (million ton-km)', category: 'Infrastructure', format: 'number' },
+
+  // ── ADDITIONAL TECHNOLOGY (2) ──────────────────────────────
+  { id: 'IT.NET.BBND.P2', label: 'Fixed Broadband Subscriptions (per 100)', category: 'Technology', format: 'number', decimals: 1 },
+  { id: 'IT.NET.SECR.P6', label: 'Secure Internet Servers (per million)', category: 'Technology', format: 'number', decimals: 1 },
+
+  // ── ADDITIONAL GENDER (4) ──────────────────────────────────
+  { id: 'SG.GEN.PARL.ZS', label: 'Women in Parliament (%)', category: 'Gender', format: 'percent', decimals: 1 },
+  { id: 'SG.LAW.NODC.HR', label: 'Nondiscrimination Laws (score)', category: 'Gender', format: 'number', decimals: 0 },
+  { id: 'SE.ENR.PRIM.FM.ZS', label: 'Gender Parity in Primary Education', category: 'Gender', format: 'ratio', decimals: 2 },
+  { id: 'SE.ENR.SECO.FM.ZS', label: 'Gender Parity in Secondary Education', category: 'Gender', format: 'ratio', decimals: 2 },
+
+  // ── ADDITIONAL EDUCATION (10) ──────────────────────────────
+  { id: 'SE.PRM.ENRR', label: 'Primary School Enrollment (gross %)', category: 'Education', format: 'percent', decimals: 1 },
+  { id: 'SE.SEC.ENRR', label: 'Secondary School Enrollment (gross %)', category: 'Education', format: 'percent', decimals: 1 },
+  { id: 'SE.PRM.CMPT.ZS', label: 'Primary Completion Rate (%)', category: 'Education', format: 'percent', decimals: 1 },
+  { id: 'SE.SEC.CMPT.LO.ZS', label: 'Lower Secondary Completion Rate (%)', category: 'Education', format: 'percent', decimals: 1 },
+  { id: 'SE.PRM.TCHR', label: 'Primary School Teachers', category: 'Education', format: 'number' },
+  { id: 'SE.SEC.TCHR', label: 'Secondary School Teachers', category: 'Education', format: 'number' },
+  { id: 'SE.PRM.PRSL.ZS', label: 'Pupil-Teacher Ratio (Primary)', category: 'Education', format: 'ratio', decimals: 1 },
+  { id: 'SE.XPD.PRIM.ZS', label: 'Education Spending, Primary (% of govt)', category: 'Education', format: 'percent', decimals: 1 },
+  { id: 'SE.XPD.SECO.ZS', label: 'Education Spending, Secondary (% of govt)', category: 'Education', format: 'percent', decimals: 1 },
+  { id: 'SE.XPD.TERT.ZS', label: 'Education Spending, Tertiary (% of govt)', category: 'Education', format: 'percent', decimals: 1 },
 ];
 
 // All unique categories in display order
 export const CATEGORIES = [
-  'Economy', 'Fiscal & Monetary', 'Trade', 'External Debt', 'Finance',
+  'Economy', 'Stock Markets', 'Financial Markets', 'Commodities', 'Currencies', 'US Economy',
+  'Fiscal & Monetary', 'Trade', 'External Debt', 'Finance',
   'Business Environment', 'Private Sector',
   'People', 'Labor', 'Education', 'Health',
   'Energy & Environment', 'Agriculture', 'Technology', 'Infrastructure',
@@ -694,5 +909,145 @@ export function formatValue(value: number | null, format: string, decimals: numb
       if (Math.abs(value) >= 1e3) return new Intl.NumberFormat('en-US', { maximumFractionDigits: decimals ?? 0 }).format(value);
       return value.toFixed(decimals ?? 0);
   }
+}
+
+// ============================================================
+// INDICATOR METADATA
+// ============================================================
+
+export interface IndicatorMeta {
+  id: string;
+  description: string | null;
+  methodology: string | null;
+  limitations: string | null;
+  sourceName: string | null;
+  sourceUrl: string | null;
+  unit: string | null;
+  frequency: string | null;
+  coverageStart: number | null;
+  coverageEnd: number | null;
+}
+
+export async function getIndicatorMeta(indicatorId: string): Promise<IndicatorMeta | null> {
+  const { data, error } = await supabase
+    .from('sotw_indicator_meta')
+    .select('*')
+    .eq('id', indicatorId)
+    .single();
+  if (error || !data) return null;
+  return {
+    id: data.id,
+    description: data.description,
+    methodology: data.methodology,
+    limitations: data.limitations,
+    sourceName: data.source_name,
+    sourceUrl: data.source_url,
+    unit: data.unit,
+    frequency: data.frequency,
+    coverageStart: data.coverage_start,
+    coverageEnd: data.coverage_end,
+  };
+}
+
+// ============================================================
+// HISTORICAL DATA
+// ============================================================
+
+export interface HistoricalDataPoint {
+  year: number;
+  value: number | null;
+}
+
+export async function getHistoricalData(
+  indicatorId: string,
+  countryId: string,
+): Promise<HistoricalDataPoint[]> {
+  const { data, error } = await supabase
+    .from('sotw_indicators_history')
+    .select('year, value')
+    .eq('id', indicatorId)
+    .eq('country_id', countryId)
+    .order('year', { ascending: true });
+  if (error || !data) return [];
+  return data.map(r => ({
+    year: r.year,
+    value: adjustValue(indicatorId, r.value),
+  }));
+}
+
+export async function getHistoricalDataMultiCountry(
+  indicatorId: string,
+  countryIds: string[],
+): Promise<Record<string, HistoricalDataPoint[]>> {
+  const { data, error } = await supabase
+    .from('sotw_indicators_history')
+    .select('country_id, year, value')
+    .eq('id', indicatorId)
+    .in('country_id', countryIds)
+    .order('year', { ascending: true });
+  if (error || !data) return {};
+  const result: Record<string, HistoricalDataPoint[]> = {};
+  for (const row of data) {
+    if (!result[row.country_id]) result[row.country_id] = [];
+    result[row.country_id].push({
+      year: row.year,
+      value: adjustValue(indicatorId, row.value),
+    });
+  }
+  return result;
+}
+
+export async function getYoYChange(
+  indicatorId: string,
+  countryId: string,
+): Promise<{ currentValue: number | null; previousValue: number | null; change: number | null; changePercent: number | null; currentYear: number; previousYear: number } | null> {
+  const { data, error } = await supabase
+    .from('sotw_indicators_history')
+    .select('year, value')
+    .eq('id', indicatorId)
+    .eq('country_id', countryId)
+    .not('value', 'is', null)
+    .order('year', { ascending: false })
+    .limit(2);
+  if (error || !data || data.length < 2) return null;
+  const current = adjustValue(indicatorId, data[0].value);
+  const previous = adjustValue(indicatorId, data[1].value);
+  return {
+    currentValue: current,
+    previousValue: previous,
+    change: current !== null && previous !== null ? current - previous : null,
+    changePercent: current !== null && previous !== null && previous !== 0
+      ? ((current - previous) / Math.abs(previous)) * 100
+      : null,
+    currentYear: data[0].year,
+    previousYear: data[1].year,
+  };
+}
+
+export async function getHistoricalStats(
+  indicatorId: string,
+  countryId: string,
+): Promise<{ min: number; max: number; avg: number; minYear: number; maxYear: number; dataPoints: number; cagr: number | null } | null> {
+  const history = await getHistoricalData(indicatorId, countryId);
+  const valid = history.filter(d => d.value !== null) as { year: number; value: number }[];
+  if (valid.length < 2) return null;
+
+  const values = valid.map(d => d.value);
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  const minYear = valid.find(d => d.value === minVal)!.year;
+  const maxYear = valid.find(d => d.value === maxVal)!.year;
+
+  // CAGR: Compound Annual Growth Rate
+  const first = valid[0];
+  const last = valid[valid.length - 1];
+  const years = last.year - first.year;
+  let cagr: number | null = null;
+  if (years > 0 && first.value > 0 && last.value > 0) {
+    cagr = (Math.pow(last.value / first.value, 1 / years) - 1) * 100;
+  }
+
+  return { min: minVal, max: maxVal, avg, minYear, maxYear, dataPoints: valid.length, cagr };
 }
 

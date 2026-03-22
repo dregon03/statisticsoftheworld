@@ -1,85 +1,189 @@
-name: Monthly ETL Pipeline
+name: ETL Data Pipeline
 
+# ============================================================
+# SCHEDULE:
+#   Every 15 min (market hours) — Live quotes (separate workflow: live-quotes.yml)
+#   Daily 7AM UTC  — Yahoo Finance history + FRED/ECB (market data)
+#   Sunday 8AM UTC — IMF + World Bank + UN + WHO + History (macro data)
+#   1st of month   — Metadata + Methodology refresh
+# ============================================================
 on:
   schedule:
-    # 1st of every month at 6:00 AM UTC
-    - cron: '0 6 1 * *'
+    - cron: '0 7 * * *'     # Daily at 7 AM UTC
+    - cron: '0 8 * * 0'     # Sundays at 8 AM UTC
+    - cron: '0 9 1 * *'     # 1st of month at 9 AM UTC
   workflow_dispatch:
-    # Allow manual trigger from GitHub UI
     inputs:
-      source:
-        description: 'Data source to fetch'
-        required: false
+      pipeline:
+        description: 'Which pipeline to run'
+        required: true
         default: 'all'
         type: choice
         options:
           - all
-          - imf
-          - wb
-          - un
+          - yfinance
+          - financial
+          - macro
+          - intl_orgs
+          - history
+          - metadata
+          - audit
+
+env:
+  SUPABASE_DB_HOST: db.seyrycaldytfjvvkqopu.supabase.co
+  SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+  FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+  ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
 
 jobs:
-  etl:
-    name: Fetch & Update Data
+  # ════════════════════════════════════════════════════════════
+  # DAILY: Yahoo Finance — stock indices, commodities, FX
+  # No API key. ~30s runtime.
+  # ════════════════════════════════════════════════════════════
+  yfinance:
+    name: "Daily: Yahoo Finance"
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-
+    timeout-minutes: 10
+    if: >
+      github.event.schedule == '0 7 * * *' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'yfinance'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: pip install psycopg2-binary yfinance
+      - name: Fetch stock indices, commodities, FX (annual history)
+        run: python scripts/etl_yfinance.py
+      - name: Fetch live/delayed quotes
+        run: python scripts/fetch_live_quotes.py
 
-      - name: Install dependencies
-        run: pip install psycopg2-binary openpyxl
+  # ════════════════════════════════════════════════════════════
+  # DAILY: Financial APIs — FRED, ECB, ExchangeRate
+  # FRED: 120 req/min (free). ECB: unlimited. ExchangeRate: 1500/month.
+  # ════════════════════════════════════════════════════════════
+  financial:
+    name: "Daily: FRED + ECB + FX"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >
+      github.event.schedule == '0 7 * * *' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'financial'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: FRED (bonds, rates, US economy)
+        run: python scripts/etl_financial.py --source fred
+      - name: ECB (exchange rates)
+        run: python scripts/etl_financial.py --source ecb
+      - name: ExchangeRate-API (FX rates)
+        run: python scripts/etl_financial.py --source exchangerate
 
-      - name: Run ETL to staging
-        env:
-          SUPABASE_DB_HOST: db.seyrycaldytfjvvkqopu.supabase.co
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+  # ════════════════════════════════════════════════════════════
+  # WEEKLY (Sunday): Macro — IMF, World Bank, UN
+  # IMF/WB update quarterly-ish. Weekly catches updates promptly.
+  # ════════════════════════════════════════════════════════════
+  macro:
+    name: "Weekly: IMF + World Bank + UN"
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: >
+      github.event.schedule == '0 8 * * 0' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'macro'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary openpyxl
+      - name: IMF World Economic Outlook
+        run: python scripts/etl.py --source imf --table main
+      - name: World Bank WDI
+        run: python scripts/etl.py --source wb --table main
+      - name: United Nations
+        run: python scripts/etl.py --source un --table main
+      - name: WHO Global Health Observatory
+        run: python scripts/etl_intl_orgs.py --source who
+      - name: World Bank extra indicators (labor, agriculture, education, infrastructure)
+        run: python scripts/etl_intl_orgs.py --source wb_extra
+
+  # ════════════════════════════════════════════════════════════
+  # WEEKLY (Sunday): Historical backfill — 20+ years
+  # Keeps sotw_indicators_history current for charts
+  # ════════════════════════════════════════════════════════════
+  history:
+    name: "Weekly: Historical Backfill"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    if: >
+      github.event.schedule == '0 8 * * 0' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'history'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: IMF historical data
+        run: python scripts/etl_history.py --source imf
+      - name: World Bank historical data (7 batches)
         run: |
-          python scripts/etl.py \
-            --source ${{ github.event.inputs.source || 'all' }} \
-            --table staging
+          for batch in 0 1 2 3 4 5 6; do
+            echo "══════ WB Batch $batch ══════"
+            python scripts/etl_history.py --source wb --batch $batch
+            sleep 5
+          done
 
-      - name: Verify staging data
-        env:
-          SUPABASE_DB_HOST: db.seyrycaldytfjvvkqopu.supabase.co
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: |
-          python -c "
-          import psycopg2, os
-          conn = psycopg2.connect(
-            host=os.environ['SUPABASE_DB_HOST'], port=5432,
-            dbname='postgres', user='postgres',
-            password=os.environ['SUPABASE_DB_PASSWORD'], sslmode='require'
-          )
-          cur = conn.cursor()
-          cur.execute('SELECT COUNT(*) FROM sotw_indicators_staging')
-          staging = cur.fetchone()[0]
-          cur.execute('SELECT COUNT(*) FROM sotw_indicators')
-          main = cur.fetchone()[0]
-          print(f'Staging: {staging} rows, Main: {main} rows')
-          # Safety: staging must have at least 50% of main
-          assert staging >= main * 0.5, f'Staging too small ({staging} vs {main}). Aborting.'
-          print('Verification passed.')
-          conn.close()
-          "
+  # ════════════════════════════════════════════════════════════
+  # MONTHLY (1st): Metadata refresh
+  # Pull indicator descriptions from WB API + update methodology
+  # ════════════════════════════════════════════════════════════
+  metadata:
+    name: "Monthly: Metadata & Methodology"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >
+      github.event.schedule == '0 9 1 * *' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'metadata'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Seed indicator metadata from APIs
+        run: python scripts/seed_metadata.py
+      - name: Update rich methodology content
+        run: python scripts/seed_methodology.py
 
-      - name: Promote staging to main
-        env:
-          SUPABASE_DB_HOST: db.seyrycaldytfjvvkqopu.supabase.co
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: python scripts/etl.py --promote
-
-      - name: Trigger Vercel redeploy
-        if: success()
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_placeholder" \
-            -H "Authorization: Bearer $VERCEL_TOKEN" \
-            -H "Content-Type: application/json" || echo "Vercel redeploy skipped (no token)"
+  # ════════════════════════════════════════════════════════════
+  # DAILY: Data quality audit (after daily ETL jobs)
+  # 41 checks across all data sources
+  # ════════════════════════════════════════════════════════════
+  audit:
+    name: "Audit: Data Quality"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [yfinance, financial]
+    if: >
+      always() && (
+        github.event.schedule == '0 7 * * *' ||
+        github.event.inputs.pipeline == 'all' ||
+        github.event.inputs.pipeline == 'audit'
+      )
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Run 41-check data audit
+        run: python scripts/audit_data.py

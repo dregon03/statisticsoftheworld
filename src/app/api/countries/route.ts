@@ -1,6 +1,16 @@
-import { getCountries, getIndicatorForAllCountries } from '@/lib/data';
+import { getCountries, getIndicatorForAllCountries, getAllIndicatorsForCountry } from '@/lib/data';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+
+  // Single country mode: return all indicators for one country
+  if (id) {
+    const indicators = await getAllIndicatorsForCountry(id);
+    return Response.json({ indicators });
+  }
+
+  // List mode: return all countries with summary stats
   const [countries, gdpData, popData, gdpCapData, lifeExpData] = await Promise.all([
     getCountries(),
     getIndicatorForAllCountries('IMF.NGDPD'),

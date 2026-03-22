@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     default: 'Statistics of the World — Every Country, Every Indicator',
     template: '%s | Statistics of the World',
   },
-  description: '320+ indicators across 22 categories for 217 countries. GDP, population, health, education, environment — authoritative global data from IMF, World Bank, WHO, UNESCO, and ILO.',
+  description: '395+ indicators across 27 categories for 218 countries. GDP, population, stock markets, commodities, and more — free data from IMF, World Bank, FRED, Yahoo Finance, ECB, and Alpha Vantage.',
   metadataBase: new URL('https://statisticsoftheworld.com'),
   openGraph: {
     type: 'website',
@@ -45,8 +45,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-screen">{children}</body>
+      <body className="min-h-screen" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

@@ -11,7 +11,7 @@ import tempfile
 DB = dict(
     host="db.seyrycaldytfjvvkqopu.supabase.co",
     port=5432, dbname="postgres", user="postgres",
-    password="F4k4klzaLrAJCzev", sslmode="require",
+    password="", sslmode="require",
 )
 
 # UN file IDs -> our indicator IDs and which row to extract

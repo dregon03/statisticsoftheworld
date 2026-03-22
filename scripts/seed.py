@@ -11,7 +11,7 @@ import urllib.request
 DB = dict(
     host="db.seyrycaldytfjvvkqopu.supabase.co",
     port=5432, dbname="postgres", user="postgres",
-    password="F4k4klzaLrAJCzev", sslmode="require",
+    password="", sslmode="require",
     options="-c statement_timeout=0",
 )
 

@@ -1,10 +1,20 @@
 import Link from 'next/link';
-import { getCountry, getAllIndicatorsForCountry, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
+import { getCountry, getAllIndicatorsForCountry, getHistoricalData, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Flag from '../../Flag';
+import CountryCharts from './CountryCharts';
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
 
 type Props = { params: Promise<{ id: string }> };
+
+const KEY_STATS = [
+  { id: 'IMF.NGDPD', label: 'GDP' },
+  { id: 'SP.POP.TOTL', label: 'Population' },
+  { id: 'IMF.NGDPDPC', label: 'GDP per Capita' },
+  { id: 'SP.DYN.LE00.IN', label: 'Life Expectancy' },
+];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
@@ -37,6 +47,14 @@ export default async function CountryPage({ params }: Props) {
 
   const indicators = await getAllIndicatorsForCountry(id);
 
+  // Fetch historical data for key stats (for charts)
+  const historyPromises = KEY_STATS.map(stat => getHistoricalData(stat.id, id));
+  const histories = await Promise.all(historyPromises);
+  const keyStatsHistory: Record<string, { year: number; value: number | null }[]> = {};
+  KEY_STATS.forEach((stat, i) => {
+    keyStatsHistory[stat.id] = histories[i];
+  });
+
   const gdp = indicators['IMF.NGDPD'];
   const pop = indicators['SP.POP.TOTL'];
   const jsonLd = {
@@ -57,18 +75,7 @@ export default async function CountryPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/icon-192.png" alt="SOTW" width={28} height={28} className="rounded" />
-            <span className="font-semibold">Statistics of the World</span>
-          </Link>
-          <nav className="flex gap-6 text-sm text-gray-500">
-            <Link href="/countries" className="hover:text-gray-900 transition">Countries</Link>
-            <Link href="/rankings" className="hover:text-gray-900 transition">Indicators</Link>
-          </nav>
-        </div>
-      </header>
+      <Nav />
 
       <section className="max-w-6xl mx-auto px-6 py-10">
         <div className="mb-4 text-sm text-gray-400">
@@ -93,30 +100,36 @@ export default async function CountryPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Key stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {[
-            { id: 'IMF.NGDPD', label: 'GDP' },
-            { id: 'SP.POP.TOTL', label: 'Population' },
-            { id: 'IMF.NGDPDPC', label: 'GDP per Capita' },
-            { id: 'SP.DYN.LE00.IN', label: 'Life Expectancy' },
-          ].map(stat => {
+        {/* Key stats cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          {KEY_STATS.map(stat => {
             const ind = INDICATORS.find(i => i.id === stat.id);
             const d = indicators[stat.id];
             return (
-              <div key={stat.id} className="border border-gray-100 rounded-xl p-5">
+              <Link
+                key={stat.id}
+                href={`/country/${id}/${encodeURIComponent(stat.id)}`}
+                className="border border-gray-100 rounded-xl p-5 hover:border-gray-300 transition group"
+              >
                 <div className="text-sm text-gray-400 mb-1">{stat.label}</div>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-blue-600 group-hover:text-blue-700 transition">
                   {d && ind ? formatValue(d.value, ind.format, ind.decimals) : 'N/A'}
                 </div>
                 {d && <div className="text-xs text-gray-400 mt-1">{d.year}</div>}
-              </div>
+              </Link>
             );
           })}
         </div>
 
+        {/* Key stats charts */}
+        <CountryCharts
+          keyStats={KEY_STATS}
+          indicators={indicators}
+          history={keyStatsHistory}
+        />
+
         {/* All indicators by category */}
-        <div className="space-y-8">
+        <div className="space-y-8 mt-12">
           {CATEGORIES.map(category => {
             const categoryIndicators = INDICATORS.filter(ind => ind.category === category);
             const hasData = categoryIndicators.some(ind => indicators[ind.id]);
@@ -140,7 +153,14 @@ export default async function CountryPage({ params }: Props) {
                         if (!d) return null;
                         return (
                           <tr key={ind.id} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                            <td className="px-5 py-2.5 text-sm">{ind.label}</td>
+                            <td className="px-5 py-2.5 text-sm">
+                              <Link
+                                href={`/country/${id}/${encodeURIComponent(ind.id)}`}
+                                className="text-gray-900 hover:text-blue-600 transition"
+                              >
+                                {ind.label}
+                              </Link>
+                            </td>
                             <td className="px-5 py-2.5 text-right font-mono text-sm">{formatValue(d.value, ind.format, ind.decimals)}</td>
                             <td className="px-5 py-2.5 text-right text-gray-400 text-xs">{d.year}</td>
                           </tr>
@@ -155,12 +175,7 @@ export default async function CountryPage({ params }: Props) {
         </div>
       </section>
 
-      <footer className="border-t border-gray-100 mt-16">
-        <div className="max-w-6xl mx-auto px-6 py-6 text-xs text-gray-400">
-          <p>Data from IMF, World Bank, WHO, UNESCO, ILO, and FAO.</p>
-          <p className="mt-1">Statistics of the World 2026</p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

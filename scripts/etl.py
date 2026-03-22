@@ -26,7 +26,7 @@ import urllib.request
 # ============================================================
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
-DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "F4k4klzaLrAJCzev")
+DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 
 DB = dict(
     host=DB_HOST, port=5432, dbname="postgres", user="postgres",

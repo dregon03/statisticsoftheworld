@@ -31,6 +31,7 @@ DB_NAME = "postgres"
 DB_USER = "postgres"
 DB_PORT = 5432
 
+
 # ── Category classification ─────────────────────────────
 CATEGORY_KEYWORDS = {
     "Central Banks & Rates": ["fed ", "federal reserve", "interest rate", "rate cut", "rate hike",

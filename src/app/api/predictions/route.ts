@@ -17,6 +17,22 @@ interface PredictionMarket {
   url: string;
 }
 
+/**
+ * Deduplicate markets by event URL — keep only the highest-probability
+ * market per event. E.g., "Democratic Presidential Nominee 2028" has 20+
+ * sub-markets; we show only the leading candidate.
+ */
+function deduplicateByEvent(markets: PredictionMarket[]): PredictionMarket[] {
+  const byUrl = new Map<string, PredictionMarket>();
+  for (const m of markets) {
+    const existing = byUrl.get(m.url);
+    if (!existing || m.probability > existing.probability) {
+      byUrl.set(m.url, m);
+    }
+  }
+  return Array.from(byUrl.values()).sort((a, b) => b.volume - a.volume);
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get('category');
@@ -63,8 +79,11 @@ export async function GET(request: Request) {
         url: m.url || `https://polymarket.com/event/${m.slug}`,
       }));
 
+      // Deduplicate: keep only the highest-probability market per event (same URL)
+      const deduped = deduplicateByEvent(markets);
+
       const byCategory: Record<string, PredictionMarket[]> = {};
-      for (const m of markets) {
+      for (const m of deduped) {
         if (!byCategory[m.category]) byCategory[m.category] = [];
         byCategory[m.category].push(m);
       }
@@ -76,13 +95,13 @@ export async function GET(request: Request) {
         .eq('active', true);
 
       return Response.json({
-        count: markets.length,
-        total: totalCount || markets.length,
+        count: deduped.length,
+        total: totalCount || deduped.length,
         updatedAt: dbMarkets[0]?.updated_at || null,
         source: 'Polymarket (polymarket.com)',
         dataSource: 'supabase',
         categories: Object.keys(byCategory),
-        markets,
+        markets: deduped,
         byCategory,
       }, {
         headers: {
@@ -210,7 +229,7 @@ async function fetchLiveFallback(category: string | null, q: string | null | und
     }
   }
 
-  let markets = Array.from(allMarkets.values()).sort((a, b) => b.volume - a.volume);
+  let markets = deduplicateByEvent(Array.from(allMarkets.values()));
   if (category) markets = markets.filter(m => m.category === category);
   if (q) markets = markets.filter(m => m.question.toLowerCase().includes(q));
   const limited = markets.slice(0, limit);

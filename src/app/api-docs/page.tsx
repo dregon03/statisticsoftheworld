@@ -56,20 +56,53 @@ export default function ApiDocsPage() {
 
         {/* Rate limits */}
         <div className="border border-[#e8e8e8] rounded-lg p-5 mb-8 bg-[#f8f9fa]">
-          <h2 className="text-[15px] font-semibold mb-2">Rate Limits</h2>
-          <table className="text-[13px]">
-            <tbody>
-              <tr>
-                <td className="pr-8 py-1 text-[#666]">Free (no key)</td>
-                <td className="py-1">100 requests/day</td>
+          <h2 className="text-[15px] font-semibold mb-2">Rate Limits & Pricing</h2>
+          <table className="text-[13px] w-full">
+            <thead>
+              <tr className="text-[11px] text-[#999] uppercase">
+                <th className="text-left pb-2">Tier</th>
+                <th className="text-left pb-2">Rate Limit</th>
+                <th className="text-left pb-2">Price</th>
+                <th className="text-left pb-2">Auth</th>
               </tr>
-              <tr>
-                <td className="pr-8 py-1 text-[#666]">Authenticated</td>
-                <td className="py-1">10,000 requests/day — add <code className="bg-white px-1 rounded">X-API-Key</code> header</td>
+            </thead>
+            <tbody>
+              <tr className="border-t border-[#e8e8e8]">
+                <td className="py-2 text-[#666]">Anonymous</td>
+                <td className="py-2">100 req/day</td>
+                <td className="py-2">Free</td>
+                <td className="py-2 text-[#999]">None (IP-based)</td>
+              </tr>
+              <tr className="border-t border-[#e8e8e8]">
+                <td className="py-2 font-medium text-[#0066cc]">Developer</td>
+                <td className="py-2">1,000 req/day</td>
+                <td className="py-2">Free</td>
+                <td className="py-2"><code className="bg-white px-1 rounded text-[12px]">X-API-Key</code></td>
+              </tr>
+              <tr className="border-t border-[#e8e8e8]">
+                <td className="py-2 text-[#666]">Pro</td>
+                <td className="py-2">50,000 req/day</td>
+                <td className="py-2">$49/mo</td>
+                <td className="py-2"><code className="bg-white px-1 rounded text-[12px]">X-API-Key</code></td>
+              </tr>
+              <tr className="border-t border-[#e8e8e8]">
+                <td className="py-2 text-[#666]">Business</td>
+                <td className="py-2">500,000 req/day</td>
+                <td className="py-2">$500/mo</td>
+                <td className="py-2"><code className="bg-white px-1 rounded text-[12px]">X-API-Key</code></td>
+              </tr>
+              <tr className="border-t border-[#e8e8e8]">
+                <td className="py-2 text-[#666]">Enterprise</td>
+                <td className="py-2">Unlimited</td>
+                <td className="py-2">Custom</td>
+                <td className="py-2"><code className="bg-white px-1 rounded text-[12px]">X-API-Key</code></td>
               </tr>
             </tbody>
           </table>
-          <p className="text-[12px] text-[#999] mt-2">Rate limit headers included in every response: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset</p>
+          <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#e8e8e8]">
+            <p className="text-[12px] text-[#999]">Rate limit headers: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-RateLimit-Tier</p>
+            <a href="/pricing" className="text-[12px] text-[#0066cc] hover:underline">Get API Key &rarr;</a>
+          </div>
         </div>
 
         {/* Endpoints */}

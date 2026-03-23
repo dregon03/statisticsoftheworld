@@ -40,6 +40,7 @@ on:
           - trade
           - api-keys
           - monitor
+          - newsletter
           - sitemap-ping
           - audit
 
@@ -323,6 +324,27 @@ jobs:
           for commodity in crude-oil gold natural-gas silver copper wheat corn; do
             curl -sf "https://statisticsoftheworld.com/api/futures-curve?commodity=$commodity" -o /dev/null && echo "futures/$commodity ✓" || echo "futures/$commodity ✗"
           done
+
+  # ════════════════════════════════════════════════════════════
+  # WEEKLY (Monday): Newsletter digest to subscribers
+  # Sends via Gmail SMTP (statisticsoftheworldcontact@gmail.com)
+  # ════════════════════════════════════════════════════════════
+  newsletter:
+    name: "Weekly: Send Newsletter Digest"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >
+      github.event.schedule == '0 6 * * 1' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'newsletter'
+    steps:
+      - name: Send weekly digest to subscribers
+        run: |
+          RESPONSE=$(curl -sf -X POST "https://statisticsoftheworld.com/api/newsletter?token=${{ secrets.NEWSLETTER_SECRET }}" \
+            -H "Content-Type: application/json" 2>/dev/null)
+          echo "Newsletter response: $RESPONSE"
+          SENT=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('sent',0))" 2>/dev/null || echo "0")
+          echo "Sent to $SENT subscribers"
 
   # ════════════════════════════════════════════════════════════
   # WEEKLY (Monday): Sitemap ping + DB health check

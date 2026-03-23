@@ -32,6 +32,10 @@ on:
           - financial
           - macro
           - intl_orgs
+          - macro-imf
+          - macro-wb
+          - macro-un
+          - macro-who
           - history
           - metadata
           - calendar
@@ -71,7 +75,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: Reset daily request counters
         run: python scripts/reset_api_keys.py
 
@@ -93,7 +96,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary yfinance
-          fi
       - name: Fetch stock indices, commodities, FX (annual history)
         run: python scripts/etl_yfinance.py
       - name: Fetch live/delayed quotes
@@ -117,7 +119,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: FRED (bonds, rates, US economy)
         run: python scripts/etl_financial.py --source fred
       - name: ECB (exchange rates)
@@ -126,33 +127,94 @@ jobs:
         run: python scripts/etl_financial.py --source exchangerate
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): Macro — IMF, World Bank, UN
+  # WEEKLY (Sunday): IMF World Economic Outlook
   # ════════════════════════════════════════════════════════════
-  macro:
-    name: "Weekly: IMF + World Bank + UN"
+  macro-imf:
+    name: "Weekly: IMF WEO"
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
     if: >
       github.event.schedule == '0 8 * * 0' ||
       github.event.inputs.pipeline == 'all' ||
-      github.event.inputs.pipeline == 'macro'
+      github.event.inputs.pipeline == 'macro' ||
+      github.event.inputs.pipeline == 'intl_orgs' ||
+      github.event.inputs.pipeline == 'macro-imf'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary openpyxl
-          fi
       - name: IMF World Economic Outlook
         run: python scripts/etl.py --source imf --table main
+
+  # ════════════════════════════════════════════════════════════
+  # WEEKLY (Sunday): World Bank WDI
+  # ════════════════════════════════════════════════════════════
+  macro-wb:
+    name: "Weekly: World Bank WDI"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: >
+      github.event.schedule == '0 8 * * 0' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'macro' ||
+      github.event.inputs.pipeline == 'intl_orgs' ||
+      github.event.inputs.pipeline == 'macro-wb'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
       - name: World Bank WDI
         run: python scripts/etl.py --source wb --table main
-      - name: United Nations
-        run: python scripts/etl.py --source un --table main
-      - name: WHO Global Health Observatory
-        run: python scripts/etl_intl_orgs.py --source who
       - name: World Bank extra indicators
         run: python scripts/etl_intl_orgs.py --source wb_extra
+
+  # ════════════════════════════════════════════════════════════
+  # WEEKLY (Sunday): United Nations
+  # ════════════════════════════════════════════════════════════
+  macro-un:
+    name: "Weekly: United Nations"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: >
+      github.event.schedule == '0 8 * * 0' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'macro' ||
+      github.event.inputs.pipeline == 'intl_orgs' ||
+      github.event.inputs.pipeline == 'macro-un'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: United Nations
+        run: python scripts/etl.py --source un --table main
+
+  # ════════════════════════════════════════════════════════════
+  # WEEKLY (Sunday): WHO Global Health Observatory
+  # ════════════════════════════════════════════════════════════
+  macro-who:
+    name: "Weekly: WHO GHO"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: >
+      github.event.schedule == '0 8 * * 0' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'macro' ||
+      github.event.inputs.pipeline == 'intl_orgs' ||
+      github.event.inputs.pipeline == 'macro-who'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: WHO Global Health Observatory
+        run: python scripts/etl_intl_orgs.py --source who
 
   # ════════════════════════════════════════════════════════════
   # WEEKLY (Sunday): Historical backfill — 20+ years
@@ -171,7 +233,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: IMF historical data
         run: python scripts/etl_history.py --source imf
       - name: World Bank historical data (7 batches)
@@ -200,7 +261,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: Fetch & cache COMTRADE trade data for 50 countries
         run: python scripts/etl_trade.py
 
@@ -221,7 +281,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: Ensure subscribers table exists
         run: python scripts/setup_subscribers.py || echo "⚠ Subscribers table setup skipped (connection issue)"
       - name: Seed indicator metadata from APIs
@@ -264,7 +323,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: Fetch & upsert Polymarket markets
         run: python scripts/etl_polymarket.py
 
@@ -390,7 +448,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: Check DB size, table health, stale data
         run: python scripts/monitor_supabase.py
 
@@ -415,7 +472,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-          fi
       - name: Run data quality checks
         run: python scripts/audit_data.py
       - name: Verify critical pages respond
@@ -446,12 +502,15 @@ jobs:
     name: "Alert: ETL Failure"
     runs-on: ubuntu-latest
     timeout-minutes: 1
-    needs: [yfinance, financial, macro, history, polymarket, audit]
+    needs: [yfinance, financial, macro-imf, macro-wb, macro-un, macro-who, history, polymarket, audit]
     if: >
       always() &&
       (needs.yfinance.result == 'failure' ||
        needs.financial.result == 'failure' ||
-       needs.macro.result == 'failure' ||
+       needs.macro-imf.result == 'failure' ||
+       needs.macro-wb.result == 'failure' ||
+       needs.macro-un.result == 'failure' ||
+       needs.macro-who.result == 'failure' ||
        needs.history.result == 'failure' ||
        needs.polymarket.result == 'failure' ||
        needs.audit.result == 'failure')
@@ -463,7 +522,10 @@ jobs:
           echo "Failed jobs:"
           echo "  yfinance:   ${{ needs.yfinance.result }}"
           echo "  financial:  ${{ needs.financial.result }}"
-          echo "  macro:      ${{ needs.macro.result }}"
+          echo "  macro-imf:  ${{ needs.macro-imf.result }}"
+          echo "  macro-wb:   ${{ needs.macro-wb.result }}"
+          echo "  macro-un:   ${{ needs.macro-un.result }}"
+          echo "  macro-who:  ${{ needs.macro-who.result }}"
           echo "  history:    ${{ needs.history.result }}"
           echo "  polymarket: ${{ needs.polymarket.result }}"
           echo "  audit:      ${{ needs.audit.result }}"

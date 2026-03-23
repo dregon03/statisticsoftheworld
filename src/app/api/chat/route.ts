@@ -1,6 +1,6 @@
 import { TOOL_DEFINITIONS, executeTool, SYSTEM_PROMPT } from '@/lib/chat-tools';
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
 const MODEL = 'mistralai/mistral-small-3.1-24b-instruct';
 
 interface ChatMessage {

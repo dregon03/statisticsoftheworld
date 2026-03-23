@@ -10,9 +10,9 @@ on:
   workflow_dispatch: {}
 
 env:
-  # Use Supabase Session Pooler (IPv4) instead of direct connection (IPv6-only)
-  SUPABASE_DB_HOST: aws-0-us-east-1.pooler.supabase.com
-  SUPABASE_DB_PORT: "5432"
+  # Shared Pooler (IPv4-compatible)
+  SUPABASE_DB_HOST: aws-1-ca-central-1.pooler.supabase.com
+  SUPABASE_DB_PORT: "6543"
   SUPABASE_DB_USER: postgres.seyrycaldytfjvvkqopu
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 

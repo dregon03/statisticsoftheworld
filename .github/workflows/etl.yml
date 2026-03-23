@@ -45,9 +45,9 @@ on:
           - audit
 
 env:
-  # Use Supabase Pooler (IPv4) instead of direct connection (IPv6-only)
-  SUPABASE_DB_HOST: aws-0-us-east-1.pooler.supabase.com
-  SUPABASE_DB_PORT: "5432"
+  # Shared Pooler (IPv4-compatible)
+  SUPABASE_DB_HOST: aws-1-ca-central-1.pooler.supabase.com
+  SUPABASE_DB_PORT: "6543"
   SUPABASE_DB_USER: postgres.seyrycaldytfjvvkqopu
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
   FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
@@ -71,6 +71,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: Reset daily request counters
         run: python scripts/reset_api_keys.py
 
@@ -92,6 +93,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary yfinance
+          fi
       - name: Fetch stock indices, commodities, FX (annual history)
         run: python scripts/etl_yfinance.py
       - name: Fetch live/delayed quotes
@@ -115,6 +117,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: FRED (bonds, rates, US economy)
         run: python scripts/etl_financial.py --source fred
       - name: ECB (exchange rates)
@@ -139,6 +142,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary openpyxl
+          fi
       - name: IMF World Economic Outlook
         run: python scripts/etl.py --source imf --table main
       - name: World Bank WDI
@@ -167,6 +171,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: IMF historical data
         run: python scripts/etl_history.py --source imf
       - name: World Bank historical data (7 batches)
@@ -195,6 +200,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: Fetch & cache COMTRADE trade data for 50 countries
         run: python scripts/etl_trade.py
 
@@ -215,6 +221,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: Ensure subscribers table exists
         run: python scripts/setup_subscribers.py || echo "⚠ Subscribers table setup skipped (connection issue)"
       - name: Seed indicator metadata from APIs
@@ -257,6 +264,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: Fetch & upsert Polymarket markets
         run: python scripts/etl_polymarket.py
 
@@ -382,6 +390,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: Check DB size, table health, stale data
         run: python scripts/monitor_supabase.py
 
@@ -406,6 +415,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+          fi
       - name: Run data quality checks
         run: python scripts/audit_data.py
       - name: Verify critical pages respond

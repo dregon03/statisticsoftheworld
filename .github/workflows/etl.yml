@@ -154,7 +154,7 @@ jobs:
   macro-wb:
     name: "Weekly: World Bank WDI"
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     if: >
       github.event.schedule == '0 8 * * 0' ||
       github.event.inputs.pipeline == 'all' ||
@@ -200,7 +200,7 @@ jobs:
   macro-who:
     name: "Weekly: WHO GHO"
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     if: >
       github.event.schedule == '0 8 * * 0' ||
       github.event.inputs.pipeline == 'all' ||

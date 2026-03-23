@@ -19,12 +19,6 @@ import urllib.request
 import urllib.error
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
-# Force IPv4 (GitHub Actions runners fail on IPv6)
-import socket as _socket
-_orig_getaddrinfo = _socket.getaddrinfo
-def _ipv4_getaddrinfo(host, port, family=0, *args, **kwargs):
-    return _orig_getaddrinfo(host, port, _socket.AF_INET, *args, **kwargs)
-_socket.getaddrinfo = _ipv4_getaddrinfo
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 
 # Top 50 countries by trade volume
@@ -69,8 +63,8 @@ def main():
     print("═══ COMTRADE Trade Data ETL ═══")
 
     conn = psycopg2.connect(
-        host=DB_HOST, dbname="postgres", user="postgres",
-        password=DB_PASS, port=5432
+        host=DB_HOST, dbname="postgres", user=os.environ.get("SUPABASE_DB_USER", "postgres"),
+        password=DB_PASS, port=int(os.environ.get("SUPABASE_DB_PORT", "5432"))
     )
     conn.autocommit = True
     cur = conn.cursor()

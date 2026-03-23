@@ -6,12 +6,6 @@ import socket
 import sys
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
-# Force IPv4 (GitHub Actions runners fail on IPv6)
-import socket as _socket
-_orig_getaddrinfo = _socket.getaddrinfo
-def _ipv4_getaddrinfo(host, port, family=0, *args, **kwargs):
-    return _orig_getaddrinfo(host, port, _socket.AF_INET, *args, **kwargs)
-_socket.getaddrinfo = _ipv4_getaddrinfo
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 
 
@@ -23,7 +17,9 @@ def main():
         sys.exit(1)
 
     # Use connection string with sslmode to force IPv4 via TCP
-    dsn = f"postgresql://postgres:{DB_PASS}@{DB_HOST}:5432/postgres?sslmode=require&options=-c%20statement_timeout%3D30000"
+    db_port = os.environ.get("SUPABASE_DB_PORT", "5432")
+    db_user = os.environ.get("SUPABASE_DB_USER", "postgres")
+    dsn = f"postgresql://{db_user}:{DB_PASS}@{DB_HOST}:{db_port}/postgres?sslmode=require&options=-c%20statement_timeout%3D30000"
     conn = psycopg2.connect(dsn)
     conn.autocommit = True
     cur = conn.cursor()

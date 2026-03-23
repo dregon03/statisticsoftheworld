@@ -56,6 +56,10 @@ IMF_INDICATORS = {
 # ============================================================
 
 WB_INDICATORS = [
+    # WB equivalents for multi-source comparison (PRIORITY — fetch first)
+    "NY.GDP.MKTP.CD","NY.GDP.PCAP.CD","NY.GDP.MKTP.KD.ZG",
+    "NY.GDP.MKTP.PP.CD","NY.GDP.PCAP.PP.CD",
+    # Core WB indicators
     "NY.GNP.MKTP.CD","NY.GNP.PCAP.CD","NY.GNP.PCAP.PP.CD",
     "NV.IND.TOTL.ZS","NV.SRV.TOTL.ZS","NV.AGR.TOTL.ZS",
     "NE.CON.GOVT.ZS","NE.CON.PRVT.ZS","NE.GDI.TOTL.ZS",
@@ -152,9 +156,6 @@ WB_INDICATORS = [
     "SH.H2O.SMDW.ZS","SH.STA.SMSS.ZS",
     "IC.FRM.CORR.ZS","IC.FRM.FEMO.ZS","IC.FRM.FEMM.ZS",
     "IC.FRM.ISOC.ZS","IC.FRM.TRNG.ZS","IC.FRM.INFM.ZS","IC.FRM.DURS","IC.FRM.CMPU.ZS",
-    # WB equivalents for multi-source comparison
-    "NY.GDP.MKTP.CD","NY.GDP.PCAP.CD","NY.GDP.MKTP.KD.ZG",
-    "NY.GDP.MKTP.PP.CD","NY.GDP.PCAP.PP.CD",
 ]
 
 # ============================================================

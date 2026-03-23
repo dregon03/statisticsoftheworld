@@ -146,93 +146,77 @@ function categorizeLive(question: string): string | null {
 
 async function fetchLiveFallback(category: string | null, q: string | null | undefined, limit: number) {
   const allMarkets = new Map<string, PredictionMarket>();
-  const eventSlugMap = new Map<string, string>(); // market_id → event_slug
 
-  // Fetch events first to build slug map
-  const eventsData = await fetch(
-    `${GAMMA_API}/events?active=true&closed=false&limit=100&order=volume&ascending=false`
-  ).then(r => r.json()).catch(() => []);
-
-  if (Array.isArray(eventsData)) {
-    for (const event of eventsData) {
-      const evtSlug = event.slug || '';
-      for (const m of (event.markets || [])) {
-        const mid = String(m.id || m.slug);
-        eventSlugMap.set(mid, evtSlug);
-      }
-    }
-  }
-
-  // Fetch 500 markets by volume
-  const promises = [];
+  // Fetch events — this is the ONLY reliable source for:
+  //   1. Correct event URLs (market slugs 404 on polymarket.com)
+  //   2. Proper deduplication (group sub-markets by event)
+  const eventPromises = [];
   for (let offset = 0; offset < 500; offset += 100) {
-    promises.push(
-      fetch(`${GAMMA_API}/markets?active=true&closed=false&limit=100&offset=${offset}&order=volume&ascending=false`)
-        .then(r => r.json()).catch(() => [])
-    );
-  }
-  // 300 by liquidity
-  for (let offset = 0; offset < 300; offset += 100) {
-    promises.push(
-      fetch(`${GAMMA_API}/markets?active=true&closed=false&limit=100&offset=${offset}&order=liquidity&ascending=false`)
+    eventPromises.push(
+      fetch(`${GAMMA_API}/events?active=true&closed=false&limit=100&offset=${offset}&order=volume&ascending=false`)
         .then(r => r.json()).catch(() => [])
     );
   }
 
-  const pages = await Promise.all(promises);
-  for (const page of pages) {
-    if (!Array.isArray(page)) continue;
-    for (const m of page) {
-      if (!m?.question || m.closed) continue;
-      const cat = categorizeLive(m.question);
-      if (!cat) continue;
+  const eventPages = await Promise.all(eventPromises);
+  for (const events of eventPages) {
+    if (!Array.isArray(events)) continue;
+    for (const event of events) {
+      const evtSlug = event.slug || '';
+      const evtUrl = `https://polymarket.com/event/${evtSlug}`;
 
-      let outcomePrices: number[] = [];
-      let outcomes: string[] = ['Yes', 'No'];
-      try {
-        outcomePrices = JSON.parse(typeof m.outcomePrices === 'string' ? m.outcomePrices : JSON.stringify(m.outcomePrices || [])).map(Number);
-        outcomes = JSON.parse(typeof m.outcomes === 'string' ? m.outcomes : JSON.stringify(m.outcomes || ['Yes', 'No']));
-      } catch {}
+      // Find the highest-probability relevant market in this event
+      let bestMarket: PredictionMarket | null = null;
 
-      const liquidity = parseFloat(m.liquidity) || 0;
-      if (liquidity < 100) continue;
+      for (const m of (event.markets || [])) {
+        if (!m?.question || m.closed) continue;
+        const cat = categorizeLive(m.question);
+        if (!cat) continue;
 
-      const probability = outcomePrices[0] || 0;
-      const volume = parseFloat(m.volume) || 0;
+        let outcomePrices: number[] = [];
+        let outcomes: string[] = ['Yes', 'No'];
+        try {
+          outcomePrices = JSON.parse(typeof m.outcomePrices === 'string' ? m.outcomePrices : JSON.stringify(m.outcomePrices || [])).map(Number);
+          outcomes = JSON.parse(typeof m.outcomes === 'string' ? m.outcomes : JSON.stringify(m.outcomes || ['Yes', 'No']));
+        } catch {}
 
-      // Filter noise: extreme probabilities are uninteresting sub-markets
-      // (e.g., "11 Fed rate cuts" at 0.5%, or already-resolved at 99%)
-      // Exception: very high volume markets are interesting even at extremes
-      if (volume < 1_000_000) {
-        if (probability < 0.03 || probability > 0.97) continue;
+        const liquidity = parseFloat(m.liquidity) || 0;
+        if (liquidity < 100) continue;
+
+        const probability = outcomePrices[0] || 0;
+        const volume = parseFloat(m.volume) || 0;
+
+        if (volume < 1_000_000) {
+          if (probability < 0.03 || probability > 0.97) continue;
+        }
+
+        const parsed: PredictionMarket = {
+          id: String(m.id || m.slug),
+          question: m.question,
+          slug: m.slug || '',
+          probability,
+          outcomes,
+          outcomePrices,
+          volume,
+          volume24hr: parseFloat(m.volume24hr) || 0,
+          liquidity,
+          endDate: m.endDate || '',
+          category: cat,
+          url: evtUrl,
+        };
+
+        if (!bestMarket || parsed.probability > bestMarket.probability) {
+          bestMarket = parsed;
+        }
       }
 
-      const mid = String(m.id || m.slug);
-      // Use event slug for URL; fall back to Polymarket search if no event slug
-      const evtSlug = eventSlugMap.get(mid);
-      const marketUrl = evtSlug
-        ? `https://polymarket.com/event/${evtSlug}`
-        : `https://polymarket.com/markets?_q=${encodeURIComponent(m.question.slice(0, 80))}`;
-
-      const parsed: PredictionMarket = {
-        id: mid,
-        question: m.question,
-        slug: m.slug || '',
-        probability: outcomePrices[0] || 0,
-        outcomes,
-        outcomePrices,
-        volume: parseFloat(m.volume) || 0,
-        volume24hr: parseFloat(m.volume24hr) || 0,
-        liquidity,
-        endDate: m.endDate || '',
-        category: cat,
-        url: marketUrl,
-      };
-      allMarkets.set(parsed.id, parsed);
+      if (bestMarket) {
+        allMarkets.set(evtSlug || bestMarket.id, bestMarket);
+      }
     }
   }
 
-  let markets = deduplicateByEvent(Array.from(allMarkets.values()));
+  let markets = Array.from(allMarkets.values()).sort((a, b) => b.volume - a.volume);
   if (category) markets = markets.filter(m => m.category === category);
   if (q) markets = markets.filter(m => m.question.toLowerCase().includes(q));
   const limited = markets.slice(0, limit);

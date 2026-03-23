@@ -236,11 +236,11 @@ def main():
 
     print(f"  Fetched {liq_fetched} by liquidity → {len(all_markets)} relevant total")
 
-    # ── 3. Fetch events (for nested markets) ─────────────
-    # Event slug is what polymarket.com/event/{slug} resolves to.
-    # Individual market slugs within a grouped event often 404.
+    # ── 3. Fetch events — primary source of truth ────────
+    # Events give us: correct URLs, proper grouping for dedup.
+    # For each event, keep ONLY the highest-probability relevant sub-market.
     print("Fetching events...")
-    event_slug_map = {}  # market_id → event_slug
+    event_markets = {}  # event_slug → best market dict
     try:
         for evt_offset in range(0, 500, 100):
             url = f"{GAMMA_API}/events?active=true&closed=false&limit=100&offset={evt_offset}&order=volume&ascending=false"
@@ -251,22 +251,26 @@ def main():
                     break
                 for event in events:
                     evt_slug = event.get("slug", "")
+                    best = None
                     for m in (event.get("markets") or []):
-                        mid = str(m.get("id", m.get("slug", "")))
-                        event_slug_map[mid] = evt_slug
                         parsed = parse_market(m, event_slug=evt_slug)
-                        if parsed:
-                            all_markets[parsed["market_id"]] = parsed
+                        if not parsed:
+                            continue
+                        if best is None or parsed["probability"] > best["probability"]:
+                            best = parsed
+                    if best:
+                        event_markets[evt_slug] = best
                 if len(events) < 100:
                     break
     except Exception as e:
         print(f"  ⚠ Events fetch error: {e}")
 
-    # Fix URLs for markets that were fetched from /markets but
-    # also appear in events — replace with the correct event slug
-    for mid, evt_slug in event_slug_map.items():
-        if mid in all_markets and evt_slug:
-            all_markets[mid]["url"] = f"https://polymarket.com/event/{evt_slug}"
+    # Merge: event-sourced markets override /markets-sourced ones
+    for evt_slug, market in event_markets.items():
+        all_markets[evt_slug] = market
+
+    # Remove any /markets-sourced duplicates that share an event
+    # (event_markets already picked the best per event)
 
     print(f"  Total relevant markets: {len(all_markets)}")
 

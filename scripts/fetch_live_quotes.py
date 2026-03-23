@@ -23,10 +23,11 @@ except ImportError:
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
 # Force IPv4 (GitHub Actions runners fail on IPv6)
-try:
-    DB_HOST = socket.getaddrinfo(DB_HOST, 5432, socket.AF_INET)[0][4][0]
-except Exception:
-    pass
+import socket as _socket
+_orig_getaddrinfo = _socket.getaddrinfo
+def _ipv4_getaddrinfo(host, port, family=0, *args, **kwargs):
+    return _orig_getaddrinfo(host, port, _socket.AF_INET, *args, **kwargs)
+_socket.getaddrinfo = _ipv4_getaddrinfo
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 DB = dict(
     host=DB_HOST, port=5432, dbname="postgres", user="postgres",

@@ -9,11 +9,17 @@ Usage:
 """
 
 import os
+import socket
 import sys
 import argparse
 import psycopg2
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
+# Force IPv4 (GitHub Actions runners fail on IPv6)
+try:
+    DB_HOST = socket.getaddrinfo(DB_HOST, 5432, socket.AF_INET)[0][4][0]
+except Exception:
+    pass
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 DB = dict(
     host=DB_HOST, port=5432, dbname="postgres", user="postgres",

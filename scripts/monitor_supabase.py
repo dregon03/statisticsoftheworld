@@ -5,9 +5,15 @@ Reports table sizes, row counts, and alerts on issues.
 """
 
 import os
+import socket
 import sys
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
+# Force IPv4 (GitHub Actions runners fail on IPv6)
+try:
+    DB_HOST = socket.getaddrinfo(DB_HOST, 5432, socket.AF_INET)[0][4][0]
+except Exception:
+    pass
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 
 # Supabase Pro limit: 8 GB database size

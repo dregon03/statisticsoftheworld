@@ -328,15 +328,15 @@ jobs:
           done
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Monday): Newsletter digest to subscribers
+  # DAILY: Newsletter digest to subscribers
   # Sends via Gmail SMTP (statisticsoftheworldcontact@gmail.com)
   # ════════════════════════════════════════════════════════════
   newsletter:
-    name: "Weekly: Send Newsletter Digest"
+    name: "Daily: Send Newsletter Digest"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: >
-      github.event.schedule == '0 6 * * 1' ||
+      github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'newsletter'
     steps:

@@ -29,6 +29,20 @@ interface ChartPoint {
   value: number;
 }
 
+interface FuturesContract {
+  label: string;
+  price: number;
+  changeFromFront: number;
+}
+
+interface FuturesCurveData {
+  commodity: string;
+  label: string;
+  contracts: FuturesContract[];
+  structure: 'backwardation' | 'contango' | 'flat';
+  structureDescription: string;
+}
+
 interface PredictionMarket {
   id: string;
   question: string;
@@ -152,6 +166,60 @@ function SectionPredictions({ sectionTitle, markets }: { sectionTitle: string; m
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {matched.slice(0, 4).map(m => <PredictionCard key={m.id} market={m} />)}
+      </div>
+    </div>
+  );
+}
+
+function FuturesCurve({ id }: { id: string }) {
+  const [data, setData] = useState<FuturesCurveData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/futures-curve?id=${encodeURIComponent(id)}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d && !d.error) setData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <div className="px-4 py-3 text-[11px] text-[#999]">Loading futures curve...</div>;
+  if (!data || data.contracts.length < 2) return null;
+
+  const structureColor = data.structure === 'backwardation' ? '#dc2626' : data.structure === 'contango' ? '#16a34a' : '#666';
+  const structureLabel = data.structure === 'backwardation' ? 'Backwardation' : data.structure === 'contango' ? 'Contango' : 'Flat';
+
+  return (
+    <div className="border-t border-[#e8e8e8] bg-white px-4 py-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[12px] font-semibold text-[#333]">Futures Curve</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
+            style={{ color: structureColor, backgroundColor: `${structureColor}12` }}>
+            {structureLabel}
+          </span>
+        </div>
+        <span className="text-[10px] text-[#ccc]">CME settlements via Yahoo Finance</span>
+      </div>
+      <p className="text-[11px] text-[#999] mb-3">{data.structureDescription}</p>
+      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1.5">
+        {data.contracts.map((c, i) => {
+          const isFirst = i === 0;
+          const changeColor = c.changeFromFront >= 0 ? '#16a34a' : '#dc2626';
+          return (
+            <div key={c.label} className={`border rounded-lg p-2 text-center ${isFirst ? 'border-[#0066cc] bg-[#f8fbff]' : 'border-[#e8e8e8]'}`}>
+              <div className="text-[10px] text-[#999] mb-0.5">{c.label}</div>
+              <div className="text-[13px] font-mono font-semibold text-[#333]">
+                ${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+              {!isFirst && (
+                <div className="text-[9px] font-mono" style={{ color: changeColor }}>
+                  {c.changeFromFront >= 0 ? '+' : ''}{c.changeFromFront.toFixed(1)}%
+                </div>
+              )}
+              {isFirst && <div className="text-[9px] text-[#0066cc] font-semibold">SPOT</div>}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -399,6 +467,7 @@ export default function CommoditiesPage() {
                               <tr>
                                 <td colSpan={4} className="p-0">
                                   <CommodityChart id={item.id} label={item.label} />
+                                  <FuturesCurve id={item.id} />
                                 </td>
                               </tr>
                             )}

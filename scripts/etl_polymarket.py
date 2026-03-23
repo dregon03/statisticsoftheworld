@@ -19,6 +19,7 @@ import sys
 import time
 import urllib.request
 import urllib.error
+import urllib.parse
 
 # ── Config ──────────────────────────────────────────────
 GAMMA_API = "https://gamma-api.polymarket.com"
@@ -134,8 +135,12 @@ def parse_market(m: dict, event_slug: str | None = None) -> dict | None:
         if probability < 0.03 or probability > 0.97:
             return None
 
-    # Use event slug for URL (market slugs often 404 on polymarket.com)
-    url_slug = event_slug or m.get("slug", "")
+    # Use event slug for URL; fall back to Polymarket search if no event slug
+    if event_slug:
+        market_url = f"https://polymarket.com/event/{event_slug}"
+    else:
+        q_encoded = urllib.parse.quote(m["question"][:80])
+        market_url = f"https://polymarket.com/markets?_q={q_encoded}"
 
     return {
         "market_id": str(m.get("id", m.get("slug", ""))),
@@ -150,7 +155,7 @@ def parse_market(m: dict, event_slug: str | None = None) -> dict | None:
         "end_date": m.get("endDate"),
         "category": category,
         "image": m.get("image", ""),
-        "url": f"https://polymarket.com/event/{url_slug}",
+        "url": market_url,
     }
 
 

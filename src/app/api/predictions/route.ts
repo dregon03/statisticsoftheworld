@@ -208,8 +208,11 @@ async function fetchLiveFallback(category: string | null, q: string | null | und
       }
 
       const mid = String(m.id || m.slug);
-      // Use event slug if available, otherwise fall back to market slug
-      const urlSlug = eventSlugMap.get(mid) || m.slug || '';
+      // Use event slug for URL; fall back to Polymarket search if no event slug
+      const evtSlug = eventSlugMap.get(mid);
+      const marketUrl = evtSlug
+        ? `https://polymarket.com/event/${evtSlug}`
+        : `https://polymarket.com/markets?_q=${encodeURIComponent(m.question.slice(0, 80))}`;
 
       const parsed: PredictionMarket = {
         id: mid,
@@ -223,7 +226,7 @@ async function fetchLiveFallback(category: string | null, q: string | null | und
         liquidity,
         endDate: m.endDate || '',
         category: cat,
-        url: `https://polymarket.com/event/${urlSlug}`,
+        url: marketUrl,
       };
       allMarkets.set(parsed.id, parsed);
     }

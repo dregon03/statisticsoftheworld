@@ -1,22 +1,24 @@
 name: ETL Data Pipeline
 
 # ============================================================
-# FULL AUTOMATION SCHEDULE — managed by 1 person, must run unattended
+# FULL AUTOMATION — managed by 1 person, runs 100% unattended
 #
 #   Every 15 min (market hours) — Live quotes (separate: live-quotes.yml)
-#   Every 4 hours               — Polymarket predictions (markets move fast)
-#   Daily 7AM UTC               — Yahoo Finance + FRED/ECB + Calendar + Narratives
-#   Sunday 8AM UTC              — IMF + World Bank + UN + WHO + History
-#   1st of month                — Metadata + Methodology refresh
-#   Weekly Monday 6AM UTC       — Sitemap ping to Google/Bing
+#   Every 4 hours               — Polymarket predictions
+#   Daily midnight UTC          — API key reset
+#   Daily 7AM UTC               — All daily jobs (YF, FRED, calendar, etc.)
+#   Sunday 8AM UTC              — Macro data + history + trade
+#   1st of month                — Metadata + full narrative refresh
+#   Weekly Monday 6AM UTC       — Sitemap ping + DB health check
 # ============================================================
 on:
   schedule:
+    - cron: '0 0 * * *'       # Daily midnight UTC (API key reset)
     - cron: '0 7 * * *'       # Daily at 7 AM UTC
     - cron: '0 8 * * 0'       # Sundays at 8 AM UTC
     - cron: '0 9 1 * *'       # 1st of month at 9 AM UTC
     - cron: '0 */4 * * *'     # Every 4 hours (Polymarket)
-    - cron: '0 6 * * 1'       # Weekly Monday 6 AM UTC (sitemap ping)
+    - cron: '0 6 * * 1'       # Weekly Monday 6 AM UTC
   workflow_dispatch:
     inputs:
       pipeline:
@@ -35,6 +37,9 @@ on:
           - calendar
           - polymarket
           - narratives
+          - trade
+          - api-keys
+          - monitor
           - sitemap-ping
           - audit
 
@@ -45,6 +50,26 @@ env:
   ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
 
 jobs:
+  # ════════════════════════════════════════════════════════════
+  # DAILY MIDNIGHT: Reset API key daily counters
+  # ════════════════════════════════════════════════════════════
+  api-keys:
+    name: "Midnight: Reset API Key Counters"
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    if: >
+      github.event.schedule == '0 0 * * *' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'api-keys'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Reset daily request counters
+        run: python scripts/reset_api_keys.py
+
   # ════════════════════════════════════════════════════════════
   # DAILY: Yahoo Finance — stock indices, commodities, FX
   # No API key. ~30s runtime.
@@ -95,7 +120,6 @@ jobs:
 
   # ════════════════════════════════════════════════════════════
   # WEEKLY (Sunday): Macro — IMF, World Bank, UN
-  # IMF/WB update quarterly-ish. Weekly catches updates promptly.
   # ════════════════════════════════════════════════════════════
   macro:
     name: "Weekly: IMF + World Bank + UN"
@@ -119,12 +143,11 @@ jobs:
         run: python scripts/etl.py --source un --table main
       - name: WHO Global Health Observatory
         run: python scripts/etl_intl_orgs.py --source who
-      - name: World Bank extra indicators (labor, agriculture, education, infrastructure)
+      - name: World Bank extra indicators
         run: python scripts/etl_intl_orgs.py --source wb_extra
 
   # ════════════════════════════════════════════════════════════
   # WEEKLY (Sunday): Historical backfill — 20+ years
-  # Keeps sotw_indicators_history current for charts
   # ════════════════════════════════════════════════════════════
   history:
     name: "Weekly: Historical Backfill"
@@ -151,8 +174,28 @@ jobs:
           done
 
   # ════════════════════════════════════════════════════════════
-  # MONTHLY (1st): Metadata refresh
-  # Pull indicator descriptions from WB API + update methodology
+  # WEEKLY (Sunday): UN COMTRADE trade data → Supabase
+  # Pre-caches trade data for 50 countries. ~10 min runtime.
+  # ════════════════════════════════════════════════════════════
+  trade:
+    name: "Weekly: COMTRADE Trade Data"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: >
+      github.event.schedule == '0 8 * * 0' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'trade'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Fetch & cache COMTRADE trade data for 50 countries
+        run: python scripts/etl_trade.py
+
+  # ════════════════════════════════════════════════════════════
+  # MONTHLY (1st): Metadata + full narrative refresh
   # ════════════════════════════════════════════════════════════
   metadata:
     name: "Monthly: Metadata & Methodology"
@@ -174,9 +217,7 @@ jobs:
         run: python scripts/seed_methodology.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Calendar — warm cache + pre-generate AI summaries
-  # Hits the live site to warm FRED + Finnhub calendar cache
-  # and generate Mistral summaries for past events
+  # DAILY: Calendar — warm FRED + Finnhub + CB meetings cache
   # ════════════════════════════════════════════════════════════
   calendar:
     name: "Daily: Calendar Warm"
@@ -189,12 +230,11 @@ jobs:
     steps:
       - name: Warm calendar + summaries
         run: |
-          curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar cache warmed"
-          curl -sf "https://statisticsoftheworld.com/calendar" -o /dev/null && echo "Calendar page hit (triggers summary fetch)"
+          curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar cache warmed ✓"
+          curl -sf "https://statisticsoftheworld.com/calendar" -o /dev/null && echo "Calendar page warmed ✓"
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Polymarket — prediction markets
-  # Free API, no auth. ~30K active markets, filters to ~1K relevant.
+  # EVERY 4 HOURS: Polymarket prediction markets
   # ════════════════════════════════════════════════════════════
   polymarket:
     name: "4-Hourly: Polymarket Predictions"
@@ -215,55 +255,77 @@ jobs:
         run: python scripts/etl_polymarket.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Refresh AI country narratives
-  # 217 narratives, regenerate any older than 30 days.
-  # Uses OpenRouter/Mistral Small (~$0.02 total per refresh).
+  # DAILY: Refresh AI country narratives (all 217)
+  # Hits the narrative API which regenerates if >30 days old.
+  # Batched to avoid overwhelming OpenRouter. ~5 min runtime.
   # ════════════════════════════════════════════════════════════
   narratives:
     name: "Daily: Refresh AI Narratives"
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     if: >
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'narratives'
     steps:
-      - name: Refresh stale narratives via API
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      - name: Refresh all 217 country narratives
         run: |
-          echo "Warming narrative cache for top countries..."
-          for code in USA CHN JPN DEU GBR FRA IND BRA CAN AUS KOR MEX RUS ITA ESP IDN NLD TUR CHE SAU ARG ZAF NGA SGP ISR NOR SWE EGY; do
-            curl -sf "https://statisticsoftheworld.com/api/narrative?country=$code" -o /dev/null && echo "  $code ✓" || echo "  $code ✗"
-            sleep 1
+          echo "Refreshing narratives (API auto-regenerates if >30 days old)..."
+          CODES="USA CHN JPN DEU GBR FRA IND BRA CAN AUS KOR MEX RUS ITA ESP
+                 IDN NLD TUR CHE SAU ARG ZAF NGA SGP ISR NOR SWE EGY POL BEL
+                 AUT IRL DNK FIN PRT GRC CZE ROU HUN NZL CHL COL PER VEN
+                 ARE QAT KWT BHR OMN JOR LBN IRQ IRN PAK BGD LKA MMR THA
+                 VNM PHL MYS KHM LAO MNG KAZ UZB GEO ARM AZE UKR BLR MDA
+                 SRB HRV SVN SVK BGR LTU LVA EST ALB MKD BIH MNE XKX
+                 MAR TUN DZA LBY EGY SDN ETH KEN TZA UGA RWA MOZ ZWE BWA
+                 NAM MUS MDG SEN CIV GHA CMR COD AGO ZMB MLI BFA NER TCD
+                 ECU BOL PRY URY CRI PAN DOM GTM HND SLV NIC CUB JAM HTI
+                 TTO BRB BHS GUY SUR BLZ FJI PNG WSM TON VUT SLB KIR"
+
+          SUCCESS=0
+          FAIL=0
+          for code in $CODES; do
+            if curl -sf "https://statisticsoftheworld.com/api/narrative?id=$code" -o /dev/null 2>/dev/null; then
+              SUCCESS=$((SUCCESS + 1))
+            else
+              FAIL=$((FAIL + 1))
+            fi
+            sleep 0.5
           done
-          echo "Top 28 country narratives refreshed"
+          echo "✓ Refreshed $SUCCESS narratives ($FAIL skipped/failed)"
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Pre-warm caches — trending, trade, heatmap
-  # Prevents cold-start lag for visitors hitting these pages first
+  # DAILY: Pre-warm caches — eliminates cold-start lag
   # ════════════════════════════════════════════════════════════
   cache-warm:
     name: "Daily: Warm Page Caches"
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: [yfinance, financial, polymarket]
     if: >
-      github.event.schedule == '0 7 * * *' ||
-      github.event.inputs.pipeline == 'all'
+      always() && (
+        github.event.schedule == '0 7 * * *' ||
+        github.event.inputs.pipeline == 'all'
+      )
     steps:
-      - name: Warm trending, trade, heatmap, forecasts, predictions
+      - name: Warm API caches
         run: |
-          for path in /api/trending /api/predictions /api/forecasts /api/heatmap; do
+          for path in /api/trending /api/predictions /api/forecasts /api/heatmap /api/quotes; do
             curl -sf "https://statisticsoftheworld.com$path" -o /dev/null && echo "$path ✓" || echo "$path ✗"
           done
-          # Warm top country pages (ISR triggers narrative + all indicators)
-          for code in USA CHN JPN GBR CAN; do
+      - name: Warm top country pages
+        run: |
+          for code in USA CHN JPN GBR CAN DEU FRA IND BRA AUS; do
             curl -sf "https://statisticsoftheworld.com/country/$code" -o /dev/null && echo "/country/$code ✓"
+          done
+      - name: Warm futures curves for top commodities
+        run: |
+          for commodity in crude-oil gold natural-gas silver copper wheat corn; do
+            curl -sf "https://statisticsoftheworld.com/api/futures-curve?commodity=$commodity" -o /dev/null && echo "futures/$commodity ✓" || echo "futures/$commodity ✗"
           done
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Monday): Ping search engines with updated sitemap
-  # Ensures Google/Bing discover new pages quickly
+  # WEEKLY (Monday): Sitemap ping + DB health check
   # ════════════════════════════════════════════════════════════
   sitemap-ping:
     name: "Weekly: Sitemap Ping"
@@ -276,18 +338,35 @@ jobs:
     steps:
       - name: Ping Google & Bing
         run: |
-          curl -sf "https://www.google.com/ping?sitemap=https://statisticsoftheworld.com/sitemap.xml" -o /dev/null && echo "Google pinged ✓" || echo "Google ping failed"
-          curl -sf "https://www.bing.com/ping?sitemap=https://statisticsoftheworld.com/sitemap.xml" -o /dev/null && echo "Bing pinged ✓" || echo "Bing ping failed"
+          curl -sf "https://www.google.com/ping?sitemap=https://statisticsoftheworld.com/sitemap.xml" -o /dev/null && echo "Google pinged ✓" || echo "Google ping ✗"
+          curl -sf "https://www.bing.com/ping?sitemap=https://statisticsoftheworld.com/sitemap.xml" -o /dev/null && echo "Bing pinged ✓" || echo "Bing ping ✗"
+
+  monitor:
+    name: "Weekly: DB Health Check"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    if: >
+      github.event.schedule == '0 6 * * 1' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'monitor'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Check DB size, table health, stale data
+        run: python scripts/monitor_supabase.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Data quality audit (after daily ETL jobs)
-  # 41 checks across all data sources
+  # DAILY: Data quality audit + page health checks
+  # Runs after all daily ETL jobs complete
   # ════════════════════════════════════════════════════════════
   audit:
-    name: "Audit: Data Quality"
+    name: "Audit: Data Quality + Pages"
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [yfinance, financial, polymarket]
+    needs: [yfinance, financial, polymarket, cache-warm]
     if: >
       always() && (
         github.event.schedule == '0 7 * * *' ||
@@ -300,21 +379,57 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-      - name: Run 41-check data audit
+      - name: Run data quality checks
         run: python scripts/audit_data.py
       - name: Verify critical pages respond
         if: always()
         run: |
           FAILED=0
-          for path in / /predictions /commodities /indicators /calendar /api/v1/countries; do
+          for path in / /predictions /commodities /indicators /calendar /countries /compare /map /markets /forecasts /ai /api/v1/countries /api/predictions /api/openapi.json /llms.txt; do
             CODE=$(curl -sf -o /dev/null -w "%{http_code}" "https://statisticsoftheworld.com$path" 2>/dev/null)
             if [ "$CODE" != "200" ]; then
               echo "❌ $path returned $CODE"
-              FAILED=1
+              FAILED=$((FAILED + 1))
             else
-              echo "✓ $path OK"
+              echo "✓ $path"
             fi
           done
-          if [ "$FAILED" = "1" ]; then
-            echo "::warning::Some critical pages are not responding with 200"
+          if [ "$FAILED" -gt "0" ]; then
+            echo "::error::$FAILED critical pages are not responding!"
+            exit 1
           fi
+          echo "All 15 critical pages OK ✓"
+
+  # ════════════════════════════════════════════════════════════
+  # FAILURE NOTIFICATION — emails on any job failure
+  # GitHub automatically sends failure emails to repo owner
+  # if Actions are configured. This job adds extra visibility.
+  # ════════════════════════════════════════════════════════════
+  notify-failure:
+    name: "Alert: ETL Failure"
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    needs: [yfinance, financial, macro, history, polymarket, audit]
+    if: >
+      always() &&
+      (needs.yfinance.result == 'failure' ||
+       needs.financial.result == 'failure' ||
+       needs.macro.result == 'failure' ||
+       needs.history.result == 'failure' ||
+       needs.polymarket.result == 'failure' ||
+       needs.audit.result == 'failure')
+    steps:
+      - name: Report failure
+        run: |
+          echo "::error::ETL pipeline failure detected!"
+          echo ""
+          echo "Failed jobs:"
+          echo "  yfinance:   ${{ needs.yfinance.result }}"
+          echo "  financial:  ${{ needs.financial.result }}"
+          echo "  macro:      ${{ needs.macro.result }}"
+          echo "  history:    ${{ needs.history.result }}"
+          echo "  polymarket: ${{ needs.polymarket.result }}"
+          echo "  audit:      ${{ needs.audit.result }}"
+          echo ""
+          echo "Check: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          exit 1

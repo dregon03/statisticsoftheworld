@@ -17,6 +17,10 @@ interface CounterConfig {
 // World CO2: ~37.5B tonnes/year = ~1,189 tonnes/sec
 // US national debt: ~36T, growing ~$1T/year = ~$31,710/sec
 // World GDP: ~105T/year = ~$3.3M/sec
+// Global military spending: ~$2.4T/year (SIPRI 2024) = ~$76,104/sec
+// Global gov debt: ~$97T, growing ~$4T/year = ~$126,839/sec
+// Global healthcare spending: ~$9.8T/year (WHO) = ~$310,744/sec
+// Global energy: ~14,500 Mtoe/year (IEA) = ~460 tonnes oil equiv/sec
 
 const WORLD_COUNTERS: CounterConfig[] = [
   {
@@ -50,23 +54,45 @@ const WORLD_COUNTERS: CounterConfig[] = [
     prefix: '$',
     color: 'text-green-600',
   },
+  {
+    label: 'Military Spending Today',
+    baseValue: 0,
+    ratePerSecond: 76104,
+    format: 'currency',
+    prefix: '$',
+    color: 'text-red-600',
+  },
+  {
+    label: 'Global Government Debt',
+    baseValue: 97_000_000_000_000,
+    ratePerSecond: 126839,
+    format: 'currency',
+    prefix: '$',
+    color: 'text-rose-500',
+  },
+  {
+    label: 'Healthcare Spending Today',
+    baseValue: 0,
+    ratePerSecond: 310744,
+    format: 'currency',
+    prefix: '$',
+    color: 'text-emerald-600',
+  },
+  {
+    label: 'Energy Used Today',
+    baseValue: 0,
+    ratePerSecond: 460,
+    format: 'weight',
+    suffix: ' toe',
+    color: 'text-amber-600',
+  },
 ];
 
 function formatLargeNumber(value: number, format: string, prefix?: string, suffix?: string): string {
   const p = prefix || '';
   const s = suffix || '';
-
-  if (format === 'weight') {
-    if (value >= 1e9) return `${p}${(value / 1e9).toFixed(2)}B${s}`;
-    if (value >= 1e6) return `${p}${(value / 1e6).toFixed(2)}M${s}`;
-    if (value >= 1e3) return `${p}${Math.floor(value).toLocaleString()}${s}`;
-    return `${p}${Math.floor(value)}${s}`;
-  }
-
-  if (value >= 1e12) return `${p}${(value / 1e12).toFixed(6)}T${s}`;
-  if (value >= 1e9) return `${p}${(value / 1e9).toFixed(3)}B${s}`;
-  if (value >= 1e6) return `${p}${(value / 1e6).toFixed(2)}M${s}`;
-  return `${p}${Math.floor(value).toLocaleString()}${s}`;
+  // Full figures with commas — makes the ticking feel live
+  return `${p}${Math.floor(value).toLocaleString('en-US')}${s}`;
 }
 
 function SingleCounter({ config }: { config: CounterConfig }) {
@@ -96,7 +122,7 @@ function SingleCounter({ config }: { config: CounterConfig }) {
 
   return (
     <div className="text-center">
-      <div className={`text-[20px] md:text-[24px] font-bold font-mono tabular-nums ${config.color || 'text-[#333]'}`}>
+      <div className={`text-[15px] md:text-[18px] font-bold font-mono tabular-nums ${config.color || 'text-[#333]'}`}>
         {formatLargeNumber(value, config.format, config.prefix, config.suffix)}
       </div>
       <div className="text-[11px] text-[#999] mt-1">{config.label}</div>
@@ -106,7 +132,7 @@ function SingleCounter({ config }: { config: CounterConfig }) {
 
 export default function LiveCounters() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-5">
       {WORLD_COUNTERS.map((config, i) => (
         <SingleCounter key={i} config={config} />
       ))}

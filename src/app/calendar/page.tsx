@@ -43,6 +43,7 @@ const COUNTRY_FLAGS: Record<string, string> = {
   CN: '🇨🇳', CA: '🇨🇦', AU: '🇦🇺', KR: '🇰🇷', IN: '🇮🇳',
   BR: '🇧🇷', MX: '🇲🇽', CH: '🇨🇭', NZ: '🇳🇿', ZA: '🇿🇦',
   SG: '🇸🇬', HK: '🇭🇰', SE: '🇸🇪', NO: '🇳🇴', DK: '🇩🇰',
+  NL: '🇳🇱', DE: '🇩🇪', FR: '🇫🇷', IT: '🇮🇹', ES: '🇪🇸',
 };
 
 // Market reaction data for known event types
@@ -438,7 +439,7 @@ function TopEventsSection({ events, todayStr }: { events: CalendarEvent[]; today
                 }`}>
                   <div className="flex items-start justify-between mb-1">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[14px]">{isEarnings ? '📊' : (COUNTRY_FLAGS[event.country] || event.country)}</span>
+                      <span className="text-[14px]">{COUNTRY_FLAGS[event.country] || event.country}</span>
                       <span className={`text-[12px] font-semibold ${isEarnings ? 'text-purple-800' : 'text-[#333]'}`}>
                         {isEarnings ? event.symbol : event.name}
                       </span>
@@ -717,7 +718,7 @@ export default function CalendarPage() {
 
           {/* Country flag */}
           <span className="text-[14px] w-7 shrink-0" title={event.country}>
-            {isEarnings ? '📊' : (COUNTRY_FLAGS[event.country] || event.country)}
+            {COUNTRY_FLAGS[event.country] || event.country}
           </span>
 
           {/* Event name */}
@@ -1042,13 +1043,16 @@ export default function CalendarPage() {
           </div>
           <div className="mt-2 pt-2 border-t border-[#e8e8e8] text-[10px] text-[#bbb] flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-medium text-[#999]">Sources:</span>
-            <span>Macro events: <a href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">ForexFactory</a></span>
+            <span>Schedule: <a href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">ForexFactory</a></span>
+            <span className="text-[#ddd]">·</span>
+            <span>US actuals: <a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">FRED</a></span>
             <span className="text-[#ddd]">·</span>
             <span>Earnings: <a href="https://finnhub.io" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Finnhub</a></span>
             <span className="text-[#ddd]">·</span>
             <span>CB meetings: <a href="https://www.cbrates.com" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">cbrates.com</a></span>
-            <span className="text-[#ddd]">·</span>
-            <span>Historical: <a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">FRED</a></span>
+          </div>
+          <div className="mt-1 text-[9px] text-[#ccc]">
+            Forecast values sourced from ForexFactory. Actual values from official government APIs (FRED, BLS, BEA). Earnings estimates via Finnhub.
           </div>
         </div>
       </section>

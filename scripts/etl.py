@@ -286,7 +286,12 @@ def _fetch_wb_indicator(args):
     best = {}
     try:
         for page in [1, 2, 3]:
-            data = fetch_json(f"{WB_BASE}/country/all/indicator/{ind_id}?format=json&mrv=5&per_page=500&page={page}")
+            req = urllib.request.Request(
+                f"{WB_BASE}/country/all/indicator/{ind_id}?format=json&mrv=5&per_page=500&page={page}",
+                headers={"User-Agent": "Mozilla/5.0 (StatisticsOfTheWorld ETL)", "Accept": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read())
             if not data[1]:
                 break
             for d in data[1]:
@@ -346,10 +351,12 @@ def etl_wb(cur, table, iso2_to_iso3, conn=None, wb_batch=-1):
             if conn:
                 conn.commit()
 
-            if done % 50 == 0:
-                print(f"  Progress: {done}/{len(WB_INDICATORS)} indicators, {total} rows")
+            if done % 20 == 0 or done == len(indicators):
+                print(f"  Progress: {done}/{len(indicators)} indicators, {total} rows", flush=True)
 
-    print(f"  World Bank total: {total} rows ({done} indicators)")
+    print(f"  World Bank total: {total} rows ({done}/{len(indicators)} indicators)", flush=True)
+    if errors:
+        print(f"  Errors ({len(errors)}): {errors[:5]}", flush=True)
     return total, errors
 
 

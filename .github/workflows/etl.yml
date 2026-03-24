@@ -177,7 +177,7 @@ jobs:
   macro-wb-2:
     name: "Monthly: World Bank (batch 2)"
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     if: >
       github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||

@@ -121,11 +121,12 @@ def clean_records(records):
     - partner2Code: transit/intermediary trade breakdowns
     - customsCode: C00 (total), C03 (re-imports), C08 (re-exports)
 
-    We filter to direct trade only, then deduplicate by partner,
-    keeping the highest value per (flow, partner) pair.
+    Strategy:
+    1. Try strict filter (partner2Code=0, customsCode=C00)
+    2. If that returns nothing, fall back to dedup-only (aggregate by partner)
     """
-    # 1. Filter to direct trade: partner2Code=0, customsCode=C00
-    clean = []
+    # Normalize values first
+    valid = []
     for r in records:
         val = r.get("primaryValue")
         if val is None:
@@ -136,21 +137,23 @@ def clean_records(records):
             continue
         if val <= 0:
             continue
-
-        # Only keep direct trade (no transit breakdowns)
-        if r.get("partner2Code", 0) != 0:
-            continue
-        # Prefer total customs (C00), but accept if customsCode not present
-        customs = r.get("customsCode", "C00")
-        if customs not in ("C00", None, ""):
-            continue
-
         r["primaryValue"] = val
-        clean.append(r)
+        valid.append(r)
 
-    # 2. Deduplicate: keep highest value per (flowCode, partnerCode)
+    if not valid:
+        return []
+
+    # 1. Try strict filter: direct trade only
+    strict = [r for r in valid
+              if r.get("partner2Code", 0) == 0
+              and r.get("customsCode", "C00") in ("C00", None, "")]
+
+    # 2. If strict filter returns too few, use all valid records
+    source = strict if len(strict) >= 5 else valid
+
+    # 3. Deduplicate: keep highest value per (flowCode, partnerCode)
     best = {}
-    for r in clean:
+    for r in source:
         key = (r.get("flowCode"), r.get("partnerCode"))
         if key not in best or r["primaryValue"] > best[key]["primaryValue"]:
             best[key] = r

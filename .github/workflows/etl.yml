@@ -155,7 +155,7 @@ jobs:
   macro-wb:
     name: "Monthly: World Bank WDI"
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     if: >
       github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
@@ -170,8 +170,6 @@ jobs:
       - run: pip install psycopg2-binary
       - name: World Bank WDI (312 indicators, batch upsert)
         run: python scripts/etl.py --source wb --table main
-      - name: World Bank extra indicators
-        run: python scripts/etl_intl_orgs.py --source wb_extra
 
   # ════════════════════════════════════════════════════════════
   # MONTHLY (1st): United Nations
@@ -218,6 +216,8 @@ jobs:
       - run: pip install psycopg2-binary
       - name: WHO Global Health Observatory
         run: python scripts/etl_intl_orgs.py --source who
+      - name: World Bank extra indicators
+        run: python scripts/etl_intl_orgs.py --source wb_extra
 
   # ════════════════════════════════════════════════════════════
   # MONTHLY (1st): Historical backfill — 20+ years

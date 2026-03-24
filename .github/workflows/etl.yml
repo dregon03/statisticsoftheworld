@@ -45,6 +45,11 @@ on:
           - newsletter
           - sitemap-ping
           - audit
+      trade_batch:
+        description: 'Trade batch number (0-6, empty=auto)'
+        required: false
+        default: ''
+        type: string
 
 env:
   # Shared Pooler (IPv4-compatible)
@@ -249,12 +254,12 @@ jobs:
           done
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: UN COMTRADE v2 trade data → Supabase
+  # QUARTERLY: UN COMTRADE v2 trade data → Supabase
+  # Runs daily for 7 days each quarter (1st-7th of Jan/Apr/Jul/Oct).
   # Rotates through 170+ countries in 7 daily batches (~24/day).
-  # All countries refreshed weekly. ~10-15 min per batch.
   # ════════════════════════════════════════════════════════════
   trade:
-    name: "Daily: COMTRADE Trade Data"
+    name: "Quarterly: COMTRADE Trade Data"
     runs-on: ubuntu-latest
     timeout-minutes: 20
     if: >
@@ -267,8 +272,21 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
+      - name: Check if trade should run (1st-7th of quarter months)
+        id: check
+        run: |
+          DAY=$(date -u +%d)
+          MONTH=$(date -u +%m)
+          # Run on 1st-7th of Jan(01), Apr(04), Jul(07), Oct(10) — or if manually triggered
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || ([ "$DAY" -le 7 ] && ([ "$MONTH" = "01" ] || [ "$MONTH" = "04" ] || [ "$MONTH" = "07" ] || [ "$MONTH" = "10" ])); then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+            echo "Skipping trade ETL (only runs 1st-7th of quarter months)"
+          fi
       - name: Fetch trade data (rotating batch)
-        run: python scripts/etl_trade.py
+        if: steps.check.outputs.should_run == 'true'
+        run: python scripts/etl_trade.py --batch ${{ github.event.inputs.trade_batch || -1 }} --total-batches 7
 
   # ════════════════════════════════════════════════════════════
   # MONTHLY (1st): Metadata + full narrative refresh

@@ -306,14 +306,25 @@ def _fetch_wb_indicator(args):
         return ind_id, {}, f"WB {ind_id}: {e}"
 
 
-def etl_wb(cur, table, iso2_to_iso3, conn=None):
+def etl_wb(cur, table, iso2_to_iso3, conn=None, wb_batch=-1):
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    print("ETL: World Bank indicators (parallel fetch)...")
+
+    # Split indicators into batches if requested
+    mid = len(WB_INDICATORS) // 2
+    if wb_batch == 0:
+        indicators = WB_INDICATORS[:mid]
+        print(f"ETL: World Bank batch 0 (indicators 1-{mid}, parallel fetch)...")
+    elif wb_batch == 1:
+        indicators = WB_INDICATORS[mid:]
+        print(f"ETL: World Bank batch 1 (indicators {mid+1}-{len(WB_INDICATORS)}, parallel fetch)...")
+    else:
+        indicators = WB_INDICATORS
+        print(f"ETL: World Bank ALL {len(WB_INDICATORS)} indicators (parallel fetch)...")
+
     total = 0
     errors = []
 
-    # Fetch all indicators in parallel (10 threads)
-    tasks = [(ind_id, iso2_to_iso3) for ind_id in WB_INDICATORS]
+    tasks = [(ind_id, iso2_to_iso3) for ind_id in indicators]
     done = 0
 
     with ThreadPoolExecutor(max_workers=10) as pool:
@@ -459,6 +470,7 @@ def main():
     parser = argparse.ArgumentParser(description="SOTW ETL Pipeline")
     parser.add_argument("--source", choices=["imf", "wb", "un", "all"], default="all")
     parser.add_argument("--table", choices=["main", "staging"], default="staging")
+    parser.add_argument("--wb-batch", type=int, default=-1, help="WB batch: 0=first half, 1=second half, -1=all")
     parser.add_argument("--promote", action="store_true", help="Copy staging to main")
     args = parser.parse_args()
 
@@ -538,7 +550,7 @@ def main():
         conn.commit()
 
     if args.source in ("wb", "all"):
-        rows, errors = etl_wb(cur, table, iso2_to_iso3, conn=conn)
+        rows, errors = etl_wb(cur, table, iso2_to_iso3, conn=conn, wb_batch=args.wb_batch)
         total_rows += rows
         all_errors.extend(errors)
         indicators_set.update(WB_INDICATORS)

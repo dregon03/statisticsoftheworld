@@ -1,62 +1,34 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-// ── FRED Release metadata: ID → display info ──────────────────
-interface ReleaseInfo {
-  name: string;
-  country: string;
-  impact: 'high' | 'medium' | 'low';
-  category: string;
-  sotwIndicators?: string[]; // link to SOTW indicators
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-const RELEASES: Record<number, ReleaseInfo> = {
-  // ── US High Impact ──
-  10:  { name: 'Consumer Price Index (CPI)', country: 'US', impact: 'high', category: 'Inflation', sotwIndicators: ['FRED.CPIAUCSL'] },
-  50:  { name: 'Employment Situation (Nonfarm Payrolls)', country: 'US', impact: 'high', category: 'Labor', sotwIndicators: ['FRED.PAYEMS', 'FRED.UNRATE'] },
-  46:  { name: 'Producer Price Index (PPI)', country: 'US', impact: 'high', category: 'Inflation' },
-  54:  { name: 'Personal Income & Outlays (PCE)', country: 'US', impact: 'high', category: 'Consumer' },
-  101: { name: 'FOMC Interest Rate Decision', country: 'US', impact: 'high', category: 'Central Bank', sotwIndicators: ['FRED.FEDFUNDS'] },
-  13:  { name: 'Industrial Production & Capacity Utilization', country: 'US', impact: 'high', category: 'Production' },
-  97:  { name: 'New Home Sales', country: 'US', impact: 'high', category: 'Housing' },
-  27:  { name: 'Housing Starts & Building Permits', country: 'US', impact: 'high', category: 'Housing' },
-  291: { name: 'Existing Home Sales', country: 'US', impact: 'high', category: 'Housing' },
-  194: { name: 'ADP National Employment Report', country: 'US', impact: 'high', category: 'Labor' },
-  47:  { name: 'Productivity & Costs', country: 'US', impact: 'high', category: 'Labor' },
-  323: { name: 'PCE Inflation Rate (Trimmed Mean)', country: 'US', impact: 'high', category: 'Inflation' },
-
-  // ── US Medium Impact ──
-  180: { name: 'Weekly Jobless Claims', country: 'US', impact: 'medium', category: 'Labor' },
-  188: { name: 'Import & Export Price Indexes', country: 'US', impact: 'medium', category: 'Trade' },
-  11:  { name: 'Employment Cost Index', country: 'US', impact: 'medium', category: 'Labor' },
-  290: { name: 'Wholesale Trade: Sales & Inventories', country: 'US', impact: 'medium', category: 'Trade' },
-  321: { name: 'Empire State Manufacturing Survey', country: 'US', impact: 'medium', category: 'Production' },
-  236: { name: 'Housing Affordability Index', country: 'US', impact: 'medium', category: 'Housing' },
-  313: { name: 'Sticky Price CPI', country: 'US', impact: 'medium', category: 'Inflation' },
-  315: { name: 'Median CPI', country: 'US', impact: 'medium', category: 'Inflation' },
-  148: { name: 'Building Permits', country: 'US', impact: 'medium', category: 'Housing' },
-  296: { name: 'Housing Vacancies & Homeownership', country: 'US', impact: 'medium', category: 'Housing' },
-  22:  { name: 'Advance Monthly Retail Sales', country: 'US', impact: 'high', category: 'Consumer' },
-  17:  { name: 'Gross Domestic Product (GDP)', country: 'US', impact: 'high', category: 'GDP', sotwIndicators: ['FRED.GDP'] },
-  25:  { name: 'Manufacturing & Trade Inventories', country: 'US', impact: 'medium', category: 'Production' },
-  53:  { name: 'Current Employment Statistics', country: 'US', impact: 'medium', category: 'Labor' },
-  21:  { name: 'Durable Goods (New Orders)', country: 'US', impact: 'high', category: 'Production' },
-  110: { name: 'Personal Income by State', country: 'US', impact: 'low', category: 'Consumer' },
-  112: { name: 'State Employment & Unemployment', country: 'US', impact: 'low', category: 'Labor' },
-  80:  { name: 'Treasury Bulletin', country: 'US', impact: 'low', category: 'Government' },
-
-  // ── International ──
-  267: { name: 'GDP (Eurostat)', country: 'EU', impact: 'high', category: 'GDP' },
-  251: { name: 'Harmonized CPI (HICP)', country: 'EU', impact: 'high', category: 'Inflation' },
-  201: { name: 'International Consumer Prices', country: 'Global', impact: 'medium', category: 'Inflation' },
-  202: { name: 'International Unemployment Rates', country: 'Global', impact: 'medium', category: 'Labor' },
-  204: { name: 'International GDP per Capita Comparison', country: 'Global', impact: 'medium', category: 'GDP' },
-  230: { name: 'International Manufacturing Productivity', country: 'Global', impact: 'medium', category: 'Production' },
+// ── SOTW indicator links for known events ──────────────────
+const INDICATOR_LINKS: Record<string, string[]> = {
+  'Consumer Price Index': ['FRED.CPIAUCSL'],
+  'CPI': ['FRED.CPIAUCSL'],
+  'Nonfarm Payrolls': ['FRED.PAYEMS', 'FRED.UNRATE'],
+  'Non-Farm Employment Change': ['FRED.PAYEMS', 'FRED.UNRATE'],
+  'Unemployment Rate': ['FRED.UNRATE'],
+  'FOMC': ['FRED.FEDFUNDS'],
+  'Fed Interest Rate Decision': ['FRED.FEDFUNDS'],
+  'Federal Funds Rate': ['FRED.FEDFUNDS'],
+  'GDP': ['FRED.GDP'],
+  'Advance GDP': ['FRED.GDP'],
+  'PCE Price Index': ['FRED.PCEPI'],
 };
 
-const RELEASE_IDS = Object.keys(RELEASES).map(Number);
+function findIndicatorLinks(title: string): string[] | undefined {
+  for (const [key, ids] of Object.entries(INDICATOR_LINKS)) {
+    if (title.includes(key)) return ids;
+  }
+  return undefined;
+}
 
-// ── Fixed global events (summits, intl org meetings — NOT central banks) ──
-// Central bank meetings are scraped from cbrates.com via /api/calendar/cb-meetings
+// ── Fixed global events (summits, intl org meetings) ──
 interface FixedEvent {
   date: string;
   name: string;
@@ -66,22 +38,18 @@ interface FixedEvent {
 }
 
 const FIXED_EVENTS_2026: FixedEvent[] = [
-  // IMF/World Bank
   { date: '2026-04-13', name: 'IMF/World Bank Spring Meetings', country: 'Global', impact: 'high', category: 'Summit' },
   { date: '2026-10-12', name: 'IMF/World Bank Annual Meetings (Bangkok)', country: 'Global', impact: 'high', category: 'Summit' },
-  // G7/G20
   { date: '2026-06-15', name: 'G7 Summit', country: 'Global', impact: 'high', category: 'Summit' },
   { date: '2026-11-22', name: 'G20 Summit', country: 'Global', impact: 'high', category: 'Summit' },
-  // OPEC+
   { date: '2026-03-01', name: 'OPEC+ Meeting', country: 'Global', impact: 'high', category: 'Energy' },
   { date: '2026-06-01', name: 'OPEC+ Meeting', country: 'Global', impact: 'high', category: 'Energy' },
   { date: '2026-09-01', name: 'OPEC+ Meeting', country: 'Global', impact: 'high', category: 'Energy' },
   { date: '2026-12-01', name: 'OPEC+ Meeting', country: 'Global', impact: 'high', category: 'Energy' },
-  // WEF Davos
   { date: '2026-01-19', name: 'World Economic Forum (Davos)', country: 'Global', impact: 'medium', category: 'Summit' },
 ];
 
-// CB code → display info for scraped meetings
+// CB meeting scraping from cbrates.com
 const CB_DISPLAY: Record<string, { country: string; name: string; impact: 'high' | 'medium' }> = {
   Fed:  { country: 'US', name: 'Fed Interest Rate Decision', impact: 'high' },
   ECB:  { country: 'EU', name: 'ECB Interest Rate Decision', impact: 'high' },
@@ -98,7 +66,7 @@ const CB_DISPLAY: Record<string, { country: string; name: string; impact: 'high'
 };
 
 let cbCache: { meetings: FixedEvent[]; fetchedAt: number } | null = null;
-const CB_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+const CB_CACHE_TTL = 24 * 60 * 60 * 1000;
 
 async function fetchCBMeetings(): Promise<FixedEvent[]> {
   if (cbCache && Date.now() - cbCache.fetchedAt < CB_CACHE_TTL) {
@@ -165,94 +133,168 @@ interface CalendarEvent {
   category: string;
   type: 'economic' | 'earnings';
   sotwIndicators?: string[];
-  // Earnings-specific fields
+  forecast?: string;
+  previous?: string;
   symbol?: string;
   epsEstimate?: number | null;
   revenueEstimate?: number | null;
 }
 
-// ── Major companies to track for earnings ──────────────────
+// ── ForexFactory events from Supabase cache (ETL-populated) ──
+async function fetchFFEvents(from: string, to: string): Promise<CalendarEvent[]> {
+  try {
+    const { data, error } = await supabase
+      .from('sotw_calendar_events')
+      .select('*')
+      .gte('date', from)
+      .lte('date', to)
+      .order('date', { ascending: true });
+
+    if (error || !data || data.length === 0) return [];
+
+    return data.map((e: any) => ({
+      date: typeof e.date === 'string' ? e.date.slice(0, 10) : e.date,
+      releaseId: 0,
+      name: e.title,
+      country: e.country || '',
+      impact: e.impact || 'low',
+      category: e.category || 'Other',
+      type: 'economic' as const,
+      sotwIndicators: findIndicatorLinks(e.title),
+      forecast: e.forecast || undefined,
+      previous: e.previous || undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// ── Live ForexFactory fetch (fallback if Supabase cache is empty) ──
+async function fetchFFLive(): Promise<CalendarEvent[]> {
+  try {
+    const resp = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json', {
+      headers: { 'User-Agent': 'SOTW/2.0' },
+      next: { revalidate: 3600 },
+    });
+    if (!resp.ok) return [];
+
+    const raw = await resp.json();
+    const CURRENCY_MAP: Record<string, string> = {
+      USD: 'US', EUR: 'EU', GBP: 'UK', JPY: 'JP', CNY: 'CN',
+      CAD: 'CA', AUD: 'AU', NZD: 'NZ', CHF: 'CH', KRW: 'KR',
+      INR: 'IN', BRL: 'BR', MXN: 'MX', ZAR: 'ZA', SGD: 'SG',
+    };
+    const IMPACT_MAP: Record<string, 'high' | 'medium' | 'low'> = {
+      High: 'high', Medium: 'medium', Low: 'low',
+    };
+
+    return (raw as any[]).map((e: any) => ({
+      date: (e.date || '').slice(0, 10),
+      releaseId: 0,
+      name: e.title || '',
+      country: CURRENCY_MAP[e.country] || (e.country || '').slice(0, 2),
+      impact: IMPACT_MAP[e.impact] || 'low',
+      category: categorizeEvent(e.title || ''),
+      type: 'economic' as const,
+      sotwIndicators: findIndicatorLinks(e.title || ''),
+      forecast: e.forecast || undefined,
+      previous: e.previous || undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function categorizeEvent(title: string): string {
+  const t = title.toLowerCase();
+  if (/cpi|ppi|inflation|pce|price/.test(t)) return 'Inflation';
+  if (/employment|payroll|jobless|unemployment|labor|jobs|adp/.test(t)) return 'Labor';
+  if (/gdp|growth/.test(t)) return 'GDP';
+  if (/rate decision|interest rate|fomc|monetary policy/.test(t)) return 'Central Bank';
+  if (/housing|home sale|building permit|mortgage/.test(t)) return 'Housing';
+  if (/retail|consumer|spending|confidence|sentiment/.test(t)) return 'Consumer';
+  if (/manufacturing|pmi|industrial|production|factory/.test(t)) return 'Production';
+  if (/trade|export|import|current account|balance/.test(t)) return 'Trade';
+  if (/bond|treasury|auction|yield/.test(t)) return 'Fixed Income';
+  if (/speaks|speech|testimony|press conference/.test(t)) return 'Speech';
+  return 'Other';
+}
+
+// ── FRED (confirmed releases only — no tentative dates) ──
+// Only used for past weeks where ForexFactory data isn't cached
+const RELEASES: Record<number, { name: string; country: string; impact: 'high' | 'medium' | 'low'; category: string; sotwIndicators?: string[] }> = {
+  10:  { name: 'Consumer Price Index (CPI)', country: 'US', impact: 'high', category: 'Inflation', sotwIndicators: ['FRED.CPIAUCSL'] },
+  50:  { name: 'Employment Situation (Nonfarm Payrolls)', country: 'US', impact: 'high', category: 'Labor', sotwIndicators: ['FRED.PAYEMS', 'FRED.UNRATE'] },
+  46:  { name: 'Producer Price Index (PPI)', country: 'US', impact: 'high', category: 'Inflation' },
+  54:  { name: 'Personal Income & Outlays (PCE)', country: 'US', impact: 'high', category: 'Consumer' },
+  101: { name: 'FOMC Interest Rate Decision', country: 'US', impact: 'high', category: 'Central Bank', sotwIndicators: ['FRED.FEDFUNDS'] },
+  13:  { name: 'Industrial Production & Capacity Utilization', country: 'US', impact: 'high', category: 'Production' },
+  97:  { name: 'New Home Sales', country: 'US', impact: 'high', category: 'Housing' },
+  27:  { name: 'Housing Starts & Building Permits', country: 'US', impact: 'high', category: 'Housing' },
+  291: { name: 'Existing Home Sales', country: 'US', impact: 'high', category: 'Housing' },
+  194: { name: 'ADP National Employment Report', country: 'US', impact: 'high', category: 'Labor' },
+  47:  { name: 'Productivity & Costs', country: 'US', impact: 'high', category: 'Labor' },
+  323: { name: 'PCE Inflation Rate (Trimmed Mean)', country: 'US', impact: 'high', category: 'Inflation' },
+  180: { name: 'Weekly Jobless Claims', country: 'US', impact: 'medium', category: 'Labor' },
+  188: { name: 'Import & Export Price Indexes', country: 'US', impact: 'medium', category: 'Trade' },
+  22:  { name: 'Advance Monthly Retail Sales', country: 'US', impact: 'high', category: 'Consumer' },
+  17:  { name: 'Gross Domestic Product (GDP)', country: 'US', impact: 'high', category: 'GDP', sotwIndicators: ['FRED.GDP'] },
+  21:  { name: 'Durable Goods (New Orders)', country: 'US', impact: 'high', category: 'Production' },
+  267: { name: 'GDP (Eurostat)', country: 'EU', impact: 'high', category: 'GDP' },
+  251: { name: 'Harmonized CPI (HICP)', country: 'EU', impact: 'high', category: 'Inflation' },
+};
+
+async function fetchFredConfirmed(from: string, to: string): Promise<CalendarEvent[]> {
+  const apiKey = process.env.FRED_API_KEY || '74b554c354e549e1e3087a689608fc29';
+  // NO include_release_dates_with_no_data — only confirmed/published releases
+  const url = `https://api.stlouisfed.org/fred/releases/dates?api_key=${apiKey}&file_type=json&sort_order=asc&limit=1000&realtime_start=${from}&realtime_end=${to}`;
+
+  try {
+    const resp = await fetch(url, { next: { revalidate: 3600 } });
+    if (!resp.ok) return [];
+
+    const data = await resp.json();
+    const releaseDates = data.release_dates || [];
+
+    const events: CalendarEvent[] = [];
+    const seen = new Set<string>();
+
+    for (const rd of releaseDates) {
+      const info = RELEASES[rd.release_id];
+      if (!info) continue;
+
+      const key = `${rd.date}-${rd.release_id}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      events.push({
+        date: rd.date,
+        releaseId: rd.release_id,
+        name: info.name,
+        country: info.country,
+        impact: info.impact,
+        category: info.category,
+        type: 'economic',
+        sotwIndicators: info.sotwIndicators,
+      });
+    }
+
+    return events;
+  } catch {
+    return [];
+  }
+}
+
+// ── Major earnings (Finnhub free tier) ──
 const MAJOR_SYMBOLS = new Set([
-  // Mag 7
   'AAPL','MSFT','GOOGL','AMZN','NVDA','META','TSLA',
-  // Big Tech
   'AVGO','CRM','ORCL','ADBE','AMD','INTC','CSCO','QCOM','TXN','NOW','NFLX','SHOP','SNOW','NET','PLTR','UBER','ABNB',
-  // Finance
   'JPM','GS','MS','BAC','WFC','C','V','MA','PYPL','SQ','COIN',
-  // Consumer/Retail
   'WMT','COST','HD','MCD','SBUX','NKE','DIS',
-  // Healthcare
   'UNH','JNJ','PFE','ABBV','LLY','MRK','TMO',
-  // Industrial/Energy
   'XOM','CVX','BA','CAT','GE','DE',
-  // Consumer Staples
   'KO','PEP','PG',
 ]);
-
-interface CachedData {
-  events: CalendarEvent[];
-  fetchedAt: number;
-}
-
-let cache: CachedData | null = null;
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
-
-async function fetchFredCalendar(from: string, to: string): Promise<CalendarEvent[]> {
-  const apiKey = process.env.FRED_API_KEY || '74b554c354e549e1e3087a689608fc29';
-  const url = `https://api.stlouisfed.org/fred/releases/dates?api_key=${apiKey}&file_type=json&include_release_dates_with_no_data=true&sort_order=asc&limit=1000&realtime_start=${from}&realtime_end=${to}`;
-
-  const resp = await fetch(url, { next: { revalidate: 3600 } });
-  if (!resp.ok) return [];
-
-  const data = await resp.json();
-  const releaseDates = data.release_dates || [];
-
-  const events: CalendarEvent[] = [];
-  const seen = new Set<string>(); // dedupe by date+releaseId
-  const releaseCount: Record<number, number> = {}; // track how many times each release appears
-
-  // First pass: count occurrences per release to detect daily/continuous releases
-  for (const rd of releaseDates) {
-    releaseCount[rd.release_id] = (releaseCount[rd.release_id] || 0) + 1;
-  }
-
-  // Calculate days in range to set threshold proportionally
-  const fromD = new Date(from);
-  const toD = new Date(to);
-  const daysInRange = Math.max(1, Math.ceil((toD.getTime() - fromD.getTime()) / (24 * 60 * 60 * 1000)));
-  const threshold = Math.max(15, Math.floor(daysInRange * 0.6));
-
-  // Releases appearing too frequently are "continuous" — skip them
-  const continuousReleases = new Set(
-    Object.entries(releaseCount)
-      .filter(([, count]) => count >= threshold)
-      .map(([id]) => Number(id))
-  );
-
-  for (const rd of releaseDates) {
-    const releaseId = rd.release_id;
-    const info = RELEASES[releaseId];
-    if (!info) continue;
-    if (continuousReleases.has(releaseId)) continue; // skip daily releases
-
-    const key = `${rd.date}-${releaseId}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-
-    events.push({
-      date: rd.date,
-      releaseId,
-      name: info.name,
-      country: info.country,
-      impact: info.impact,
-      category: info.category,
-      type: 'economic',
-      sotwIndicators: info.sotwIndicators,
-    });
-  }
-
-  return events;
-}
 
 async function fetchEarningsCalendar(from: string, to: string): Promise<CalendarEvent[]> {
   const token = process.env.FINNHUB_KEY || 'd6vl62hr01qiiutc8p6gd6vl62hr01qiiutc8p70';
@@ -263,10 +305,7 @@ async function fetchEarningsCalendar(from: string, to: string): Promise<Calendar
     if (!resp.ok) return [];
 
     const data = await resp.json();
-    const all = data.earningsCalendar || [];
-
-    // Filter to major companies only
-    return all
+    return (data.earningsCalendar || [])
       .filter((e: any) => MAJOR_SYMBOLS.has(e.symbol))
       .map((e: any) => ({
         date: e.date,
@@ -284,6 +323,14 @@ async function fetchEarningsCalendar(from: string, to: string): Promise<Calendar
     return [];
   }
 }
+
+interface CachedData {
+  events: CalendarEvent[];
+  fetchedAt: number;
+}
+
+let cache: CachedData | null = null;
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 export async function GET(request: Request) {
   try {
@@ -303,38 +350,64 @@ export async function GET(request: Request) {
         }));
     }
 
-    // If custom date range provided, fetch directly (no cache)
-    if (from && to) {
-      const [econ, earnings] = await Promise.all([
-        fetchFredCalendar(from, to),
-        fetchEarningsCalendar(from, to),
-      ]);
-      const fixed = await getFixedEvents(from, to);
-      const events = [...econ, ...fixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
-      return NextResponse.json({ events, source: 'FRED + Finnhub' });
+    async function getEconomicEvents(from: string, to: string): Promise<CalendarEvent[]> {
+      // 1. Try ForexFactory cache from Supabase (most accurate for current/recent weeks)
+      const ffEvents = await fetchFFEvents(from, to);
+      if (ffEvents.length > 0) {
+        return ffEvents;
+      }
+
+      // 2. Fallback: try live ForexFactory (current week only)
+      const ffLive = await fetchFFLive();
+      const ffFiltered = ffLive.filter(e => e.date >= from && e.date <= to);
+      if (ffFiltered.length > 0) {
+        return ffFiltered;
+      }
+
+      // 3. Last resort: FRED confirmed releases only (no tentative dates)
+      return fetchFredConfirmed(from, to);
     }
 
-    // Default: next 90 days (to catch quarterly earnings)
+    if (from && to) {
+      const [econ, earnings, fixed] = await Promise.all([
+        getEconomicEvents(from, to),
+        fetchEarningsCalendar(from, to),
+        getFixedEvents(from, to),
+      ]);
+
+      // Deduplicate: if ForexFactory has a CB meeting, don't also show the hardcoded one
+      const econNames = new Set(econ.map(e => `${e.date}|${e.category}`));
+      const dedupedFixed = fixed.filter(e => !econNames.has(`${e.date}|${e.category}`));
+
+      const events = [...econ, ...dedupedFixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
+      return NextResponse.json({ events, source: 'ForexFactory + Finnhub' });
+    }
+
+    // Default: current + next 4 weeks
     if (cache && Date.now() - cache.fetchedAt < CACHE_TTL) {
-      return NextResponse.json({ events: cache.events, source: 'FRED + Finnhub', cached: true });
+      return NextResponse.json({ events: cache.events, source: 'ForexFactory + Finnhub', cached: true });
     }
 
     const today = new Date();
-    const fromDate = today.toISOString().slice(0, 10);
+    const fromDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const toDate = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-    const [econ, earnings] = await Promise.all([
-      fetchFredCalendar(fromDate, toDate),
+    const [econ, earnings, fixed] = await Promise.all([
+      getEconomicEvents(fromDate, toDate),
       fetchEarningsCalendar(fromDate, toDate),
+      getFixedEvents(fromDate, toDate),
     ]);
-    const fixed = await getFixedEvents(fromDate, toDate);
-    const events = [...econ, ...fixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
+
+    const econNames = new Set(econ.map(e => `${e.date}|${e.category}`));
+    const dedupedFixed = fixed.filter(e => !econNames.has(`${e.date}|${e.category}`));
+
+    const events = [...econ, ...dedupedFixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
     cache = { events, fetchedAt: Date.now() };
 
-    return NextResponse.json({ events, source: 'FRED + Finnhub' });
+    return NextResponse.json({ events, source: 'ForexFactory + Finnhub' });
   } catch {
     if (cache) {
-      return NextResponse.json({ events: cache.events, source: 'FRED + Finnhub', cached: true });
+      return NextResponse.json({ events: cache.events, source: 'ForexFactory + Finnhub', cached: true });
     }
     return NextResponse.json({ events: [], error: 'Failed to fetch calendar' }, { status: 500 });
   }

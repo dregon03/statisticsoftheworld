@@ -14,6 +14,8 @@ interface CalendarEvent {
   category: string;
   type: 'economic' | 'earnings';
   sotwIndicators?: string[];
+  forecast?: string;
+  previous?: string;
   symbol?: string;
   epsEstimate?: number | null;
   revenueEstimate?: number | null;
@@ -321,6 +323,15 @@ export default function CalendarPage() {
                               </span>
                             )}
 
+                            {/* Forecast / Previous */}
+                            {!isEarnings && (event.forecast || event.previous) && (
+                              <span className="text-[11px] text-[#666] font-mono hidden sm:inline">
+                                {event.forecast && <><span className="text-[#999]">Fcst</span> {event.forecast}</>}
+                                {event.forecast && event.previous && ' · '}
+                                {event.previous && <><span className="text-[#999]">Prev</span> {event.previous}</>}
+                              </span>
+                            )}
+
                             {/* Category */}
                             {!isEarnings && (
                               <span className="text-[11px] text-[#999] hidden sm:inline">
@@ -369,7 +380,7 @@ export default function CalendarPage() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500 inline-block" /> Major Earnings</span>
           </div>
           <div>
-            Sources: <a href="https://fred.stlouisfed.org/releases/calendar" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">FRED</a> + <a href="https://finnhub.io" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Finnhub</a>
+            Sources: <a href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">ForexFactory</a> + <a href="https://finnhub.io" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Finnhub</a> + <a href="https://fred.stlouisfed.org/releases/calendar" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">FRED</a>
           </div>
         </div>
       </section>

@@ -6,7 +6,7 @@ name: ETL Data Pipeline
 #   Every 15 min (market hours) — Live quotes (separate: live-quotes.yml)
 #   Every 4 hours               — Polymarket predictions
 #   Daily midnight UTC          — API key reset
-#   Daily 7AM UTC               — All daily jobs (YF, FRED, calendar, etc.)
+#   Daily 7AM UTC               — All daily jobs (YF, FRED, etc.)
 #   1st of month 9AM UTC        — Intl org data (IMF, WB, UN, WHO, COMTRADE, history)
 #   Weekly Monday 6AM UTC       — Sitemap ping + DB health check
 # ============================================================
@@ -314,21 +314,32 @@ jobs:
         run: python scripts/seed_methodology.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Calendar — warm FRED + Finnhub + CB meetings cache
+  # WEEKLY (Monday): ForexFactory calendar → Supabase
+  # Fetches current week's verified economic events.
+  # More accurate than FRED's tentative release dates.
+  # Source: https://nfs.faireconomy.media/ff_calendar_thisweek.json
   # ════════════════════════════════════════════════════════════
   calendar:
-    name: "Daily: Calendar Warm"
+    name: "Weekly: Calendar ETL (ForexFactory)"
     runs-on: ubuntu-latest
     timeout-minutes: 3
     if: >
+      github.event.schedule == '0 6 * * 1' ||
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'calendar'
     steps:
-      - name: Warm calendar + summaries
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Fetch ForexFactory calendar → Supabase
+        run: python scripts/etl_calendar.py
+      - name: Warm calendar page cache
         run: |
-          curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar cache warmed ✓"
-          curl -sf "https://statisticsoftheworld.com/calendar" -o /dev/null && echo "Calendar page warmed ✓"
+          curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar API warmed ✓" || true
+          curl -sf "https://statisticsoftheworld.com/calendar" -o /dev/null && echo "Calendar page warmed ✓" || true
 
   # ════════════════════════════════════════════════════════════
   # EVERY 4 HOURS: Polymarket prediction markets

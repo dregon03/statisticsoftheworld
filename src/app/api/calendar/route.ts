@@ -136,9 +136,89 @@ interface CalendarEvent {
   sotwIndicators?: string[];
   forecast?: string;
   previous?: string;
+  actual?: string;
+  revised?: string;
+  source?: string;
   symbol?: string;
   epsEstimate?: number | null;
   revenueEstimate?: number | null;
+  epsActual?: number | null;
+  revenueActual?: number | null;
+}
+
+// Map calendar event names to FRED series for actuals enrichment
+const EVENT_TO_FRED_SERIES: Record<string, string[]> = {
+  'Consumer Price Index': ['CPIAUCSL', 'CPILFESL'],
+  'CPI': ['CPIAUCSL'],
+  'Core CPI': ['CPILFESL'],
+  'Nonfarm Payrolls': ['PAYEMS'],
+  'Non-Farm Employment Change': ['PAYEMS'],
+  'Unemployment Rate': ['UNRATE'],
+  'Unemployment Claims': ['ICSA'],
+  'Jobless Claims': ['ICSA'],
+  'GDP': ['GDP'],
+  'Advance GDP': ['GDP'],
+  'Retail Sales': ['RSAFS'],
+  'PCE Price Index': ['PCEPI'],
+  'Core PCE': ['PCEPILFE'],
+  'PPI': ['PPIFIS'],
+  'Producer Price Index': ['PPIFIS'],
+  'Industrial Production': ['INDPRO'],
+  'Durable Goods': ['DGORDER'],
+  'Housing Starts': ['HOUST'],
+  'Building Permits': ['PERMIT'],
+  'New Home Sales': ['HSN1F'],
+  'Trade Balance': ['BOPGSTB'],
+  'JOLTS': ['JTSJOL'],
+  'Michigan Consumer Sentiment': ['UMCSENT'],
+  'Consumer Sentiment': ['UMCSENT'],
+  'Federal Funds Rate': ['FEDFUNDS'],
+};
+
+// Fetch official actuals from sotw_macro_releases and enrich events
+async function enrichWithOfficialActuals(events: CalendarEvent[], from: string, to: string): Promise<CalendarEvent[]> {
+  try {
+    const { data: releases } = await supabase
+      .from('sotw_macro_releases')
+      .select('series_id, release_date, actual, previous, revised, source')
+      .gte('release_date', from)
+      .lte('release_date', to);
+
+    if (!releases || releases.length === 0) return events;
+
+    // Index by series_id + date
+    const releaseMap = new Map<string, typeof releases[0]>();
+    for (const r of releases) {
+      const date = typeof r.release_date === 'string' ? r.release_date.slice(0, 10) : r.release_date;
+      releaseMap.set(`${r.series_id}|${date}`, r);
+    }
+
+    // Enrich events
+    return events.map(event => {
+      if (event.type !== 'economic' || event.country !== 'US') return event;
+
+      // Find matching FRED series for this event
+      for (const [eventKey, seriesIds] of Object.entries(EVENT_TO_FRED_SERIES)) {
+        if (event.name.includes(eventKey)) {
+          for (const seriesId of seriesIds) {
+            const release = releaseMap.get(`${seriesId}|${event.date}`);
+            if (release) {
+              return {
+                ...event,
+                actual: release.actual || undefined,
+                previous: release.previous || event.previous,
+                revised: release.revised || undefined,
+                source: 'FRED',
+              };
+            }
+          }
+        }
+      }
+      return event;
+    });
+  } catch {
+    return events;
+  }
 }
 
 // ── Cached events from Supabase (ForexFactory economic + Finnhub earnings) ──
@@ -398,7 +478,9 @@ export async function GET(request: Request) {
       const econKeys = new Set(econ.map(e => `${e.date}|${e.category}`));
       const dedupedFixed = fixed.filter(e => !econKeys.has(`${e.date}|${e.category}`));
 
-      return [...econ, ...dedupedFixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
+      // 5. Enrich with official actuals from sotw_macro_releases
+      const allEvents = [...econ, ...dedupedFixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
+      return enrichWithOfficialActuals(allEvents, from, to);
     }
 
     if (from && to) {

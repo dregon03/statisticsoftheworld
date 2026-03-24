@@ -18,9 +18,14 @@ interface CalendarEvent {
   sotwIndicators?: string[];
   forecast?: string;
   previous?: string;
+  actual?: string;
+  revised?: string;
+  source?: string;
   symbol?: string;
   epsEstimate?: number | null;
   revenueEstimate?: number | null;
+  epsActual?: number | null;
+  revenueActual?: number | null;
 }
 
 interface CalendarMeta {
@@ -741,32 +746,50 @@ export default function CalendarPage() {
             )}
           </div>
 
-          {/* Forecast / EPS */}
-          <span className="w-20 text-right text-[11px] font-mono hidden sm:block">
+          {/* Actual (official, post-release) */}
+          <span className="w-16 text-right text-[11px] font-mono hidden sm:block">
             {isEarnings ? (
-              event.epsEstimate != null ? (
-                <span className="text-[#333]"><span className="text-[#999] text-[10px]">EPS </span>${event.epsEstimate.toFixed(2)}</span>
+              event.epsActual != null ? (
+                <span className="text-green-700 font-semibold">${event.epsActual.toFixed(2)}</span>
               ) : <span className="text-[#ddd]">—</span>
             ) : (
-              event.forecast ? (
-                <span className="text-[#333] font-semibold">{event.forecast}</span>
+              event.actual ? (
+                <span className="text-green-700 font-semibold" title={`Source: ${event.source || 'official'}`}>{event.actual}</span>
               ) : <span className="text-[#ddd]">—</span>
             )}
           </span>
 
-          {/* Previous / Revenue */}
-          <span className="w-20 text-right text-[11px] font-mono text-[#666] hidden sm:block">
+          {/* Forecast / EPS estimate */}
+          <span className="w-16 text-right text-[11px] font-mono hidden sm:block">
             {isEarnings ? (
-              event.revenueEstimate != null && event.revenueEstimate > 0 ? (
-                <span><span className="text-[#999] text-[10px]">Rev </span>{formatRev(event.revenueEstimate)}</span>
+              event.epsEstimate != null ? (
+                <span className="text-[#333]">${event.epsEstimate.toFixed(2)}</span>
               ) : <span className="text-[#ddd]">—</span>
             ) : (
-              event.previous ? event.previous : <span className="text-[#ddd]">—</span>
+              event.forecast ? (
+                <span className="text-[#333]">{event.forecast}</span>
+              ) : <span className="text-[#ddd]">—</span>
+            )}
+          </span>
+
+          {/* Previous / Revenue estimate */}
+          <span className="w-16 text-right text-[11px] font-mono text-[#666] hidden sm:block">
+            {isEarnings ? (
+              event.revenueEstimate != null && event.revenueEstimate > 0 ? (
+                <span>{formatRev(event.revenueEstimate)}</span>
+              ) : <span className="text-[#ddd]">—</span>
+            ) : (
+              event.previous ? (
+                <span>
+                  {event.previous}
+                  {event.revised && <span className="text-orange-500 text-[9px] ml-0.5" title={`Revised from ${event.revised}`}>R</span>}
+                </span>
+              ) : <span className="text-[#ddd]">—</span>
             )}
           </span>
 
           {/* Category */}
-          <span className="w-20 text-right text-[10px] text-[#999] hidden lg:block truncate">{event.category}</span>
+          <span className="w-16 text-right text-[10px] text-[#999] hidden lg:block truncate">{event.category}</span>
 
           {/* Impact badge */}
           <span className={`text-[9px] px-2 py-0.5 rounded-full border shrink-0 hidden md:inline font-medium ${
@@ -930,10 +953,11 @@ export default function CalendarPage() {
               <span className="w-12 shrink-0">Time</span>
               <span className="w-7 shrink-0">Ctry</span>
               <span className="flex-1">Event</span>
-              <span className="w-20 text-right">Forecast</span>
-              <span className="w-20 text-right">Previous</span>
-              <span className="w-20 text-right hidden lg:block">Category</span>
-              <span className="w-16 text-right hidden md:block">Impact</span>
+              <span className="w-16 text-right">Actual</span>
+              <span className="w-16 text-right">Forecast</span>
+              <span className="w-16 text-right">Previous</span>
+              <span className="w-16 text-right hidden lg:block">Category</span>
+              <span className="w-14 text-right hidden md:block">Impact</span>
             </div>
             <div className="divide-y divide-[#f0f0f0]">
               {top10Events.length === 0 ? (
@@ -959,10 +983,11 @@ export default function CalendarPage() {
               <span className="w-12 shrink-0">Time</span>
               <span className="w-7 shrink-0">Ctry</span>
               <span className="flex-1">Event</span>
-              <span className="w-20 text-right">Forecast</span>
-              <span className="w-20 text-right">Previous</span>
-              <span className="w-20 text-right hidden lg:block">Category</span>
-              <span className="w-16 text-right hidden md:block">Impact</span>
+              <span className="w-16 text-right">Actual</span>
+              <span className="w-16 text-right">Forecast</span>
+              <span className="w-16 text-right">Previous</span>
+              <span className="w-16 text-right hidden lg:block">Category</span>
+              <span className="w-14 text-right hidden md:block">Impact</span>
             </div>
 
             {week.dates.map(d => {

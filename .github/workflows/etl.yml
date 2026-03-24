@@ -7,16 +7,14 @@ name: ETL Data Pipeline
 #   Every 4 hours               — Polymarket predictions
 #   Daily midnight UTC          — API key reset
 #   Daily 7AM UTC               — All daily jobs (YF, FRED, calendar, etc.)
-#   Sunday 8AM UTC              — Macro data + history + trade
-#   1st of month                — Metadata + full narrative refresh
+#   1st of month 9AM UTC        — Intl org data (IMF, WB, UN, WHO, COMTRADE, history)
 #   Weekly Monday 6AM UTC       — Sitemap ping + DB health check
 # ============================================================
 on:
   schedule:
     - cron: '0 0 * * *'       # Daily midnight UTC (API key reset)
     - cron: '0 7 * * *'       # Daily at 7 AM UTC
-    - cron: '0 8 * * 0'       # Sundays at 8 AM UTC
-    - cron: '0 9 1 * *'       # 1st of month at 9 AM UTC
+    - cron: '0 9 1 * *'       # 1st of month at 9 AM UTC (intl org annual data)
     - cron: '0 */4 * * *'     # Every 4 hours (Polymarket)
     - cron: '0 6 * * 1'       # Weekly Monday 6 AM UTC
   workflow_dispatch:
@@ -127,14 +125,15 @@ jobs:
         run: python scripts/etl_financial.py --source exchangerate
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): IMF World Economic Outlook
+  # MONTHLY (1st): IMF World Economic Outlook
+  # Annual data — no need to fetch weekly
   # ════════════════════════════════════════════════════════════
   macro-imf:
-    name: "Weekly: IMF WEO"
+    name: "Monthly: IMF WEO"
     runs-on: ubuntu-latest
     timeout-minutes: 20
     if: >
-      github.event.schedule == '0 8 * * 0' ||
+      github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'macro' ||
       github.event.inputs.pipeline == 'intl_orgs' ||
@@ -149,15 +148,16 @@ jobs:
         run: python scripts/etl.py --source imf --table main
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): World Bank WDI — Batch 1 (priority + economic)
+  # MONTHLY (1st): World Bank WDI — Batch 1 (priority + economic)
   # 312 indicators split into 2 parallel jobs to stay within timeout
+  # Annual data — no need to fetch weekly
   # ════════════════════════════════════════════════════════════
   macro-wb-1:
-    name: "Weekly: World Bank (batch 1)"
+    name: "Monthly: World Bank (batch 1)"
     runs-on: ubuntu-latest
     timeout-minutes: 25
     if: >
-      github.event.schedule == '0 8 * * 0' ||
+      github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'macro' ||
       github.event.inputs.pipeline == 'intl_orgs' ||
@@ -172,14 +172,14 @@ jobs:
         run: python scripts/etl.py --source wb --table main --wb-batch 0
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): World Bank WDI — Batch 2 (health/education/env)
+  # MONTHLY (1st): World Bank WDI — Batch 2 (health/education/env)
   # ════════════════════════════════════════════════════════════
   macro-wb-2:
-    name: "Weekly: World Bank (batch 2)"
+    name: "Monthly: World Bank (batch 2)"
     runs-on: ubuntu-latest
     timeout-minutes: 25
     if: >
-      github.event.schedule == '0 8 * * 0' ||
+      github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'macro' ||
       github.event.inputs.pipeline == 'intl_orgs' ||
@@ -196,14 +196,15 @@ jobs:
         run: python scripts/etl_intl_orgs.py --source wb_extra
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): United Nations
+  # MONTHLY (1st): United Nations
+  # Annual data — no need to fetch weekly
   # ════════════════════════════════════════════════════════════
   macro-un:
-    name: "Weekly: United Nations"
+    name: "Monthly: United Nations"
     runs-on: ubuntu-latest
     timeout-minutes: 20
     if: >
-      github.event.schedule == '0 8 * * 0' ||
+      github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'macro' ||
       github.event.inputs.pipeline == 'intl_orgs' ||
@@ -218,14 +219,15 @@ jobs:
         run: python scripts/etl.py --source un --table main
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): WHO Global Health Observatory
+  # MONTHLY (1st): WHO Global Health Observatory
+  # Annual data — no need to fetch weekly
   # ════════════════════════════════════════════════════════════
   macro-who:
-    name: "Weekly: WHO GHO"
+    name: "Monthly: WHO GHO"
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: >
-      github.event.schedule == '0 8 * * 0' ||
+      github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'macro' ||
       github.event.inputs.pipeline == 'intl_orgs' ||
@@ -240,14 +242,15 @@ jobs:
         run: python scripts/etl_intl_orgs.py --source who
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): Historical backfill — 20+ years
+  # MONTHLY (1st): Historical backfill — 20+ years
+  # Annual data — no need to fetch weekly
   # ════════════════════════════════════════════════════════════
   history:
-    name: "Weekly: Historical Backfill"
+    name: "Monthly: Historical Backfill"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     if: >
-      github.event.schedule == '0 8 * * 0' ||
+      github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'history'
     steps:
@@ -267,15 +270,15 @@ jobs:
           done
 
   # ════════════════════════════════════════════════════════════
-  # WEEKLY (Sunday): UN COMTRADE trade data → Supabase
-  # Pre-caches trade data for 50 countries. ~10 min runtime.
+  # MONTHLY (1st): UN COMTRADE trade data → Supabase
+  # Pre-caches trade data for 50 countries. Annual data.
   # ════════════════════════════════════════════════════════════
   trade:
-    name: "Weekly: COMTRADE Trade Data"
+    name: "Monthly: COMTRADE Trade Data"
     runs-on: ubuntu-latest
     timeout-minutes: 20
     if: >
-      github.event.schedule == '0 8 * * 0' ||
+      github.event.schedule == '0 9 1 * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'trade'
     steps:

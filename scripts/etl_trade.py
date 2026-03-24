@@ -114,8 +114,57 @@ def fetch_trade(reporter_code, cmd_code="TOTAL"):
     return data.get("data", []) if data else []
 
 
+def clean_records(records):
+    """Transform: deduplicate and normalize raw COMTRADE records.
+
+    COMTRADE v2 returns multiple rows per partner due to:
+    - partner2Code: transit/intermediary trade breakdowns
+    - customsCode: C00 (total), C03 (re-imports), C08 (re-exports)
+
+    We filter to direct trade only, then deduplicate by partner,
+    keeping the highest value per (flow, partner) pair.
+    """
+    # 1. Filter to direct trade: partner2Code=0, customsCode=C00
+    clean = []
+    for r in records:
+        val = r.get("primaryValue")
+        if val is None:
+            continue
+        try:
+            val = float(val)
+        except (ValueError, TypeError):
+            continue
+        if val <= 0:
+            continue
+
+        # Only keep direct trade (no transit breakdowns)
+        if r.get("partner2Code", 0) != 0:
+            continue
+        # Prefer total customs (C00), but accept if customsCode not present
+        customs = r.get("customsCode", "C00")
+        if customs not in ("C00", None, ""):
+            continue
+
+        r["primaryValue"] = val
+        clean.append(r)
+
+    # 2. Deduplicate: keep highest value per (flowCode, partnerCode)
+    best = {}
+    for r in clean:
+        key = (r.get("flowCode"), r.get("partnerCode"))
+        if key not in best or r["primaryValue"] > best[key]["primaryValue"]:
+            best[key] = r
+
+    return list(best.values())
+
+
 def process_country(records):
     """Split combined X+M records into structured trade data."""
+    if not records:
+        return None
+
+    # Transform: clean, deduplicate, normalize
+    records = clean_records(records)
     if not records:
         return None
 
@@ -162,20 +211,30 @@ def process_commodities(records):
     if not records:
         return [], []
 
+    # Transform: clean and deduplicate commodity records
+    records = clean_records(records)
+    if not records:
+        return [], []
+
     years = set(r.get("refYear") or r.get("period") for r in records)
     year = max(int(y) for y in years if y)
     latest = [r for r in records if int(r.get("refYear") or r.get("period") or 0) == year]
 
     def top_commodities(flow_records):
-        flow_records = [r for r in flow_records if r.get("primaryValue")]
-        flow_records.sort(key=lambda r: r["primaryValue"], reverse=True)
+        # Deduplicate by cmdCode (keep highest value per commodity)
+        best = {}
+        for r in flow_records:
+            code = r.get("cmdCode", "")
+            if code not in best or (r.get("primaryValue", 0) or 0) > (best[code].get("primaryValue", 0) or 0):
+                best[code] = r
+        deduped = sorted(best.values(), key=lambda r: r.get("primaryValue", 0) or 0, reverse=True)
         return [
             {
                 "code": r.get("cmdCode", ""),
                 "name": (r.get("cmdDesc") or "").split(";")[0].strip()[:60],
                 "value": r["primaryValue"],
             }
-            for r in flow_records[:15]
+            for r in deduped[:15]
         ]
 
     return (

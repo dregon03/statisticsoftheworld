@@ -280,49 +280,65 @@ def etl_imf(cur, table, valid_countries, conn=None):
 # ETL: WORLD BANK
 # ============================================================
 
+def _fetch_wb_indicator(args):
+    """Fetch one WB indicator (runs in thread pool)."""
+    ind_id, iso2_to_iso3 = args
+    best = {}
+    try:
+        for page in [1, 2, 3]:
+            data = fetch_json(f"{WB_BASE}/country/all/indicator/{ind_id}?format=json&mrv=5&per_page=500&page={page}")
+            if not data[1]:
+                break
+            for d in data[1]:
+                iso2 = d["country"]["id"]
+                if d["value"] is None:
+                    continue
+                iso3 = iso2_to_iso3.get(iso2)
+                if not iso3:
+                    continue
+                yr = int(d["date"])
+                if iso3 not in best or yr > best[iso3][1]:
+                    best[iso3] = (d["value"], yr)
+            if data[0].get("pages", 1) <= page:
+                break
+        return ind_id, best, None
+    except Exception as e:
+        return ind_id, {}, f"WB {ind_id}: {e}"
+
+
 def etl_wb(cur, table, iso2_to_iso3, conn=None):
-    print("ETL: World Bank indicators...")
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    print("ETL: World Bank indicators (parallel fetch)...")
     total = 0
     errors = []
 
-    for i, ind_id in enumerate(WB_INDICATORS):
-        try:
-            best = {}
-            for page in [1, 2, 3]:
-                data = fetch_json(f"{WB_BASE}/country/all/indicator/{ind_id}?format=json&mrv=5&per_page=500&page={page}")
-                if not data[1]:
-                    break
-                for d in data[1]:
-                    iso2 = d["country"]["id"]
-                    if d["value"] is None:
-                        continue
-                    iso3 = iso2_to_iso3.get(iso2)
-                    if not iso3:
-                        continue
-                    yr = int(d["date"])
-                    if iso3 not in best or yr > best[iso3][1]:
-                        best[iso3] = (d["value"], yr)
-                if data[0].get("pages", 1) <= page:
-                    break
-        except Exception as e:
-            errors.append(f"WB {ind_id}: {e}")
-            continue
+    # Fetch all indicators in parallel (10 threads)
+    tasks = [(ind_id, iso2_to_iso3) for ind_id in WB_INDICATORS]
+    done = 0
 
-        count = 0
-        for iso3, (value, yr) in best.items():
-            upsert(cur, table, ind_id, iso3, value, yr, "wb")
-            count += 1
-        total += count
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        futures = {pool.submit(_fetch_wb_indicator, t): t[0] for t in tasks}
+        for future in as_completed(futures):
+            ind_id, best, err = future.result()
+            done += 1
+            if err:
+                errors.append(err)
+                continue
 
-        # Commit after each indicator to avoid statement timeout on Shared Pooler
-        if conn:
-            conn.commit()
+            count = 0
+            for iso3, (value, yr) in best.items():
+                upsert(cur, table, ind_id, iso3, value, yr, "wb")
+                count += 1
+            total += count
 
-        if (i + 1) % 20 == 0:
-            print(f"  Progress: {i+1}/{len(WB_INDICATORS)} indicators, {total} rows")
-        time.sleep(0.5)
+            # Commit after each indicator to avoid statement timeout
+            if conn:
+                conn.commit()
 
-    print(f"  World Bank total: {total} rows")
+            if done % 50 == 0:
+                print(f"  Progress: {done}/{len(WB_INDICATORS)} indicators, {total} rows")
+
+    print(f"  World Bank total: {total} rows ({done} indicators)")
     return total, errors
 
 

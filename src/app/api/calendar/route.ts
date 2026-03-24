@@ -126,6 +126,7 @@ async function fetchCBMeetings(): Promise<FixedEvent[]> {
 
 interface CalendarEvent {
   date: string;
+  time?: string;
   releaseId: number;
   name: string;
   country: string;
@@ -161,6 +162,7 @@ async function fetchCachedEvents(from: string, to: string): Promise<{ economic: 
 
       const event: CalendarEvent = {
         date,
+        time: e.time || undefined,
         releaseId: 0,
         name: e.title,
         country: e.country || '',

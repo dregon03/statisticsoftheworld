@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { INDICATORS, CATEGORIES, formatValue, MULTI_SOURCE } from '@/lib/data';
 import Flag from '../Flag';
-import BarRankingChart from '@/components/charts/BarRankingChart';
+const BarRankingChart = dynamic(() => import('@/components/charts/BarRankingChart'), { ssr: false });
 import ExportButton from '@/components/ExportButton';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -48,7 +49,6 @@ function IndicatorsContent() {
 
   useEffect(() => {
     setLoading(true);
-    setMultiData(null);
     setSortBySource(null);
     fetch(`/api/indicator?id=${encodeURIComponent(selectedIndicator.id)}`)
       .then(r => r.json())
@@ -68,7 +68,6 @@ function IndicatorsContent() {
   }, [selectedIndicator]);
 
   const sorted = sortAsc ? [...data].reverse() : data;
-  const maxValue = data.length > 0 ? Math.max(...data.map(d => Math.abs(d.value || 0))) : 1;
 
   const filteredIndicators = INDICATORS.filter(ind => {
     if (!searchIndicator) return true;
@@ -122,13 +121,13 @@ function IndicatorsContent() {
             </div>
           </div>
 
-          {/* Data table */}
-          <div className="lg:col-span-3">
+          {/* Data table — key forces remount on indicator change (no stale data flash) */}
+          <div className="lg:col-span-3" key={selectedIndicator.id}>
             <div className="mb-4">
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-xl font-bold">{selectedIndicator.label}</h2>
-                  <div className="text-sm text-gray-400">{selectedIndicator.category} &middot; {hasMultiSource && multiData ? multiData.countries.length : data.length} countries</div>
+                  <div className="text-sm text-gray-400">{selectedIndicator.category}{!loading && data.length > 0 ? ` · ${hasMultiSource && multiData ? multiData.countries.length : data.length} countries` : ''}</div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex border border-gray-200 rounded-lg overflow-hidden">
@@ -299,13 +298,11 @@ function IndicatorsContent() {
                       </th>
                       <th className="px-4 py-2.5 text-gray-500">Country</th>
                       <th className="px-4 py-2.5 text-right text-gray-700 font-semibold w-36">{sourceName}</th>
-                      <th className="px-4 py-2.5 w-56 hidden md:table-cell"></th>
                       <th className="px-4 py-2.5 text-right text-gray-500 w-14">Year</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sorted.map((entry, i) => {
-                      const barWidth = maxValue > 0 ? (Math.abs(entry.value || 0) / maxValue) * 100 : 0;
                       const rank = sortAsc ? data.length - i : i + 1;
                       return (
                         <tr key={entry.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
@@ -318,14 +315,6 @@ function IndicatorsContent() {
                           </td>
                           <td className="px-4 py-2 text-right font-mono text-sm">
                             {formatValue(entry.value, selectedIndicator.format, selectedIndicator.decimals)}
-                          </td>
-                          <td className="px-4 py-2 hidden md:table-cell">
-                            <div className="w-full bg-gray-100 rounded-full h-1.5">
-                              <div
-                                className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
-                                style={{ width: `${barWidth}%` }}
-                              />
-                            </div>
                           </td>
                           <td className="px-4 py-2 text-right text-gray-400 text-xs">{entry.year}</td>
                         </tr>

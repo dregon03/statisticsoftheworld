@@ -243,7 +243,7 @@ def finish_run(cur, run_id, rows, indicators, errors, status="completed"):
 # ETL: IMF
 # ============================================================
 
-def etl_imf(cur, table, valid_countries):
+def etl_imf(cur, table, valid_countries, conn=None):
     print("ETL: IMF indicators...")
     year = datetime.datetime.now().year
     total = 0
@@ -268,6 +268,8 @@ def etl_imf(cur, table, valid_countries):
                     count += 1
                     break
         total += count
+        if conn:
+            conn.commit()
         print(f"  {sotw_id}: {count} countries")
         time.sleep(1)
 
@@ -278,7 +280,7 @@ def etl_imf(cur, table, valid_countries):
 # ETL: WORLD BANK
 # ============================================================
 
-def etl_wb(cur, table, iso2_to_iso3):
+def etl_wb(cur, table, iso2_to_iso3, conn=None):
     print("ETL: World Bank indicators...")
     total = 0
     errors = []
@@ -312,6 +314,10 @@ def etl_wb(cur, table, iso2_to_iso3):
             count += 1
         total += count
 
+        # Commit after each indicator to avoid statement timeout on Shared Pooler
+        if conn:
+            conn.commit()
+
         if (i + 1) % 20 == 0:
             print(f"  Progress: {i+1}/{len(WB_INDICATORS)} indicators, {total} rows")
         time.sleep(0.5)
@@ -324,7 +330,7 @@ def etl_wb(cur, table, iso2_to_iso3):
 # ETL: UNITED NATIONS
 # ============================================================
 
-def etl_un(cur, table, name_to_iso3):
+def etl_un(cur, table, name_to_iso3, conn=None):
     print("ETL: United Nations indicators...")
     total = 0
     errors = []
@@ -397,6 +403,8 @@ def etl_un(cur, table, name_to_iso3):
 
             wb.close()
             total += count
+            if conn:
+                conn.commit()
             print(f"  {ind_id}: {count} countries")
         except Exception as e:
             errors.append(f"UN parse {ind_id}: {e}")
@@ -507,21 +515,21 @@ def main():
     indicators_set = set()
 
     if args.source in ("imf", "all"):
-        rows, errors = etl_imf(cur, table, valid_countries)
+        rows, errors = etl_imf(cur, table, valid_countries, conn=conn)
         total_rows += rows
         all_errors.extend(errors)
         indicators_set.update(IMF_INDICATORS.keys())
         conn.commit()
 
     if args.source in ("wb", "all"):
-        rows, errors = etl_wb(cur, table, iso2_to_iso3)
+        rows, errors = etl_wb(cur, table, iso2_to_iso3, conn=conn)
         total_rows += rows
         all_errors.extend(errors)
         indicators_set.update(WB_INDICATORS)
         conn.commit()
 
     if args.source in ("un", "all"):
-        rows, errors = etl_un(cur, table, name_to_iso3)
+        rows, errors = etl_un(cur, table, name_to_iso3, conn=conn)
         total_rows += rows
         all_errors.extend(errors)
         indicators_set.update(f["id"] for f in UN_FILES.values())

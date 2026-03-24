@@ -386,8 +386,9 @@ async function fetchFredConfirmed(from: string, to: string): Promise<CalendarEve
   }
 }
 
-// ── Major earnings (Finnhub free tier) ──
+// ── Major earnings (Finnhub free tier) — US + international watchlist ──
 const MAJOR_SYMBOLS = new Set([
+  // US (55)
   'AAPL','MSFT','GOOGL','AMZN','NVDA','META','TSLA',
   'AVGO','CRM','ORCL','ADBE','AMD','INTC','CSCO','QCOM','TXN','NOW','NFLX','SHOP','SNOW','NET','PLTR','UBER','ABNB',
   'JPM','GS','MS','BAC','WFC','C','V','MA','PYPL','SQ','COIN',
@@ -395,6 +396,14 @@ const MAJOR_SYMBOLS = new Set([
   'UNH','JNJ','PFE','ABBV','LLY','MRK','TMO',
   'XOM','CVX','BA','CAT','GE','DE',
   'KO','PEP','PG',
+  // Canada
+  'RY','TD','ENB','CNR','BMO',
+  // UK (Finnhub ADR tickers)
+  'SHEL','AZN','HSBC','UL','BP',
+  // Europe
+  'ASML','SAP','NVO',
+  // Asia-Pacific (ADR tickers)
+  'TM','SONY','SSNLF','TCEHY','BHP',
 ]);
 
 async function fetchEarningsCalendar(from: string, to: string): Promise<CalendarEvent[]> {

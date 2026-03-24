@@ -45,6 +45,7 @@ on:
           - newsletter
           - sitemap-ping
           - audit
+          - clean-trade
       trade_batch:
         description: 'Trade batch number (0-6, empty=auto)'
         required: false
@@ -518,10 +519,23 @@ jobs:
           echo "All 15 critical pages OK ✓"
 
   # ════════════════════════════════════════════════════════════
-  # FAILURE NOTIFICATION — emails on any job failure
-  # GitHub automatically sends failure emails to repo owner
-  # if Actions are configured. This job adds extra visibility.
   # ════════════════════════════════════════════════════════════
+  # ONE-TIME: Clean dirty trade cache (deduplicate partner lists)
+  # ════════════════════════════════════════════════════════════
+  clean-trade:
+    name: "Util: Clean Trade Cache"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event.inputs.pipeline == 'clean-trade'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Deduplicate trade cache
+        run: python scripts/clean_trade_cache.py
+
   notify-failure:
     name: "Alert: ETL Failure"
     runs-on: ubuntu-latest

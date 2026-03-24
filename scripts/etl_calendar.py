@@ -212,7 +212,7 @@ def main():
     conn.autocommit = True
     cur = conn.cursor()
 
-    # Create/migrate table
+    # Create table if not exists (includes all columns)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sotw_calendar_events (
             id SERIAL PRIMARY KEY,
@@ -232,12 +232,9 @@ def main():
             revenue_estimate DOUBLE PRECISION,
             created_at TIMESTAMPTZ DEFAULT NOW()
         );
-        CREATE INDEX IF NOT EXISTS idx_calendar_date ON sotw_calendar_events(date);
-        CREATE INDEX IF NOT EXISTS idx_calendar_week ON sotw_calendar_events(week_start);
-        CREATE INDEX IF NOT EXISTS idx_calendar_type ON sotw_calendar_events(event_type);
     """)
 
-    # Add columns if they don't exist (migration for existing table)
+    # Migrate existing table: add new columns if they don't exist
     for col, typ in [
         ("event_type", "TEXT DEFAULT 'economic'"),
         ("symbol", "TEXT"),
@@ -248,6 +245,13 @@ def main():
             cur.execute(f"ALTER TABLE sotw_calendar_events ADD COLUMN IF NOT EXISTS {col} {typ}")
         except Exception:
             pass
+
+    # Create indexes after columns exist
+    cur.execute("""
+        CREATE INDEX IF NOT EXISTS idx_calendar_date ON sotw_calendar_events(date);
+        CREATE INDEX IF NOT EXISTS idx_calendar_week ON sotw_calendar_events(week_start);
+        CREATE INDEX IF NOT EXISTS idx_calendar_type ON sotw_calendar_events(event_type);
+    """)
 
     # 3. Store ForexFactory events (replace current week)
     if ff_events:

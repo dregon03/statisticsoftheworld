@@ -54,6 +54,7 @@ env:
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
   FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
   ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
+  COMTRADE_API_KEY: ${{ secrets.COMTRADE_API_KEY }}
 
 jobs:
   # ════════════════════════════════════════════════════════════

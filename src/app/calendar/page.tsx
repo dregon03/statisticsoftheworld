@@ -741,6 +741,16 @@ export default function CalendarPage() {
                   {isExpanded ? '▼' : 'Intel'}
                 </span>
               )}
+              {event.sotwIndicators && event.sotwIndicators.length > 0 && (
+                <Link
+                  href={`/indicators?id=${encodeURIComponent(event.sotwIndicators[0])}`}
+                  className="text-[9px] bg-[#e8f0fe] px-1.5 py-0.5 rounded hover:bg-[#d0e0f8] transition text-[#0066cc]"
+                  title="View historical data"
+                  onClick={e => e.stopPropagation()}
+                >
+                  Chart →
+                </Link>
+              )}
             </div>
             {isPast && summary && (
               <div className="text-[10px] text-[#888] mt-0.5 truncate italic">{summary}</div>
@@ -793,7 +803,7 @@ export default function CalendarPage() {
           <span className="w-16 text-right text-[10px] text-[#999] hidden lg:block truncate">{event.category}</span>
 
           {/* Impact badge */}
-          <span className={`text-[9px] px-2 py-0.5 rounded-full border shrink-0 hidden md:inline font-medium ${
+          <span className={`w-14 text-center text-[9px] py-0.5 rounded-full border shrink-0 hidden md:inline-block font-medium ${
             isEarnings ? 'bg-purple-50 text-purple-700 border-purple-200' :
             event.impact === 'high' ? 'bg-red-50 text-red-700 border-red-200' :
             event.impact === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' :
@@ -801,18 +811,6 @@ export default function CalendarPage() {
           }`}>
             {isEarnings ? 'Earnings' : event.impact === 'high' ? 'High' : event.impact === 'medium' ? 'Med' : 'Low'}
           </span>
-
-          {/* SOTW link */}
-          {event.sotwIndicators && event.sotwIndicators.length > 0 && (
-            <Link
-              href={`/indicators?id=${encodeURIComponent(event.sotwIndicators[0])}`}
-              className="text-[9px] bg-[#e8f0fe] px-1.5 py-0.5 rounded hover:bg-[#d0e0f8] transition text-[#0066cc] shrink-0"
-              title="View historical data"
-              onClick={e => e.stopPropagation()}
-            >
-              Chart →
-            </Link>
-          )}
         </div>
 
         {/* Expanded intelligence card */}

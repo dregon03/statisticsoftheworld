@@ -140,8 +140,8 @@ interface CalendarEvent {
   revenueEstimate?: number | null;
 }
 
-// ── ForexFactory events from Supabase cache (ETL-populated) ──
-async function fetchFFEvents(from: string, to: string): Promise<CalendarEvent[]> {
+// ── Cached events from Supabase (ForexFactory economic + Finnhub earnings) ──
+async function fetchCachedEvents(from: string, to: string): Promise<{ economic: CalendarEvent[]; earnings: CalendarEvent[] }> {
   try {
     const { data, error } = await supabase
       .from('sotw_calendar_events')
@@ -150,22 +150,41 @@ async function fetchFFEvents(from: string, to: string): Promise<CalendarEvent[]>
       .lte('date', to)
       .order('date', { ascending: true });
 
-    if (error || !data || data.length === 0) return [];
+    if (error || !data || data.length === 0) return { economic: [], earnings: [] };
 
-    return data.map((e: any) => ({
-      date: typeof e.date === 'string' ? e.date.slice(0, 10) : e.date,
-      releaseId: 0,
-      name: e.title,
-      country: e.country || '',
-      impact: e.impact || 'low',
-      category: e.category || 'Other',
-      type: 'economic' as const,
-      sotwIndicators: findIndicatorLinks(e.title),
-      forecast: e.forecast || undefined,
-      previous: e.previous || undefined,
-    }));
+    const economic: CalendarEvent[] = [];
+    const earnings: CalendarEvent[] = [];
+
+    for (const e of data) {
+      const date = typeof e.date === 'string' ? e.date.slice(0, 10) : e.date;
+      const isEarnings = e.event_type === 'earnings';
+
+      const event: CalendarEvent = {
+        date,
+        releaseId: 0,
+        name: e.title,
+        country: e.country || '',
+        impact: e.impact || 'low',
+        category: e.category || 'Other',
+        type: isEarnings ? 'earnings' : 'economic',
+        sotwIndicators: isEarnings ? undefined : findIndicatorLinks(e.title),
+        forecast: e.forecast || undefined,
+        previous: e.previous || undefined,
+        symbol: e.symbol || undefined,
+        epsEstimate: e.eps_estimate ?? undefined,
+        revenueEstimate: e.revenue_estimate ?? undefined,
+      };
+
+      if (isEarnings) {
+        earnings.push(event);
+      } else {
+        economic.push(event);
+      }
+    }
+
+    return { economic, earnings };
   } catch {
-    return [];
+    return { economic: [], earnings: [] };
   }
 }
 
@@ -350,40 +369,42 @@ export async function GET(request: Request) {
         }));
     }
 
-    async function getEconomicEvents(from: string, to: string): Promise<CalendarEvent[]> {
-      // 1. Try ForexFactory cache from Supabase (most accurate for current/recent weeks)
-      const ffEvents = await fetchFFEvents(from, to);
-      if (ffEvents.length > 0) {
-        return ffEvents;
+    async function getAllEvents(from: string, to: string): Promise<CalendarEvent[]> {
+      // 1. Try Supabase cache (ForexFactory economic + Finnhub earnings from ETL)
+      const cached = await fetchCachedEvents(from, to);
+      let econ = cached.economic;
+      let earnings = cached.earnings;
+
+      // 2. Fallback for economic: live ForexFactory → FRED confirmed
+      if (econ.length === 0) {
+        const ffLive = await fetchFFLive();
+        econ = ffLive.filter(e => e.date >= from && e.date <= to);
+        if (econ.length === 0) {
+          econ = await fetchFredConfirmed(from, to);
+        }
       }
 
-      // 2. Fallback: try live ForexFactory (current week only)
-      const ffLive = await fetchFFLive();
-      const ffFiltered = ffLive.filter(e => e.date >= from && e.date <= to);
-      if (ffFiltered.length > 0) {
-        return ffFiltered;
+      // 3. Fallback for earnings: live Finnhub
+      if (earnings.length === 0) {
+        earnings = await fetchEarningsCalendar(from, to);
       }
 
-      // 3. Last resort: FRED confirmed releases only (no tentative dates)
-      return fetchFredConfirmed(from, to);
+      // 4. Fixed events (summits, CB meetings)
+      const fixed = await getFixedEvents(from, to);
+
+      // Deduplicate: if ForexFactory has a CB meeting, don't also show the hardcoded one
+      const econKeys = new Set(econ.map(e => `${e.date}|${e.category}`));
+      const dedupedFixed = fixed.filter(e => !econKeys.has(`${e.date}|${e.category}`));
+
+      return [...econ, ...dedupedFixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
     }
 
     if (from && to) {
-      const [econ, earnings, fixed] = await Promise.all([
-        getEconomicEvents(from, to),
-        fetchEarningsCalendar(from, to),
-        getFixedEvents(from, to),
-      ]);
-
-      // Deduplicate: if ForexFactory has a CB meeting, don't also show the hardcoded one
-      const econNames = new Set(econ.map(e => `${e.date}|${e.category}`));
-      const dedupedFixed = fixed.filter(e => !econNames.has(`${e.date}|${e.category}`));
-
-      const events = [...econ, ...dedupedFixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
+      const events = await getAllEvents(from, to);
       return NextResponse.json({ events, source: 'ForexFactory + Finnhub' });
     }
 
-    // Default: current + next 4 weeks
+    // Default: current + next 90 days
     if (cache && Date.now() - cache.fetchedAt < CACHE_TTL) {
       return NextResponse.json({ events: cache.events, source: 'ForexFactory + Finnhub', cached: true });
     }
@@ -392,16 +413,7 @@ export async function GET(request: Request) {
     const fromDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const toDate = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-    const [econ, earnings, fixed] = await Promise.all([
-      getEconomicEvents(fromDate, toDate),
-      fetchEarningsCalendar(fromDate, toDate),
-      getFixedEvents(fromDate, toDate),
-    ]);
-
-    const econNames = new Set(econ.map(e => `${e.date}|${e.category}`));
-    const dedupedFixed = fixed.filter(e => !econNames.has(`${e.date}|${e.category}`));
-
-    const events = [...econ, ...dedupedFixed, ...earnings].sort((a, b) => a.date.localeCompare(b.date));
+    const events = await getAllEvents(fromDate, toDate);
     cache = { events, fetchedAt: Date.now() };
 
     return NextResponse.json({ events, source: 'ForexFactory + Finnhub' });

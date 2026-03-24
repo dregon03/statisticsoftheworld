@@ -71,7 +71,7 @@ export default function Footer() {
 
         <div className="flex flex-wrap justify-between gap-6 text-[12px] text-[#999]">
           <div>
-            <p>Data from IMF, World Bank, FRED, ECB, Yahoo Finance, Polymarket, and Alpha Vantage.</p>
+            <p>Data from IMF, World Bank, FRED, UN COMTRADE, ForexFactory, Finnhub, Polymarket, and Alpha Vantage.</p>
             <p className="mt-1">Statistics of the World &copy; {new Date().getFullYear()}</p>
           </div>
           <div className="flex flex-wrap gap-4">

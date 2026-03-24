@@ -401,12 +401,30 @@ export async function GET(request: Request) {
 
     if (from && to) {
       const events = await getAllEvents(from, to);
-      return NextResponse.json({ events, source: 'ForexFactory + Finnhub' });
+      const econCount = events.filter(e => e.type === 'economic').length;
+      const earningsCount = events.filter(e => e.type === 'earnings').length;
+      const highCount = events.filter(e => e.impact === 'high').length;
+      const countries = [...new Set(events.map(e => e.country))].length;
+      return NextResponse.json({
+        events,
+        meta: {
+          total: events.length,
+          economic: econCount,
+          earnings: earningsCount,
+          highImpact: highCount,
+          countries,
+          sources: ['ForexFactory', 'Finnhub', 'FRED', 'cbrates.com'],
+          updatedAt: new Date().toISOString(),
+        },
+      });
     }
 
     // Default: current + next 90 days
     if (cache && Date.now() - cache.fetchedAt < CACHE_TTL) {
-      return NextResponse.json({ events: cache.events, source: 'ForexFactory + Finnhub', cached: true });
+      return NextResponse.json({
+        events: cache.events,
+        meta: { updatedAt: new Date(cache.fetchedAt).toISOString(), cached: true },
+      });
     }
 
     const today = new Date();
@@ -416,10 +434,16 @@ export async function GET(request: Request) {
     const events = await getAllEvents(fromDate, toDate);
     cache = { events, fetchedAt: Date.now() };
 
-    return NextResponse.json({ events, source: 'ForexFactory + Finnhub' });
+    return NextResponse.json({
+      events,
+      meta: { updatedAt: new Date().toISOString() },
+    });
   } catch {
     if (cache) {
-      return NextResponse.json({ events: cache.events, source: 'ForexFactory + Finnhub', cached: true });
+      return NextResponse.json({
+        events: cache.events,
+        meta: { updatedAt: new Date(cache.fetchedAt).toISOString(), cached: true },
+      });
     }
     return NextResponse.json({ events: [], error: 'Failed to fetch calendar' }, { status: 500 });
   }

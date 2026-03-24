@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Data Release Calendar — International Organization Publications',
-  description: 'Track when IMF, World Bank, UN, ILO, WHO, and central banks publish updated economic data. Release schedules for WEO, WDI, jobs reports, CPI, and more.',
+  title: 'Economic Calendar — Macro Events & Earnings | Statistics of the World',
+  description: 'Track this week\'s most important macro events, earnings reports, and central bank decisions. Verified data from ForexFactory, Finnhub, and FRED.',
   openGraph: {
-    title: 'Data Release Calendar — Statistics of the World',
-    description: 'Track major international data publication schedules.',
+    title: 'Economic Calendar — Statistics of the World',
+    description: 'Macro events, earnings, and market-moving releases in one place.',
   },
 };
 

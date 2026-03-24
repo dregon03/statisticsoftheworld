@@ -234,7 +234,7 @@ def main():
         );
     """)
 
-    # Migrate existing table: add new columns if they don't exist
+    # Migrate existing table: add new columns + fix constraints
     for col, typ in [
         ("event_type", "TEXT DEFAULT 'economic'"),
         ("symbol", "TEXT"),
@@ -245,6 +245,12 @@ def main():
             cur.execute(f"ALTER TABLE sotw_calendar_events ADD COLUMN IF NOT EXISTS {col} {typ}")
         except Exception:
             pass
+
+    # Make week_start nullable (earnings don't have a week_start)
+    try:
+        cur.execute("ALTER TABLE sotw_calendar_events ALTER COLUMN week_start DROP NOT NULL")
+    except Exception:
+        pass
 
     # Create indexes after columns exist
     cur.execute("""

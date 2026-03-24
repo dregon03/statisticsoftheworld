@@ -35,7 +35,7 @@ const supabase = createClient(
 
 async function fetchLiveV2(reporterCode: number, cmdCode: string): Promise<any[]> {
   if (!COMTRADE_KEY) return [];
-  const url = `${V2_BASE}?reporterCode=${reporterCode}&period=2024,2023&flowCode=X,M&cmdCode=${cmdCode}&includeDesc=true&subscription-key=${COMTRADE_KEY}`;
+  const url = `${V2_BASE}?reporterCode=${reporterCode}&period=2024,2023&flowCode=X,M&cmdCode=${cmdCode}&partner2Code=0&customsCode=C00&includeDesc=true&subscription-key=${COMTRADE_KEY}`;
   try {
     const resp = await fetch(url, { headers: { 'User-Agent': 'SOTW/2.0' } });
     if (!resp.ok) return [];

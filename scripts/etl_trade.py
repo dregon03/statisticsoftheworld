@@ -101,12 +101,19 @@ def discover_countries():
 
 
 def fetch_trade(reporter_code, cmd_code="TOTAL"):
-    """Fetch bilateral trade from COMTRADE v2 (exports+imports combined)."""
+    """Fetch bilateral trade from COMTRADE v2 (exports+imports combined).
+
+    partner2Code=0 → direct trade only (no transit breakdowns)
+    customsCode=C00 → total customs (no re-export/re-import splits)
+    This reduces response from ~25,000 records to ~400.
+    """
     url = (
         f"{V2_BASE}/get/C/A/HS?reporterCode={reporter_code}"
         f"&period=2024,2023"
         f"&flowCode=X,M"
         f"&cmdCode={cmd_code}"
+        f"&partner2Code=0"
+        f"&customsCode=C00"
         f"&includeDesc=true"
         f"&subscription-key={COMTRADE_KEY}"
     )

@@ -223,6 +223,18 @@ def upsert(cur, table, ind_id, country_id, value, year, source):
     """, (ind_id, country_id, value, year, source))
 
 
+def batch_upsert(cur, table, rows):
+    """Upsert multiple rows in one SQL statement. 31,000 round-trips → 156."""
+    if not rows:
+        return
+    from psycopg2.extras import execute_values
+    execute_values(cur,
+        f"INSERT INTO {table} (id, country_id, value, year, source) VALUES %s "
+        f"ON CONFLICT (id, country_id) DO UPDATE SET "
+        f"value=EXCLUDED.value, year=EXCLUDED.year, source=EXCLUDED.source, updated_at=NOW()",
+        rows, page_size=500)
+
+
 def log_run(cur, source, table, status="running"):
     cur.execute("""
         INSERT INTO sotw_etl_runs (source, target_table, status)
@@ -257,17 +269,17 @@ def etl_imf(cur, table, valid_countries, conn=None):
             errors.append(f"IMF {sotw_id}: {e}")
             continue
 
-        count = 0
+        rows = []
         for country_code, year_data in values.items():
             if country_code not in valid_countries:
                 continue
             for yr in [year, year - 1, year - 2]:
                 val = year_data.get(str(yr))
                 if val is not None:
-                    upsert(cur, table, sotw_id, country_code, val, yr, "imf")
-                    count += 1
+                    rows.append((sotw_id, country_code, val, yr, "imf"))
                     break
-        total += count
+        batch_upsert(cur, table, rows)
+        total += len(rows)
         if conn:
             conn.commit()
         print(f"  {sotw_id}: {count} countries")
@@ -341,10 +353,9 @@ def etl_wb(cur, table, iso2_to_iso3, conn=None, wb_batch=-1):
                 errors.append(err)
                 continue
 
-            count = 0
-            for iso3, (value, yr) in best.items():
-                upsert(cur, table, ind_id, iso3, value, yr, "wb")
-                count += 1
+            rows = [(ind_id, iso3, value, yr, "wb") for iso3, (value, yr) in best.items()]
+            batch_upsert(cur, table, rows)
+            count = len(rows)
             total += count
 
             # Commit after each indicator to avoid statement timeout
@@ -405,6 +416,7 @@ def etl_un(cur, table, name_to_iso3, conn=None):
             data_start_col = 2
             count = 0
 
+            un_rows = []
             for i, row in enumerate(ws.iter_rows(values_only=True)):
                 vals = list(row)
                 if i == 2:
@@ -429,13 +441,14 @@ def etl_un(cur, table, name_to_iso3, conn=None):
                                 value = float(vals[col_idx])
                                 iso3 = name_to_iso3(country)
                                 if iso3:
-                                    upsert(cur, table, ind_id, iso3, value, yr, "un")
-                                    count += 1
+                                    un_rows.append((ind_id, iso3, value, yr, "un"))
                             except (ValueError, TypeError):
                                 pass
                             break
 
             wb.close()
+            batch_upsert(cur, table, un_rows)
+            count = len(un_rows)
             total += count
             if conn:
                 conn.commit()

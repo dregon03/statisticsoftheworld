@@ -249,15 +249,16 @@ jobs:
           done
 
   # ════════════════════════════════════════════════════════════
-  # MONTHLY (1st): UN COMTRADE trade data → Supabase
-  # Pre-caches trade data for 50 countries. Annual data.
+  # DAILY: UN COMTRADE v2 trade data → Supabase
+  # Rotates through 170+ countries in 7 daily batches (~24/day).
+  # All countries refreshed weekly. ~10-15 min per batch.
   # ════════════════════════════════════════════════════════════
   trade:
-    name: "Monthly: COMTRADE Trade Data"
+    name: "Daily: COMTRADE Trade Data"
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     if: >
-      github.event.schedule == '0 9 1 * *' ||
+      github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'trade'
     steps:
@@ -266,7 +267,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-      - name: Fetch & cache COMTRADE trade data for 50 countries
+      - name: Fetch trade data (rotating batch)
         run: python scripts/etl_trade.py
 
   # ════════════════════════════════════════════════════════════

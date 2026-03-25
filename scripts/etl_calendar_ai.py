@@ -159,7 +159,9 @@ Known recurring releases (include if in date range):
 
 Other indicators: CPI, PPI, GDP, PCE, Retail Sales, FOMC, Durable Goods, Housing Starts, Building Permits, New/Existing Home Sales, JOLTS, Import/Export Prices, Trade Balance, Personal Income/Spending, Factory Orders, Construction Spending, Productivity, Fed regional indices (Richmond, Dallas, Chicago, Philly)
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full official name","impact":"high/medium/low","category":"Inflation/Labor/GDP/Central Bank/Consumer/Housing/Production/Trade/Other"}}]
+For each event also include the consensus forecast/expectation if available (e.g. "3.1%", "228K", "+0.4%", "50.5").
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full official name","impact":"high/medium/low","category":"Inflation/Labor/GDP/Central Bank/Consumer/Housing/Production/Trade/Other","forecast":"consensus expectation or empty string"}}]
 
 Return ONLY a JSON array. No commentary."""
 
@@ -172,7 +174,9 @@ Search: ecb.europa.eu/press/calendars, ons.gov.uk/releasecalendar, pmi.spglobal.
 Eurozone: ECB decision, HICP Flash + Final, GDP, PMI (Flash + Final), German IFO, ZEW, Industrial Production, Retail Sales, Unemployment, Consumer Confidence, German GfK
 UK: BOE decision, CPI, GDP, PMI (Flash + Final), Retail Sales, Employment, GfK Consumer Confidence
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"EU/DE/FR/IT/UK","impact":"high/medium/low","category":"..."}}]
+For each event also include the consensus forecast/expectation if available.
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"EU/DE/FR/IT/UK","impact":"high/medium/low","category":"...","forecast":"consensus or empty"}}]
 
 Return ONLY JSON array."""
 
@@ -185,7 +189,9 @@ Search: boj.or.jp/en/about/calendar, pmi.spglobal.com/Public/Release/ReleaseDate
 Japan: BOJ decision, CPI (National + Tokyo), GDP, PMI, Tankan, Industrial Production, Retail Sales, Unemployment
 China: PBoC LPR, Caixin PMI (Mfg + Services), NBS PMI, GDP, Trade Balance, CPI, PPI, Industrial Production, Retail Sales
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"JP/CN/KR","impact":"high/medium/low","category":"..."}}]
+For each event also include the consensus forecast/expectation if available.
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"JP/CN/KR","impact":"high/medium/low","category":"...","forecast":"consensus or empty"}}]
 
 Return ONLY JSON array."""
 
@@ -198,7 +204,9 @@ Search: bankofcanada.ca, rba.gov.au/schedules-events
 Canada: BOC decision, CPI, GDP, Employment Change, Retail Sales, Trade Balance
 Australia: RBA decision, CPI, Employment, Retail Sales, Trade Balance
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"CA/AU","impact":"high/medium/low","category":"..."}}]
+For each event also include the consensus forecast/expectation if available.
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"CA/AU","impact":"high/medium/low","category":"...","forecast":"consensus or empty"}}]
 
 Return ONLY JSON array."""
 
@@ -252,7 +260,7 @@ def main():
             UNIQUE(series_id, release_date)
         );
     """)
-    for col, typ in [("actual", "TEXT"), ("outcome", "TEXT"), ("detail", "TEXT")]:
+    for col, typ in [("actual", "TEXT"), ("outcome", "TEXT"), ("detail", "TEXT"), ("forecast", "TEXT")]:
         try:
             cur.execute(f"ALTER TABLE sotw_release_schedule ADD COLUMN IF NOT EXISTS {col} {typ}")
         except Exception:
@@ -363,6 +371,7 @@ def main():
         time_str = str(event.get("time", ""))
         symbol = event.get("symbol", "")
         detail = event.get("detail", "")
+        forecast = event.get("forecast", "")
 
         # Clean time
         time_clean = re.sub(r"\s*(AM|PM|ET|EST|EDT|UTC|GMT|BMO|AMC|CET|CEST|JST|CST|AEDT|AEST|BST|KST)\s*", "", time_str, flags=re.IGNORECASE).strip()
@@ -387,15 +396,16 @@ def main():
             cur.execute("""
                 INSERT INTO sotw_release_schedule
                     (series_id, country, name, category, impact, release_date, release_time,
-                     source, source_url, detail, verified, updated_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, 'Gemini Search', '', %s, TRUE, NOW())
+                     source, source_url, detail, forecast, verified, updated_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, 'Gemini Search', '', %s, %s, TRUE, NOW())
                 ON CONFLICT (series_id, release_date) DO UPDATE SET
                     name = EXCLUDED.name, country = EXCLUDED.country,
                     category = EXCLUDED.category, impact = EXCLUDED.impact,
                     release_time = EXCLUDED.release_time,
                     detail = COALESCE(EXCLUDED.detail, sotw_release_schedule.detail),
+                    forecast = COALESCE(EXCLUDED.forecast, sotw_release_schedule.forecast),
                     verified = TRUE, updated_at = NOW()
-            """, (sid, country, name, category, impact, date, time_clean, detail))
+            """, (sid, country, name, category, impact, date, time_clean, detail, forecast))
             macro_count += 1
 
     if earnings_values:

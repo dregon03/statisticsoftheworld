@@ -62,6 +62,7 @@ interface CalendarEvent {
   actual?: string;
   outcome?: string;
   detail?: string;
+  forecast?: string;
   source?: string;
   symbol?: string;
   epsEstimate?: number | null;
@@ -73,7 +74,7 @@ async function fetchMacroEvents(from: string, to: string): Promise<CalendarEvent
   try {
     const { data, error } = await supabase
       .from('sotw_release_schedule')
-      .select('name, country, category, impact, release_date, release_time, source, actual, outcome, detail')
+      .select('name, country, category, impact, release_date, release_time, source, actual, outcome, detail, forecast')
       .gte('release_date', from)
       .lte('release_date', to)
       .order('release_date', { ascending: true });
@@ -93,6 +94,7 @@ async function fetchMacroEvents(from: string, to: string): Promise<CalendarEvent
       actual: e.actual || undefined,
       outcome: e.outcome || undefined,
       detail: e.detail || undefined,
+      forecast: e.forecast || undefined,
       source: e.source || 'Gemini Search',
     }));
   } catch {

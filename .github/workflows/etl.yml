@@ -16,6 +16,7 @@ on:
     - cron: '0 7 * * *'       # Daily at 7 AM UTC
     - cron: '0 9 1 * *'       # 1st of month at 9 AM UTC (intl org annual data)
     - cron: '0 */4 * * *'     # Every 4 hours (Polymarket)
+    - cron: '0 13,15,19 * * 1-5'  # 3x/day weekdays: 9AM, 11AM, 3PM ET (after major release windows)
     - cron: '0 6 * * 1'       # Weekly Monday 6 AM UTC
   workflow_dispatch:
     inputs:
@@ -37,6 +38,7 @@ on:
           - history
           - metadata
           - calendar
+          - calendar-actuals
           - polymarket
           - narratives
           - trade
@@ -340,6 +342,27 @@ jobs:
       - name: Warm calendar page cache
         run: |
           curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar API warmed ✓" || true
+
+  # ════════════════════════════════════════════════════════════
+  # 3x/DAY (weekdays): Calendar Actuals
+  # Fetches actual released data after major release windows
+  # 9AM ET (after 8:30 releases), 11AM ET (after 10AM), 3PM ET (after 2PM FOMC etc.)
+  # ════════════════════════════════════════════════════════════
+  calendar-actuals:
+    name: "Daily: Calendar Actuals"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    if: >
+      github.event.schedule == '0 13,15,19 * * 1-5' ||
+      github.event.inputs.pipeline == 'calendar-actuals'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Fetch actuals for recent events
+        run: python scripts/etl_calendar_actuals.py
 
   # ════════════════════════════════════════════════════════════
   # EVERY 4 HOURS: Polymarket prediction markets

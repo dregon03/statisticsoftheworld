@@ -451,11 +451,11 @@ function TopEventsSection({ events, todayStr }: { events: CalendarEvent[]; today
                     )}
                   </div>
 
-                  {/* Actual / Previous */}
-                  {!isEarnings && (event.actual || event.previous) && (
+                  {/* Actual / Expectations */}
+                  {!isEarnings && (event.actual || event.forecast) && (
                     <div className="flex items-center gap-2 text-[11px] font-mono mb-1">
                       {event.actual && <span><span className="text-[#999] text-[10px]">Act</span> <span className="text-green-700 font-semibold">{event.actual}</span></span>}
-                      {event.previous && <span><span className="text-[#999] text-[10px]">Prev</span> {event.previous}</span>}
+                      {event.forecast && <span><span className="text-[#999] text-[10px]">Exp</span> {event.forecast}</span>}
                     </div>
                   )}
 
@@ -746,17 +746,16 @@ export default function CalendarPage() {
             )}
           </span>
 
-          {/* Previous / Revenue */}
+          {/* Expected / Revenue */}
           <span className="w-16 text-right text-[11px] font-mono text-[#666] hidden sm:block">
             {isEarnings ? (
               event.revenueEstimate != null && event.revenueEstimate > 0 ? (
-                <span title="Revenue estimate (Finnhub)">{formatRev(event.revenueEstimate)}</span>
+                <span title="Revenue estimate">{formatRev(event.revenueEstimate)}</span>
               ) : <span className="text-[#ddd]">—</span>
             ) : (
-              event.previous ? (
-                <span>
-                  {event.previous}
-                  {event.revised && <span className="text-orange-500 text-[9px] ml-0.5" title={`Revised from ${event.revised}`}>R</span>}
+              event.forecast ? (
+                <span title="Consensus expectation">
+                  {event.forecast}
                 </span>
               ) : <span className="text-[#ddd]">—</span>
             )}
@@ -916,7 +915,7 @@ export default function CalendarPage() {
               <span className="w-7 shrink-0">Ctry</span>
               <span className="flex-1">Event</span>
               <span className="w-16 text-right">Actual</span>
-              <span className="w-16 text-right">Previous</span>
+              <span className="w-16 text-right">Expected</span>
               <span className="w-16 text-right hidden lg:block">Category</span>
               <span className="w-14 text-right hidden md:block">Impact</span>
             </div>
@@ -945,7 +944,7 @@ export default function CalendarPage() {
               <span className="w-7 shrink-0">Ctry</span>
               <span className="flex-1">Event</span>
               <span className="w-16 text-right">Actual</span>
-              <span className="w-16 text-right">Previous</span>
+              <span className="w-16 text-right">Expected</span>
               <span className="w-16 text-right hidden lg:block">Category</span>
               <span className="w-14 text-right hidden md:block">Impact</span>
             </div>

@@ -120,7 +120,10 @@ FRED_SCHEDULE_RELEASES = [
 def fetch_url(url):
     """Fetch URL content as text."""
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "SOTW/2.0"})
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "Accept": "text/html,text/calendar,application/json,*/*",
+        })
         with urllib.request.urlopen(req, timeout=15) as resp:
             return resp.read().decode("utf-8", errors="replace")
     except Exception as e:
@@ -144,8 +147,19 @@ def parse_ics_dates(ics_text):
 
 
 def fetch_fred_release_dates_confirmed(release_id, limit=12):
-    """Get confirmed release dates from FRED (NO tentative flag)."""
-    qs = f"api_key={FRED_KEY}&file_type=json&release_id={release_id}&sort_order=desc&limit={limit}"
+    """Get release dates from FRED per-release endpoint (includes upcoming scheduled).
+
+    NOTE: We use include_release_dates_with_no_data=true here because this is
+    the PER-RELEASE endpoint (release/dates?release_id=X), which is reliable.
+    The problem before was the ALL-RELEASES endpoint (releases/dates) which
+    returned tentative dates across all releases.
+    """
+    today = datetime.date.today()
+    qs = (f"api_key={FRED_KEY}&file_type=json&release_id={release_id}"
+          f"&include_release_dates_with_no_data=true"
+          f"&realtime_start={today.strftime('%Y-%m-%d')}"
+          f"&realtime_end={(today + datetime.timedelta(days=180)).strftime('%Y-%m-%d')}"
+          f"&sort_order=asc&limit={limit}")
     url = f"https://api.stlouisfed.org/fred/release/dates?{qs}"
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "SOTW/2.0"})

@@ -8,7 +8,8 @@ import Flag from './Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-// Lazy-load Compare and Map content
+// Lazy-load tab content
+const IndicatorsTab = dynamic(() => import('./IndicatorsTab'), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading indicators...</div> });
 const CompareContent = dynamic(() => import('./compare/page').then(m => ({ default: m.CompareContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div> });
 const MapContent = dynamic(() => import('./map/page').then(m => ({ default: m.MapContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading map...</div> });
 
@@ -264,14 +265,7 @@ export default function Home() {
         </section>
       )}
 
-      {activeTab === 'indicators' && (
-        <section className="max-w-[1400px] mx-auto px-4 py-6 text-center">
-          <p className="text-[13px] text-[#999] mb-4">Browse {INDICATORS.length} indicators across all categories with top-10 rankings.</p>
-          <Link href="/indicators" className="px-4 py-2 bg-[#0066cc] text-white rounded-lg hover:bg-[#0055aa] transition text-[13px]">
-            Open Indicators Explorer
-          </Link>
-        </section>
-      )}
+      {activeTab === 'indicators' && <IndicatorsTab />}
 
       {activeTab === 'compare' && (
         <Suspense fallback={<div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div>}>

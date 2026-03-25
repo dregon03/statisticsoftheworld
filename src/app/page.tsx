@@ -33,17 +33,25 @@ interface CountryStats {
 
 type SortKey = 'name' | 'gdp' | 'population' | 'gdpPerCapita' | 'gdpGrowth' | 'inflation' | 'unemployment' | 'debtToGdp' | 'lifeExpectancy' | 'tradeOpenness';
 
-const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number | undefined) => string; hideOnMobile?: boolean }[] = [
+// higherIsBetter: true = high values are good (blue), false = high values are bad (red)
+const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number | undefined) => string; hideOnMobile?: boolean; outlier?: boolean; higherIsBetter?: boolean }[] = [
   { key: 'gdp', label: 'GDP (USD)', short: 'GDP', format: v => v ? formatValue(v, 'currency') : '-' },
   { key: 'population', label: 'Population', short: 'Pop.', format: v => v ? formatValue(v, 'number') : '-' },
   { key: 'gdpPerCapita', label: 'GDP/Capita', short: 'GDP/Cap', format: v => v ? formatValue(v, 'currency') : '-' },
-  { key: 'gdpGrowth', label: 'GDP Growth', short: 'Growth', format: v => v != null ? `${v.toFixed(1)}%` : '-' },
-  { key: 'inflation', label: 'Inflation', short: 'CPI', format: v => v != null ? `${v.toFixed(1)}%` : '-' },
-  { key: 'unemployment', label: 'Unemployment', short: 'Unemp.', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true },
-  { key: 'debtToGdp', label: 'Debt/GDP', short: 'Debt', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true },
-  { key: 'lifeExpectancy', label: 'Life Exp.', short: 'Life', format: v => v != null ? `${v.toFixed(1)}` : '-', hideOnMobile: true },
-  { key: 'tradeOpenness', label: 'Trade/GDP', short: 'Trade', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true },
+  { key: 'gdpGrowth', label: 'GDP Growth', short: 'Growth', format: v => v != null ? `${v.toFixed(1)}%` : '-', outlier: true, higherIsBetter: true },
+  { key: 'inflation', label: 'Inflation', short: 'CPI', format: v => v != null ? `${v.toFixed(1)}%` : '-', outlier: true, higherIsBetter: false },
+  { key: 'unemployment', label: 'Unemployment', short: 'Unemp.', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true, outlier: true, higherIsBetter: false },
+  { key: 'debtToGdp', label: 'Debt/GDP', short: 'Debt', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true, outlier: true, higherIsBetter: false },
+  { key: 'lifeExpectancy', label: 'Life Exp.', short: 'Life', format: v => v != null ? `${v.toFixed(1)}` : '-', hideOnMobile: true, outlier: true, higherIsBetter: true },
+  { key: 'tradeOpenness', label: 'Trade/GDP', short: 'Trade', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true, outlier: true, higherIsBetter: true },
 ];
+
+function computePercentiles(values: number[]): { p10: number; p90: number } {
+  const sorted = [...values].sort((a, b) => a - b);
+  const p10 = sorted[Math.floor(sorted.length * 0.1)] ?? -Infinity;
+  const p90 = sorted[Math.floor(sorted.length * 0.9)] ?? Infinity;
+  return { p10, p90 };
+}
 
 export default function Home() {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -66,6 +74,35 @@ export default function Home() {
   }, []);
 
   const regions = useMemo(() => [...new Set(countries.map(c => c.region))].sort(), [countries]);
+
+  // Compute outlier thresholds for rate columns
+  const outlierThresholds = useMemo(() => {
+    const thresholds: Record<string, { p10: number; p90: number }> = {};
+    for (const col of COLUMNS) {
+      if (!col.outlier) continue;
+      const values = Object.values(stats)
+        .map(s => (s as any)[col.key] as number | undefined)
+        .filter((v): v is number => v != null && isFinite(v));
+      if (values.length > 10) {
+        thresholds[col.key] = computePercentiles(values);
+      }
+    }
+    return thresholds;
+  }, [stats]);
+
+  const getOutlierClass = (col: typeof COLUMNS[0], value: number | undefined): string => {
+    if (!col.outlier || value == null || !isFinite(value)) return '';
+    const t = outlierThresholds[col.key];
+    if (!t) return '';
+    if (col.higherIsBetter) {
+      if (value >= t.p90) return 'text-[#0066cc] font-bold'; // good: high
+      if (value <= t.p10) return 'text-[#cc3333] font-bold'; // bad: low
+    } else {
+      if (value <= t.p10) return 'text-[#0066cc] font-bold'; // good: low
+      if (value >= t.p90) return 'text-[#cc3333] font-bold'; // bad: high
+    }
+    return '';
+  };
 
   const filtered = useMemo(() => {
     let list = countries.filter(c => {
@@ -180,14 +217,18 @@ export default function Home() {
                           {c.name}
                         </Link>
                       </td>
-                      {COLUMNS.map(col => (
-                        <td
-                          key={col.key}
-                          className={`px-3 py-2 text-right font-mono text-[12px] text-[#555] ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
-                        >
-                          {col.format((s as any)[col.key])}
-                        </td>
-                      ))}
+                      {COLUMNS.map(col => {
+                        const val = (s as any)[col.key] as number | undefined;
+                        const outlierCls = getOutlierClass(col, val);
+                        return (
+                          <td
+                            key={col.key}
+                            className={`px-3 py-2 text-right font-mono text-[12px] ${outlierCls || 'text-[#555]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
+                          >
+                            {col.format(val)}
+                          </td>
+                        );
+                      })}
                     </tr>
                   );
                 })}

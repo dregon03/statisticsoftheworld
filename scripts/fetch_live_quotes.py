@@ -173,6 +173,7 @@ def main():
             print(f"\nMax runtime reached ({elapsed_total/3600:.1f}h). Stopping.", flush=True)
             break
 
+        now = datetime.datetime.utcnow()
         start = time.time()
         try:
             count, errors = fetch_once(conn)

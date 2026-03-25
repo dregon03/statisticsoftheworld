@@ -639,7 +639,15 @@ export async function getIndicatorForAllCountries(indicatorId: string): Promise<
   }));
 }
 
+let _top10Cache: { data: Record<string, { country: string; countryId: string; iso2: string; value: number; year: string }[]>; ts: number } | null = null;
+const TOP10_CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
 export async function getTop10AllIndicators(): Promise<Record<string, { country: string; countryId: string; iso2: string; value: number; year: string }[]>> {
+  // Return cached data if fresh
+  if (_top10Cache && Date.now() - _top10Cache.ts < TOP10_CACHE_TTL) {
+    return _top10Cache.data;
+  }
+
   // Fetch country names + iso2 first (fast, ~217 rows)
   const countries = await getCountries();
   const countryMap = new Map(countries.map(c => [c.id, { name: c.name, iso2: c.iso2 }]));
@@ -675,6 +683,7 @@ export async function getTop10AllIndicators(): Promise<Record<string, { country:
     grouped[id].sort((a, b) => (b.value || 0) - (a.value || 0));
     grouped[id] = grouped[id].slice(0, 10);
   }
+  _top10Cache = { data: grouped, ts: Date.now() };
   return grouped;
 }
 

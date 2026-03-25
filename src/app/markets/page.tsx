@@ -72,14 +72,20 @@ export default function MarketsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/quotes')
-      .then(r => r.json())
-      .then((data: QuotesResponse) => {
-        setQuotes(data.quotes || []);
-        setUpdatedAt(data.updatedAt);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const fetchQuotes = () => {
+      fetch('/api/quotes')
+        .then(r => r.json())
+        .then((data: QuotesResponse) => {
+          setQuotes(data.quotes || []);
+          setUpdatedAt(data.updatedAt);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    };
+
+    fetchQuotes();
+    const interval = setInterval(fetchQuotes, 30_000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const quoteMap = Object.fromEntries(quotes.map(q => [q.id, q]));
@@ -109,7 +115,10 @@ export default function MarketsPage() {
         <div className="flex items-end justify-between mb-1">
           <h1 className="text-[24px] font-bold">Markets</h1>
           {updatedStr && (
-            <span className="text-[11px] text-[#999]">Updated: {updatedStr}</span>
+            <span className="text-[11px] text-[#999] flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              Live &middot; {updatedStr}
+            </span>
           )}
         </div>
         <p className="text-[13px] text-[#999] mb-6">

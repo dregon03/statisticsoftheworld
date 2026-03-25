@@ -1,11 +1,15 @@
 name: Live Market Quotes
 
-# Single run at market open — script loops every 30s until market close
-# ET = UTC-4 (EDT): 9:30 AM ET = 13:30 UTC
-# Starts at 13:30 UTC, runs ~7 hours until 20:30 UTC (4:30 PM ET)
+# Three jobs cover the full trading day (pre-market → after-hours):
+#   Job 1: 4 AM - 10 AM ET (pre-market + early session)
+#   Job 2: 10 AM - 4 PM ET (core session)
+#   Job 3: 4 PM - 8 PM ET (after-hours)
+# Each runs ~6 hours max (GHA limit), loops every 30 seconds.
 on:
   schedule:
-    - cron: '30 13 * * 1-5'  # 9:30 AM ET, Mon-Fri (market open)
+    - cron: '0 8 * * 1-5'   # 4 AM ET = 8 AM UTC (pre-market)
+    - cron: '0 14 * * 1-5'  # 10 AM ET = 2 PM UTC (mid-session)
+    - cron: '0 20 * * 1-5'  # 4 PM ET = 8 PM UTC (after-hours)
   workflow_dispatch: {}
 
 env:
@@ -18,12 +22,12 @@ jobs:
   quotes:
     name: Live Quotes (30s loop)
     runs-on: ubuntu-latest
-    timeout-minutes: 450  # 7.5 hours max (market session + buffer)
+    timeout-minutes: 360  # 6 hours (GHA max for public repos)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary yfinance
-      - name: Fetch quotes every 30 seconds until market close
+      - name: Fetch quotes every 30 seconds for ~6 hours
         run: python scripts/fetch_live_quotes.py --loop --interval 30

@@ -159,17 +159,18 @@ def main():
         conn.close()
         return
 
-    # Loop mode: fetch every 30 seconds until 8:30 PM UTC (4:30 PM ET)
+    # Loop mode: fetch every 30 seconds for up to 5.5 hours
+    # (stays under GHA's 6-hour job limit)
+    # Three cron triggers cover the full day: pre-market, core, after-hours
     print(f"=== Live quotes loop (every {args.interval}s) ===", flush=True)
     iteration = 0
-    # Run until 20:30 UTC (4:30 PM ET) — 30 min after market close for settlement
-    end_hour_utc = 20
-    end_minute_utc = 30
+    max_runtime_seconds = 5.5 * 3600  # 5 hours 30 minutes
+    start_time = time.time()
 
     while True:
-        now = datetime.datetime.utcnow()
-        if now.hour > end_hour_utc or (now.hour == end_hour_utc and now.minute >= end_minute_utc):
-            print(f"\nMarket closed ({now.strftime('%H:%M UTC')}). Stopping.", flush=True)
+        elapsed_total = time.time() - start_time
+        if elapsed_total >= max_runtime_seconds:
+            print(f"\nMax runtime reached ({elapsed_total/3600:.1f}h). Stopping.", flush=True)
             break
 
         start = time.time()

@@ -240,11 +240,13 @@ def main():
         CREATE INDEX IF NOT EXISTS idx_earnings_symbol ON sotw_earnings_releases(symbol);
     """)
 
-    # Clean up: removed series + all tentative future dates (actual IS NULL)
+    # Clean up: removed series + tentative dates + old ForexFactory economic events
     removed_series = ['FEDFUNDS', 'CPILFESL', 'PCEPILFE', 'GDPC1', 'PERMIT', 'UNRATE']
     cur.execute("DELETE FROM sotw_macro_releases WHERE series_id = ANY(%s)", (removed_series,))
     cur.execute("DELETE FROM sotw_macro_releases WHERE actual IS NULL")
-    print(f"Schema ready. Cleaned removed series + tentative dates. Processing {len(FRED_SERIES)} FRED series...", flush=True)
+    # Remove all ForexFactory economic events from calendar events table (legacy)
+    cur.execute("DELETE FROM sotw_calendar_events WHERE event_type = 'economic'")
+    print(f"Schema ready. Cleaned legacy data. Processing {len(FRED_SERIES)} FRED series...", flush=True)
 
     stored = 0
     updated = 0

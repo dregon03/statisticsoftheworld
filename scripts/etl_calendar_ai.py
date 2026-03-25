@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-ETL: Economic Calendar powered by AI (Perplexity Sonar Pro)
+ETL: Economic Calendar powered by Gemini 2.5 Pro
 
-One AI call → full weekly calendar (macro + earnings + CB meetings).
-AI searches official sources in real-time and returns verified dates.
-Model configurable via CALENDAR_AI_MODEL env var.
+One Gemini call with Google Search grounding → full calendar.
+44+ events across 7 countries, macro + earnings + CB meetings.
+Gemini searches official sources (BLS, BEA, Census, ECB, BOE, BOJ,
+company IR pages) and returns verified dates.
 
 No FRED. No Alpha Vantage. No Finnhub. No ForexFactory.
-Just AI + your database.
+Just Gemini + your database.
 
 Schedule: Daily 7 AM UTC (refreshes current + next week)
 Cost: ~$0.02/day
@@ -24,35 +25,36 @@ DB_HOST = os.environ.get("SUPABASE_DB_HOST", "aws-1-ca-central-1.pooler.supabase
 DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
-OPENROUTER_KEY = os.environ.get("OPENROUTER_KEY", "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")
-AI_MODEL = os.environ.get("CALENDAR_AI_MODEL", "perplexity/sonar")
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyA_Dh_cJJkrRf8xM45JlJwkAvDHvnGZbo4")
 
 TODAY = datetime.date.today()
 
 
 def ai_query(prompt):
-    """Call AI model via OpenRouter."""
+    """Call Gemini 2.5 Pro via Google AI API with search grounding."""
     try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_KEY}"
         req = urllib.request.Request(
-            "https://openrouter.ai/api/v1/chat/completions",
+            url,
             data=json.dumps({
-                "model": AI_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.1,
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.1, "maxOutputTokens": 8192},
+                "tools": [{"google_search": {}}],
             }).encode(),
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://statisticsoftheworld.com",
-            },
+            headers={"Content-Type": "application/json"},
         )
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=180) as resp:
             result = json.loads(resp.read())
-        msg = result["choices"][0]["message"]
-        citations = [a["url_citation"]["url"] for a in msg.get("annotations", []) if a.get("type") == "url_citation"]
-        return msg["content"], citations
+
+        # Extract text from response parts
+        text = ""
+        for part in result["candidates"][0]["content"]["parts"]:
+            if "text" in part:
+                text += part["text"]
+
+        return text, ["Google Search grounded"]
     except Exception as e:
-        print(f"  AI error ({AI_MODEL}): {e}")
+        print(f"  Gemini error: {e}")
         return "", []
 
 
@@ -80,7 +82,7 @@ def main():
     import psycopg2
     from psycopg2.extras import execute_values
 
-    print("=== Calendar ETL (Gemini) ===", flush=True)
+    print("=== Calendar ETL (Gemini 2.5 Pro) ===", flush=True)
 
     conn = psycopg2.connect(host=DB_HOST, dbname="postgres", user=DB_USER, password=DB_PASS, port=DB_PORT)
     conn.autocommit = True

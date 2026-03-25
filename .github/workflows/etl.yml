@@ -314,28 +314,26 @@ jobs:
         run: python scripts/seed_methodology.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Calendar (Gemini 2.5 Flash with Google Search)
+  # DAILY: Calendar (Gemini 2.5 Pro with Google Search grounding)
   # One AI call → full global macro + earnings calendar
-  # Grounded in official sources via Google Search
-  # Cost: ~$0.002/day
+  # 44+ events across 7 countries, verified via Google Search
+  # Cost: ~$0.01/day
   # ════════════════════════════════════════════════════════════
   calendar:
-    name: "Daily: Calendar (Gemini)"
+    name: "Daily: Calendar (Gemini 2.5 Pro)"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: >
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'calendar'
-    env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-      - name: Fetch calendar via Gemini
+      - name: Fetch calendar via Gemini 2.5 Pro
         run: python scripts/etl_calendar_ai.py
       - name: Warm calendar page cache
         run: |

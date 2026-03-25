@@ -48,7 +48,7 @@ const REGIONS: Record<string, string[]> = {
   'Middle East & Africa': ['YF.IDX.ISR', 'YF.IDX.SAU', 'YF.IDX.ZAF'],
 };
 
-type Tab = 'stocks' | 'commodities' | 'currencies';
+type Tab = 'stocks' | 'currencies';
 
 function ChangeCell({ value, pct }: { value: number; pct: number }) {
   const color = value >= 0 ? 'text-[#2ecc40]' : 'text-[#e74c3c]';
@@ -91,15 +91,10 @@ export default function MarketsPage() {
   const quoteMap = Object.fromEntries(quotes.map(q => [q.id, q]));
 
   const stockQuotes = quotes.filter(q => q.id.startsWith('YF.IDX.'));
-  const commodityQuotes = quotes.filter(q =>
-    ['YF.GOLD', 'YF.SILVER', 'YF.CRUDE_OIL', 'YF.BRENT', 'YF.NATGAS', 'YF.COPPER', 'YF.PLATINUM',
-     'YF.WHEAT', 'YF.CORN', 'YF.COFFEE', 'YF.COCOA'].includes(q.id)
-  );
   const fxQuotes = quotes.filter(q => q.id.startsWith('YF.FX.'));
 
   const tabs: { id: Tab; label: string; count: number }[] = [
     { id: 'stocks', label: 'Stock Indices', count: stockQuotes.length },
-    { id: 'commodities', label: 'Commodities', count: commodityQuotes.length },
     { id: 'currencies', label: 'Currencies', count: fxQuotes.length },
   ];
 
@@ -140,6 +135,9 @@ export default function MarketsPage() {
               {t.label}
             </button>
           ))}
+          <Link href="/commodities" className="px-4 py-2 text-[13px] border-b-2 -mb-[1px] border-transparent text-[#666] hover:text-[#333] transition">
+            Commodities &rarr;
+          </Link>
         </div>
 
         {loading ? (
@@ -197,38 +195,6 @@ export default function MarketsPage() {
                 </div>
               );
             })}
-          </div>
-        ) : tab === 'commodities' ? (
-          <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
-                  <th className="text-left px-3 py-2">Commodity</th>
-                  <th className="text-right px-3 py-2">Price</th>
-                  <th className="text-right px-3 py-2">Prev Close</th>
-                  <th className="text-right px-3 py-2">Change</th>
-                  <th className="text-right px-3 py-2">% Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                {commodityQuotes.map(q => (
-                  <tr key={q.id} className="border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px]">
-                    <td className="px-3 py-2 font-medium">
-                      <Link href={`/country/WLD/${encodeURIComponent(q.id)}`} className="text-[#0066cc] hover:underline">
-                        {q.label}
-                      </Link>
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono font-semibold">
-                      ${q.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
-                      ${q.previousClose.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                    </td>
-                    <ChangeCell value={q.change} pct={q.changePct} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         ) : (
           <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">

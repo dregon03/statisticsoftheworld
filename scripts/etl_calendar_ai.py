@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-ETL: Economic Calendar powered by Perplexity Sonar
+ETL: Economic Calendar powered by AI (Perplexity Sonar Pro)
 
-One Perplexity call → full weekly calendar (macro + earnings + CB meetings).
-Perplexity searches official sources in real-time (BLS, BEA, Census, ECB,
-BOE, BOJ, company IR pages) and returns verified dates with citations.
+One AI call → full weekly calendar (macro + earnings + CB meetings).
+AI searches official sources in real-time and returns verified dates.
+Model configurable via CALENDAR_AI_MODEL env var.
 
 No FRED. No Alpha Vantage. No Finnhub. No ForexFactory.
-Just Perplexity + your database.
+Just AI + your database.
 
 Schedule: Daily 7 AM UTC (refreshes current + next week)
 Cost: ~$0.02/day
@@ -25,17 +25,18 @@ DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 OPENROUTER_KEY = os.environ.get("OPENROUTER_KEY", "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")
+AI_MODEL = os.environ.get("CALENDAR_AI_MODEL", "perplexity/sonar")
 
 TODAY = datetime.date.today()
 
 
-def perplexity(prompt):
-    """Call Perplexity Sonar via OpenRouter."""
+def ai_query(prompt):
+    """Call AI model via OpenRouter."""
     try:
         req = urllib.request.Request(
             "https://openrouter.ai/api/v1/chat/completions",
             data=json.dumps({
-                "model": "perplexity/sonar",
+                "model": AI_MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.1,
             }).encode(),
@@ -45,13 +46,13 @@ def perplexity(prompt):
                 "HTTP-Referer": "https://statisticsoftheworld.com",
             },
         )
-        with urllib.request.urlopen(req, timeout=90) as resp:
+        with urllib.request.urlopen(req, timeout=120) as resp:
             result = json.loads(resp.read())
         msg = result["choices"][0]["message"]
         citations = [a["url_citation"]["url"] for a in msg.get("annotations", []) if a.get("type") == "url_citation"]
         return msg["content"], citations
     except Exception as e:
-        print(f"  Perplexity error: {e}")
+        print(f"  AI error ({AI_MODEL}): {e}")
         return "", []
 
 
@@ -79,7 +80,7 @@ def main():
     import psycopg2
     from psycopg2.extras import execute_values
 
-    print("=== Calendar ETL (Perplexity only) ===", flush=True)
+    print("=== Calendar ETL (Gemini) ===", flush=True)
 
     conn = psycopg2.connect(host=DB_HOST, dbname="postgres", user=DB_USER, password=DB_PASS, port=DB_PORT)
     conn.autocommit = True
@@ -154,7 +155,7 @@ For EACH event provide these exact JSON fields:
 
 Return ONLY a JSON array. No markdown, no commentary. I need at least 30 macro events and all earnings in this window."""
 
-    content, citations = perplexity(prompt)
+    content, citations = ai_query(prompt)
     events = parse_json(content)
 
     print(f"  Got {len(events)} events", flush=True)
@@ -293,7 +294,7 @@ Events:
 Format as JSON array with fields: name, date, actual (the released number, e.g. "3.1%" or "228K" or "+0.4%"), outcome (one sentence: what happened and market reaction).
 Only include events where the data has actually been released. No commentary outside JSON."""
 
-        results_content, _ = perplexity(results_prompt)
+        results_content, _ = ai_query(results_prompt)
         results = parse_json(results_content)
         print(f"  Got results for {len(results)} events", flush=True)
 

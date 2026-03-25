@@ -258,6 +258,8 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
 
   // Format tick labels based on range
   const formatXTick = (date: string) => {
+    // Intraday dates are already formatted strings like "Mar 25, 3:30 PM"
+    if (range === '1d' || range === '5d') return date.replace(/,.*,/, ',').split(', ').pop() || date;
     const d = new Date(date);
     if (range === '5y') return d.toLocaleDateString('en', { year: '2-digit', month: 'short' });
     if (range === '1y' || range === '6mo') return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
@@ -334,12 +336,15 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
                 content={({ active, payload }) => {
                   if (!active || !payload?.[0]) return null;
                   const p = payload[0].payload as ChartPoint;
-                  const d = new Date(p.date);
+                  // For intraday, p.date is already formatted (e.g. "Mar 25, 3:30 PM")
+                  // For daily+, p.date is ISO (e.g. "2026-03-25")
+                  const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
+                  const dateLabel = isISO
+                    ? new Date(p.date).toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : p.date;
                   return (
                     <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
-                      <div className="text-[#999] mb-0.5">
-                        {d.toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })}
-                      </div>
+                      <div className="text-[#999] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[14px]">
                         ${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>

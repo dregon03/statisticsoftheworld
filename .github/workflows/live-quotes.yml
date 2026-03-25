@@ -1,15 +1,14 @@
 name: Live Market Quotes
 
-# Runs every 5 minutes during US market hours (Mon-Fri, 9:30 AM - 4 PM ET)
-# ET = UTC-4 (EDT): 9:30 AM ET = 13:30 UTC, 4:00 PM ET = 20:00 UTC
-# Note: GHA minimum interval is 5 minutes
+# Single run at market open — script loops every 30s until market close
+# ET = UTC-4 (EDT): 9:30 AM ET = 13:30 UTC
+# Starts at 13:30 UTC, runs ~7 hours until 20:30 UTC (4:30 PM ET)
 on:
   schedule:
-    - cron: '*/5 13-20 * * 1-5'  # Every 5 min, 1-8 PM UTC, Mon-Fri
+    - cron: '30 13 * * 1-5'  # 9:30 AM ET, Mon-Fri (market open)
   workflow_dispatch: {}
 
 env:
-  # Shared Pooler (IPv4-compatible)
   SUPABASE_DB_HOST: aws-1-ca-central-1.pooler.supabase.com
   SUPABASE_DB_PORT: "6543"
   SUPABASE_DB_USER: postgres.seyrycaldytfjvvkqopu
@@ -17,14 +16,14 @@ env:
 
 jobs:
   quotes:
-    name: Fetch Live Quotes
+    name: Live Quotes (30s loop)
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 450  # 7.5 hours max (market session + buffer)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary yfinance
-      - name: Fetch 46 live/delayed quotes
-        run: python scripts/fetch_live_quotes.py
+      - name: Fetch quotes every 30 seconds until market close
+        run: python scripts/fetch_live_quotes.py --loop --interval 30

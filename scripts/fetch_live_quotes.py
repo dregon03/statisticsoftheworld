@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
 """
 Fetch live/delayed market quotes from Yahoo Finance and write to Supabase.
-Runs every 15 minutes via cron or on-demand. ~30 seconds total.
+
+Two modes:
+  --once     Single fetch (default for daily ETL)
+  --loop     Continuous loop: fetch every 30 seconds until market close
+             Used by live-quotes.yml during market hours (~6.5 hour run)
 
 Fetches current price, previous close, day change for:
-  - 38 stock market indices
-  - 15 commodities
-  - 20 FX pairs
+  - 25 stock market indices
+  - 11 commodities
+  - 10 FX pairs
 """
 
+import argparse
+import datetime
 import json
 import os
-import socket
 import time
 import psycopg2
 
@@ -84,31 +89,13 @@ SYMBOLS = {
 }
 
 
-def main():
-    conn = psycopg2.connect(**DB)
+def fetch_once(conn):
+    """Single fetch of all quotes."""
     cur = conn.cursor()
-
-    # Create table if not exists
-    cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS {QUOTES_TABLE} (
-            id TEXT PRIMARY KEY,
-            label TEXT,
-            price DOUBLE PRECISION,
-            previous_close DOUBLE PRECISION,
-            change DOUBLE PRECISION,
-            change_pct DOUBLE PRECISION,
-            updated_at TIMESTAMPTZ DEFAULT NOW()
-        )
-    """)
-    conn.commit()
-
     count = 0
     errors = 0
 
-    # Batch fetch using yfinance download (faster than individual tickers)
-    symbols = list(SYMBOLS.keys())
-
-    for symbol in symbols:
+    for symbol in SYMBOLS:
         sotw_id, label = SYMBOLS[symbol]
         try:
             t = yf.Ticker(symbol)
@@ -134,16 +121,87 @@ def main():
             """, (sotw_id, label, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
 
             count += 1
-            sign = "+" if change >= 0 else ""
-            print(f"  {label:15s} {price:>12.2f}  {sign}{change:.2f} ({sign}{change_pct:.2f}%)")
 
         except Exception as e:
             errors += 1
-            print(f"  SKIP {symbol}: {e}")
 
     conn.commit()
+    return count, errors
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--loop", action="store_true", help="Loop every 30s until market close (8 PM UTC)")
+    parser.add_argument("--interval", type=int, default=30, help="Seconds between fetches in loop mode")
+    args = parser.parse_args()
+
+    conn = psycopg2.connect(**DB)
+    cur = conn.cursor()
+
+    # Create table if not exists
+    cur.execute(f"""
+        CREATE TABLE IF NOT EXISTS {QUOTES_TABLE} (
+            id TEXT PRIMARY KEY,
+            label TEXT,
+            price DOUBLE PRECISION,
+            previous_close DOUBLE PRECISION,
+            change DOUBLE PRECISION,
+            change_pct DOUBLE PRECISION,
+            updated_at TIMESTAMPTZ DEFAULT NOW()
+        )
+    """)
+    conn.commit()
+
+    if not args.loop:
+        # Single fetch
+        count, errors = fetch_once(conn)
+        print(f"Updated {count} quotes ({errors} errors)")
+        conn.close()
+        return
+
+    # Loop mode: fetch every 30 seconds until 8:30 PM UTC (4:30 PM ET)
+    print(f"=== Live quotes loop (every {args.interval}s) ===", flush=True)
+    iteration = 0
+    # Run until 20:30 UTC (4:30 PM ET) — 30 min after market close for settlement
+    end_hour_utc = 20
+    end_minute_utc = 30
+
+    while True:
+        now = datetime.datetime.utcnow()
+        if now.hour > end_hour_utc or (now.hour == end_hour_utc and now.minute >= end_minute_utc):
+            print(f"\nMarket closed ({now.strftime('%H:%M UTC')}). Stopping.", flush=True)
+            break
+
+        start = time.time()
+        try:
+            count, errors = fetch_once(conn)
+            iteration += 1
+            elapsed = time.time() - start
+            print(f"  [{now.strftime('%H:%M:%S')}] #{iteration}: {count} quotes in {elapsed:.1f}s", flush=True)
+        except Exception as e:
+            print(f"  [{now.strftime('%H:%M:%S')}] Error: {e}", flush=True)
+            # Reconnect on DB errors
+            try:
+                conn.close()
+            except Exception:
+                pass
+            time.sleep(5)
+            try:
+                conn = psycopg2.connect(**DB)
+                cur = conn.cursor()
+            except Exception as e2:
+                print(f"  Reconnect failed: {e2}", flush=True)
+                time.sleep(30)
+                continue
+
+        # Sleep remaining time to hit the interval
+        elapsed = time.time() - start
+        sleep_time = max(0, args.interval - elapsed)
+        if sleep_time > 0:
+            time.sleep(sleep_time)
+
     conn.close()
-    print(f"\nUpdated {count} quotes ({errors} errors)")
+    print(f"=== Done: {iteration} iterations ===", flush=True)
 
 
 if __name__ == "__main__":

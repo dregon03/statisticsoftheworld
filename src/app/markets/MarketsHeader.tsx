@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 const TABS = [
   { href: '/markets', label: 'Stock Indices' },
   { href: '/markets/commodities', label: 'Commodities' },
+  { href: '/markets/currencies', label: 'Currencies' },
 ];
 
 export default function MarketsHeader({ updatedAt }: { updatedAt?: string | null }) {

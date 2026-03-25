@@ -87,7 +87,6 @@ export default function MarketsPage() {
   }, []);
 
   const quoteMap = Object.fromEntries(quotes.map(q => [q.id, q]));
-  const fxQuotes = quotes.filter(q => q.id.startsWith('YF.FX.'));
 
   return (
     <main className="min-h-screen bg-white text-[#333]">
@@ -153,37 +152,6 @@ export default function MarketsPage() {
               );
             })}
 
-            {/* Currencies */}
-            <div>
-              <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">Currencies</h2>
-              <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
-                      <th className="text-left px-3 py-2">Pair</th>
-                      <th className="text-right px-3 py-2">Rate</th>
-                      <th className="text-right px-3 py-2">Prev Close</th>
-                      <th className="text-right px-3 py-2">Change</th>
-                      <th className="text-right px-3 py-2">% Change</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {fxQuotes.map(q => (
-                      <tr key={q.id} className="border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px]">
-                        <td className="px-3 py-2 font-medium">{q.label}</td>
-                        <td className="px-3 py-2 text-right font-mono font-semibold">
-                          {q.price.toFixed(4)}
-                        </td>
-                        <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
-                          {q.previousClose.toFixed(4)}
-                        </td>
-                        <ChangeCell value={q.change} pct={q.changePct} />
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
           </div>
         )}
       </div>

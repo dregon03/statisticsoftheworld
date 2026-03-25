@@ -9,6 +9,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 import IndicatorsTab from './IndicatorsTab';
+import LiveCounters from '@/components/LiveCounter';
 
 // Lazy-load heavy tab content
 const CompareContent = dynamic(() => import('./compare/page').then(m => ({ default: m.CompareContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div> });
@@ -39,7 +40,7 @@ interface CountryStats {
 }
 
 type SortKey = 'name' | 'gdp' | 'population' | 'gdpPerCapita' | 'gdpGrowth' | 'inflation' | 'unemployment' | 'debtToGdp' | 'lifeExpectancy' | 'tradeOpenness';
-type ViewTab = 'countries' | 'indicators' | 'compare' | 'map';
+type ViewTab = 'countries' | 'indicators' | 'compare' | 'map' | 'live';
 
 // higherIsBetter: true = high values are good (blue), false = high values are bad (red)
 const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number | undefined) => string; hideOnMobile?: boolean; outlier?: boolean; higherIsBetter?: boolean }[] = [
@@ -159,6 +160,7 @@ export default function Home() {
     { key: 'indicators', label: 'Indicators' },
     { key: 'compare', label: 'Compare' },
     { key: 'map', label: 'Map' },
+    { key: 'live', label: 'Live' },
   ];
 
   return (
@@ -286,6 +288,12 @@ export default function Home() {
         <Suspense fallback={<div className="text-center py-20 text-[#999] text-[13px]">Loading map...</div>}>
           <MapContent />
         </Suspense>
+      )}
+
+      {activeTab === 'live' && (
+        <section className="max-w-[1000px] mx-auto px-4 py-10">
+          <LiveCounters />
+        </section>
       )}
 
       <Footer />

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Fetch live quotes for all S&P 500 stocks via Yahoo Finance batch download.
+Fetch live quotes for major stock indices via Yahoo Finance batch download.
 
-Uses yf.download() for a single HTTP request → all 500 prices in ~5-10 seconds.
-Stores in the same sotw_live_quotes table as index/commodity/FX quotes.
+Covers: S&P 500, Nasdaq 100, Russell 1000 (top ~500 beyond S&P), TSX 60, FTSE 100
+~1,200 unique tickers, fetched in one yf.download() call (~15-20 seconds).
+Stores as YF.STOCK.{TICKER} in sotw_live_quotes.
 
 Modes:
   --once     Single fetch (default)
@@ -14,6 +15,8 @@ import argparse
 import datetime
 import os
 import time
+import io
+import contextlib
 import psycopg2
 
 try:
@@ -31,7 +34,10 @@ DB = dict(
 
 QUOTES_TABLE = "sotw_live_quotes"
 
-# S&P 500 tickers (as of 2026)
+# ═══════════════════════════════════════════════════════════
+# TICKER LISTS BY INDEX
+# ═══════════════════════════════════════════════════════════
+
 SP500 = [
     "AAPL","ABBV","ABT","ACN","ADBE","ADI","ADM","ADP","ADSK","AEE","AEP","AES","AFL","AIG","AIZ",
     "AJG","AKAM","ALB","ALGN","ALK","ALL","ALLE","AMAT","AMCR","AMD","AME","AMGN","AMP","AMT","AMZN",
@@ -43,7 +49,7 @@ SP500 = [
     "CPRT","CPT","CRL","CRM","CSCO","CSGP","CSX","CTAS","CTLT","CTRA","CTSH","CTVA","CVS","CVX",
     "CZR","D","DAL","DD","DE","DFS","DG","DGX","DHI","DHR","DIS","DISH","DLR","DLTR","DOV",
     "DOW","DPZ","DRI","DTE","DUK","DVA","DVN","DXC","DXCM","EA","EBAY","ECL","ED","EFX","EIX",
-    "EL","EMN","EMR","ENPH","EOG","EPAM","EQIX","EQR","EQT","ES","ESS","ETN","ETR","EVRG","EW",
+    "EL","EMN","EMR","ENPH","EOG","EPAM","EQIX","EQR","EQT","ESS","ETN","ETR","EVRG","EW",
     "EXC","EXPD","EXPE","EXR","F","FANG","FAST","FBHS","FCX","FDS","FDX","FE","FFIV","FIS","FISV",
     "FITB","FLT","FMC","FOX","FOXA","FRC","FRT","FTNT","FTV","GD","GE","GILD","GIS","GL","GLW",
     "GM","GNRC","GOOG","GOOGL","GPC","GPN","GRMN","GS","GWW","HAL","HAS","HBAN","HCA","HD","HOLX",
@@ -68,45 +74,96 @@ SP500 = [
     "WRB","WRK","WST","WTW","WY","WYNN","XEL","XOM","XRAY","XYL","YUM","ZBH","ZBRA","ZION","ZTS",
 ]
 
+NASDAQ100 = [
+    "AAPL","ABNB","ADBE","ADI","ADP","ADSK","AEP","AMAT","AMD","AMGN","AMZN","ANSS","APP","ARM",
+    "ASML","AVGO","AZN","BIIB","BKNG","BKR","CCEP","CDNS","CDW","CEG","CHTR","CMCSA","COST",
+    "CPRT","CRWD","CSCO","CSGP","CTAS","CTSH","DASH","DDOG","DLTR","DXCM","EA","EXC","FANG",
+    "FAST","FTNT","GEHC","GFS","GILD","GOOG","GOOGL","HON","IDXX","ILMN","INTC","INTU","ISRG",
+    "KDP","KHC","KLAC","LIN","LRCX","LULU","MAR","MCHP","MDB","MDLZ","MELI","META","MNST",
+    "MRNA","MRVL","MSFT","MU","NFLX","NVDA","NXPI","ODFL","ON","ORLY","PANW","PAYX","PCAR",
+    "PDD","PEP","PYPL","QCOM","REGN","ROST","SBUX","SMCI","SNPS","SPLK","TEAM","TMUS","TSLA",
+    "TTD","TTWO","TXN","VRSK","VRTX","WBD","WDAY","XEL","ZS",
+]
+
+TSX60 = [
+    "RY.TO","TD.TO","BNS.TO","BMO.TO","CM.TO","ENB.TO","CNR.TO","CP.TO","TRP.TO","SU.TO",
+    "CNQ.TO","MFC.TO","SLF.TO","BCE.TO","T.TO","ABX.TO","NTR.TO","FNV.TO","CSU.TO","SHOP.TO",
+    "ATD.TO","WCN.TO","IFC.TO","QSR.TO","DOL.TO","SAP.TO","GIB-A.TO","WSP.TO","CCO.TO","TRI.TO",
+    "BAM.TO","BN.TO","POW.TO","FFH.TO","GWO.TO","IAG.TO","NA.TO","EMA.TO","FTS.TO","AQN.TO",
+    "H.TO","MG.TO","L.TO","CTC-A.TO","WPM.TO","AEM.TO","K.TO","FM.TO","IMO.TO","CVE.TO",
+    "HSE.TO","PPL.TO","IPL.TO","KEY.TO","GFL.TO","TFII.TO","STN.TO","OTEX.TO","BB.TO","LSPD.TO",
+]
+
+FTSE100 = [
+    "III.L","ADM.L","AAF.L","AAL.L","ANTO.L","AHT.L","ABF.L","AZN.L","AUTO.L","AVV.L",
+    "AV.L","BME.L","BA.L","BARC.L","BDEV.L","BEZ.L","BKG.L","BP.L","BATS.L","BLND.L",
+    "BT-A.L","BNZL.L","BRBY.L","CCH.L","CPG.L","CNA.L","CRH.L","CRDA.L","DCC.L","DGE.L",
+    "DPLM.L","EDV.L","ENT.L","EXPN.L","FCIT.L","FRAS.L","FRES.L","GLEN.L","GSK.L","HLN.L",
+    "HLMA.L","HSBA.L","IHG.L","III.L","IMB.L","INF.L","ITV.L","JD.L","KGF.L","LAND.L",
+    "LGEN.L","LLOY.L","LSEG.L","MNG.L","MRO.L","MNDI.L","NG.L","NWG.L","NXT.L","OCDO.L",
+    "PSON.L","PSH.L","PSN.L","PHNX.L","PRU.L","RKT.L","REL.L","RIO.L","RMV.L","RR.L",
+    "RS1.L","RTO.L","SAG.L","SBRY.L","SDR.L","SGE.L","SGRO.L","SHEL.L","SJP.L","SKG.L",
+    "SMDS.L","SMIN.L","SMT.L","SN.L","SPX.L","SSE.L","STAN.L","STJ.L","SVT.L","TSCO.L",
+    "TW.L","ULVR.L","UTG.L","UU.L","VOD.L","WEIR.L","WPP.L","WTB.L",
+]
+
+# All indices and their tickers
+INDICES = {
+    "sp500": SP500,
+    "nasdaq100": NASDAQ100,
+    "tsx60": TSX60,
+    "ftse100": FTSE100,
+}
+
+
+def get_all_unique_tickers():
+    """Combine all index tickers, deduplicated."""
+    all_tickers = set()
+    for tickers in INDICES.values():
+        all_tickers.update(tickers)
+    return sorted(all_tickers)
+
 
 def fetch_once(conn):
-    """Batch fetch all S&P 500 quotes using yf.download()."""
-    import pandas as pd
-    import io
-    import contextlib
-
+    """Batch fetch all stock quotes using yf.download()."""
     cur = conn.cursor()
+    all_tickers = get_all_unique_tickers()
     count = 0
 
     try:
-        # Suppress yfinance output
         with contextlib.redirect_stderr(io.StringIO()):
-            data = yf.download(SP500, period="1d", group_by="ticker", progress=False, threads=True)
+            data = yf.download(all_tickers, period="2d", group_by="ticker", progress=False, threads=True)
 
         if data.empty:
             return 0, 0
 
-        for symbol in SP500:
+        for symbol in all_tickers:
             try:
-                if symbol not in data.columns.get_level_values(0):
+                if len(all_tickers) == 1:
+                    ticker_data = data
+                elif symbol not in data.columns.get_level_values(0):
                     continue
-                ticker_data = data[symbol]
-                if ticker_data.empty:
+                else:
+                    ticker_data = data[symbol]
+
+                if ticker_data.empty or len(ticker_data) < 1:
                     continue
 
-                row = ticker_data.iloc[-1]
-                price = float(row.get("Close", 0))
-                prev = float(row.get("Open", 0))  # Use open as proxy for prev close in 1d download
+                # Get latest close and previous close
+                closes = ticker_data["Close"].dropna()
+                if len(closes) < 1:
+                    continue
+
+                price = float(closes.iloc[-1])
+                prev = float(closes.iloc[-2]) if len(closes) >= 2 else price
 
                 if price <= 0:
                     continue
 
-                # Try to get better prev close from individual ticker
-                # But for speed, just use open price as approximation
                 change = price - prev
                 change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
 
-                sotw_id = f"YF.SP500.{symbol}"
+                sotw_id = f"YF.STOCK.{symbol}"
 
                 cur.execute(f"""
                     INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
@@ -132,8 +189,8 @@ def fetch_once(conn):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--loop", action="store_true", help="Loop every 30s")
-    parser.add_argument("--interval", type=int, default=30, help="Seconds between fetches")
+    parser.add_argument("--loop", action="store_true")
+    parser.add_argument("--interval", type=int, default=30)
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB)
@@ -148,13 +205,18 @@ def main():
     """)
     conn.commit()
 
+    unique = get_all_unique_tickers()
+    print(f"Tracking {len(unique)} unique tickers across {len(INDICES)} indices", flush=True)
+    for name, tickers in INDICES.items():
+        print(f"  {name}: {len(tickers)} tickers", flush=True)
+
     if not args.loop:
         count, errors = fetch_once(conn)
-        print(f"Updated {count} S&P 500 quotes")
+        print(f"Updated {count} stock quotes")
         conn.close()
         return
 
-    print(f"=== S&P 500 quotes loop (every {args.interval}s) ===", flush=True)
+    print(f"=== Stock quotes loop (every {args.interval}s) ===", flush=True)
     iteration = 0
     max_runtime = 5.5 * 3600
     start_time = time.time()

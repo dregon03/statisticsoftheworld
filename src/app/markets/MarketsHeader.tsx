@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const TABS = [
   { href: '/markets', label: 'Indices' },
-  { href: '/markets/stocks', label: 'S&P 500' },
+  { href: '/markets/stocks/sp500', label: 'Stocks' },
   { href: '/markets/commodities', label: 'Commodities' },
   { href: '/markets/currencies', label: 'Currencies' },
 ];
@@ -39,7 +39,7 @@ export default function MarketsHeader({ updatedAt }: { updatedAt?: string | null
             key={t.href}
             href={t.href}
             className={`px-4 py-2 text-[13px] transition border-b-2 -mb-[1px] ${
-              pathname === t.href
+              pathname === t.href || (t.href.includes('/stocks/') && pathname.startsWith('/markets/stocks'))
                 ? 'border-[#0066cc] text-[#0066cc] font-medium'
                 : 'border-transparent text-[#666] hover:text-[#333]'
             }`}

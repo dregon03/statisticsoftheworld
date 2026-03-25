@@ -106,14 +106,24 @@ BEA_RELEASES = [
 FRED_KEY = os.environ.get("FRED_API_KEY", "74b554c354e549e1e3087a689608fc29")
 
 FRED_SCHEDULE_RELEASES = [
-    (22,  "RSAFS",   "Retail Sales",                    "Consumer",   "high",   "08:30"),
-    (13,  "INDPRO",  "Industrial Production",            "Production", "high",   "09:15"),
-    (21,  "DGORDER", "Durable Goods Orders",             "Production", "high",   "08:30"),
-    (27,  "HOUST",   "Housing Starts & Building Permits","Housing",    "high",   "08:30"),
-    (97,  "HSN1F",   "New Home Sales",                   "Housing",    "high",   "10:00"),
-    (127, "BOPGSTB", "Trade Balance",                    "Trade",      "medium", "08:30"),
-    (14,  "UMCSENT", "Michigan Consumer Sentiment",      "Consumer",   "medium", "10:00"),
-    (180, "ICSA",    "Initial Jobless Claims",           "Labor",      "medium", "08:30"),
+    # BLS releases (iCal blocked, use FRED per-release as fallback)
+    (10,  "CPIAUCSL", "Consumer Price Index (CPI)",         "Inflation",  "high",   "08:30"),
+    (50,  "PAYEMS",   "Employment Situation (Nonfarm Payrolls)", "Labor", "high",   "08:30"),
+    (46,  "PPIFIS",   "Producer Price Index (PPI)",         "Inflation",  "high",   "08:30"),
+    (286, "JTSJOL",   "JOLTS Job Openings",                 "Labor",      "high",   "10:00"),
+    # Census Bureau releases
+    (22,  "RSAFS",    "Retail Sales",                       "Consumer",   "high",   "08:30"),
+    (13,  "INDPRO",   "Industrial Production",              "Production", "high",   "09:15"),
+    (21,  "DGORDER",  "Durable Goods Orders",               "Production", "high",   "08:30"),
+    (27,  "HOUST",    "Housing Starts & Building Permits",  "Housing",    "high",   "08:30"),
+    (97,  "HSN1F",    "New Home Sales",                     "Housing",    "high",   "10:00"),
+    (127, "BOPGSTB",  "Trade Balance",                      "Trade",      "medium", "08:30"),
+    # BEA releases (HTML parsing unreliable, use FRED)
+    (17,  "GDP",      "Gross Domestic Product (GDP)",        "GDP",        "high",   "08:30"),
+    (54,  "PCEPI",    "PCE Price Index",                     "Inflation",  "high",   "08:30"),
+    # Other
+    (14,  "UMCSENT",  "Michigan Consumer Sentiment",         "Consumer",   "medium", "10:00"),
+    (180, "ICSA",     "Initial Jobless Claims",              "Labor",      "medium", "08:30"),
 ]
 
 

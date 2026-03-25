@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import CategorySection from './CategorySection';
 
 interface CategoryData {
@@ -15,21 +14,8 @@ interface CategoryData {
   featuredCount: number;
 }
 
-export default function IndicatorsTab() {
-  const [categories, setCategories] = useState<CategoryData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/indicators-overview')
-      .then(r => r.json())
-      .then(({ categories: cats }) => {
-        setCategories(cats);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+export default function IndicatorsTab({ categories }: { categories: CategoryData[] }) {
+  if (categories.length === 0) {
     return <div className="text-center py-20 text-[#999] text-[13px]">Loading indicators...</div>;
   }
 

@@ -8,8 +8,9 @@ import Flag from './Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-// Lazy-load tab content
-const IndicatorsTab = dynamic(() => import('./IndicatorsTab'), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading indicators...</div> });
+import IndicatorsTab from './IndicatorsTab';
+
+// Lazy-load heavy tab content
 const CompareContent = dynamic(() => import('./compare/page').then(m => ({ default: m.CompareContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div> });
 const MapContent = dynamic(() => import('./map/page').then(m => ({ default: m.MapContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading map...</div> });
 
@@ -69,8 +70,10 @@ export default function Home() {
   const [sortAsc, setSortAsc] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ViewTab>('countries');
+  const [indicatorsData, setIndicatorsData] = useState<any[]>([]);
 
   useEffect(() => {
+    // Fetch countries (shown immediately)
     fetch('/api/countries')
       .then(r => r.json())
       .then(({ countries: list, stats: s }) => {
@@ -79,6 +82,12 @@ export default function Home() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+
+    // Prefetch indicators in background (ready when tab is clicked)
+    fetch('/api/indicators-overview')
+      .then(r => r.json())
+      .then(({ categories }) => setIndicatorsData(categories))
+      .catch(() => {});
   }, []);
 
   const regions = useMemo(() => [...new Set(countries.map(c => c.region))].sort(), [countries]);
@@ -265,7 +274,7 @@ export default function Home() {
         </section>
       )}
 
-      {activeTab === 'indicators' && <IndicatorsTab />}
+      {activeTab === 'indicators' && <IndicatorsTab categories={indicatorsData} />}
 
       {activeTab === 'compare' && (
         <Suspense fallback={<div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div>}>

@@ -33,8 +33,8 @@ DB_HOST = os.environ.get("SUPABASE_DB_HOST", "aws-1-ca-central-1.pooler.supabase
 DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "") or "AIzaSyA_Dh_cJJkrRf8xM45JlJwkAvDHvnGZbo4"
-OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "") or "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"
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 
 TODAY = datetime.date.today()
 TODAY_FMT = TODAY.strftime("%B %d, %Y")

@@ -20,7 +20,7 @@ DB_HOST = os.environ.get("SUPABASE_DB_HOST", "aws-1-ca-central-1.pooler.supabase
 DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "") or "AIzaSyA_Dh_cJJkrRf8xM45JlJwkAvDHvnGZbo4"
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 NOW = datetime.datetime.utcnow()
 TODAY = NOW.date()

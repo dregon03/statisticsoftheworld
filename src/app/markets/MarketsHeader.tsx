@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const TABS = [
-  { href: '/markets', label: 'Stock Indices' },
+  { href: '/markets', label: 'Indices' },
+  { href: '/markets/stocks', label: 'S&P 500' },
   { href: '/markets/commodities', label: 'Commodities' },
   { href: '/markets/currencies', label: 'Currencies' },
 ];

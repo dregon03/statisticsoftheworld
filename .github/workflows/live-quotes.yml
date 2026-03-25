@@ -1,10 +1,10 @@
 name: Live Market Quotes
 
-# Three jobs cover the full trading day (pre-market → after-hours):
-#   Job 1: 4 AM - 10 AM ET (pre-market + early session)
-#   Job 2: 10 AM - 4 PM ET (core session)
-#   Job 3: 4 PM - 8 PM ET (after-hours)
-# Each runs ~6 hours max (GHA limit), loops every 30 seconds.
+# Three triggers cover the full trading day (pre-market → after-hours):
+#   8 UTC (4 AM ET): pre-market
+#   14 UTC (10 AM ET): core session
+#   20 UTC (4 PM ET): after-hours
+# Each job runs ~5.5 hours, loops every 30 seconds.
 on:
   schedule:
     - cron: '0 8 * * 1-5'   # 4 AM ET = 8 AM UTC (pre-market)
@@ -19,15 +19,28 @@ env:
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
 jobs:
-  quotes:
-    name: Live Quotes (30s loop)
+  indices:
+    name: Indices + Commodities + FX (30s)
     runs-on: ubuntu-latest
-    timeout-minutes: 360  # 6 hours (GHA max for public repos)
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary yfinance
-      - name: Fetch quotes every 30 seconds for ~6 hours
+      - name: Fetch indices/commodities/FX every 30s
         run: python scripts/fetch_live_quotes.py --loop --interval 30
+
+  sp500:
+    name: S&P 500 Stocks (30s)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary yfinance pandas
+      - name: Fetch S&P 500 stocks every 30s
+        run: python scripts/fetch_sp500_quotes.py --loop --interval 30

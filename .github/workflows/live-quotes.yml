@@ -30,4 +30,4 @@ jobs:
           python-version: '3.12'
       - run: pip install psycopg2-binary yfinance
       - name: Fetch quotes every 30 seconds for ~6 hours
-        run: python scripts/fetch_live_quotes.py --loop --interval 10
+        run: python scripts/fetch_live_quotes.py --loop --interval 30

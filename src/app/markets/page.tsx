@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { formatValue } from '@/lib/data';
+import MarketsHeader from './MarketsHeader';
 
 interface Quote {
   id: string;
@@ -48,8 +49,6 @@ const REGIONS: Record<string, string[]> = {
   'Middle East & Africa': ['YF.IDX.ISR', 'YF.IDX.SAU', 'YF.IDX.ZAF'],
 };
 
-type Tab = 'stocks' | 'currencies';
-
 function ChangeCell({ value, pct }: { value: number; pct: number }) {
   const color = value >= 0 ? 'text-[#2ecc40]' : 'text-[#e74c3c]';
   const sign = value >= 0 ? '+' : '';
@@ -66,7 +65,6 @@ function ChangeCell({ value, pct }: { value: number; pct: number }) {
 }
 
 export default function MarketsPage() {
-  const [tab, setTab] = useState<Tab>('stocks');
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,66 +82,25 @@ export default function MarketsPage() {
     };
 
     fetchQuotes();
-    const interval = setInterval(fetchQuotes, 30_000); // Refresh every 30 seconds
+    const interval = setInterval(fetchQuotes, 30_000);
     return () => clearInterval(interval);
   }, []);
 
   const quoteMap = Object.fromEntries(quotes.map(q => [q.id, q]));
-
-  const stockQuotes = quotes.filter(q => q.id.startsWith('YF.IDX.'));
   const fxQuotes = quotes.filter(q => q.id.startsWith('YF.FX.'));
-
-  const tabs: { id: Tab; label: string; count: number }[] = [
-    { id: 'stocks', label: 'Stock Indices', count: stockQuotes.length },
-    { id: 'currencies', label: 'Currencies', count: fxQuotes.length },
-  ];
-
-  const updatedStr = updatedAt
-    ? new Date(updatedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })
-    : '';
 
   return (
     <main className="min-h-screen bg-white text-[#333]">
       <Nav />
 
       <div className="max-w-[1200px] mx-auto px-4 py-8">
-        <div className="flex items-end justify-between mb-1">
-          <h1 className="text-[24px] font-bold">Markets</h1>
-          {updatedStr && (
-            <span className="text-[11px] text-[#999] flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-              Live &middot; {updatedStr}
-            </span>
-          )}
-        </div>
-        <p className="text-[13px] text-[#999] mb-6">
-          Live delayed quotes from Yahoo Finance. Stock indices, commodities, and exchange rates.
-        </p>
-
-        {/* Tabs */}
-        <div className="flex gap-1 mb-6 border-b border-[#e8e8e8]">
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`px-4 py-2 text-[13px] transition border-b-2 -mb-[1px] ${
-                tab === t.id
-                  ? 'border-[#0066cc] text-[#0066cc] font-medium'
-                  : 'border-transparent text-[#666] hover:text-[#333]'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-          <Link href="/commodities" className="px-4 py-2 text-[13px] border-b-2 -mb-[1px] border-transparent text-[#666] hover:text-[#333] transition">
-            Commodities &rarr;
-          </Link>
-        </div>
+        <MarketsHeader updatedAt={updatedAt} />
 
         {loading ? (
           <div className="text-center py-20 text-[#999]">Loading market data...</div>
-        ) : tab === 'stocks' ? (
+        ) : (
           <div className="space-y-8">
+            {/* Stock Indices by region */}
             {Object.entries(REGIONS).map(([region, ids]) => {
               const regionQuotes = ids.map(id => quoteMap[id]).filter(Boolean);
               if (regionQuotes.length === 0) return null;
@@ -195,34 +152,38 @@ export default function MarketsPage() {
                 </div>
               );
             })}
-          </div>
-        ) : (
-          <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
-                  <th className="text-left px-3 py-2">Pair</th>
-                  <th className="text-right px-3 py-2">Rate</th>
-                  <th className="text-right px-3 py-2">Prev Close</th>
-                  <th className="text-right px-3 py-2">Change</th>
-                  <th className="text-right px-3 py-2">% Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                {fxQuotes.map(q => (
-                  <tr key={q.id} className="border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px]">
-                    <td className="px-3 py-2 font-medium">{q.label}</td>
-                    <td className="px-3 py-2 text-right font-mono font-semibold">
-                      {q.price.toFixed(4)}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
-                      {q.previousClose.toFixed(4)}
-                    </td>
-                    <ChangeCell value={q.change} pct={q.changePct} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+            {/* Currencies */}
+            <div>
+              <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">Currencies</h2>
+              <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
+                      <th className="text-left px-3 py-2">Pair</th>
+                      <th className="text-right px-3 py-2">Rate</th>
+                      <th className="text-right px-3 py-2">Prev Close</th>
+                      <th className="text-right px-3 py-2">Change</th>
+                      <th className="text-right px-3 py-2">% Change</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fxQuotes.map(q => (
+                      <tr key={q.id} className="border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px]">
+                        <td className="px-3 py-2 font-medium">{q.label}</td>
+                        <td className="px-3 py-2 text-right font-mono font-semibold">
+                          {q.price.toFixed(4)}
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
+                          {q.previousClose.toFixed(4)}
+                        </td>
+                        <ChangeCell value={q.change} pct={q.changePct} />
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>

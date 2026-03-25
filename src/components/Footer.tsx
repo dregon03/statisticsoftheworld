@@ -84,7 +84,7 @@ export default function Footer() {
             <Link href="/calendar" className="hover:text-[#333] transition">Calendar</Link>
             <Link href="/credit-ratings" className="hover:text-[#333] transition">Ratings</Link>
             <Link href="/markets" className="hover:text-[#333] transition">Markets</Link>
-            <Link href="/commodities" className="hover:text-[#333] transition">Commodities</Link>
+            <Link href="/markets/commodities" className="hover:text-[#333] transition">Commodities</Link>
             <Link href="/predictions" className="hover:text-[#333] transition">Predictions</Link>
             <Link href="/pricing" className="hover:text-[#333] transition">Pricing</Link>
             <Link href="/api-docs" className="hover:text-[#333] transition">API</Link>

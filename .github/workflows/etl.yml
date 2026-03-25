@@ -316,25 +316,28 @@ jobs:
         run: python scripts/seed_methodology.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Earnings calendar (Finnhub → Supabase)
+  # DAILY: Earnings (Alpha Vantage + SEC EDGAR + Finnhub)
   # 75-company watchlist: 55 US + 20 international
+  # AV seeds dates, EDGAR pulls actuals, Finnhub fills gaps
   # ════════════════════════════════════════════════════════════
   calendar:
-    name: "Daily: Earnings Calendar (Finnhub)"
+    name: "Daily: Earnings (AV + EDGAR + Finnhub)"
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     if: >
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'calendar'
+    env:
+      FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-      - name: Fetch Finnhub earnings → Supabase
-        run: python scripts/etl_calendar.py
+      - name: Fetch earnings (Alpha Vantage + SEC EDGAR + Finnhub)
+        run: python scripts/etl_earnings_official.py
       - name: Warm calendar page cache
         run: |
           curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar API warmed ✓" || true

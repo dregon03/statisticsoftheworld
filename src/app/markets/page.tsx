@@ -82,7 +82,7 @@ export default function MarketsPage() {
     };
 
     fetchQuotes();
-    const interval = setInterval(fetchQuotes, 30_000);
+    const interval = setInterval(fetchQuotes, 10_000);
     return () => clearInterval(interval);
   }, []);
 

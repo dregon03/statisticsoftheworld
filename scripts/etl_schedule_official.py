@@ -25,6 +25,77 @@ DB_HOST = os.environ.get("SUPABASE_DB_HOST", "aws-1-ca-central-1.pooler.supabase
 DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
+OPENROUTER_KEY = os.environ.get("OPENROUTER_KEY", "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")
+
+
+# ── AI verification ──────────────────────────────────────
+def verify_dates_with_ai(events):
+    """Ask AI to verify a batch of macro release dates.
+    Returns set of (name, date) tuples that are confirmed correct.
+    """
+    if not events:
+        return set()
+
+    # Build a batch prompt
+    lines = []
+    for name, date in events:
+        lines.append(f"- {name} on {date}")
+
+    prompt = f"""You are a macro economics expert. For each of the following US economic data releases,
+answer whether the date is a real scheduled release date.
+Only answer with the line number and YES or NO. No explanation needed.
+
+Releases to verify:
+{chr(10).join(f'{i+1}. {name} on {date}' for i, (name, date) in enumerate(events))}
+
+Answer format (one per line):
+1. YES
+2. NO
+etc."""
+
+    try:
+        req_data = json.dumps({
+            "model": "mistralai/mistral-small-3.1-24b-instruct",
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": len(events) * 10,
+            "temperature": 0.1,
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=req_data,
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://statisticsoftheworld.com",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            result = json.loads(resp.read())
+
+        answer = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+        # Parse YES/NO answers
+        verified = set()
+        for line in answer.strip().split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            # Match "1. YES" or "1: YES" or "1 YES"
+            match = re.match(r"(\d+)[.\s:]+\s*(YES|NO)", line, re.IGNORECASE)
+            if match:
+                idx = int(match.group(1)) - 1
+                is_yes = match.group(2).upper() == "YES"
+                if is_yes and 0 <= idx < len(events):
+                    verified.add(events[idx])
+
+        return verified
+
+    except Exception as e:
+        print(f"  AI verification error: {e}")
+        # On failure, reject all — better to show nothing than wrong dates
+        return set()
+
 
 # ── BLS iCal feeds ──────────────────────────────────────
 # Each BLS release has its own .ics file
@@ -323,9 +394,11 @@ def main():
         print("  ⚠ BEA page fetch failed")
         errors += 1
 
-    # ── 3. FRED confirmed release dates (Census Bureau releases) ──
-    print("\n--- FRED confirmed dates (Census/Fed) ---", flush=True)
+    # ── 3. FRED dates → collect all, then AI-verify ──
+    print("\n--- FRED dates (collect for verification) ---", flush=True)
     import time
+    candidates = []  # (series_id, name, category, impact, release_time, date, release_id)
+
     for release_id, series_id, name, category, impact, release_time in FRED_SCHEDULE_RELEASES:
         print(f"  {series_id:12s} {name:42s}", end=" ", flush=True)
 
@@ -333,21 +406,49 @@ def main():
         future = [d for d in dates if d >= today_str]
 
         for d in future:
-            cur.execute("""
-                INSERT INTO sotw_release_schedule
-                    (series_id, country, name, category, impact, release_date, release_time,
-                     source, source_url, verified, updated_at)
-                VALUES (%s, 'US', %s, %s, %s, %s, %s, 'FRED', %s, TRUE, NOW())
-                ON CONFLICT (series_id, release_date) DO UPDATE SET
-                    verified = TRUE, updated_at = NOW()
-            """, (
-                series_id, name, category, impact, d, release_time,
-                f"https://fred.stlouisfed.org/releases/dates?rid={release_id}",
-            ))
-            stored += 1
+            candidates.append((series_id, name, category, impact, release_time, d, release_id))
 
-        print(f"✓ {len(future)} upcoming ({len(dates)} total)", flush=True)
+        print(f"{len(future)} candidates", flush=True)
         time.sleep(0.3)
+
+    # ── 4. AI verification — reject wrong dates ──
+    print(f"\n--- AI verification ({len(candidates)} candidates) ---", flush=True)
+
+    # Clear old schedule data before storing fresh verified dates
+    cur.execute("DELETE FROM sotw_release_schedule")
+
+    if candidates:
+        # Batch verify: send all (name, date) pairs to AI
+        to_verify = [(name, date) for _, name, _, _, _, date, _ in candidates]
+
+        # Split into chunks of 20 to avoid token limits
+        verified_set = set()
+        for i in range(0, len(to_verify), 20):
+            chunk = to_verify[i:i+20]
+            chunk_verified = verify_dates_with_ai(chunk)
+            verified_set.update(chunk_verified)
+            print(f"  Batch {i//20 + 1}: {len(chunk_verified)}/{len(chunk)} verified", flush=True)
+
+        # Store only verified dates
+        for series_id, name, category, impact, release_time, date, release_id in candidates:
+            if (name, date) in verified_set:
+                cur.execute("""
+                    INSERT INTO sotw_release_schedule
+                        (series_id, country, name, category, impact, release_date, release_time,
+                         source, source_url, verified, updated_at)
+                    VALUES (%s, 'US', %s, %s, %s, %s, %s, 'FRED', %s, TRUE, NOW())
+                    ON CONFLICT (series_id, release_date) DO UPDATE SET
+                        verified = TRUE, updated_at = NOW()
+                """, (
+                    series_id, name, category, impact, date, release_time,
+                    f"https://fred.stlouisfed.org/releases/dates?rid={release_id}",
+                ))
+                stored += 1
+
+        rejected = len(candidates) - stored
+        print(f"  Result: {stored} verified, {rejected} rejected", flush=True)
+    else:
+        print("  No candidates to verify", flush=True)
 
     cur.close()
     conn.close()

@@ -24,12 +24,75 @@ import sys
 import time
 import urllib.request
 
+import re
+
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "aws-1-ca-central-1.pooler.supabase.com")
 DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 AV_KEY = os.environ.get("ALPHA_VANTAGE_KEY", "")
 FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "d6vl62hr01qiiutc8p6gd6vl62hr01qiiutc8p70")
+OPENROUTER_KEY = os.environ.get("OPENROUTER_KEY", "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")
+
+
+def verify_earnings_dates_with_ai(events):
+    """Ask AI to verify a batch of earnings report dates.
+    Returns set of (symbol, date) tuples that are confirmed correct.
+    """
+    if not events:
+        return set()
+
+    prompt = f"""You are a financial analyst. For each company below, verify if the earnings report date is correct.
+Only answer with the line number and YES or NO. No explanation needed.
+
+Companies to verify:
+{chr(10).join(f'{i+1}. {name} ({symbol}) earnings on {date}' for i, (symbol, name, date) in enumerate(events))}
+
+Answer format (one per line):
+1. YES
+2. NO
+etc."""
+
+    try:
+        req_data = json.dumps({
+            "model": "mistralai/mistral-small-3.1-24b-instruct",
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": len(events) * 10,
+            "temperature": 0.1,
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=req_data,
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://statisticsoftheworld.com",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            result = json.loads(resp.read())
+
+        answer = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+        verified = set()
+        for line in answer.strip().split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            match = re.match(r"(\d+)[.\s:]+\s*(YES|NO)", line, re.IGNORECASE)
+            if match:
+                idx = int(match.group(1)) - 1
+                is_yes = match.group(2).upper() == "YES"
+                if is_yes and 0 <= idx < len(events):
+                    verified.add((events[idx][0], events[idx][2]))  # (symbol, date)
+
+        return verified
+
+    except Exception as e:
+        print(f"  AI verification error: {e}")
+        # On failure, keep all — Alpha Vantage is generally reliable for earnings
+        return {(s, d) for s, _, d in events}
 
 # ── 75-company watchlist ──────────────────────────────
 # (symbol, company_name, country, cik_number_for_edgar)
@@ -399,10 +462,31 @@ def main():
     print(f"    From Alpha Vantage: {sum(1 for s in merged.values() if s.get('source') == 'AlphaVantage')}", flush=True)
     print(f"    From Finnhub: {sum(1 for s in merged.values() if s.get('source') == 'Finnhub')}", flush=True)
 
+    # ── Step 3.5: AI verification of earnings dates ──
+    print("\n--- Step 3.5: AI verification ---", flush=True)
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    to_verify = [
+        (symbol, data["name"], data.get("report_date", ""))
+        for symbol, data in merged.items()
+        if data.get("report_date", "") >= today
+    ]
+
+    verified_pairs = set()
+    for i in range(0, len(to_verify), 20):
+        chunk = to_verify[i:i+20]
+        chunk_verified = verify_earnings_dates_with_ai(chunk)
+        verified_pairs.update(chunk_verified)
+        print(f"  Batch {i//20 + 1}: {len(chunk_verified)}/{len(chunk)} verified", flush=True)
+
+    # Remove unverified entries from merged
+    before = len(merged)
+    merged = {s: d for s, d in merged.items() if (s, d.get("report_date", "")) in verified_pairs or d.get("report_date", "") < today}
+    rejected = before - len(merged)
+    print(f"  Result: {len(merged)} kept, {rejected} rejected by AI", flush=True)
+
     # ── Step 4: Store schedule in both tables ──
     print("\n--- Step 4: Store earnings schedule ---", flush=True)
     stored = 0
-    today = datetime.date.today().strftime("%Y-%m-%d")
 
     # Clear future earnings from calendar events table
     cur.execute("DELETE FROM sotw_calendar_events WHERE event_type = 'earnings' AND date >= %s", (today,))

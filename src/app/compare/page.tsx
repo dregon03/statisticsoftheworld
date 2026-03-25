@@ -29,13 +29,17 @@ const DEFAULT_INDICATORS = [
 
 export default function ComparePage() {
   return (
-    <Suspense>
-      <CompareContent />
-    </Suspense>
+    <main className="min-h-screen">
+      <Nav />
+      <Suspense>
+        <CompareContent />
+      </Suspense>
+      <Footer />
+    </main>
   );
 }
 
-function CompareContent() {
+export function CompareContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -163,9 +167,6 @@ function CompareContent() {
   };
 
   return (
-    <main className="min-h-screen">
-      <Nav />
-
       <section className="max-w-[1200px] mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-6">
@@ -409,9 +410,6 @@ function CompareContent() {
           </>
         )}
       </section>
-
-      <Footer />
-    </main>
   );
 }
 

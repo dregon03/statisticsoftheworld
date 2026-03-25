@@ -18,13 +18,17 @@ interface RankingEntry {
 
 export default function MapPage() {
   return (
-    <Suspense>
-      <MapContent />
-    </Suspense>
+    <main className="min-h-screen">
+      <Nav />
+      <Suspense>
+        <MapContent />
+      </Suspense>
+      <Footer />
+    </main>
   );
 }
 
-function MapContent() {
+export function MapContent() {
   const searchParams = useSearchParams();
   const initialId = searchParams.get('id');
   const initialIndicator = (initialId && INDICATORS.find(i => i.id === initialId)) || INDICATORS[0];
@@ -62,10 +66,7 @@ function MapContent() {
   const bottom5 = sorted.slice(-5).reverse();
 
   return (
-    <main className="min-h-screen">
-      <Nav />
-
-      <section className="max-w-[1200px] mx-auto px-4 py-8">
+    <section className="max-w-[1200px] mx-auto px-4 py-8">
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <h1 className="text-[28px] font-bold">World Map</h1>
@@ -171,8 +172,5 @@ function MapContent() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </main>
   );
 }

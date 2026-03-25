@@ -1,11 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useMemo } from 'react';
+import dynamic from 'next/dynamic';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { INDICATORS, formatValue } from '@/lib/data';
 import Flag from './Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+
+// Lazy-load Compare and Map content
+const CompareContent = dynamic(() => import('./compare/page').then(m => ({ default: m.CompareContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div> });
+const MapContent = dynamic(() => import('./map/page').then(m => ({ default: m.MapContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading map...</div> });
 
 interface Country {
   id: string;
@@ -32,6 +37,7 @@ interface CountryStats {
 }
 
 type SortKey = 'name' | 'gdp' | 'population' | 'gdpPerCapita' | 'gdpGrowth' | 'inflation' | 'unemployment' | 'debtToGdp' | 'lifeExpectancy' | 'tradeOpenness';
+type ViewTab = 'countries' | 'indicators' | 'compare' | 'map';
 
 // higherIsBetter: true = high values are good (blue), false = high values are bad (red)
 const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number | undefined) => string; hideOnMobile?: boolean; outlier?: boolean; higherIsBetter?: boolean }[] = [
@@ -61,6 +67,7 @@ export default function Home() {
   const [sortKey, setSortKey] = useState<SortKey>('gdp');
   const [sortAsc, setSortAsc] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<ViewTab>('countries');
 
   useEffect(() => {
     fetch('/api/countries')
@@ -137,6 +144,13 @@ export default function Home() {
     return sortAsc ? ' \u2191' : ' \u2193';
   };
 
+  const TABS: { key: ViewTab; label: string }[] = [
+    { key: 'countries', label: 'Countries' },
+    { key: 'indicators', label: 'Indicators' },
+    { key: 'compare', label: 'Compare' },
+    { key: 'map', label: 'Map' },
+  ];
+
   return (
     <main className="min-h-screen bg-white text-[#333]">
       <Nav />
@@ -146,97 +160,130 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-4 py-8 text-center">
           <h1 className="text-[26px] font-bold mb-2">Statistics of the World</h1>
           <p className="text-[13px] text-[#999] mb-5">{countries.length} countries. {INDICATORS.length} indicators. Free global data from IMF, World Bank, FRED, and more.</p>
-          <div className="flex flex-wrap justify-center gap-2 text-[12px]">
-            <Link href="/indicators" className="px-3 py-1.5 bg-[#0066cc] text-white rounded-lg hover:bg-[#0055aa] transition">Indicators</Link>
-            <Link href="/compare" className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">Compare</Link>
-            <Link href="/map" className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">Map</Link>
+          <div className="flex flex-wrap justify-center gap-1 text-[13px]">
+            {TABS.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-1.5 rounded-lg transition font-medium ${
+                  activeTab === tab.key
+                    ? 'bg-[#0066cc] text-white'
+                    : 'border border-[#e8e8e8] text-[#555] hover:bg-[#f5f7fa]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Countries table */}
-      <section className="max-w-[1400px] mx-auto px-4 py-6">
-        {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-4">
-          <input
-            type="text"
-            placeholder="Search countries..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
-          />
-          <select
-            value={filterRegion}
-            onChange={(e) => setFilterRegion(e.target.value)}
-            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
-          >
-            <option value="">All Regions</option>
-            {regions.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
-          <span className="text-[12px] text-[#999] self-center ml-auto">{filtered.length} countries</span>
-        </div>
+      {/* Tab content */}
+      {activeTab === 'countries' && (
+        <section className="max-w-[1400px] mx-auto px-4 py-6">
+          {/* Filters */}
+          <div className="flex flex-wrap gap-3 mb-4">
+            <input
+              type="text"
+              placeholder="Search countries..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
+            />
+            <select
+              value={filterRegion}
+              onChange={(e) => setFilterRegion(e.target.value)}
+              className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
+            >
+              <option value="">All Regions</option>
+              {regions.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+            <span className="text-[12px] text-[#999] self-center ml-auto">{filtered.length} countries</span>
+          </div>
 
-        {loading ? (
-          <div className="text-center py-20 text-[#999] text-[13px]">Loading countries...</div>
-        ) : (
-          <div className="border border-[#e8e8e8] rounded-xl overflow-x-auto">
-            <table className="w-full text-[13px]">
-              <thead>
-                <tr className="bg-[#f8f9fa] border-b border-[#e8e8e8] text-[11px] text-[#999] uppercase tracking-wider">
-                  <th className="px-3 py-2.5 text-left font-medium sticky left-0 bg-[#f8f9fa] z-10 min-w-[180px]">
-                    <button onClick={() => handleSort('name')} className="hover:text-[#333] transition">
-                      Country{sortIcon('name')}
-                    </button>
-                  </th>
-                  {COLUMNS.map(col => (
-                    <th
-                      key={col.key}
-                      className={`px-3 py-2.5 text-right font-medium whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
-                    >
-                      <button onClick={() => handleSort(col.key)} className="hover:text-[#333] transition">
-                        <span className="hidden md:inline">{col.label}</span>
-                        <span className="md:hidden">{col.short}</span>
-                        {sortIcon(col.key)}
+          {loading ? (
+            <div className="text-center py-20 text-[#999] text-[13px]">Loading countries...</div>
+          ) : (
+            <div className="border border-[#e8e8e8] rounded-xl overflow-x-auto">
+              <table className="w-full text-[13px]">
+                <thead>
+                  <tr className="bg-[#f8f9fa] border-b border-[#e8e8e8] text-[11px] text-[#999] uppercase tracking-wider">
+                    <th className="px-3 py-2.5 text-left font-medium sticky left-0 bg-[#f8f9fa] z-10 min-w-[180px]">
+                      <button onClick={() => handleSort('name')} className="hover:text-[#333] transition">
+                        Country{sortIcon('name')}
                       </button>
                     </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((c, i) => {
-                  const s = stats[c.id] || {};
-                  return (
-                    <tr
-                      key={c.id}
-                      className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition cursor-pointer ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}
-                      onClick={() => window.location.href = `/country/${c.id}`}
-                    >
-                      <td className="px-3 py-2 sticky left-0 bg-inherit z-10">
-                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium" onClick={e => e.stopPropagation()}>
-                          <Flag iso2={c.iso2} size={18} />
-                          {c.name}
-                        </Link>
-                      </td>
-                      {COLUMNS.map(col => {
-                        const val = (s as any)[col.key] as number | undefined;
-                        const outlierCls = getOutlierClass(col, val);
-                        return (
-                          <td
-                            key={col.key}
-                            className={`px-3 py-2 text-right font-mono text-[12px] ${outlierCls || 'text-[#555]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
-                          >
-                            {col.format(val)}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+                    {COLUMNS.map(col => (
+                      <th
+                        key={col.key}
+                        className={`px-3 py-2.5 text-right font-medium whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
+                      >
+                        <button onClick={() => handleSort(col.key)} className="hover:text-[#333] transition">
+                          <span className="hidden md:inline">{col.label}</span>
+                          <span className="md:hidden">{col.short}</span>
+                          {sortIcon(col.key)}
+                        </button>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((c, i) => {
+                    const s = stats[c.id] || {};
+                    return (
+                      <tr
+                        key={c.id}
+                        className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition cursor-pointer ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}
+                        onClick={() => window.location.href = `/country/${c.id}`}
+                      >
+                        <td className="px-3 py-2 sticky left-0 bg-inherit z-10">
+                          <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium" onClick={e => e.stopPropagation()}>
+                            <Flag iso2={c.iso2} size={18} />
+                            {c.name}
+                          </Link>
+                        </td>
+                        {COLUMNS.map(col => {
+                          const val = (s as any)[col.key] as number | undefined;
+                          const outlierCls = getOutlierClass(col, val);
+                          return (
+                            <td
+                              key={col.key}
+                              className={`px-3 py-2 text-right font-mono text-[12px] ${outlierCls || 'text-[#555]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
+                            >
+                              {col.format(val)}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
+
+      {activeTab === 'indicators' && (
+        <section className="max-w-[1400px] mx-auto px-4 py-6 text-center">
+          <p className="text-[13px] text-[#999] mb-4">Browse {INDICATORS.length} indicators across all categories with top-10 rankings.</p>
+          <Link href="/indicators" className="px-4 py-2 bg-[#0066cc] text-white rounded-lg hover:bg-[#0055aa] transition text-[13px]">
+            Open Indicators Explorer
+          </Link>
+        </section>
+      )}
+
+      {activeTab === 'compare' && (
+        <Suspense fallback={<div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div>}>
+          <CompareContent />
+        </Suspense>
+      )}
+
+      {activeTab === 'map' && (
+        <Suspense fallback={<div className="text-center py-20 text-[#999] text-[13px]">Loading map...</div>}>
+          <MapContent />
+        </Suspense>
+      )}
 
       <Footer />
     </main>

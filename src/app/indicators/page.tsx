@@ -3,6 +3,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import CategorySection from '../CategorySection';
 import IndicatorExplorer from './IndicatorExplorer';
+import LiveCounters from '@/components/LiveCounter';
 
 // Key indicators shown by default per category
 const FEATURED: Record<string, string[]> = {
@@ -52,8 +53,11 @@ export default async function IndicatorsPage({ searchParams }: { searchParams: P
 
       {/* Header */}
       <section className="border-b border-[#e8e8e8]">
-        <div className="max-w-[1200px] mx-auto px-4 py-8">
-          <h1 className="text-[24px] font-bold mb-1">Indicators</h1>
+        <div className="max-w-[1200px] mx-auto px-4 py-8 text-center">
+          <h1 className="text-[24px] font-bold mb-2">Indicators</h1>
+          <div className="mb-3">
+            <LiveCounters />
+          </div>
           <p className="text-[13px] text-[#999]">{INDICATORS.length} indicators across {CATEGORIES.length} categories from IMF, World Bank, WHO, UN, and more.</p>
         </div>
       </section>

@@ -127,33 +127,32 @@ def main():
     # ══════════════════════════════════════════════════════
     print(f"\nFetching calendar: {start_str} to {end_str}", flush=True)
 
-    prompt = f"""List ALL important global economic events and major company earnings scheduled from {start_str} to {end_str}.
+    prompt = f"""List EVERY important global economic data release AND major company earnings report scheduled from {start_str} to {end_str}. Be exhaustive.
 
-MACRO EVENTS to include:
-- US: CPI, PPI, NFP/Employment, GDP, PCE, Retail Sales, FOMC decisions, Industrial Production, Durable Goods, Housing Starts, New Home Sales, Consumer Sentiment, JOLTS, Jobless Claims, Trade Balance, ISM PMI
-- Europe: ECB decisions, Eurozone CPI/HICP, PMI, GDP, German IFO
-- UK: BOE decisions, CPI, GDP, PMI, Retail Sales
-- Japan: BOJ decisions, CPI, GDP, PMI, Tankan
-- China: PMI, GDP, Trade Balance, PBoC decisions
-- Canada: BOC decisions, CPI, GDP, Employment
-- Australia: RBA decisions, CPI, Employment
-- Other major: OPEC meetings, G7/G20 summits, IMF/World Bank meetings
+MACRO — list every single one of these for EACH country where scheduled:
+US: CPI, Core CPI, PPI, Nonfarm Payrolls, Unemployment Rate, GDP (advance/2nd/3rd), PCE, Core PCE, Retail Sales, FOMC decision, Industrial Production, Durable Goods Orders, Housing Starts, Building Permits, New Home Sales, Existing Home Sales, ISM Manufacturing PMI, ISM Services PMI, Consumer Confidence, Michigan Consumer Sentiment, JOLTS, Initial Jobless Claims (weekly), Trade Balance, Personal Income, Construction Spending, Factory Orders
+EU: ECB decision, HICP/CPI, GDP, PMI (Manufacturing + Services), German IFO, ZEW
+UK: BOE decision, CPI, GDP, PMI, Retail Sales, Employment
+Japan: BOJ decision, CPI, GDP, PMI, Tankan
+China: Caixin PMI, NBS PMI, GDP, Trade Balance, CPI, PBoC rate
+Canada: BOC decision, CPI, GDP, Employment
+Australia: RBA decision, CPI, Employment
 
-EARNINGS to include (only if reporting in this period):
-Top companies: AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA, JPM, GS, MS, BAC, WFC, NFLX, ASML, TSM, NKE, COST, WMT, HD, UNH, JNJ, LLY, PFE, XOM, CVX, BA, V, MA, CRM, ORCL, ADBE, AMD, AVGO, CSCO, INTC, QCOM, PEP, KO, PG, DIS, SBUX, MCD, UBER, ABNB, PLTR, COIN, SHOP, SAP, NVO, SHEL, AZN, BP, RY, TD, BHP
+EARNINGS — list ALL of these companies reporting in this period:
+AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA, JPM, GS, MS, BAC, WFC, NFLX, ASML, TSM, NKE, COST, WMT, HD, UNH, JNJ, LLY, PFE, XOM, CVX, BA, V, MA, CRM, ORCL, ADBE, AMD, AVGO, CSCO, INTC, QCOM, PEP, KO, PG, DIS, SBUX, MCD, UBER, ABNB, PLTR, COIN, SHOP, SAP, NVO, SHEL, AZN, BP, RY, TD
 
-For each event, provide:
-- date: YYYY-MM-DD
-- time: HH:MM in ET (or local time with timezone noted)
-- name: event name
-- country: 2-letter code (US, EU, UK, JP, CN, CA, AU, etc.)
+For EACH event provide these exact JSON fields:
+- date: "YYYY-MM-DD"
+- time: "HH:MM" (ET for US, local time for others)
+- name: full event name
+- country: "US", "EU", "UK", "JP", "CN", "CA", "AU", or other 2-letter code
 - type: "macro" or "earnings"
 - impact: "high", "medium", or "low"
-- category: Inflation, Labor, GDP, Central Bank, Consumer, Housing, Production, Trade, Earnings, Summit, Other
-- symbol: ticker symbol (for earnings only, empty for macro)
-- detail: one sentence on why it matters or what to watch
+- category: "Inflation", "Labor", "GDP", "Central Bank", "Consumer", "Housing", "Production", "Trade", "Earnings", "Summit", or "Other"
+- symbol: ticker (earnings only, "" for macro)
+- detail: one sentence — why this matters or what consensus expects
 
-Format as a JSON array. No commentary outside the JSON. Be comprehensive — include ALL scheduled releases from official sources."""
+Return ONLY a JSON array. No markdown, no commentary. I need at least 30 macro events and all earnings in this window."""
 
     content, citations = perplexity(prompt)
     events = parse_json(content)

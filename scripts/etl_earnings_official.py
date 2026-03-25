@@ -114,6 +114,11 @@ WATCHLIST = [
     ("ASML",  "ASML",               "NL", ""),
     ("SAP",   "SAP",                "DE", ""),
     ("NVO",   "Novo Nordisk",       "DK", ""),
+    # Semiconductors (ADR tickers on Alpha Vantage)
+    ("TSM",   "TSMC",               "TW", ""),
+    # Korea — no US ADR, need DART (dart.fss.or.kr) for schedule
+    ("005930.KS", "Samsung Electronics", "KR", ""),
+    ("000660.KS", "SK Hynix",           "KR", ""),
 ]
 
 SYMBOL_MAP = {w[0]: {"name": w[1], "country": w[2], "cik": w[3]} for w in WATCHLIST}

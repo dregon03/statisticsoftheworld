@@ -43,7 +43,7 @@ const COUNTRY_FLAGS: Record<string, string> = {
   CN: '🇨🇳', CA: '🇨🇦', AU: '🇦🇺', KR: '🇰🇷', IN: '🇮🇳',
   BR: '🇧🇷', MX: '🇲🇽', CH: '🇨🇭', NZ: '🇳🇿', ZA: '🇿🇦',
   SG: '🇸🇬', HK: '🇭🇰', SE: '🇸🇪', NO: '🇳🇴', DK: '🇩🇰',
-  NL: '🇳🇱', DE: '🇩🇪', FR: '🇫🇷', IT: '🇮🇹', ES: '🇪🇸',
+  NL: '🇳🇱', DE: '🇩🇪', FR: '🇫🇷', IT: '🇮🇹', ES: '🇪🇸', TW: '🇹🇼',
 };
 
 // Market reaction data for known event types

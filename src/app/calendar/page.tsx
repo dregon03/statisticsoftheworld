@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -451,10 +451,10 @@ function TopEventsSection({ events, todayStr }: { events: CalendarEvent[]; today
                     )}
                   </div>
 
-                  {/* Forecast → Previous */}
-                  {!isEarnings && (event.forecast || event.previous) && (
+                  {/* Actual / Previous */}
+                  {!isEarnings && (event.actual || event.previous) && (
                     <div className="flex items-center gap-2 text-[11px] font-mono mb-1">
-                      {event.forecast && <span><span className="text-[#999] text-[10px]">Fcst</span> <span className="text-[#333] font-semibold">{event.forecast}</span></span>}
+                      {event.actual && <span><span className="text-[#999] text-[10px]">Act</span> <span className="text-green-700 font-semibold">{event.actual}</span></span>}
                       {event.previous && <span><span className="text-[#999] text-[10px]">Prev</span> {event.previous}</span>}
                     </div>
                   )}
@@ -587,7 +587,6 @@ export default function CalendarPage() {
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('top10');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const [summaries, setSummaries] = useState<Record<string, string>>({});
   const dayRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const week = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
@@ -604,26 +603,6 @@ export default function CalendarPage() {
       .then(data => { setEvents(data.events || []); setMeta(data.meta || {}); setLoading(false); })
       .catch(err => { setError(err.message || 'Failed to load'); setLoading(false); });
   }, [weekOffset, week.from, week.to]);
-
-  // AI summaries for past events
-  const fetchSummaries = useCallback(async (evts: CalendarEvent[]) => {
-    const pastHigh = evts
-      .filter(e => e.date < todayStr && e.impact === 'high')
-      .map(e => ({ date: e.date, name: e.name, type: e.type, symbol: e.symbol }));
-    if (pastHigh.length === 0) return;
-    const needed = pastHigh.filter(e => !summaries[`${e.date}|${e.name}|${e.symbol || ''}`]);
-    if (needed.length === 0) return;
-    try {
-      const resp = await fetch('/api/calendar/summaries', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ events: needed }),
-      });
-      const data = await resp.json();
-      if (data.summaries) setSummaries(prev => ({ ...prev, ...data.summaries }));
-    } catch { /* silent */ }
-  }, [summaries, todayStr]);
-
-  useEffect(() => { if (events.length > 0) fetchSummaries(events); }, [events, fetchSummaries]);
 
   const countries = useMemo(() => [...new Set(events.map(e => e.country))].sort(), [events]);
   const categories = useMemo(() => [...new Set(events.map(e => e.category))].filter(c => c !== 'Earnings').sort(), [events]);
@@ -692,8 +671,6 @@ export default function CalendarPage() {
     const rowKey = `${dateStr}-${event.name}-${event.symbol || ''}-${i}`;
     const isExpanded = expandedRows.has(rowKey);
     const hasIntel = !!(findIntel(event.name) || getEarningsIntel(event));
-    const summaryKey = `${event.date}|${event.name}|${event.symbol || ''}`;
-    const summary = summaries[summaryKey];
 
     return (
       <div key={rowKey}>
@@ -752,42 +729,28 @@ export default function CalendarPage() {
                 </Link>
               )}
             </div>
-            {isPast && summary && (
-              <div className="text-[10px] text-[#888] mt-0.5 truncate italic">{summary}</div>
-            )}
           </div>
 
-          {/* Actual (official, post-release) */}
-          <span className="w-16 text-right text-[11px] font-mono hidden sm:block">
-            {isEarnings ? (
-              event.epsActual != null ? (
-                <span className="text-green-700 font-semibold">${event.epsActual.toFixed(2)}</span>
-              ) : <span className="text-[#ddd]">—</span>
-            ) : (
-              event.actual ? (
-                <span className="text-green-700 font-semibold" title={`Source: ${event.source || 'official'}`}>{event.actual}</span>
-              ) : <span className="text-[#ddd]">—</span>
-            )}
-          </span>
-
-          {/* Forecast / EPS estimate */}
+          {/* Actual / EPS */}
           <span className="w-16 text-right text-[11px] font-mono hidden sm:block">
             {isEarnings ? (
               event.epsEstimate != null ? (
-                <span className="text-[#333]">${event.epsEstimate.toFixed(2)}</span>
+                <span className="text-[#333]" title="EPS estimate (Finnhub)">
+                  <span className="text-[#999] text-[9px]">Est </span>${event.epsEstimate.toFixed(2)}
+                </span>
               ) : <span className="text-[#ddd]">—</span>
             ) : (
-              event.forecast ? (
-                <span className="text-[#333]">{event.forecast}</span>
+              event.actual ? (
+                <span className="text-green-700 font-semibold" title="Official value (FRED)">{event.actual}</span>
               ) : <span className="text-[#ddd]">—</span>
             )}
           </span>
 
-          {/* Previous / Revenue estimate */}
+          {/* Previous / Revenue */}
           <span className="w-16 text-right text-[11px] font-mono text-[#666] hidden sm:block">
             {isEarnings ? (
               event.revenueEstimate != null && event.revenueEstimate > 0 ? (
-                <span>{formatRev(event.revenueEstimate)}</span>
+                <span title="Revenue estimate (Finnhub)">{formatRev(event.revenueEstimate)}</span>
               ) : <span className="text-[#ddd]">—</span>
             ) : (
               event.previous ? (
@@ -953,7 +916,6 @@ export default function CalendarPage() {
               <span className="w-7 shrink-0">Ctry</span>
               <span className="flex-1">Event</span>
               <span className="w-16 text-right">Actual</span>
-              <span className="w-16 text-right">Forecast</span>
               <span className="w-16 text-right">Previous</span>
               <span className="w-16 text-right hidden lg:block">Category</span>
               <span className="w-14 text-right hidden md:block">Impact</span>
@@ -983,7 +945,6 @@ export default function CalendarPage() {
               <span className="w-7 shrink-0">Ctry</span>
               <span className="flex-1">Event</span>
               <span className="w-16 text-right">Actual</span>
-              <span className="w-16 text-right">Forecast</span>
               <span className="w-16 text-right">Previous</span>
               <span className="w-16 text-right hidden lg:block">Category</span>
               <span className="w-14 text-right hidden md:block">Impact</span>
@@ -1041,16 +1002,14 @@ export default function CalendarPage() {
           </div>
           <div className="mt-2 pt-2 border-t border-[#e8e8e8] text-[10px] text-[#bbb] flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-medium text-[#999]">Sources:</span>
-            <span>Schedule: <a href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">ForexFactory</a></span>
-            <span className="text-[#ddd]">·</span>
-            <span>US actuals: <a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">FRED</a></span>
+            <span>US macro: <a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">FRED</a> (official)</span>
             <span className="text-[#ddd]">·</span>
             <span>Earnings: <a href="https://finnhub.io" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Finnhub</a></span>
             <span className="text-[#ddd]">·</span>
             <span>CB meetings: <a href="https://www.cbrates.com" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">cbrates.com</a></span>
           </div>
           <div className="mt-1 text-[9px] text-[#ccc]">
-            Forecast values sourced from ForexFactory. Actual values from official government APIs (FRED, BLS, BEA). Earnings estimates via Finnhub.
+            All macro values from official government APIs. No unverified consensus. Earnings estimates via Finnhub.
           </div>
         </div>
       </section>

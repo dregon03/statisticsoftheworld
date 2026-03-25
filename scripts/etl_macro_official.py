@@ -31,34 +31,31 @@ FRED_KEY = os.environ.get("FRED_API_KEY", "74b554c354e549e1e3087a689608fc29")
 # ── Curated US macro indicators ──────────────────────────
 # (series_id, release_id, name, category, impact, release_time_ET)
 FRED_SERIES = [
-    # Inflation
+    # Inflation — one series per release to avoid duplicate calendar entries
     ("CPIAUCSL",  10,  "Consumer Price Index (CPI)",         "Inflation",   "high",   "08:30"),
-    ("CPILFESL",  10,  "Core CPI (ex Food & Energy)",        "Inflation",   "high",   "08:30"),
     ("PCEPI",     54,  "PCE Price Index",                     "Inflation",   "high",   "08:30"),
-    ("PCEPILFE",  54,  "Core PCE Price Index",                "Inflation",   "high",   "08:30"),
     ("PPIFIS",    46,  "Producer Price Index (PPI)",          "Inflation",   "high",   "08:30"),
     # Labor
-    ("PAYEMS",    50,  "Nonfarm Payrolls",                    "Labor",       "high",   "08:30"),
-    ("UNRATE",    50,  "Unemployment Rate",                   "Labor",       "high",   "08:30"),
+    ("PAYEMS",    50,  "Employment Situation (Nonfarm Payrolls)", "Labor",   "high",   "08:30"),
     ("ICSA",     180,  "Initial Jobless Claims",              "Labor",       "medium", "08:30"),
     ("JTSJOL",   286,  "JOLTS Job Openings",                  "Labor",       "high",   "10:00"),
-    # GDP
+    # GDP — one series per release
     ("GDP",       17,  "Gross Domestic Product (GDP)",        "GDP",         "high",   "08:30"),
-    ("GDPC1",     17,  "Real GDP",                            "GDP",         "high",   "08:30"),
     # Consumer
     ("RSAFS",     22,  "Retail Sales",                        "Consumer",    "high",   "08:30"),
     ("UMCSENT",   14,  "Michigan Consumer Sentiment",         "Consumer",    "medium", "10:00"),
     # Production
     ("INDPRO",    13,  "Industrial Production",               "Production",  "high",   "09:15"),
     ("DGORDER",   21,  "Durable Goods Orders",                "Production",  "high",   "08:30"),
-    # Housing
-    ("HOUST",     27,  "Housing Starts",                      "Housing",     "high",   "08:30"),
-    ("PERMIT",    27,  "Building Permits",                    "Housing",     "high",   "08:30"),
+    # Housing — one series per release
+    ("HOUST",     27,  "Housing Starts & Building Permits",   "Housing",     "high",   "08:30"),
     ("HSN1F",     97,  "New Home Sales",                      "Housing",     "high",   "10:00"),
     # Trade
     ("BOPGSTB",  127,  "Trade Balance",                       "Trade",       "medium", "08:30"),
-    # Central Bank
-    ("FEDFUNDS", 101,  "Federal Funds Rate",                  "Central Bank","high",   "14:00"),
+    # NOTE: Federal Funds Rate (FEDFUNDS) removed — daily effective rate, not an event.
+    # FOMC decisions are sourced from cbrates.com CB meetings scraper.
+    # NOTE: Core CPI (CPILFESL), Core PCE (PCEPILFE), Real GDP (GDPC1), Building Permits (PERMIT),
+    # Unemployment Rate (UNRATE) removed — same release as their headline series, would create duplicates.
 ]
 
 
@@ -78,7 +75,7 @@ def fred_get(endpoint, params):
 
 
 def fetch_release_dates(release_id, limit=10):
-    """Get recent release dates for a FRED release."""
+    """Get recent release dates for a FRED release (past)."""
     data = fred_get("release/dates", {
         "release_id": release_id,
         "sort_order": "desc",
@@ -87,6 +84,25 @@ def fetch_release_dates(release_id, limit=10):
     if not data or "release_dates" not in data:
         return []
     return [rd["date"] for rd in data["release_dates"]]
+
+
+def fetch_future_release_dates(release_id):
+    """Get upcoming release dates for a FRED release (next 90 days)."""
+    today = datetime.date.today()
+    to_date = today + datetime.timedelta(days=90)
+    data = fred_get("release/dates", {
+        "release_id": release_id,
+        "realtime_start": today.strftime("%Y-%m-%d"),
+        "realtime_end": to_date.strftime("%Y-%m-%d"),
+        "include_release_dates_with_no_data": "true",
+        "sort_order": "asc",
+        "limit": "10",
+    })
+    if not data or "release_dates" not in data:
+        return []
+    # Only return future dates
+    today_str = today.strftime("%Y-%m-%d")
+    return [rd["date"] for rd in data["release_dates"] if rd["date"] > today_str]
 
 
 def fetch_observations(series_id, limit=10):
@@ -241,11 +257,19 @@ def main():
         CREATE INDEX IF NOT EXISTS idx_earnings_symbol ON sotw_earnings_releases(symbol);
     """)
 
-    print(f"Schema ready. Processing {len(FRED_SERIES)} FRED series...", flush=True)
+    # Clean up removed series (FEDFUNDS daily rate, duplicate sub-series)
+    removed_series = ['FEDFUNDS', 'CPILFESL', 'PCEPILFE', 'GDPC1', 'PERMIT', 'UNRATE']
+    cur.execute(
+        "DELETE FROM sotw_macro_releases WHERE series_id = ANY(%s)",
+        (removed_series,)
+    )
+    print(f"Schema ready. Cleaned {removed_series}. Processing {len(FRED_SERIES)} FRED series...", flush=True)
 
     stored = 0
     updated = 0
+    scheduled = 0
     errors = 0
+    seen_releases = set()  # track which release_ids we've fetched future dates for
 
     for series_id, release_id, name, category, impact, release_time in FRED_SERIES:
         print(f"  {series_id:12s} {name:40s}", end=" ", flush=True)
@@ -331,14 +355,35 @@ def main():
             else:
                 stored += 1
 
-        print(f"✓ {len(observations)} obs, {len(release_dates)} dates", flush=True)
+        # 4. Fetch and store future release dates (schedule only, no actuals yet)
+        # Use per-release endpoint — more reliable than the all-releases endpoint
+        future_dates = []
+        if release_id not in seen_releases:
+            seen_releases.add(release_id)
+            future_dates = fetch_future_release_dates(release_id)
+            for fut_date in future_dates[:3]:  # max 3 future dates per release
+                cur.execute("""
+                    INSERT INTO sotw_macro_releases
+                        (series_id, country, name, category, impact, release_date, release_time,
+                         source, source_url, updated_at)
+                    VALUES (%s, 'US', %s, %s, %s, %s, %s,
+                            'FRED', %s, NOW())
+                    ON CONFLICT (series_id, release_date) DO NOTHING
+                """, (
+                    series_id, name, category, impact, fut_date, release_time,
+                    f"https://fred.stlouisfed.org/series/{series_id}",
+                ))
+            if future_dates:
+                scheduled += len(future_dates[:3])
+
+        print(f"✓ {len(observations)} obs, {len(release_dates)} past, {len(future_dates) if release_id in seen_releases else 0} future", flush=True)
         time.sleep(0.3)  # FRED rate limit: 120 req/min
 
     cur.close()
     conn.close()
 
-    print(f"\n=== Done: {stored} new, {updated} updated, {errors} errors ===", flush=True)
-    print(f"Total series: {len(FRED_SERIES)} | FRED API calls: ~{len(FRED_SERIES) * 2}", flush=True)
+    print(f"\n=== Done: {stored} new, {updated} updated, {scheduled} scheduled, {errors} errors ===", flush=True)
+    print(f"Total series: {len(FRED_SERIES)} | FRED API calls: ~{len(FRED_SERIES) * 3}", flush=True)
 
 
 if __name__ == "__main__":

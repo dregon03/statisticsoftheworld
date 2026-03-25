@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 """
-ETL: Economic Calendar powered by Gemini 2.5 Pro
+ETL: Economic Calendar powered by Gemini 2.5 Pro (Google Search grounding)
 
-One Gemini call with Google Search grounding → full calendar.
-44+ events across 7 countries, macro + earnings + CB meetings.
-Gemini searches official sources (BLS, BEA, Census, ECB, BOE, BOJ,
-company IR pages) and returns verified dates.
+Architecture:
+  - Small, focused Gemini queries per region + time window
+  - Google Search grounding ensures real-time accuracy
+  - Explicit government shutdown context for US releases
+  - DeepSeek V3.2 (via OpenRouter) for JSON parsing fallback
 
-No FRED. No Alpha Vantage. No Finnhub. No ForexFactory.
-Just Gemini + your database.
+Queries (sequential):
+  1. US macro this week
+  2. US macro next 3 weeks
+  3. EU/Eurozone + UK macro
+  4. Japan + China macro
+  5. Canada + Australia macro
+  6. Earnings (all regions, 2 weeks at a time)
+  7. Past event outcomes
 
-Schedule: Daily 7 AM UTC (refreshes current + next week)
-Cost: ~$0.02/day
+Schedule: Daily 7 AM UTC
+Cost: ~$0.10-0.15/day
 """
 
 import datetime
@@ -19,6 +26,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.request
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "aws-1-ca-central-1.pooler.supabase.com")
@@ -26,52 +34,185 @@ DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyA_Dh_cJJkrRf8xM45JlJwkAvDHvnGZbo4")
+OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "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")
 
 TODAY = datetime.date.today()
+TODAY_FMT = TODAY.strftime("%B %d, %Y")
 
 
-def ai_query(prompt):
-    """Call Gemini 2.5 Pro via Google AI API with search grounding."""
+def call_gemini(prompt, max_tokens=8192):
+    """Call Gemini 2.5 Pro with Google Search grounding."""
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_KEY}"
         req = urllib.request.Request(
             url,
             data=json.dumps({
                 "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"temperature": 0.1, "maxOutputTokens": 8192},
+                "generationConfig": {"temperature": 0.1, "maxOutputTokens": max_tokens},
                 "tools": [{"google_search": {}}],
             }).encode(),
             headers={"Content-Type": "application/json"},
         )
         with urllib.request.urlopen(req, timeout=180) as resp:
             result = json.loads(resp.read())
-
-        # Extract text from response parts
         text = ""
-        for part in result["candidates"][0]["content"]["parts"]:
+        for part in result.get("candidates", [{}])[0].get("content", {}).get("parts", []):
             if "text" in part:
                 text += part["text"]
-
-        return text, ["Google Search grounded"]
+        return text
     except Exception as e:
-        print(f"  Gemini error: {e}")
-        return "", []
+        print(f"    Gemini error: {e}")
+        return ""
 
 
-def parse_json(text):
-    """Extract JSON array from response."""
-    text = re.sub(r"```json\s*", "", text)
-    text = re.sub(r"```\s*", "", text).strip()
+def call_deepseek(prompt):
+    """Call DeepSeek V3.2 via OpenRouter for parsing."""
     try:
-        return json.loads(text)
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=json.dumps({
+                "model": "deepseek/deepseek-v3.2",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.0,
+                "max_tokens": 4096,
+            }).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {OPENROUTER_KEY}",
+                "HTTP-Referer": "https://statisticsoftheworld.com",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            result = json.loads(resp.read())
+        return result["choices"][0]["message"]["content"]
+    except Exception as e:
+        print(f"    DeepSeek error: {e}")
+        return ""
+
+
+def extract_json(text):
+    """Extract JSON array from AI response."""
+    if not text.strip():
+        return []
+    cleaned = re.sub(r"```json\s*", "", text)
+    cleaned = re.sub(r"```\s*", "", cleaned).strip()
+    # Try direct parse
+    try:
+        result = json.loads(cleaned)
+        if isinstance(result, list):
+            return result
     except json.JSONDecodeError:
-        match = re.search(r"\[.*\]", text, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group())
-            except json.JSONDecodeError:
-                pass
-    return []
+        pass
+    # Try regex extract
+    match = re.search(r"\[.*\]", cleaned, re.DOTALL)
+    if match:
+        try:
+            result = json.loads(match.group())
+            if isinstance(result, list):
+                return result
+        except json.JSONDecodeError:
+            pass
+    # DeepSeek fallback
+    print("    -> Using DeepSeek V3.2 to fix JSON...")
+    fixed = call_deepseek(f"Extract the JSON array from this text. Return ONLY a valid JSON array.\n\n{text[:5000]}")
+    cleaned2 = re.sub(r"```json\s*", "", fixed)
+    cleaned2 = re.sub(r"```\s*", "", cleaned2).strip()
+    try:
+        return json.loads(cleaned2)
+    except json.JSONDecodeError:
+        return []
+
+
+def query(label, prompt):
+    """Run a Gemini query, extract JSON, print progress."""
+    print(f"  [{label}]...", end="", flush=True)
+    raw = call_gemini(prompt)
+    events = extract_json(raw)
+    print(f" {len(events)} events", flush=True)
+    time.sleep(2)  # Rate limit
+    return events
+
+
+# ═══════════════════════════════════════════════════════════
+# PROMPTS
+# ═══════════════════════════════════════════════════════════
+
+def prompt_us_macro(start, end):
+    return f"""Today is {TODAY_FMT}. List ALL confirmed US economic data releases from {start} to {end}.
+
+CRITICAL: The US government had lapses in federal appropriations in 2025-2026. Many releases have been DELAYED and RESCHEDULED. Search these official sources for CURRENT dates:
+- BLS: bls.gov/schedule/2026/ and bls.gov/bls/2025-lapse-revised-release-dates.htm
+- BEA: bea.gov/news/schedule
+- Census: census.gov/economic-indicators/calendar-listview.html
+- Federal Reserve: federalreserve.gov/monetarypolicy/fomccalendars.htm
+
+DO NOT use pre-shutdown dates. Only use the CURRENT confirmed schedule.
+
+Known recurring releases (include if in date range):
+- Initial Jobless Claims: every Thursday, 8:30 AM ET
+- Conference Board Consumer Confidence: last Tuesday of month, 10:00 AM
+- Michigan Consumer Sentiment: preliminary ~2nd Friday, final ~4th Friday, 10:00 AM
+- ISM Manufacturing PMI: 1st business day of month, 10:00 AM
+- ISM Services PMI: 3rd business day of month, 10:00 AM
+- Nonfarm Payrolls: 1st Friday of month, 8:30 AM
+- S&P Global Flash PMI: ~3rd week of month
+
+Other indicators: CPI, PPI, GDP, PCE, Retail Sales, FOMC, Durable Goods, Housing Starts, Building Permits, New/Existing Home Sales, JOLTS, Import/Export Prices, Trade Balance, Personal Income/Spending, Factory Orders, Construction Spending, Productivity, Fed regional indices (Richmond, Dallas, Chicago, Philly)
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full official name","impact":"high/medium/low","category":"Inflation/Labor/GDP/Central Bank/Consumer/Housing/Production/Trade/Other"}}]
+
+Return ONLY a JSON array. No commentary."""
+
+
+def prompt_eu_uk_macro(start, end):
+    return f"""Today is {TODAY_FMT}. List ALL confirmed economic releases for Eurozone/EU and UK from {start} to {end}.
+
+Search: ecb.europa.eu/press/calendars, ons.gov.uk/releasecalendar, pmi.spglobal.com/Public/Release/ReleaseDates, bankofengland.co.uk
+
+Eurozone: ECB decision, HICP Flash + Final, GDP, PMI (Flash + Final), German IFO, ZEW, Industrial Production, Retail Sales, Unemployment, Consumer Confidence, German GfK
+UK: BOE decision, CPI, GDP, PMI (Flash + Final), Retail Sales, Employment, GfK Consumer Confidence
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"EU/DE/FR/IT/UK","impact":"high/medium/low","category":"..."}}]
+
+Return ONLY JSON array."""
+
+
+def prompt_asia_macro(start, end):
+    return f"""Today is {TODAY_FMT}. List ALL confirmed economic releases for Japan, China, and South Korea from {start} to {end}.
+
+Search: boj.or.jp/en/about/calendar, pmi.spglobal.com/Public/Release/ReleaseDates
+
+Japan: BOJ decision, CPI (National + Tokyo), GDP, PMI, Tankan, Industrial Production, Retail Sales, Unemployment
+China: PBoC LPR, Caixin PMI (Mfg + Services), NBS PMI, GDP, Trade Balance, CPI, PPI, Industrial Production, Retail Sales
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"JP/CN/KR","impact":"high/medium/low","category":"..."}}]
+
+Return ONLY JSON array."""
+
+
+def prompt_other_macro(start, end):
+    return f"""Today is {TODAY_FMT}. List ALL confirmed economic releases for Canada and Australia from {start} to {end}.
+
+Search: bankofcanada.ca, rba.gov.au/schedules-events
+
+Canada: BOC decision, CPI, GDP, Employment Change, Retail Sales, Trade Balance
+Australia: RBA decision, CPI, Employment, Retail Sales, Trade Balance
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"CA/AU","impact":"high/medium/low","category":"..."}}]
+
+Return ONLY JSON array."""
+
+
+def prompt_earnings(start, end):
+    return f"""Today is {TODAY_FMT}. Search earnings calendars (Yahoo Finance, Nasdaq, Earnings Whispers, TipRanks) for all notable company earnings confirmed from {start} to {end}.
+
+Include any company with market cap over $10 billion reporting in this window. Also check these specific tickers: AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA, JPM, GS, MS, BAC, WFC, NFLX, NKE, COST, WMT, HD, UNH, JNJ, LLY, PFE, XOM, CVX, BA, V, MA, CRM, ORCL, ADBE, AMD, AVGO, CSCO, PEP, KO, PG, DIS, MCD, UBER, PLTR, GME, LULU, DLTR, CHWY, CCL, MU, FDX, ACN, KBH
+
+Only include companies CONFIRMED to report in this date range.
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"BMO/AMC","name":"Company Name Earnings","symbol":"TICKER","country":"US/NL/TW/etc","impact":"high/medium"}}]
+
+Return ONLY JSON array."""
 
 
 def main():
@@ -82,13 +223,14 @@ def main():
     import psycopg2
     from psycopg2.extras import execute_values
 
-    print("=== Calendar ETL (Gemini 2.5 Pro) ===", flush=True)
+    print("=== Calendar ETL (Gemini 2.5 Pro + Google Search) ===", flush=True)
+    print(f"  Today: {TODAY_FMT}", flush=True)
 
     conn = psycopg2.connect(host=DB_HOST, dbname="postgres", user=DB_USER, password=DB_PASS, port=DB_PORT)
     conn.autocommit = True
     cur = conn.cursor()
 
-    # Ensure tables + migrate
+    # Ensure tables
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sotw_release_schedule (
             id SERIAL PRIMARY KEY,
@@ -116,127 +258,146 @@ def main():
         except Exception:
             pass
 
-    # Date range: current week Monday through 4 weeks out
-    day_of_week = TODAY.weekday()
-    monday = TODAY - datetime.timedelta(days=day_of_week)
-    end = monday + datetime.timedelta(days=27)
-    start_str = monday.strftime("%B %d, %Y")
-    end_str = end.strftime("%B %d, %Y")
+    # Date ranges
+    dow = TODAY.weekday()
+    monday = TODAY - datetime.timedelta(days=dow)
+    end_date = monday + datetime.timedelta(days=27)
+    mid_date = monday + datetime.timedelta(days=13)
+
     start_iso = monday.strftime("%Y-%m-%d")
-    end_iso = end.strftime("%Y-%m-%d")
+    end_iso = end_date.strftime("%Y-%m-%d")
+
+    w1_start = monday.strftime("%B %d, %Y")
+    w1_end = (monday + datetime.timedelta(days=6)).strftime("%B %d, %Y")
+    w2_start = (monday + datetime.timedelta(days=7)).strftime("%B %d, %Y")
+    w2_end = mid_date.strftime("%B %d, %Y")
+    w34_start = (mid_date + datetime.timedelta(days=1)).strftime("%B %d, %Y")
+    w34_end = end_date.strftime("%B %d, %Y")
+    full_start = w1_start
+    full_end = w34_end
+
+    print(f"\n  Range: {full_start} to {full_end}", flush=True)
 
     # ══════════════════════════════════════════════════════
-    # ONE PROMPT: Get everything
+    # SEQUENTIAL FOCUSED QUERIES
     # ══════════════════════════════════════════════════════
-    print(f"\nFetching calendar: {start_str} to {end_str}", flush=True)
+    all_events = []
 
-    prompt = f"""List EVERY important global economic data release AND major company earnings report scheduled from {start_str} to {end_str}. Be exhaustive.
+    # US macro — by week for precision
+    for label, s, e in [
+        ("US Macro W1", w1_start, w1_end),
+        ("US Macro W2", w2_start, w2_end),
+        ("US Macro W3-4", w34_start, w34_end),
+    ]:
+        for ev in query(label, prompt_us_macro(s, e)):
+            ev["country"] = "US"
+            ev["type"] = "macro"
+            all_events.append(ev)
 
-MACRO — list every single one of these for EACH country where scheduled:
-US: CPI, Core CPI, PPI, Nonfarm Payrolls, Unemployment Rate, GDP (advance/2nd/3rd), PCE, Core PCE, Retail Sales, FOMC decision, Industrial Production, Durable Goods Orders, Housing Starts, Building Permits, New Home Sales, Existing Home Sales, ISM Manufacturing PMI, ISM Services PMI, Consumer Confidence, Michigan Consumer Sentiment, JOLTS, Initial Jobless Claims (weekly), Trade Balance, Personal Income, Construction Spending, Factory Orders
-EU: ECB decision, HICP/CPI, GDP, PMI (Manufacturing + Services), German IFO, ZEW
-UK: BOE decision, CPI, GDP, PMI, Retail Sales, Employment
-Japan: BOJ decision, CPI, GDP, PMI, Tankan
-China: Caixin PMI, NBS PMI, GDP, Trade Balance, CPI, PBoC rate
-Canada: BOC decision, CPI, GDP, Employment
-Australia: RBA decision, CPI, Employment
+    # EU + UK macro
+    for ev in query("EU/UK Macro", prompt_eu_uk_macro(full_start, full_end)):
+        ev.setdefault("country", "EU")
+        ev["type"] = "macro"
+        all_events.append(ev)
 
-EARNINGS — list ALL of these companies reporting in this period:
-AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA, JPM, GS, MS, BAC, WFC, NFLX, ASML, TSM, NKE, COST, WMT, HD, UNH, JNJ, LLY, PFE, XOM, CVX, BA, V, MA, CRM, ORCL, ADBE, AMD, AVGO, CSCO, INTC, QCOM, PEP, KO, PG, DIS, SBUX, MCD, UBER, ABNB, PLTR, COIN, SHOP, SAP, NVO, SHEL, AZN, BP, RY, TD
+    # Asia macro (JP + CN)
+    for ev in query("Asia Macro", prompt_asia_macro(full_start, full_end)):
+        ev.setdefault("country", "JP")
+        ev["type"] = "macro"
+        all_events.append(ev)
 
-For EACH event provide these exact JSON fields:
-- date: "YYYY-MM-DD"
-- time: "HH:MM" (ET for US, local time for others)
-- name: full event name
-- country: "US", "EU", "UK", "JP", "CN", "CA", "AU", or other 2-letter code
-- type: "macro" or "earnings"
-- impact: "high", "medium", or "low"
-- category: "Inflation", "Labor", "GDP", "Central Bank", "Consumer", "Housing", "Production", "Trade", "Earnings", "Summit", or "Other"
-- symbol: ticker (earnings only, "" for macro)
-- detail: one sentence — why this matters or what consensus expects
+    # CA + AU macro
+    for ev in query("CA/AU Macro", prompt_other_macro(full_start, full_end)):
+        ev.setdefault("country", "CA")
+        ev["type"] = "macro"
+        all_events.append(ev)
 
-Return ONLY a JSON array. No markdown, no commentary. I need at least 30 macro events and all earnings in this window."""
+    # Earnings — split into 2 halves
+    for label, s, e in [
+        ("Earnings W1-2", full_start, (mid_date + datetime.timedelta(days=1)).strftime("%B %d, %Y")),
+        ("Earnings W3-4", w34_start, w34_end),
+    ]:
+        for ev in query(label, prompt_earnings(s, e)):
+            ev["type"] = "earnings"
+            ev.setdefault("country", "US")
+            all_events.append(ev)
 
-    content, citations = ai_query(prompt)
-    events = parse_json(content)
+    total = len(all_events)
+    print(f"\n  Total raw: {total} events", flush=True)
 
-    print(f"  Got {len(events)} events", flush=True)
-    for url in citations[:5]:
-        print(f"  Source: {url}", flush=True)
-
-    if not events:
-        print("  ⚠ No events returned, keeping existing data")
+    if not all_events:
+        print("  No events, keeping existing data")
         cur.close()
         conn.close()
         return
 
     # ══════════════════════════════════════════════════════
-    # STORE: Clear old schedule + calendar events, insert fresh
+    # STORE
     # ══════════════════════════════════════════════════════
-
-    # Clear schedule table for this date range
     cur.execute("DELETE FROM sotw_release_schedule WHERE release_date >= %s AND release_date <= %s", (start_iso, end_iso))
-    # Clear earnings for this range
     cur.execute("DELETE FROM sotw_calendar_events WHERE event_type = 'earnings' AND date >= %s AND date <= %s", (start_iso, end_iso))
 
     macro_count = 0
     earnings_count = 0
     earnings_values = []
+    seen = set()
 
-    for event in events:
+    for event in all_events:
         date = event.get("date", "")
         name = event.get("name", "")
         if not date or not name:
             continue
+        if date < start_iso or date > end_iso:
+            continue
+
+        # Deduplicate
+        key = f"{date}|{name[:25].upper()}"
+        if key in seen:
+            continue
+        seen.add(key)
 
         country = event.get("country", "US")
         event_type = event.get("type", "macro")
         impact = event.get("impact", "medium")
         category = event.get("category", "Other")
-        time_str = event.get("time", "")
+        time_str = str(event.get("time", ""))
         symbol = event.get("symbol", "")
         detail = event.get("detail", "")
 
         # Clean time
-        time_clean = re.sub(r"\s*(AM|PM|ET|EST|EDT|UTC|GMT)\s*", "", time_str, flags=re.IGNORECASE).strip()
+        time_clean = re.sub(r"\s*(AM|PM|ET|EST|EDT|UTC|GMT|BMO|AMC|CET|CEST|JST|CST|AEDT|AEST|BST|KST)\s*", "", time_str, flags=re.IGNORECASE).strip()
 
-        # Generate series_id
-        series_id = re.sub(r"[^a-zA-Z0-9]", "", name)[:30].upper()
+        # Series ID
+        sid = re.sub(r"[^a-zA-Z0-9]", "", name)[:30].upper()
         if symbol:
-            series_id = f"EARN_{symbol}"
+            sid = f"EARN_{symbol}"
 
         if event_type == "earnings" and symbol:
-            # Store in calendar events table
-            country_currency = {
+            ccy_map = {
                 "US": "USD", "CA": "CAD", "UK": "GBP", "EU": "EUR", "JP": "JPY",
                 "CN": "CNY", "AU": "AUD", "NL": "EUR", "DE": "EUR", "DK": "DKK",
                 "TW": "TWD", "KR": "KRW", "HK": "HKD",
             }
             earnings_values.append((
-                date, time_clean, name, country, country_currency.get(country, "USD"),
+                date, time_clean, name, country, ccy_map.get(country, "USD"),
                 impact, "Earnings", "", "", None, "earnings", symbol, None, None,
             ))
             earnings_count += 1
         else:
-            # Store in release schedule table
             cur.execute("""
                 INSERT INTO sotw_release_schedule
                     (series_id, country, name, category, impact, release_date, release_time,
                      source, source_url, detail, verified, updated_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, 'Perplexity', %s, %s, TRUE, NOW())
+                VALUES (%s, %s, %s, %s, %s, %s, %s, 'Gemini Search', '', %s, TRUE, NOW())
                 ON CONFLICT (series_id, release_date) DO UPDATE SET
                     name = EXCLUDED.name, country = EXCLUDED.country,
                     category = EXCLUDED.category, impact = EXCLUDED.impact,
                     release_time = EXCLUDED.release_time,
                     detail = COALESCE(EXCLUDED.detail, sotw_release_schedule.detail),
                     verified = TRUE, updated_at = NOW()
-            """, (
-                series_id, country, name, category, impact, date, time_clean,
-                citations[0] if citations else "", detail,
-            ))
+            """, (sid, country, name, category, impact, date, time_clean, detail))
             macro_count += 1
 
-    # Batch insert earnings
     if earnings_values:
         execute_values(cur, """
             INSERT INTO sotw_calendar_events
@@ -245,92 +406,78 @@ Return ONLY a JSON array. No markdown, no commentary. I need at least 30 macro e
             VALUES %s
         """, earnings_values)
 
-    # Print summary
+    # Summary
     by_country = {}
-    by_type = {"macro": 0, "earnings": 0}
-    for event in events:
-        c = event.get("country", "?")
-        t = event.get("type", "macro")
+    for ev in all_events:
+        c = ev.get("country", "?")
         by_country[c] = by_country.get(c, 0) + 1
-        by_type[t] = by_type.get(t, 0) + 1
 
-    print(f"\n  Macro: {macro_count} events", flush=True)
-    print(f"  Earnings: {earnings_count} events", flush=True)
-    print(f"\n  By country:", flush=True)
+    print(f"\n  Stored: {macro_count} macro + {earnings_count} earnings", flush=True)
+    print(f"  By country:", flush=True)
     for c, n in sorted(by_country.items(), key=lambda x: -x[1]):
         print(f"    {c}: {n}", flush=True)
 
-    # Show next 2 weeks
-    two_weeks = (TODAY + datetime.timedelta(days=14)).strftime("%Y-%m-%d")
-    upcoming = [e for e in events if e.get("date", "") <= two_weeks and e.get("date", "") >= TODAY.strftime("%Y-%m-%d")]
-    upcoming.sort(key=lambda x: x.get("date", ""))
-
-    print(f"\n  Upcoming ({len(upcoming)} events):", flush=True)
-    for e in upcoming[:20]:
-        impact_icon = "🔴" if e.get("impact") == "high" else "🟡" if e.get("impact") == "medium" else "⚪"
-        sym = f" ({e['symbol']})" if e.get("symbol") else ""
-        print(f"    {e['date']}  {impact_icon} {e.get('country',''):3s}  {e['name']}{sym}", flush=True)
+    # Print all events
+    sorted_events = sorted(all_events, key=lambda x: x.get("date", ""))
+    print(f"\n  Calendar ({len(sorted_events)} events):", flush=True)
+    for e in sorted_events:
+        if e.get("date", "") < start_iso or e.get("date", "") > end_iso:
+            continue
+        imp = "H" if e.get("impact") == "high" else "M" if e.get("impact") == "medium" else "L"
+        sym = f" ({e.get('symbol','')})" if e.get("symbol") else ""
+        t = e.get("type", "macro")[:1].upper()
+        print(f"    {e.get('date','')} [{imp}] {e.get('country',''):3s} {t} {e.get('name','')}{sym}", flush=True)
 
     # ══════════════════════════════════════════════════════
-    # PART 2: Fetch results for recent past events
+    # PART 2: Outcomes for past events
     # ══════════════════════════════════════════════════════
-    print(f"\n--- Fetching results for past events ---", flush=True)
+    print(f"\n--- Fetching outcomes ---", flush=True)
 
-    # Get events from past 7 days that don't have outcomes yet
     week_ago = (TODAY - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
-    today_iso = TODAY.strftime("%Y-%m-%d")
     cur.execute("""
         SELECT series_id, name, country, release_date FROM sotw_release_schedule
         WHERE release_date >= %s AND release_date < %s AND outcome IS NULL
         ORDER BY release_date ASC
-    """, (week_ago, today_iso))
-    past_events = cur.fetchall()
+    """, (week_ago, TODAY.strftime("%Y-%m-%d")))
+    past = cur.fetchall()
 
-    if past_events:
-        event_list = "\n".join(f"- {name} ({country}) on {date}" for _, name, country, date in past_events)
-        results_prompt = f"""For each of these economic releases that already happened, give the actual result and a one-sentence market reaction summary.
+    if past:
+        event_list = "\n".join(f"- {n} ({c}) on {d}" for _, n, c, d in past)
+        prompt = f"""For each of these economic releases that already happened, search for the actual result and market reaction.
 
 Events:
 {event_list}
 
-Format as JSON array with fields: name, date, actual (the released number, e.g. "3.1%" or "228K" or "+0.4%"), outcome (one sentence: what happened and market reaction).
-Only include events where the data has actually been released. No commentary outside JSON."""
+JSON array: [{{"name":"event name","date":"YYYY-MM-DD","actual":"3.1%","outcome":"one sentence summary"}}]
+Only include events where data was actually released. Return ONLY JSON array."""
 
-        results_content, _ = ai_query(results_prompt)
-        results = parse_json(results_content)
-        print(f"  Got results for {len(results)} events", flush=True)
-
+        results = query("Outcomes", prompt)
         updated = 0
         for r in results:
             rname = r.get("name", "")
-            rdate = r.get("date", "")
             actual = r.get("actual", "")
             outcome = r.get("outcome", "")
+            rdate = r.get("date", "")
             if not rname or not actual:
                 continue
-
-            # Match to stored event
-            for sid, name, country, date in past_events:
-                date_str = date.isoformat() if hasattr(date, 'isoformat') else str(date)
-                if date_str == rdate or name.lower() in rname.lower() or rname.lower() in name.lower():
+            for sid, name, country, date in past:
+                ds = date.isoformat() if hasattr(date, 'isoformat') else str(date)
+                if ds == rdate or name.lower() in rname.lower() or rname.lower() in name.lower():
                     cur.execute("""
-                        UPDATE sotw_release_schedule
-                        SET actual = %s, outcome = %s, updated_at = NOW()
-                        WHERE series_id = %s AND release_date = %s
-                    """, (actual, outcome, sid, date_str))
+                        UPDATE sotw_release_schedule SET actual=%s, outcome=%s, updated_at=NOW()
+                        WHERE series_id=%s AND release_date=%s
+                    """, (actual, outcome, sid, ds))
                     if cur.rowcount > 0:
                         updated += 1
-                        print(f"    {date_str}  {name[:40]:40s}  → {actual}", flush=True)
+                        print(f"    {ds}  {name[:35]:35s} -> {actual}", flush=True)
                     break
-
-        print(f"  Updated {updated} events with results", flush=True)
+        print(f"  Updated {updated} events", flush=True)
     else:
         print("  No past events need results", flush=True)
 
     cur.close()
     conn.close()
-
-    print(f"\n=== Done: {macro_count} macro + {earnings_count} earnings = {macro_count + earnings_count} total ===", flush=True)
+    print(f"\n=== Done: {macro_count} macro + {earnings_count} earnings ===", flush=True)
 
 
 if __name__ == "__main__":

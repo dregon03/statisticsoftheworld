@@ -61,6 +61,8 @@ env:
   FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
   ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
   COMTRADE_API_KEY: ${{ secrets.COMTRADE_API_KEY }}
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
 jobs:
   # ════════════════════════════════════════════════════════════
@@ -314,15 +316,15 @@ jobs:
         run: python scripts/seed_methodology.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Calendar (Gemini 2.5 Pro with Google Search grounding)
-  # One AI call → full global macro + earnings calendar
-  # 44+ events across 7 countries, verified via Google Search
-  # Cost: ~$0.01/day
+  # DAILY: Calendar (Gemini 2.5 Pro + Google Search grounding)
+  # Small focused queries per region → accurate global calendar
+  # 50+ events across 7+ countries, verified via Google Search
+  # Cost: ~$0.10-0.15/day
   # ════════════════════════════════════════════════════════════
   calendar:
     name: "Daily: Calendar (Gemini 2.5 Pro)"
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     if: >
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||

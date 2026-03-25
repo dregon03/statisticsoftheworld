@@ -93,7 +93,7 @@ async function fetchMacroEvents(from: string, to: string): Promise<CalendarEvent
       actual: e.actual || undefined,
       outcome: e.outcome || undefined,
       detail: e.detail || undefined,
-      source: e.source || 'Perplexity',
+      source: e.source || 'Gemini Search',
     }));
   } catch {
     return [];
@@ -125,7 +125,7 @@ async function fetchEarningsEvents(from: string, to: string): Promise<CalendarEv
       symbol: e.symbol || undefined,
       epsEstimate: e.eps_estimate ?? undefined,
       revenueEstimate: e.revenue_estimate ?? undefined,
-      source: 'Perplexity',
+      source: 'Gemini Search',
     }));
   } catch {
     return [];

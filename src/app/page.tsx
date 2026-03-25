@@ -113,9 +113,6 @@ export default function Home() {
             <Link href="/indicators" className="px-3 py-1.5 bg-[#0066cc] text-white rounded-lg hover:bg-[#0055aa] transition">Indicators</Link>
             <Link href="/compare" className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">Compare</Link>
             <Link href="/map" className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">Map</Link>
-            <Link href="/markets" className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">Markets</Link>
-            <Link href="/calendar" className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">Calendar</Link>
-            <Link href="/api-docs" className="px-3 py-1.5 border border-[#e8e8e8] rounded-lg hover:bg-[#f5f7fa] transition">API</Link>
           </div>
         </div>
       </section>

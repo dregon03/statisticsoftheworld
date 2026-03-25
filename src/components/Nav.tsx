@@ -7,9 +7,6 @@ import SearchModal from './SearchModal';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Home' },
-  { href: '/indicators', label: 'Indicators' },
-  { href: '/compare', label: 'Compare' },
-  { href: '/map', label: 'Map' },
   { href: '/markets', label: 'Markets' },
   { href: '/commodities', label: 'Commodities' },
   { href: '/heatmap', label: 'Heatmap' },

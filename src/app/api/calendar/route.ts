@@ -181,6 +181,38 @@ async function fetchMacroEvents(from: string, to: string): Promise<CalendarEvent
   }
 }
 
+// ── Scheduled future events from sotw_release_schedule (BLS/BEA/FRED official) ──
+async function fetchScheduledEvents(from: string, to: string): Promise<CalendarEvent[]> {
+  try {
+    const { data, error } = await supabase
+      .from('sotw_release_schedule')
+      .select('series_id, name, category, impact, release_date, release_time, source, source_url, verified')
+      .gte('release_date', from)
+      .lte('release_date', to)
+      .order('release_date', { ascending: true });
+
+    if (error || !data || data.length === 0) return [];
+
+    return data.map((e: any) => {
+      const date = typeof e.release_date === 'string' ? e.release_date.slice(0, 10) : e.release_date;
+      return {
+        date,
+        time: e.release_time || undefined,
+        releaseId: 0,
+        name: e.name,
+        country: 'US',
+        impact: e.impact || 'medium',
+        category: e.category || 'Other',
+        type: 'economic' as const,
+        sotwIndicators: findIndicatorLinks(e.name),
+        source: e.source,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 // ── Earnings from sotw_calendar_events (Finnhub) ──
 async function fetchEarningsEvents(from: string, to: string): Promise<CalendarEvent[]> {
   try {
@@ -269,22 +301,30 @@ export async function GET(request: Request) {
     const to = searchParams.get('to');
 
     async function getAllEvents(from: string, to: string): Promise<CalendarEvent[]> {
-      // 1. Macro events from FRED (sotw_macro_releases)
-      const macro = await fetchMacroEvents(from, to);
+      // 1. Past macro events with actuals (sotw_macro_releases — FRED data)
+      const macroActuals = await fetchMacroEvents(from, to);
 
-      // 2. Earnings from Supabase cache, fallback to live Finnhub
+      // 2. Future scheduled events (sotw_release_schedule — BLS/BEA/FRED official)
+      const scheduled = await fetchScheduledEvents(from, to);
+
+      // 3. Merge: actuals take priority over schedule for same series+date
+      const actualKeys = new Set(macroActuals.map(e => `${e.date}|${e.name}`));
+      const dedupedSchedule = scheduled.filter(e => !actualKeys.has(`${e.date}|${e.name}`));
+      const macro = [...macroActuals, ...dedupedSchedule];
+
+      // 4. Earnings from Supabase cache, fallback to live Finnhub
       let earnings = await fetchEarningsEvents(from, to);
       if (earnings.length === 0) {
         earnings = await fetchEarningsLive(from, to);
       }
 
-      // 3. CB meetings + fixed events
+      // 5. CB meetings + fixed events
       const cbMeetings = await fetchCBMeetings();
       const fixed = [...FIXED_EVENTS_2026, ...cbMeetings]
         .filter(e => e.date >= from && e.date <= to)
         .map(e => ({ ...e, releaseId: 0, type: 'economic' as const, sotwIndicators: findIndicatorLinks(e.name) }));
 
-      // Deduplicate CB meetings if FRED already has them
+      // Deduplicate CB meetings if already covered
       const macroKeys = new Set(macro.map(e => `${e.date}|${e.category}`));
       const dedupedFixed = fixed.filter(e => !macroKeys.has(`${e.date}|${e.category}`));
 

@@ -37,6 +37,7 @@ on:
           - history
           - metadata
           - calendar
+          - schedule-official
           - macro-official
           - polymarket
           - narratives
@@ -339,8 +340,31 @@ jobs:
           curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar API warmed ✓" || true
 
   # ════════════════════════════════════════════════════════════
+  # WEEKLY (Monday): Official release schedules (BLS iCal + BEA + FRED)
+  # Parses machine-readable feeds from official statistical agencies.
+  # These are CONFIRMED future dates — no tentative/estimated dates.
+  # ════════════════════════════════════════════════════════════
+  schedule-official:
+    name: "Weekly: Official Release Schedules (BLS/BEA)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    if: >
+      github.event.schedule == '0 6 * * 1' ||
+      github.event.schedule == '0 7 * * *' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'schedule-official'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Parse BLS iCal + BEA + FRED confirmed schedules
+        run: python scripts/etl_schedule_official.py
+
+  # ════════════════════════════════════════════════════════════
   # DAILY: Official macro actuals (FRED → sotw_macro_releases)
-  # Pulls actual values for 20 US indicators from FRED API.
+  # Pulls actual values for 14 US indicators from FRED API.
   # Builds compounding data asset — historical actuals grow over time.
   # ════════════════════════════════════════════════════════════
   macro-official:

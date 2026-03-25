@@ -86,23 +86,6 @@ def fetch_release_dates(release_id, limit=10):
     return [rd["date"] for rd in data["release_dates"]]
 
 
-def fetch_future_release_dates(release_id):
-    """Get upcoming release dates for a FRED release (next 90 days)."""
-    today = datetime.date.today()
-    to_date = today + datetime.timedelta(days=90)
-    data = fred_get("release/dates", {
-        "release_id": release_id,
-        "realtime_start": today.strftime("%Y-%m-%d"),
-        "realtime_end": to_date.strftime("%Y-%m-%d"),
-        "include_release_dates_with_no_data": "true",
-        "sort_order": "asc",
-        "limit": "10",
-    })
-    if not data or "release_dates" not in data:
-        return []
-    # Only return future dates
-    today_str = today.strftime("%Y-%m-%d")
-    return [rd["date"] for rd in data["release_dates"] if rd["date"] > today_str]
 
 
 def fetch_observations(series_id, limit=10):
@@ -257,19 +240,15 @@ def main():
         CREATE INDEX IF NOT EXISTS idx_earnings_symbol ON sotw_earnings_releases(symbol);
     """)
 
-    # Clean up removed series (FEDFUNDS daily rate, duplicate sub-series)
+    # Clean up: removed series + all tentative future dates (actual IS NULL)
     removed_series = ['FEDFUNDS', 'CPILFESL', 'PCEPILFE', 'GDPC1', 'PERMIT', 'UNRATE']
-    cur.execute(
-        "DELETE FROM sotw_macro_releases WHERE series_id = ANY(%s)",
-        (removed_series,)
-    )
-    print(f"Schema ready. Cleaned {removed_series}. Processing {len(FRED_SERIES)} FRED series...", flush=True)
+    cur.execute("DELETE FROM sotw_macro_releases WHERE series_id = ANY(%s)", (removed_series,))
+    cur.execute("DELETE FROM sotw_macro_releases WHERE actual IS NULL")
+    print(f"Schema ready. Cleaned removed series + tentative dates. Processing {len(FRED_SERIES)} FRED series...", flush=True)
 
     stored = 0
     updated = 0
-    scheduled = 0
     errors = 0
-    seen_releases = set()  # track which release_ids we've fetched future dates for
 
     for series_id, release_id, name, category, impact, release_time in FRED_SERIES:
         print(f"  {series_id:12s} {name:40s}", end=" ", flush=True)
@@ -355,35 +334,14 @@ def main():
             else:
                 stored += 1
 
-        # 4. Fetch and store future release dates (schedule only, no actuals yet)
-        # Use per-release endpoint — more reliable than the all-releases endpoint
-        future_dates = []
-        if release_id not in seen_releases:
-            seen_releases.add(release_id)
-            future_dates = fetch_future_release_dates(release_id)
-            for fut_date in future_dates[:3]:  # max 3 future dates per release
-                cur.execute("""
-                    INSERT INTO sotw_macro_releases
-                        (series_id, country, name, category, impact, release_date, release_time,
-                         source, source_url, updated_at)
-                    VALUES (%s, 'US', %s, %s, %s, %s, %s,
-                            'FRED', %s, NOW())
-                    ON CONFLICT (series_id, release_date) DO NOTHING
-                """, (
-                    series_id, name, category, impact, fut_date, release_time,
-                    f"https://fred.stlouisfed.org/series/{series_id}",
-                ))
-            if future_dates:
-                scheduled += len(future_dates[:3])
-
-        print(f"✓ {len(observations)} obs, {len(release_dates)} past, {len(future_dates) if release_id in seen_releases else 0} future", flush=True)
+        print(f"✓ {len(observations)} obs, {len(release_dates)} dates", flush=True)
         time.sleep(0.3)  # FRED rate limit: 120 req/min
 
     cur.close()
     conn.close()
 
-    print(f"\n=== Done: {stored} new, {updated} updated, {scheduled} scheduled, {errors} errors ===", flush=True)
-    print(f"Total series: {len(FRED_SERIES)} | FRED API calls: ~{len(FRED_SERIES) * 3}", flush=True)
+    print(f"\n=== Done: {stored} new, {updated} updated, {errors} errors ===", flush=True)
+    print(f"Total series: {len(FRED_SERIES)} | FRED API calls: ~{len(FRED_SERIES) * 2}", flush=True)
 
 
 if __name__ == "__main__":

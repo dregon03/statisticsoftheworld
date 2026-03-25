@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { INDICATORS, formatValue } from '@/lib/data';
 import Flag from '../Flag';
 import Nav from '@/components/Nav';
@@ -22,166 +22,166 @@ interface CountryStats {
     population?: number;
     gdpPerCapita?: number;
     lifeExpectancy?: number;
+    inflation?: number;
+    unemployment?: number;
+    debtToGdp?: number;
+    gdpGrowth?: number;
+    tradeOpenness?: number;
+    fdi?: number;
   };
 }
+
+type SortKey = 'name' | 'gdp' | 'population' | 'gdpPerCapita' | 'gdpGrowth' | 'inflation' | 'unemployment' | 'debtToGdp' | 'lifeExpectancy' | 'tradeOpenness';
+
+const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number | undefined) => string; hideOnMobile?: boolean }[] = [
+  { key: 'gdp', label: 'GDP (USD)', short: 'GDP', format: v => v ? formatValue(v, 'currency') : '-' },
+  { key: 'population', label: 'Population', short: 'Pop.', format: v => v ? formatValue(v, 'number') : '-' },
+  { key: 'gdpPerCapita', label: 'GDP/Capita', short: 'GDP/Cap', format: v => v ? formatValue(v, 'currency') : '-' },
+  { key: 'gdpGrowth', label: 'GDP Growth', short: 'Growth', format: v => v != null ? `${v.toFixed(1)}%` : '-' },
+  { key: 'inflation', label: 'Inflation', short: 'CPI', format: v => v != null ? `${v.toFixed(1)}%` : '-' },
+  { key: 'unemployment', label: 'Unemployment', short: 'Unemp.', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true },
+  { key: 'debtToGdp', label: 'Debt/GDP', short: 'Debt', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true },
+  { key: 'lifeExpectancy', label: 'Life Exp.', short: 'Life', format: v => v != null ? `${v.toFixed(1)}` : '-', hideOnMobile: true },
+  { key: 'tradeOpenness', label: 'Trade/GDP', short: 'Trade', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true },
+];
 
 export default function CountriesPage() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [stats, setStats] = useState<CountryStats>({});
   const [search, setSearch] = useState('');
   const [filterRegion, setFilterRegion] = useState('');
-  const [filterIncome, setFilterIncome] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [sortKey, setSortKey] = useState<SortKey>('gdp');
+  const [sortAsc, setSortAsc] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/countries')
       .then(r => r.json())
       .then(({ countries: list, stats: s }) => {
-        const sorted = list.sort((a: Country, b: Country) => a.name.localeCompare(b.name));
-        setCountries(sorted);
+        setCountries(list);
         setStats(s);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  const regions = [...new Set(countries.map(c => c.region))].sort();
-  const incomeLevels = [...new Set(countries.map(c => c.incomeLevel))].sort();
+  const regions = useMemo(() => [...new Set(countries.map(c => c.region))].sort(), [countries]);
 
-  const filtered = countries.filter(c => {
-    const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.id.toLowerCase().includes(search.toLowerCase());
-    const matchRegion = !filterRegion || c.region === filterRegion;
-    const matchIncome = !filterIncome || c.incomeLevel === filterIncome;
-    return matchSearch && matchRegion && matchIncome;
-  });
+  const filtered = useMemo(() => {
+    let list = countries.filter(c => {
+      const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.id.toLowerCase().includes(search.toLowerCase());
+      const matchRegion = !filterRegion || c.region === filterRegion;
+      return matchSearch && matchRegion;
+    });
+
+    // Sort
+    list.sort((a, b) => {
+      if (sortKey === 'name') {
+        return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      }
+      const aVal = (stats[a.id] as any)?.[sortKey] ?? -Infinity;
+      const bVal = (stats[b.id] as any)?.[sortKey] ?? -Infinity;
+      return sortAsc ? aVal - bVal : bVal - aVal;
+    });
+
+    return list;
+  }, [countries, stats, search, filterRegion, sortKey, sortAsc]);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortKey(key);
+      setSortAsc(key === 'name');
+    }
+  };
+
+  const sortIcon = (key: SortKey) => {
+    if (sortKey !== key) return '';
+    return sortAsc ? ' \u2191' : ' \u2193';
+  };
 
   return (
     <main className="min-h-screen bg-white text-[#333]">
       <Nav />
 
-      <section className="max-w-6xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-2">All Countries</h1>
-        <p className="text-gray-500 mb-8">{countries.length} countries and territories with {INDICATORS.length} indicators each.</p>
+      <section className="max-w-[1400px] mx-auto px-4 py-8">
+        <div className="flex items-end justify-between mb-6">
+          <div>
+            <h1 className="text-[24px] font-bold">Countries</h1>
+            <p className="text-[13px] text-[#999]">{countries.length} countries and territories</p>
+          </div>
+        </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        <div className="flex flex-wrap gap-3 mb-4">
           <input
             type="text"
             placeholder="Search countries..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-600 transition w-64"
+            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
           />
           <select
             value={filterRegion}
             onChange={(e) => setFilterRegion(e.target.value)}
-            className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm outline-none cursor-pointer"
+            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
           >
             <option value="">All Regions</option>
             {regions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <select
-            value={filterIncome}
-            onChange={(e) => setFilterIncome(e.target.value)}
-            className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm outline-none cursor-pointer"
-          >
-            <option value="">All Income Levels</option>
-            {incomeLevels.map(il => <option key={il} value={il}>{il}</option>)}
-          </select>
-          <div className="flex gap-1 ml-auto">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`px-3 py-2 rounded-lg text-sm transition ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-            >Grid</button>
-            <button
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-2 rounded-lg text-sm transition ${viewMode === 'table' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-            >Table</button>
-          </div>
+          <span className="text-[12px] text-[#999] self-center ml-auto">{filtered.length} shown</span>
         </div>
 
-        <div className="text-sm text-gray-500 mb-4">{filtered.length} countries shown</div>
-
         {loading ? (
-          <div className="text-center py-20 text-gray-500">Loading countries...</div>
-        ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map(c => {
-              const s = stats[c.id] || {};
-              return (
-                <Link
-                  key={c.id}
-                  href={`/country/${c.id}`}
-                  className="bg-white border border-gray-100 rounded-xl p-5 hover:border-gray-300 hover:bg-gray-100/50 transition group"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-bold text-lg group-hover:text-blue-600 transition flex items-center gap-2">
-                      <Flag iso2={c.iso2} size={24} />
-                      {c.name}
-                    </h3>
-                      <div className="text-xs text-gray-500">{c.capitalCity || 'N/A'}</div>
-                    </div>
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500">{c.id}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <div className="text-gray-500 text-xs">GDP</div>
-                      <div className="font-mono text-blue-600">{s.gdp ? formatValue(s.gdp, 'currency') : '-'}</div>
-                    </div>
-                    <div>
-                      <div className="text-gray-500 text-xs">Population</div>
-                      <div className="font-mono text-gray-900">{s.population ? formatValue(s.population, 'number') : '-'}</div>
-                    </div>
-                    <div>
-                      <div className="text-gray-500 text-xs">GDP/Capita</div>
-                      <div className="font-mono">{s.gdpPerCapita ? formatValue(s.gdpPerCapita, 'currency') : '-'}</div>
-                    </div>
-                    <div>
-                      <div className="text-gray-500 text-xs">Life Exp.</div>
-                      <div className="font-mono">{s.lifeExpectancy ? `${s.lifeExpectancy.toFixed(1)}y` : '-'}</div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 mt-3">
-                    <span className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-500">{c.region}</span>
-                    <span className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-500">{c.incomeLevel}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+          <div className="text-center py-20 text-[#999] text-[13px]">Loading countries...</div>
         ) : (
-          <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
-            <table className="w-full">
+          <div className="border border-[#e8e8e8] rounded-xl overflow-x-auto">
+            <table className="w-full text-[13px]">
               <thead>
-                <tr className="text-left text-sm text-gray-500 border-b border-gray-100">
-                  <th className="px-4 py-3">Country</th>
-                  <th className="px-4 py-3">Region</th>
-                  <th className="px-4 py-3">Income Level</th>
-                  <th className="px-4 py-3 text-right">GDP</th>
-                  <th className="px-4 py-3 text-right">Population</th>
-                  <th className="px-4 py-3 text-right">GDP/Cap</th>
-                  <th className="px-4 py-3 text-right">Life Exp.</th>
+                <tr className="bg-[#f8f9fa] border-b border-[#e8e8e8] text-[11px] text-[#999] uppercase tracking-wider">
+                  <th className="px-3 py-2.5 text-left font-medium sticky left-0 bg-[#f8f9fa] z-10 min-w-[180px]">
+                    <button onClick={() => handleSort('name')} className="hover:text-[#333] transition">
+                      Country{sortIcon('name')}
+                    </button>
+                  </th>
+                  {COLUMNS.map(col => (
+                    <th
+                      key={col.key}
+                      className={`px-3 py-2.5 text-right font-medium whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
+                    >
+                      <button onClick={() => handleSort(col.key)} className="hover:text-[#333] transition">
+                        <span className="hidden md:inline">{col.label}</span>
+                        <span className="md:hidden">{col.short}</span>
+                        {sortIcon(col.key)}
+                      </button>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(c => {
+                {filtered.map((c, i) => {
                   const s = stats[c.id] || {};
                   return (
-                    <tr key={c.id} className="border-b border-gray-100/50 hover:bg-gray-50 transition">
-                      <td className="px-4 py-2.5">
-                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm transition">
-                          <Flag iso2={c.iso2} size={20} />
+                    <tr
+                      key={c.id}
+                      className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition cursor-pointer ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}
+                      onClick={() => window.location.href = `/country/${c.id}`}
+                    >
+                      <td className="px-3 py-2 sticky left-0 bg-inherit z-10">
+                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium" onClick={e => e.stopPropagation()}>
+                          <Flag iso2={c.iso2} size={18} />
                           {c.name}
                         </Link>
                       </td>
-                      <td className="px-4 py-2.5 text-sm text-gray-500">{c.region}</td>
-                      <td className="px-4 py-2.5 text-sm text-gray-500">{c.incomeLevel}</td>
-                      <td className="px-4 py-2.5 text-right font-mono text-sm">{s.gdp ? formatValue(s.gdp, 'currency') : '-'}</td>
-                      <td className="px-4 py-2.5 text-right font-mono text-sm">{s.population ? formatValue(s.population, 'number') : '-'}</td>
-                      <td className="px-4 py-2.5 text-right font-mono text-sm">{s.gdpPerCapita ? formatValue(s.gdpPerCapita, 'currency') : '-'}</td>
-                      <td className="px-4 py-2.5 text-right font-mono text-sm">{s.lifeExpectancy ? `${s.lifeExpectancy.toFixed(1)}y` : '-'}</td>
+                      {COLUMNS.map(col => (
+                        <td
+                          key={col.key}
+                          className={`px-3 py-2 text-right font-mono text-[12px] text-[#555] ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
+                        >
+                          {col.format((s as any)[col.key])}
+                        </td>
+                      ))}
                     </tr>
                   );
                 })}

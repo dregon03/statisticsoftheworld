@@ -11,20 +11,48 @@ export async function GET(request: Request) {
   }
 
   // List mode: return all countries with summary stats
-  const [countries, gdpData, popData, gdpCapData, lifeExpData] = await Promise.all([
+  const [
+    countries,
+    gdpData, popData, gdpCapData, lifeExpData,
+    inflationData, unemploymentData, debtData, gdpGrowthData,
+    tradeData, fdiData,
+  ] = await Promise.all([
     getCountries(),
     getIndicatorForAllCountries('IMF.NGDPD'),
     getIndicatorForAllCountries('SP.POP.TOTL'),
     getIndicatorForAllCountries('IMF.NGDPDPC'),
     getIndicatorForAllCountries('SP.DYN.LE00.IN'),
+    getIndicatorForAllCountries('IMF.PCPIPCH'),
+    getIndicatorForAllCountries('SL.UEM.TOTL.ZS'),
+    getIndicatorForAllCountries('IMF.GGXWDG_NGDP'),
+    getIndicatorForAllCountries('IMF.NGDP_RPCH'),
+    getIndicatorForAllCountries('NE.TRD.GNFS.ZS'),
+    getIndicatorForAllCountries('BX.KLT.DINV.WD.GD.ZS'),
   ]);
 
   // Build stats map
-  const stats: Record<string, { gdp?: number; population?: number; gdpPerCapita?: number; lifeExpectancy?: number }> = {};
-  for (const d of gdpData) { if (!stats[d.countryId]) stats[d.countryId] = {}; stats[d.countryId].gdp = d.value ?? undefined; }
-  for (const d of popData) { if (!stats[d.countryId]) stats[d.countryId] = {}; stats[d.countryId].population = d.value ?? undefined; }
-  for (const d of gdpCapData) { if (!stats[d.countryId]) stats[d.countryId] = {}; stats[d.countryId].gdpPerCapita = d.value ?? undefined; }
-  for (const d of lifeExpData) { if (!stats[d.countryId]) stats[d.countryId] = {}; stats[d.countryId].lifeExpectancy = d.value ?? undefined; }
+  type Stats = {
+    gdp?: number; population?: number; gdpPerCapita?: number; lifeExpectancy?: number;
+    inflation?: number; unemployment?: number; debtToGdp?: number; gdpGrowth?: number;
+    tradeOpenness?: number; fdi?: number;
+  };
+  const stats: Record<string, Stats> = {};
+  const assign = (data: any[], key: keyof Stats) => {
+    for (const d of data) {
+      if (!stats[d.countryId]) stats[d.countryId] = {};
+      (stats[d.countryId] as any)[key] = d.value ?? undefined;
+    }
+  };
+  assign(gdpData, 'gdp');
+  assign(popData, 'population');
+  assign(gdpCapData, 'gdpPerCapita');
+  assign(lifeExpData, 'lifeExpectancy');
+  assign(inflationData, 'inflation');
+  assign(unemploymentData, 'unemployment');
+  assign(debtData, 'debtToGdp');
+  assign(gdpGrowthData, 'gdpGrowth');
+  assign(tradeData, 'tradeOpenness');
+  assign(fdiData, 'fdi');
 
   return Response.json({ countries, stats });
 }

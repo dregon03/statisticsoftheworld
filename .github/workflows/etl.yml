@@ -37,7 +37,6 @@ on:
           - history
           - metadata
           - calendar
-          - schedule-official
           - macro-official
           - polymarket
           - narratives
@@ -316,54 +315,30 @@ jobs:
         run: python scripts/seed_methodology.py
 
   # ════════════════════════════════════════════════════════════
-  # DAILY: Earnings (Alpha Vantage + SEC EDGAR + Finnhub)
-  # 75-company watchlist: 55 US + 20 international
-  # AV seeds dates, EDGAR pulls actuals, Finnhub fills gaps
+  # DAILY: Calendar (Perplexity macro + Alpha Vantage earnings)
+  # Perplexity Sonar for verified macro schedule (grounded in official sources)
+  # Alpha Vantage for earnings dates
+  # Cost: ~$0.01/day
   # ════════════════════════════════════════════════════════════
   calendar:
-    name: "Daily: Earnings (AV + EDGAR + Finnhub)"
+    name: "Daily: Calendar (Perplexity + AV)"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: >
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'calendar'
-    env:
-      FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install psycopg2-binary
-      - name: Fetch earnings (Alpha Vantage + SEC EDGAR + Finnhub)
-        run: python scripts/etl_earnings_official.py
+      - name: Fetch macro schedule + earnings dates
+        run: python scripts/etl_calendar_ai.py
       - name: Warm calendar page cache
         run: |
           curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar API warmed ✓" || true
-
-  # ════════════════════════════════════════════════════════════
-  # WEEKLY (Monday): Official release schedules (BLS iCal + BEA + FRED)
-  # Parses machine-readable feeds from official statistical agencies.
-  # These are CONFIRMED future dates — no tentative/estimated dates.
-  # ════════════════════════════════════════════════════════════
-  schedule-official:
-    name: "Weekly: Official Release Schedules (BLS/BEA)"
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    if: >
-      github.event.schedule == '0 6 * * 1' ||
-      github.event.schedule == '0 7 * * *' ||
-      github.event.inputs.pipeline == 'all' ||
-      github.event.inputs.pipeline == 'schedule-official'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install psycopg2-binary
-      - name: Parse BLS iCal + BEA + FRED confirmed schedules
-        run: python scripts/etl_schedule_official.py
 
   # ════════════════════════════════════════════════════════════
   # DAILY: Official macro actuals (FRED → sotw_macro_releases)

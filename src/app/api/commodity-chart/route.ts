@@ -17,11 +17,13 @@ const SOTW_TO_YAHOO: Record<string, string> = {
   'AV.ALUMINUM': 'ALI=F',
 };
 
-const VALID_RANGES = ['1mo', '3mo', '6mo', '1y', '5y'] as const;
+const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y'] as const;
 
 // Pick interval based on range to keep data points reasonable
 function intervalForRange(range: string): string {
   switch (range) {
+    case '1d': return '2m';   // 2-minute candles for intraday
+    case '5d': return '15m';  // 15-minute candles for 5 days
     case '1mo': return '1d';
     case '3mo': return '1d';
     case '6mo': return '1d';
@@ -32,7 +34,12 @@ function intervalForRange(range: string): string {
 }
 
 let cache: Record<string, { data: any; ts: number }> = {};
-const CACHE_TTL = 15 * 60 * 1000; // 15 min
+// Short cache for intraday, longer for historical
+function cacheTtl(range: string): number {
+  if (range === '1d') return 60 * 1000;       // 1 minute for intraday
+  if (range === '5d') return 5 * 60 * 1000;   // 5 minutes for 5-day
+  return 15 * 60 * 1000;                      // 15 minutes for rest
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -49,7 +56,7 @@ export async function GET(request: Request) {
 
   const cacheKey = `${id}_${range}`;
   const cached = cache[cacheKey];
-  if (cached && Date.now() - cached.ts < CACHE_TTL) {
+  if (cached && Date.now() - cached.ts < cacheTtl(range)) {
     return Response.json(cached.data);
   }
 
@@ -70,13 +77,13 @@ export async function GET(request: Request) {
         return Response.json({ error: 'Yahoo Finance unavailable' }, { status: 502 });
       }
       const json2 = await res2.json();
-      const result = parseYahooChart(json2);
+      const result = parseYahooChart(json2, range);
       cache[cacheKey] = { data: result, ts: Date.now() };
       return Response.json(result);
     }
 
     const json = await res.json();
-    const result = parseYahooChart(json);
+    const result = parseYahooChart(json, range);
     cache[cacheKey] = { data: result, ts: Date.now() };
     return Response.json(result);
   } catch {
@@ -84,13 +91,14 @@ export async function GET(request: Request) {
   }
 }
 
-function parseYahooChart(json: any) {
+function parseYahooChart(json: any, range: string = '1y') {
   const result = json?.chart?.result?.[0];
   if (!result) return { points: [] };
 
   const timestamps: number[] = result.timestamp || [];
   const closes: (number | null)[] = result.indicators?.quote?.[0]?.close || [];
   const currency = result.meta?.currency || 'USD';
+  const isIntraday = range === '1d' || range === '5d';
 
   const points: { date: string; value: number }[] = [];
   for (let i = 0; i < timestamps.length; i++) {
@@ -98,7 +106,9 @@ function parseYahooChart(json: any) {
     if (close != null && !isNaN(close)) {
       const d = new Date(timestamps[i] * 1000);
       points.push({
-        date: d.toISOString().slice(0, 10),
+        date: isIntraday
+          ? d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+          : d.toISOString().slice(0, 10),
         value: Math.round(close * 100) / 100,
       });
     }

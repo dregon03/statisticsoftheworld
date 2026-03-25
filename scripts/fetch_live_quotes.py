@@ -39,6 +39,11 @@ QUOTES_TABLE = "sotw_live_quotes"
 SYMBOLS = {
     # Stock indices
     "^GSPC": ("YF.IDX.USA", "S&P 500"),
+    # Index futures (trade nearly 24h, Sun 6PM - Fri 5PM ET)
+    "ES=F": ("YF.FUT.SP500", "S&P 500 Futures"),
+    "NQ=F": ("YF.FUT.NASDAQ", "Nasdaq 100 Futures"),
+    "YM=F": ("YF.FUT.DOW", "Dow Futures"),
+    "RTY=F": ("YF.FUT.RUSSELL", "Russell 2000 Futures"),
     "^GSPTSE": ("YF.IDX.CAN", "S&P/TSX"),
     "^BVSP": ("YF.IDX.BRA", "Bovespa"),
     "^MXX": ("YF.IDX.MEX", "IPC Mexico"),

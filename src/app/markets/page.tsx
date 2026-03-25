@@ -31,6 +31,7 @@ const ID_TO_COUNTRY: Record<string, string> = {
   'YF.IDX.IND': 'IND', 'YF.IDX.AUS': 'AUS', 'YF.IDX.NZL': 'NZL', 'YF.IDX.SGP': 'SGP',
   'YF.IDX.IDN': 'IDN', 'YF.IDX.MYS': 'MYS', 'YF.IDX.ISR': 'ISR', 'YF.IDX.SAU': 'SAU',
   'YF.IDX.ZAF': 'ZAF',
+  'YF.FUT.SP500': 'USA', 'YF.FUT.NASDAQ': 'USA', 'YF.FUT.DOW': 'USA', 'YF.FUT.RUSSELL': 'USA',
 };
 
 const COUNTRY_NAMES: Record<string, string> = {
@@ -43,6 +44,7 @@ const COUNTRY_NAMES: Record<string, string> = {
 };
 
 const REGIONS: Record<string, string[]> = {
+  'Futures (Live 24h)': ['YF.FUT.SP500', 'YF.FUT.NASDAQ', 'YF.FUT.DOW', 'YF.FUT.RUSSELL'],
   'Americas': ['YF.IDX.USA', 'YF.IDX.CAN', 'YF.IDX.BRA', 'YF.IDX.MEX', 'YF.IDX.ARG'],
   'Europe': ['YF.IDX.GBR', 'YF.IDX.DEU', 'YF.IDX.FRA', 'YF.IDX.ESP', 'YF.IDX.ITA', 'YF.IDX.CHE', 'YF.IDX.NLD'],
   'Asia-Pacific': ['YF.IDX.JPN', 'YF.IDX.CHN', 'YF.IDX.HKG', 'YF.IDX.KOR', 'YF.IDX.IND', 'YF.IDX.AUS', 'YF.IDX.NZL', 'YF.IDX.SGP', 'YF.IDX.IDN', 'YF.IDX.MYS'],

@@ -37,7 +37,6 @@ on:
           - history
           - metadata
           - calendar
-          - macro-official
           - polymarket
           - narratives
           - trade
@@ -339,28 +338,6 @@ jobs:
       - name: Warm calendar page cache
         run: |
           curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar API warmed ✓" || true
-
-  # ════════════════════════════════════════════════════════════
-  # DAILY: Official macro actuals (FRED → sotw_macro_releases)
-  # Pulls actual values for 14 US indicators from FRED API.
-  # Builds compounding data asset — historical actuals grow over time.
-  # ════════════════════════════════════════════════════════════
-  macro-official:
-    name: "Daily: Official Macro Actuals (FRED)"
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    if: >
-      github.event.schedule == '0 7 * * *' ||
-      github.event.inputs.pipeline == 'all' ||
-      github.event.inputs.pipeline == 'macro-official'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install psycopg2-binary
-      - name: Fetch FRED official actuals → sotw_macro_releases
-        run: python scripts/etl_macro_official.py
 
   # ════════════════════════════════════════════════════════════
   # EVERY 4 HOURS: Polymarket prediction markets

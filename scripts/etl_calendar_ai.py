@@ -35,6 +35,7 @@ DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
 OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 
 TODAY = datetime.date.today()
 TODAY_FMT = TODAY.strftime("%B %d, %Y")
@@ -161,7 +162,7 @@ Other indicators: CPI, PPI, GDP, PCE, Retail Sales, FOMC, Durable Goods, Housing
 
 For each event also include the consensus forecast/expectation if available (e.g. "3.1%", "228K", "+0.4%", "50.5").
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full official name","impact":"high/medium/low","category":"Inflation/Labor/GDP/Central Bank/Consumer/Housing/Production/Trade/Other","forecast":"consensus expectation or empty string"}}]
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full official name","impact":"high/medium/low","category":"Inflation/Labor/GDP/Central Bank/Consumer/Housing/Production/Trade/Other","forecast":"consensus expectation or empty string","detail":"one sentence explaining what this indicator measures and why it matters"}}]
 
 Return ONLY a JSON array. No commentary."""
 
@@ -176,7 +177,7 @@ UK: BOE decision, CPI, GDP, PMI (Flash + Final), Retail Sales, Employment, GfK C
 
 For each event also include the consensus forecast/expectation if available.
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"EU/DE/FR/IT/UK","impact":"high/medium/low","category":"...","forecast":"consensus or empty"}}]
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"EU/DE/FR/IT/UK","impact":"high/medium/low","category":"...","forecast":"consensus or empty","detail":"one sentence explaining what this indicator measures and why it matters"}}]
 
 Return ONLY JSON array."""
 
@@ -191,7 +192,7 @@ China: PBoC LPR, Caixin PMI (Mfg + Services), NBS PMI, GDP, Trade Balance, CPI, 
 
 For each event also include the consensus forecast/expectation if available.
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"JP/CN/KR","impact":"high/medium/low","category":"...","forecast":"consensus or empty"}}]
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"JP/CN/KR","impact":"high/medium/low","category":"...","forecast":"consensus or empty","detail":"one sentence explaining what this indicator measures and why it matters"}}]
 
 Return ONLY JSON array."""
 
@@ -206,7 +207,7 @@ Australia: RBA decision, CPI, Employment, Retail Sales, Trade Balance
 
 For each event also include the consensus forecast/expectation if available.
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"CA/AU","impact":"high/medium/low","category":"...","forecast":"consensus or empty"}}]
+JSON array: [{{"date":"YYYY-MM-DD","time":"HH:MM","name":"full name","country":"CA/AU","impact":"high/medium/low","category":"...","forecast":"consensus or empty","detail":"one sentence explaining what this indicator measures and why it matters"}}]
 
 Return ONLY JSON array."""
 
@@ -218,7 +219,9 @@ Include any company with market cap over $10 billion reporting in this window. A
 
 Only include companies CONFIRMED to report in this date range.
 
-JSON array: [{{"date":"YYYY-MM-DD","time":"BMO/AMC","name":"Company Name Earnings","symbol":"TICKER","country":"US/NL/TW/etc","impact":"high/medium"}}]
+For each company, include consensus EPS and revenue estimates if available.
+
+JSON array: [{{"date":"YYYY-MM-DD","time":"BMO/AMC","name":"Company Name Earnings","symbol":"TICKER","country":"US/NL/TW/etc","impact":"high/medium","detail":"one sentence on what the company does and why this report matters","eps_estimate":"consensus EPS or empty","revenue_estimate":"consensus revenue or empty"}}]
 
 Return ONLY JSON array."""
 
@@ -387,9 +390,34 @@ def main():
                 "CN": "CNY", "AU": "AUD", "NL": "EUR", "DE": "EUR", "DK": "DKK",
                 "TW": "TWD", "KR": "KRW", "HK": "HKD",
             }
+            # Parse EPS/revenue estimates
+            eps_est = event.get("eps_estimate", "")
+            rev_est = event.get("revenue_estimate", "")
+            eps_val = None
+            rev_val = None
+            if eps_est:
+                try:
+                    eps_val = float(re.sub(r"[^0-9.\-]", "", str(eps_est)))
+                except (ValueError, TypeError):
+                    pass
+            if rev_est:
+                try:
+                    rev_str = str(rev_est).upper()
+                    multiplier = 1
+                    if "T" in rev_str:
+                        multiplier = 1e12
+                    elif "B" in rev_str:
+                        multiplier = 1e9
+                    elif "M" in rev_str:
+                        multiplier = 1e6
+                    rev_clean = re.sub(r"[^0-9.\-]", "", rev_str)
+                    rev_val = float(rev_clean) * multiplier if rev_clean else None
+                except (ValueError, TypeError):
+                    pass
             earnings_values.append((
                 date, time_clean, name, country, ccy_map.get(country, "USD"),
-                impact, "Earnings", "", "", None, "earnings", symbol, None, None,
+                impact, "Earnings", "", "", None, "earnings", symbol, eps_val, rev_val,
+                detail,
             ))
             earnings_count += 1
         else:
@@ -408,11 +436,18 @@ def main():
             """, (sid, country, name, category, impact, date, time_clean, detail, forecast))
             macro_count += 1
 
+    # Ensure detail column exists on earnings table
+    try:
+        cur.execute("ALTER TABLE sotw_calendar_events ADD COLUMN IF NOT EXISTS detail TEXT")
+    except Exception:
+        pass
+
     if earnings_values:
         execute_values(cur, """
             INSERT INTO sotw_calendar_events
                 (date, time, title, country, currency, impact, category,
-                 forecast, previous, week_start, event_type, symbol, eps_estimate, revenue_estimate)
+                 forecast, previous, week_start, event_type, symbol, eps_estimate, revenue_estimate,
+                 detail)
             VALUES %s
         """, earnings_values)
 
@@ -484,6 +519,44 @@ Only include events where data was actually released. Return ONLY JSON array."""
         print(f"  Updated {updated} events", flush=True)
     else:
         print("  No past events need results", flush=True)
+
+    # ══════════════════════════════════════════════════════
+    # PART 3: Finnhub EPS enrichment for earnings
+    # Overwrites AI-generated EPS estimates with real analyst consensus
+    # ══════════════════════════════════════════════════════
+    if FINNHUB_KEY:
+        print(f"\n--- Finnhub EPS enrichment ---", flush=True)
+        cur.execute("""
+            SELECT id, symbol FROM sotw_calendar_events
+            WHERE event_type = 'earnings' AND symbol IS NOT NULL
+              AND date >= %s AND date <= %s
+            ORDER BY date ASC
+        """, (start_iso, end_iso))
+        earn_rows = cur.fetchall()
+        finnhub_updated = 0
+        for eid, symbol in earn_rows:
+            try:
+                furl = f"https://finnhub.io/api/v1/stock/earnings?symbol={symbol}&token={FINNHUB_KEY}"
+                freq = urllib.request.Request(furl)
+                with urllib.request.urlopen(freq, timeout=10) as fresp:
+                    fdata = json.loads(fresp.read())
+                if not fdata:
+                    continue
+                # Prefer upcoming (no actual yet), else use most recent
+                upcoming = [d for d in fdata if d.get("actual") is None and d.get("estimate") is not None]
+                best = upcoming[0] if upcoming else fdata[0]
+                eps_est = best.get("estimate")
+                if eps_est is not None:
+                    cur.execute("UPDATE sotw_calendar_events SET eps_estimate=%s, updated_at=NOW() WHERE id=%s",
+                                (round(float(eps_est), 2), eid))
+                    if cur.rowcount > 0:
+                        finnhub_updated += 1
+                time.sleep(0.35)  # Finnhub: 60 req/min
+            except Exception:
+                pass
+        print(f"  Updated {finnhub_updated} earnings with Finnhub EPS", flush=True)
+    else:
+        print("\n  FINNHUB_KEY not set, skipping EPS enrichment", flush=True)
 
     cur.close()
     conn.close()

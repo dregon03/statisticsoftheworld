@@ -7,6 +7,7 @@ import { INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import Flag from '../Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import HeroTabs from '@/components/HeroTabs';
 import MultiCountryChart from '@/components/charts/MultiCountryChart';
 
 interface Country {
@@ -29,8 +30,9 @@ const DEFAULT_INDICATORS = [
 
 export default function ComparePage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white text-[#333]">
       <Nav />
+      <HeroTabs active="/compare" />
       <Suspense>
         <CompareContent />
       </Suspense>

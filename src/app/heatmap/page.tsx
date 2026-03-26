@@ -5,8 +5,10 @@ import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import Flag from '../Flag';
+import ExportButton from '@/components/ExportButton';
+import HeroTabs from '@/components/HeroTabs';
 
-interface Indicator { id: string; label: string; higherIsBetter: boolean; }
+interface Indicator { id: string; label: string; higherIsBetter: boolean; neutral?: boolean; }
 interface Range { min: number; max: number; }
 interface CountryRow {
   countryId: string;
@@ -15,9 +17,19 @@ interface CountryRow {
   values: Record<string, { value: number; year: string }>;
 }
 
-function getColor(value: number, range: Range, higherIsBetter: boolean): string {
+function getColor(value: number, range: Range, higherIsBetter: boolean, neutral?: boolean): string {
   if (!range || range.max === range.min) return 'bg-gray-100';
   const normalized = (value - range.min) / (range.max - range.min); // 0-1
+
+  // Neutral scale (blue) — no value judgment, just magnitude
+  if (neutral) {
+    if (normalized >= 0.8) return 'bg-blue-600 text-white';
+    if (normalized >= 0.6) return 'bg-blue-400 text-white';
+    if (normalized >= 0.4) return 'bg-blue-200 text-blue-900';
+    if (normalized >= 0.2) return 'bg-blue-100 text-blue-800';
+    return 'bg-slate-50 text-slate-600';
+  }
+
   const score = higherIsBetter ? normalized : 1 - normalized; // 0=bad, 1=good
 
   if (score >= 0.8) return 'bg-green-500 text-white';
@@ -28,9 +40,19 @@ function getColor(value: number, range: Range, higherIsBetter: boolean): string 
 }
 
 function formatCell(value: number, indId: string): string {
-  if (indId.includes('NGDPDPC') || indId.includes('NGDPD')) {
+  // IMF.NGDPD is in billions of USD — convert to trillions for display
+  if (indId === 'IMF.NGDPD') {
+    if (Math.abs(value) >= 1000) return `$${(value / 1000).toFixed(1)}T`;
+    return `$${Math.round(value)}B`;
+  }
+  if (indId.includes('NGDPDPC')) {
+    return `$${Math.round(value).toLocaleString()}`;
+  }
+  // Military spending in raw USD
+  if (indId === 'MS.MIL.XPND.CD') {
     if (Math.abs(value) >= 1e12) return `$${(value / 1e12).toFixed(1)}T`;
-    if (Math.abs(value) >= 1e9) return `$${(value / 1e9).toFixed(0)}B`;
+    if (Math.abs(value) >= 1e9) return `$${(value / 1e9).toFixed(1)}B`;
+    if (Math.abs(value) >= 1e6) return `$${(value / 1e6).toFixed(0)}M`;
     return `$${Math.round(value).toLocaleString()}`;
   }
   if (Math.abs(value) >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
@@ -77,12 +99,9 @@ export default function HeatmapPage() {
   return (
     <main className="min-h-screen bg-white text-[#333]">
       <Nav />
+      <HeroTabs active="/heatmap" />
 
-      <section className="max-w-[1400px] mx-auto px-4 py-8">
-        <h1 className="text-[28px] font-bold mb-1">Heatmap</h1>
-        <p className="text-[13px] text-[#999] mb-5">
-          Compare countries across multiple indicators at a glance. Green = strong, Red = weak.
-        </p>
+      <section className="max-w-[1400px] mx-auto px-4 py-6">
 
         {/* Controls */}
         <div className="flex flex-wrap gap-3 mb-6">
@@ -106,6 +125,18 @@ export default function HeatmapPage() {
           >
             {groups.map(g => <option key={g} value={g}>{g}</option>)}
           </select>
+          <div className="ml-auto self-center">
+            <ExportButton
+              filename={`sotw-heatmap-${preset}-${new Date().toISOString().slice(0, 10)}`}
+              getData={() => ({
+                headers: ['Country', 'Code', ...indicators.map(ind => ind.label)],
+                rows: sorted.map(r => [
+                  r.country, r.countryId,
+                  ...indicators.map(ind => r.values[ind.id]?.value ?? null),
+                ]),
+              })}
+            />
+          </div>
         </div>
 
         {loading ? (
@@ -148,7 +179,7 @@ export default function HeatmapPage() {
                       if (!d) {
                         return <td key={ind.id} className="px-2 py-2 text-center text-[11px] text-[#ccc]">—</td>;
                       }
-                      const colorClass = getColor(d.value, ranges[ind.id], ind.higherIsBetter);
+                      const colorClass = getColor(d.value, ranges[ind.id], ind.higherIsBetter, ind.neutral);
                       return (
                         <td key={ind.id} className="px-1 py-1 text-center">
                           <div className={`rounded px-1.5 py-1 text-[11px] font-mono ${colorClass}`} title={`${d.value} (${d.year})`}>
@@ -167,11 +198,23 @@ export default function HeatmapPage() {
         {/* Legend */}
         <div className="mt-4 flex items-center gap-3 text-[11px] text-[#999]">
           <span>Color scale:</span>
-          <span className="bg-green-500 text-white px-2 py-0.5 rounded">Strong</span>
-          <span className="bg-green-200 text-green-900 px-2 py-0.5 rounded">Good</span>
-          <span className="bg-yellow-100 text-yellow-900 px-2 py-0.5 rounded">Average</span>
-          <span className="bg-orange-200 text-orange-900 px-2 py-0.5 rounded">Weak</span>
-          <span className="bg-red-400 text-white px-2 py-0.5 rounded">Poor</span>
+          {preset === 'military' ? (
+            <>
+              <span className="bg-blue-600 text-white px-2 py-0.5 rounded">Highest</span>
+              <span className="bg-blue-400 text-white px-2 py-0.5 rounded">High</span>
+              <span className="bg-blue-200 text-blue-900 px-2 py-0.5 rounded">Medium</span>
+              <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Low</span>
+              <span className="bg-slate-50 text-slate-600 px-2 py-0.5 rounded border border-slate-200">Lowest</span>
+            </>
+          ) : (
+            <>
+              <span className="bg-green-500 text-white px-2 py-0.5 rounded">Strong</span>
+              <span className="bg-green-200 text-green-900 px-2 py-0.5 rounded">Good</span>
+              <span className="bg-yellow-100 text-yellow-900 px-2 py-0.5 rounded">Average</span>
+              <span className="bg-orange-200 text-orange-900 px-2 py-0.5 rounded">Weak</span>
+              <span className="bg-red-400 text-white px-2 py-0.5 rounded">Poor</span>
+            </>
+          )}
           <span className="ml-auto">Click column headers to sort</span>
         </div>
       </section>

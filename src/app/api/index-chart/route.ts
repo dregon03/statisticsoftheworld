@@ -17,13 +17,13 @@ const INDEX_SYMBOLS: Record<string, string> = {
   // Stocks (use ticker directly)
 };
 
-const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y'] as const;
+const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y', 'max'] as const;
 
 function intervalForRange(range: string): string {
   switch (range) {
     case '1d': return '2m';
     case '5d': return '15m';
-    default: return range === '5y' ? '1wk' : '1d';
+    default: return (range === '5y' || range === 'max') ? '1wk' : '1d';
   }
 }
 

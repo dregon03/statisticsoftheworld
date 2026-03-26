@@ -1,6 +1,7 @@
 import { getCountries, getTop10AllIndicators, INDICATORS, CATEGORIES } from '@/lib/data';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import HeroTabs from '@/components/HeroTabs';
 import CategorySection from '../CategorySection';
 import IndicatorExplorer from './IndicatorExplorer';
 import LiveCounters from '@/components/LiveCounter';
@@ -50,17 +51,7 @@ export default async function IndicatorsPage({ searchParams }: { searchParams: P
   return (
     <main className="min-h-screen bg-white text-[#333]">
       <Nav />
-
-      {/* Header */}
-      <section className="border-b border-[#e8e8e8]">
-        <div className="max-w-[1200px] mx-auto px-4 py-8 text-center">
-          <h1 className="text-[24px] font-bold mb-2">Indicators</h1>
-          <div className="mb-3">
-            <LiveCounters />
-          </div>
-          <p className="text-[13px] text-[#999]">{INDICATORS.length} indicators across {CATEGORIES.length} categories from IMF, World Bank, WHO, UN, and more.</p>
-        </div>
-      </section>
+      <HeroTabs active="/indicators" indicatorCount={INDICATORS.length} />
 
       {/* Category nav */}
       <nav className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] border-b border-[#f0f0f0]">

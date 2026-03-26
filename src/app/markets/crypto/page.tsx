@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
+import ExportButton from '@/components/ExportButton';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -53,6 +54,7 @@ const RANGES = [
   { key: '6mo', label: '6M' },
   { key: '1y', label: '1Y' },
   { key: '5y', label: '5Y' },
+  { key: 'max', label: 'All' },
 ] as const;
 
 const COINS: { pair: string; name: string; symbol: string; icon: string }[] = [
@@ -364,7 +366,10 @@ export default function CryptoPage() {
         {/* BTC + ETH Headline */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="border border-[#e8e8e8] rounded-xl p-5 bg-gradient-to-r from-[#fff8f0] to-white">
-            <div className="text-[11px] text-[#999] uppercase tracking-wider mb-1">Bitcoin (BTC)</div>
+            <div className="flex items-center gap-2 mb-1">
+              <img src="https://cryptofonts.com/img/SVG/btc.svg" alt="" width={24} height={24} className="rounded-full" />
+              <span className="text-[11px] text-[#999] uppercase tracking-wider">Bitcoin (BTC)</span>
+            </div>
             <div className="flex items-baseline gap-3">
               <span className="text-[28px] font-bold font-mono text-[#333]">
                 {btc?.price != null ? `$${btc.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '—'}
@@ -382,7 +387,10 @@ export default function CryptoPage() {
             )}
           </div>
           <div className="border border-[#e8e8e8] rounded-xl p-5 bg-gradient-to-r from-[#f0f4ff] to-white">
-            <div className="text-[11px] text-[#999] uppercase tracking-wider mb-1">Ethereum (ETH)</div>
+            <div className="flex items-center gap-2 mb-1">
+              <img src="https://cryptofonts.com/img/SVG/eth.svg" alt="" width={24} height={24} className="rounded-full" />
+              <span className="text-[11px] text-[#999] uppercase tracking-wider">Ethereum (ETH)</span>
+            </div>
             <div className="flex items-baseline gap-3">
               <span className="text-[28px] font-bold font-mono text-[#333]">
                 {eth?.price != null ? `$${eth.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '—'}
@@ -407,7 +415,20 @@ export default function CryptoPage() {
           <div className="space-y-8">
             {/* Coins Table */}
             <div>
-              <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">Top 20 Cryptocurrencies</h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider">Top 20 Cryptocurrencies</h2>
+                <ExportButton
+                  filename={`sotw-crypto-${new Date().toISOString().slice(0, 10)}`}
+                  getData={() => ({
+                    headers: ['Name', 'Symbol', 'Price', '24h %', 'Week %', 'Month %', 'YTD %'],
+                    rows: sortedCoins.map(c => {
+                      const d = data[c.pair];
+                      const dayChg = d?.price && d?.previousClose ? ((d.price - d.previousClose) / d.previousClose * 100) : null;
+                      return [c.name, c.symbol, d?.price ?? null, dayChg ? +dayChg.toFixed(2) : null, d?.weeklyChg ?? null, d?.monthlyChg ?? null, d?.ytdChg ?? null];
+                    }),
+                  })}
+                />
+              </div>
               <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
                 <table className="w-full">
                   <thead>
@@ -445,7 +466,7 @@ export default function CryptoPage() {
                             <td className="px-3 py-2">
                               <span className="flex items-center gap-2">
                                 <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
-                                <span className="text-[16px] w-5 text-center">{coin.icon}</span>
+                                <img src={`https://cryptofonts.com/img/SVG/${coin.symbol.toLowerCase()}.svg`} alt="" width={20} height={20} className="rounded-full" loading="lazy" />
                                 <span className="font-medium">{coin.name}</span>
                                 <span className="text-[11px] text-[#999]">{coin.symbol}</span>
                               </span>

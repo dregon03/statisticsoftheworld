@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
+import ExportButton from '@/components/ExportButton';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -49,6 +50,7 @@ const RANGES = [
   { key: '6mo', label: '6M' },
   { key: '1y', label: '1Y' },
   { key: '5y', label: '5Y' },
+  { key: 'max', label: 'All' },
 ] as const;
 
 function FlagIcon({ code, size = 20 }: { code: string; size?: number }) {
@@ -143,19 +145,11 @@ const FX_SECTIONS: { title: string; pairs: { pair: string; label: string; flag: 
       { pair: 'USDTND', label: 'USD/TND', flag: 'tn', decimals: 4 },
     ],
   },
-  {
-    title: 'Crypto',
-    pairs: [
-      { pair: 'BTCUSD', label: 'BTC/USD', flag: '', decimals: 2 },
-      { pair: 'ETHUSD', label: 'ETH/USD', flag: '', decimals: 2 },
-      { pair: 'SOLUSD', label: 'SOL/USD', flag: '', decimals: 2 },
-    ],
-  },
 ];
 
 const PREDICTION_KEYWORDS = [
   'dollar', 'usd', 'euro', 'eur', 'yen', 'yuan', 'currency', 'forex', 'fx',
-  'tariff', 'trade war', 'sanctions', 'import', 'export', 'dxy',
+  'tariff', 'trade war', 'sanctions', 'import', 'export', 'customs', 'dxy',
 ];
 
 /* ── DXY Card ──────────────────────────────────────── */
@@ -606,7 +600,7 @@ export default function CurrenciesPage() {
 
   // Compute movers: daily change from USD perspective
   // For USD/XXX pairs, positive change = USD stronger. For XXX/USD (EUR,GBP,AUD), flip sign.
-  const QUOTED_VS_USD_SET = new Set(['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD', 'BTCUSD', 'ETHUSD', 'SOLUSD']);
+  const QUOTED_VS_USD_SET = new Set(['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD']);
   const movers: Mover[] = FX_SECTIONS.flatMap(s => s.pairs).map(p => {
     const d = data[p.pair];
     if (!d?.price || !d?.previousClose) return null;
@@ -639,6 +633,19 @@ export default function CurrenciesPage() {
           <div className="text-center py-20 text-[#999]">Loading currency data...</div>
         ) : (
           <div className="space-y-8">
+            <div className="flex justify-end">
+              <ExportButton
+                filename={`sotw-currencies-${new Date().toISOString().slice(0, 10)}`}
+                getData={() => ({
+                  headers: ['Pair', 'Rate', 'Day %', 'Week %', 'Month %', 'YTD %'],
+                  rows: FX_SECTIONS.flatMap(s => s.pairs.map(p => {
+                    const d = data[p.pair];
+                    const chg = d?.price && d?.previousClose ? ((d.price - d.previousClose) / d.previousClose * 100) : null;
+                    return [p.pair, d?.price ?? null, chg ? +chg.toFixed(4) : null, d?.weeklyChg ?? null, d?.monthlyChg ?? null, d?.ytdChg ?? null];
+                  })),
+                })}
+              />
+            </div>
             {FX_SECTIONS.map(section => (
               <div key={section.title}>
                 <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">{section.title}</h2>

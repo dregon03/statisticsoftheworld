@@ -51,6 +51,7 @@ const RANGES = [
   { key: '1mo', label: '1M' }, { key: '3mo', label: '3M' },
   { key: '6mo', label: '6M' }, { key: '1y', label: '1Y' },
   { key: '5y', label: '5Y' },
+  { key: 'max', label: 'All' },
 ] as const;
 
 function fmt(v: number | null) {

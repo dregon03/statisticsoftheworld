@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-ETL: Fetch actual results for economic events that just happened.
+ETL: Fetch actual results for economic events and earnings that just happened.
 
-Runs every 30 minutes. Checks for events scheduled in the last 2 hours
-that don't have actuals yet, then asks Gemini to search for the released data.
+Checks for macro events and earnings from today/yesterday that don't have
+actuals yet, then asks Gemini to search for the released data.
 
-Schedule: Every 30 minutes during market hours (12:00-22:00 UTC = 7AM-5PM ET)
-Cost: ~$0.01-0.03 per run (only when there are events to check)
+Schedule: 5x/day weekdays — 8:45AM, 9AM, 10:15AM, 3PM, 5PM ET
+Cost: ~$0.01-0.05 per run (only when there are events to check)
 """
 
 import datetime
@@ -21,6 +21,7 @@ DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 
 NOW = datetime.datetime.utcnow()
 TODAY = NOW.date()
@@ -90,6 +91,13 @@ def main():
         cur.execute("ALTER TABLE sotw_release_schedule ADD COLUMN IF NOT EXISTS forecast TEXT")
     except Exception:
         pass
+
+    # Ensure columns exist
+    for col in ["actual", "outcome", "eps_actual", "revenue_actual"]:
+        try:
+            cur.execute(f"ALTER TABLE sotw_calendar_events ADD COLUMN IF NOT EXISTS {col} TEXT")
+        except Exception:
+            pass
 
     # Find events from today and yesterday that have no actual yet
     yesterday = (TODAY - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -196,7 +204,135 @@ Return ONLY a JSON array: [{{"name":"...","date":"YYYY-MM-DD","actual":"...","ou
                     print(f"    {date_str} {name[:40]:40s} -> {actual}", flush=True)
                 break
 
-    print(f"  Updated {updated} events with actuals", flush=True)
+    print(f"  Updated {updated} macro events with actuals", flush=True)
+
+    # ══════════════════════════════════════════════════════
+    # EARNINGS ACTUALS (via Finnhub earnings calendar — single API call)
+    # Updates actuals within minutes of press release
+    # Also enriches: eps_estimate, revenue_estimate, time (bmo/amc)
+    # ══════════════════════════════════════════════════════
+    if FINNHUB_KEY:
+        cur.execute("""
+            SELECT id, title, symbol, date
+            FROM sotw_calendar_events
+            WHERE event_type = 'earnings' AND symbol IS NOT NULL
+              AND date >= %s AND date <= %s
+            ORDER BY date ASC
+        """, (yesterday, today_str))
+        our_earnings = cur.fetchall()
+
+        if our_earnings:
+            print(f"\n  Checking {len(our_earnings)} earnings via Finnhub calendar...", flush=True)
+
+            # Single Finnhub call for the date range
+            try:
+                furl = f"https://finnhub.io/api/v1/calendar/earnings?from={yesterday}&to={today_str}&token={FINNHUB_KEY}"
+                freq = urllib.request.Request(furl)
+                with urllib.request.urlopen(freq, timeout=15) as fresp:
+                    fdata = json.loads(fresp.read())
+                finnhub_events = fdata.get("earningsCalendar", [])
+                print(f"  Finnhub returned {len(finnhub_events)} earnings in range", flush=True)
+            except Exception as ex:
+                print(f"  Finnhub calendar error: {ex}", flush=True)
+                finnhub_events = []
+
+            # Build symbol->finnhub lookup
+            fh_lookup = {}
+            for fe in finnhub_events:
+                sym = fe.get("symbol", "")
+                if sym:
+                    fh_lookup[sym] = fe
+
+            earn_updated = 0
+            for eid, title, symbol, edate in our_earnings:
+                date_str = edate.isoformat() if hasattr(edate, 'isoformat') else str(edate)
+                fe = fh_lookup.get(symbol)
+                if not fe:
+                    continue
+
+                eps_est = fe.get("epsEstimate")
+                eps_actual = fe.get("epsActual")
+                rev_est = fe.get("revenueEstimate")
+                rev_actual = fe.get("revenueActual")
+                hour = fe.get("hour", "")  # "bmo", "amc", or ""
+
+                # Build update
+                updates = {}
+
+                # Always update timing if available
+                if hour in ("bmo", "amc"):
+                    time_str = "BMO" if hour == "bmo" else "AMC"
+                    updates["time"] = time_str
+
+                # Update estimates (Finnhub consensus is authoritative)
+                if eps_est is not None:
+                    updates["eps_estimate"] = round(float(eps_est), 4)
+                if rev_est is not None and rev_est > 0:
+                    updates["revenue_estimate"] = float(rev_est)
+
+                # Fill actuals if reported
+                if eps_actual is not None:
+                    # For BMO: available same morning. For AMC: available same evening.
+                    # Only fill if the timing makes sense
+                    should_fill = False
+                    if date_str < today_str:
+                        should_fill = True  # Yesterday — always fill
+                    elif hour == "bmo" and NOW.hour >= 12:
+                        should_fill = True  # BMO today + it's past 8 AM ET
+                    elif hour == "amc" and NOW.hour >= 22:
+                        should_fill = True  # AMC today + it's past 6 PM ET
+                    elif NOW.hour >= 22:
+                        should_fill = True  # Late enough for any timing
+
+                    if should_fill:
+                        # Short format: "$2.61 (miss $0.09)" — fits table column
+                        actual_str = f"${eps_actual:.2f}"
+                        if eps_est is not None:
+                            surprise = eps_actual - eps_est
+                            surprise_pct = (surprise / abs(eps_est) * 100) if eps_est != 0 else 0
+                            direction = "beat" if surprise >= 0 else "miss"
+                            actual_str += f" ({direction} ${abs(surprise):.2f})"
+                            updates["outcome"] = f"{'Beat' if surprise >= 0 else 'Missed'} by ${abs(surprise):.2f} ({abs(surprise_pct):.1f}%)"
+
+                        # Append revenue if available
+                        if rev_actual and rev_actual > 0:
+                            if rev_actual >= 1e9:
+                                actual_str += f" Rev ${rev_actual/1e9:.1f}B"
+                            else:
+                                actual_str += f" Rev ${rev_actual/1e6:.0f}M"
+
+                        updates["actual"] = actual_str
+
+                if not updates:
+                    continue
+
+                set_clauses = ", ".join(f"{k}=%s" for k in updates)
+                vals = list(updates.values()) + [eid]
+
+                # Only update actual if not already set
+                if "actual" in updates:
+                    cur.execute(
+                        f"UPDATE sotw_calendar_events SET {set_clauses}, updated_at=NOW() WHERE id=%s AND (actual IS NULL OR actual = '')",
+                        vals
+                    )
+                else:
+                    cur.execute(
+                        f"UPDATE sotw_calendar_events SET {set_clauses}, updated_at=NOW() WHERE id=%s",
+                        vals
+                    )
+
+                if cur.rowcount > 0:
+                    earn_updated += 1
+                    act = updates.get("actual", "")
+                    timing = updates.get("time", "")
+                    if act:
+                        print(f"    {date_str} {symbol:6s} {timing:3s} {act}", flush=True)
+
+            print(f"  Updated {earn_updated} earnings", flush=True)
+        else:
+            print("  No earnings in range", flush=True)
+    else:
+        print("  FINNHUB_KEY not set, skipping earnings actuals", flush=True)
 
     cur.close()
     conn.close()

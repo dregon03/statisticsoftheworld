@@ -16,7 +16,12 @@ on:
     - cron: '0 7 * * *'       # Daily at 7 AM UTC
     - cron: '0 9 1 * *'       # 1st of month at 9 AM UTC (intl org annual data)
     - cron: '0 */4 * * *'     # Every 4 hours (Polymarket)
-    - cron: '0 13,15,19 * * 1-5'  # 3x/day weekdays: 9AM, 11AM, 3PM ET (after major release windows)
+    - cron: '30,45 12 * * 1-5'     # Weekdays 8:30AM, 8:45AM ET (BMO earnings + 8:30 macro)
+    - cron: '0,15,30 13 * * 1-5'  # Weekdays 9:00, 9:15, 9:30AM ET (BMO actuals trickle in)
+    - cron: '15 14 * * 1-5'       # Weekdays 10:15AM ET (after 10AM macro releases)
+    - cron: '0 19 * * 1-5'        # Weekdays 3PM ET (after FOMC)
+    - cron: '15,30,45 21 * * 1-5' # Weekdays 5:15, 5:30, 5:45PM ET (AMC earnings)
+    - cron: '0,15 22 * * 1-5'     # Weekdays 6:00, 6:15PM ET (late AMC earnings)
     - cron: '0 6 * * 1'       # Weekly Monday 6 AM UTC
   workflow_dispatch:
     inputs:
@@ -48,6 +53,8 @@ on:
           - sitemap-ping
           - audit
           - clean-trade
+          - stock-profiles
+          - correlations
       trade_batch:
         description: 'Trade batch number (0-6, empty=auto)'
         required: false
@@ -65,6 +72,7 @@ env:
   COMTRADE_API_KEY: ${{ secrets.COMTRADE_API_KEY }}
   GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
   OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+  FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
 
 jobs:
   # ════════════════════════════════════════════════════════════
@@ -344,16 +352,23 @@ jobs:
           curl -sf "https://statisticsoftheworld.com/api/calendar" -o /dev/null && echo "Calendar API warmed ✓" || true
 
   # ════════════════════════════════════════════════════════════
-  # 3x/DAY (weekdays): Calendar Actuals
-  # Fetches actual released data after major release windows
-  # 9AM ET (after 8:30 releases), 11AM ET (after 10AM), 3PM ET (after 2PM FOMC etc.)
+  # ~12x/DAY (weekdays): Calendar Actuals (macro + earnings)
+  # BMO window: 8:30-9:30AM ET (every 15 min — catches pre-market earnings)
+  # Macro window: 10:15AM ET (after 10AM releases), 3PM ET (FOMC)
+  # AMC window: 5:15-6:15PM ET (every 15 min — catches after-close earnings)
+  # Finnhub updates actuals within minutes of press release
   # ════════════════════════════════════════════════════════════
   calendar-actuals:
     name: "Daily: Calendar Actuals"
     runs-on: ubuntu-latest
     timeout-minutes: 3
     if: >
-      github.event.schedule == '0 13,15,19 * * 1-5' ||
+      github.event.schedule == '30,45 12 * * 1-5' ||
+      github.event.schedule == '0,15,30 13 * * 1-5' ||
+      github.event.schedule == '15 14 * * 1-5' ||
+      github.event.schedule == '0 19 * * 1-5' ||
+      github.event.schedule == '15,30,45 21 * * 1-5' ||
+      github.event.schedule == '0,15 22 * * 1-5' ||
       github.event.inputs.pipeline == 'calendar-actuals'
     steps:
       - uses: actions/checkout@v4
@@ -509,6 +524,40 @@ jobs:
       - run: pip install psycopg2-binary
       - name: Check DB size, table health, stale data
         run: python scripts/monitor_supabase.py
+
+  correlations:
+    name: "Weekly: Indicator Correlations"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >
+      github.event.schedule == '0 6 * * 1' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'correlations'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Compute indicator correlations
+        run: python scripts/etl_correlations.py
+
+  stock-profiles:
+    name: "Weekly: Stock Profiles (Sector/Market Cap)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: >
+      github.event.schedule == '0 6 * * 1' ||
+      github.event.inputs.pipeline == 'all' ||
+      github.event.inputs.pipeline == 'stock-profiles'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary yfinance
+      - name: Fetch stock sector + market cap data
+        run: python scripts/etl_stock_profiles.py
 
   # ════════════════════════════════════════════════════════════
   # DAILY: Data quality audit + page health checks

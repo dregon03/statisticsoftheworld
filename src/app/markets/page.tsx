@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import ExportButton from '@/components/ExportButton';
 import MarketsHeader from './MarketsHeader';
 import {
   ResponsiveContainer,
@@ -82,6 +83,7 @@ const RANGES = [
   { key: '6mo', label: '6M' },
   { key: '1y', label: '1Y' },
   { key: '5y', label: '5Y' },
+  { key: 'max', label: 'All' },
 ] as const;
 
 interface ChartPoint { date: string; value: number }
@@ -234,6 +236,22 @@ export default function MarketsPage() {
           <div className="text-center py-20 text-[#999]">Loading market data...</div>
         ) : (
           <div className="space-y-8">
+            <div className="flex justify-end">
+              <ExportButton
+                filename={`sotw-indices-${new Date().toISOString().slice(0, 10)}`}
+                getData={() => ({
+                  headers: ['Region', 'Country', 'Index', 'Price', 'Prev Close', 'Change', '% Change'],
+                  rows: Object.entries(REGIONS).flatMap(([region, ids]) =>
+                    ids.map(id => {
+                      const q = quoteMap[id];
+                      if (!q) return null;
+                      const cid = ID_TO_COUNTRY[id] || '';
+                      return [region, COUNTRY_NAMES[cid] || cid, q.label, q.price, q.previousClose, q.change, q.changePct];
+                    }).filter(Boolean) as (string | number)[][],
+                  ),
+                })}
+              />
+            </div>
             {/* Stock Indices by region */}
             {Object.entries(REGIONS).map(([region, ids]) => {
               const regionQuotes = ids.map(id => quoteMap[id]).filter(Boolean);

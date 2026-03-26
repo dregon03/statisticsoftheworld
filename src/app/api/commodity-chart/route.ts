@@ -17,7 +17,7 @@ const SOTW_TO_YAHOO: Record<string, string> = {
   'AV.ALUMINUM': 'ALI=F',
 };
 
-const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y'] as const;
+const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y', 'max'] as const;
 
 // Pick interval based on range to keep data points reasonable
 function intervalForRange(range: string): string {
@@ -29,6 +29,7 @@ function intervalForRange(range: string): string {
     case '6mo': return '1d';
     case '1y': return '1d';
     case '5y': return '1wk';
+    case 'max': return '1mo';
     default: return '1d';
   }
 }

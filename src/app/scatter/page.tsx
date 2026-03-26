@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import ScatterPlotChart from '@/components/charts/ScatterChart';
@@ -76,6 +76,16 @@ function ScatterContent() {
   const [searchX, setSearchX] = useState('');
   const [searchY, setSearchY] = useState('');
   const [regionFilter, setRegionFilter] = useState('');
+  const [correlations, setCorrelations] = useState<{ x: string; y: string; labelX: string; labelY: string; r: number; rSquared: number; n: number }[]>([]);
+  const [corrFilter, setCorrFilter] = useState<'strongest' | 'surprising' | 'negative'>('strongest');
+
+  // Fetch precomputed correlations
+  useEffect(() => {
+    fetch('/api/correlations')
+      .then(r => r.json())
+      .then(data => setCorrelations(data.correlations || []))
+      .catch(() => {});
+  }, []);
 
   const xInd = INDICATORS.find(i => i.id === xIndicatorId);
   const yInd = INDICATORS.find(i => i.id === yIndicatorId);
@@ -131,6 +141,33 @@ function ScatterContent() {
       region: c.region,
     }));
 
+  // Compute R² for the current scatter
+  const currentR = useMemo(() => {
+    if (scatterData.length < 5) return null;
+    const n = scatterData.length;
+    const sumX = scatterData.reduce((s, d) => s + d.x, 0);
+    const sumY = scatterData.reduce((s, d) => s + d.y, 0);
+    const sumXY = scatterData.reduce((s, d) => s + d.x * d.y, 0);
+    const sumX2 = scatterData.reduce((s, d) => s + d.x * d.x, 0);
+    const sumY2 = scatterData.reduce((s, d) => s + d.y * d.y, 0);
+    const denom = Math.sqrt((n * sumX2 - sumX ** 2) * (n * sumY2 - sumY ** 2));
+    if (denom === 0) return null;
+    const r = (n * sumXY - sumX * sumY) / denom;
+    return { r, rSquared: r * r, n };
+  }, [scatterData]);
+
+  // Filter correlations for discover section
+  const filteredCorrelations = useMemo(() => {
+    let list = [...correlations];
+    if (corrFilter === 'negative') list = list.filter(c => c.r < 0);
+    if (corrFilter === 'surprising') {
+      // "Surprising" = R² between 0.15 and 0.6 (moderate, not obvious)
+      list = list.filter(c => c.rSquared >= 0.15 && c.rSquared <= 0.6);
+    }
+    list.sort((a, b) => corrFilter === 'negative' ? a.r - b.r : Math.abs(b.r) - Math.abs(a.r));
+    return list.slice(0, 10);
+  }, [correlations, corrFilter]);
+
   const applyPreset = (preset: typeof PRESETS[0]) => {
     setXIndicatorId(preset.x);
     setYIndicatorId(preset.y);
@@ -158,6 +195,54 @@ function ScatterContent() {
             Explore relationships between any two indicators across 218 countries. Bubble size represents population. Inspired by Gapminder.
           </p>
         </div>
+
+        {/* Discover Correlations */}
+        {correlations.length > 0 && (
+          <div className="mb-8 border border-[#e8e8e8] rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-[15px] font-semibold">Discover Correlations</h2>
+              <div className="flex gap-0.5 bg-[#f0f0f0] rounded-lg p-0.5">
+                {([
+                  { key: 'strongest' as const, label: 'Strongest' },
+                  { key: 'surprising' as const, label: 'Surprising' },
+                  { key: 'negative' as const, label: 'Negative' },
+                ]).map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setCorrFilter(tab.key)}
+                    className={`px-2.5 py-1 text-[11px] rounded transition ${
+                      corrFilter === tab.key ? 'bg-white shadow-sm font-medium text-[#333]' : 'text-[#666]'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+              {filteredCorrelations.map((c, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setXIndicatorId(c.x); setYIndicatorId(c.y); setLogX(false); setLogY(false); }}
+                  className={`text-left border rounded-lg p-2.5 hover:border-[#0066cc] hover:bg-[#f5f7fa] transition ${
+                    xIndicatorId === c.x && yIndicatorId === c.y ? 'border-[#0066cc] bg-[#f0f5ff]' : 'border-[#e8e8e8]'
+                  }`}
+                >
+                  <div className="text-[11px] text-[#666] leading-tight mb-1.5">
+                    {c.labelX} <span className="text-[#999]">vs</span> {c.labelY}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[13px] font-mono font-bold ${c.r >= 0 ? 'text-[#0066cc]' : 'text-red-500'}`}>
+                      {c.r >= 0 ? '+' : ''}{c.r.toFixed(2)}
+                    </span>
+                    <span className="text-[9px] text-[#999]">R²={c.rSquared.toFixed(2)}</span>
+                    <span className="text-[9px] text-[#bbb]">{c.n} countries</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Presets */}
         <div className="mb-6">
@@ -276,14 +361,20 @@ function ScatterContent() {
         {scatterData.length > 5 && (
           <div className="mt-6 border border-[#e8e8e8] rounded-xl p-5 bg-[#f8f9fa]">
             <h3 className="text-[14px] font-semibold mb-3">Quick Statistics</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[13px]">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-[13px]">
               <div>
                 <div className="text-[#999] text-[11px]">Countries plotted</div>
                 <div className="font-mono font-semibold">{scatterData.length}</div>
               </div>
               <div>
-                <div className="text-[#999] text-[11px]">Correlation</div>
-                <div className="font-mono font-semibold">{computeCorrelation(scatterData).toFixed(3)}</div>
+                <div className="text-[#999] text-[11px]">Correlation (r)</div>
+                <div className={`font-mono font-semibold ${currentR && currentR.r >= 0 ? 'text-[#0066cc]' : 'text-red-500'}`}>
+                  {currentR ? `${currentR.r >= 0 ? '+' : ''}${currentR.r.toFixed(3)}` : '—'}
+                </div>
+              </div>
+              <div>
+                <div className="text-[#999] text-[11px]">R² (variance explained)</div>
+                <div className="font-mono font-semibold">{currentR ? `${(currentR.rSquared * 100).toFixed(1)}%` : '—'}</div>
               </div>
               <div>
                 <div className="text-[#999] text-[11px]">{xInd?.label} range</div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import HeroTabs from '@/components/HeroTabs';
 import Flag from '../Flag';
 
 interface ForecastIndicator {
@@ -32,7 +33,7 @@ function formatVal(value: number | undefined, format: string): string {
   return value.toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
-export default function ForecastsPage() {
+export function ForecastsContent() {
   const [indicators, setIndicators] = useState<ForecastIndicator[]>([]);
   const [selectedId, setSelectedId] = useState('IMF.NGDP_RPCH');
   const [selectedIndicator, setSelectedIndicator] = useState<ForecastIndicator | null>(null);
@@ -68,13 +69,10 @@ export default function ForecastsPage() {
     return sortAsc ? aVal - bVal : bVal - aVal;
   });
 
-  return (
-    <main className="min-h-screen bg-white text-[#333]">
-      <Nav />
-
-      <section className="max-w-[1200px] mx-auto px-4 py-8">
-        <h1 className="text-[28px] font-bold mb-1">IMF Forecasts</h1>
-        <p className="text-[13px] text-[#999] mb-6">
+  const content = (
+      <section className="max-w-[1200px] mx-auto px-4 py-6">
+        <h2 className="text-[20px] font-bold mb-1">IMF Forecasts</h2>
+        <p className="text-[12px] text-[#999] mb-5">
           IMF World Economic Outlook projections for {years.join(' & ')}. Free data that Trading Economics charges for.
         </p>
 
@@ -172,7 +170,17 @@ export default function ForecastsPage() {
           Forecasts are IMF staff projections, not guarantees.
         </div>
       </section>
+  );
 
+  return content;
+}
+
+export default function ForecastsPage() {
+  return (
+    <main className="min-h-screen bg-white text-[#333]">
+      <Nav />
+      <HeroTabs active="/forecasts" />
+      <ForecastsContent />
       <Footer />
     </main>
   );

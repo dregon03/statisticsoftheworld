@@ -7,6 +7,7 @@ import { INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import WorldMap from '@/components/charts/WorldMap';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import HeroTabs from '@/components/HeroTabs';
 
 interface RankingEntry {
   country: string;
@@ -18,8 +19,9 @@ interface RankingEntry {
 
 export default function MapPage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white text-[#333]">
       <Nav />
+      <HeroTabs active="/map" />
       <Suspense>
         <MapContent />
       </Suspense>

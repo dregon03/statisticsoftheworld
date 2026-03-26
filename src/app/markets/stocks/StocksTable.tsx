@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
+import ExportButton from '@/components/ExportButton';
 import StocksHeader from './StocksHeader';
 import { COMPANY_NAMES } from './tickers';
 import {
@@ -15,6 +16,34 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
+
+// Finnhub stores some logos under exchange-specific names
+const LOGO_OVERRIDES: Record<string, string> = {
+  META: 'FB', AZN: 'AZN.L', BMO: 'BMO.TO', BP: 'BP.L', ENB: 'ENB.TO',
+  HSBC: 'HSBA.L', NVO: 'NOVO B.CO', RY: 'RY.TO', SAP: 'SAP.DE', SHEL: 'SHEL.L',
+  CNXC: '942965499836', CSCO: '950800186156', CNR: 'CNR.TO',
+  TD: 'TD.TO', BNS: 'BNS.TO', CM: 'CM.TO', SU: 'SU.TO', TRP: 'TRP.TO',
+  CP: 'CP.TO', MFC: 'MFC.TO', SLF: 'SLF.TO', BCE: 'BCE.TO', T: 'T',
+  BHP: 'BHP.AX', RIO: 'RIO.L', UL: 'ULVR.L', TM: 'TM', SONY: 'SONY',
+  ASML: 'ASML.AS', TSM: 'TSM', BABA: 'BABA', PDD: 'PDD', JD: 'JD',
+};
+
+function StockLogo({ ticker, size = 20 }: { ticker: string; size?: number }) {
+  const [error, setError] = useState(false);
+  if (error) return null;
+  const logoKey = LOGO_OVERRIDES[ticker] || ticker;
+  return (
+    <img
+      src={`https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/${encodeURIComponent(logoKey)}.png`}
+      alt=""
+      width={size}
+      height={size}
+      className="rounded-sm object-contain"
+      onError={() => setError(true)}
+      loading="lazy"
+    />
+  );
+}
 
 interface Quote {
   id: string;
@@ -35,6 +64,7 @@ const RANGES = [
   { key: '6mo', label: '6M' },
   { key: '1y', label: '1Y' },
   { key: '5y', label: '5Y' },
+  { key: 'max', label: 'All' },
 ] as const;
 
 interface ChartPoint { date: string; value: number }
@@ -149,6 +179,356 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
   );
 }
 
+interface StockProfile { sector: string; industry: string; marketCap: number }
+
+// ── Squarified Treemap (Canvas-based, Finviz-style) ──────────────
+
+function getTreemapColor(pct: number): string {
+  if (pct <= -3) return '#7a1a1a';
+  if (pct <= -2) return '#a02020';
+  if (pct <= -1) return '#c03030';
+  if (pct <= -0.3) return '#c85050';
+  if (pct < 0) return '#a06060';
+  if (pct === 0) return '#555';
+  if (pct < 0.3) return '#608060';
+  if (pct < 1) return '#407040';
+  if (pct < 2) return '#306030';
+  if (pct < 3) return '#205020';
+  return '#184018';
+}
+
+interface TreemapStock { ticker: string; name: string; size: number; changePct: number; industry: string }
+interface TreemapSector { name: string; children: TreemapStock[]; totalCap: number }
+interface Tile { x: number; y: number; w: number; h: number; ticker: string; name: string; changePct: number; sector: string; industry: string; size: number }
+
+// Squarified treemap layout algorithm (Bruls-Huetink-van Wijk)
+function squarify(items: { key: string; size: number }[], rect: { x: number; y: number; w: number; h: number }): Map<string, { x: number; y: number; w: number; h: number }> {
+  const result = new Map<string, { x: number; y: number; w: number; h: number }>();
+  if (items.length === 0 || rect.w <= 0 || rect.h <= 0) return result;
+
+  const totalSize = items.reduce((s, i) => s + i.size, 0);
+  if (totalSize <= 0) return result;
+
+  const sorted = [...items].sort((a, b) => b.size - a.size);
+  let { x, y, w, h } = rect;
+
+  function layoutRow(row: typeof sorted, rowArea: number, side: number) {
+    const rowWidth = rowArea / side;
+    let offset = 0;
+    for (const item of row) {
+      const itemLen = (item.size / rowArea) * side;
+      if (w >= h) {
+        result.set(item.key, { x: x, y: y + offset, w: rowWidth, h: itemLen });
+      } else {
+        result.set(item.key, { x: x + offset, y: y, w: itemLen, h: rowWidth });
+      }
+      offset += itemLen;
+    }
+    if (w >= h) { x += rowWidth; w -= rowWidth; }
+    else { y += rowWidth; h -= rowWidth; }
+  }
+
+  function worstRatio(row: typeof sorted, rowArea: number, side: number): number {
+    const rowWidth = rowArea / side;
+    let worst = 0;
+    for (const item of row) {
+      const itemLen = (item.size / rowArea) * side;
+      const r = Math.max(rowWidth / itemLen, itemLen / rowWidth);
+      if (r > worst) worst = r;
+    }
+    return worst;
+  }
+
+  let remaining = sorted.map(item => ({ ...item, size: (item.size / totalSize) * w * h }));
+
+  while (remaining.length > 0) {
+    const side = Math.min(w, h);
+    if (side <= 0) break;
+    const row: typeof remaining = [remaining[0]];
+    let rowArea = remaining[0].size;
+    let bestRatio = worstRatio(row, rowArea, side);
+
+    let i = 1;
+    while (i < remaining.length) {
+      const newRow = [...row, remaining[i]];
+      const newArea = rowArea + remaining[i].size;
+      const newRatio = worstRatio(newRow, newArea, side);
+      if (newRatio <= bestRatio) {
+        row.push(remaining[i]);
+        rowArea = newArea;
+        bestRatio = newRatio;
+        i++;
+      } else break;
+    }
+
+    layoutRow(row, rowArea, side);
+    remaining = remaining.slice(i);
+  }
+
+  return result;
+}
+
+// Canvas-based Finviz-style treemap
+function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; profiles: Record<string, StockProfile> }) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [hovered, setHovered] = React.useState<Tile | null>(null);
+  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+  const [dims, setDims] = React.useState({ w: 0, h: 640 });
+  const tilesRef = React.useRef<Tile[]>([]);
+  const headersRef = React.useRef<{ x: number; y: number; w: number; h: number; label: string; type: 'sector' | 'industry' }[]>([]);
+
+  // Observe container width
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new ResizeObserver(entries => {
+      const cr = entries[0].contentRect;
+      if (cr.width > 0) setDims({ w: cr.width, h: 640 });
+    });
+    obs.observe(el);
+    setDims({ w: el.clientWidth, h: 640 });
+    return () => obs.disconnect();
+  }, []);
+
+  // Compute layout
+  const { tiles, headers } = React.useMemo(() => {
+    if (dims.w <= 0) return { tiles: [] as Tile[], headers: [] as typeof headersRef.current };
+    const totalCap = sectors.reduce((s, sec) => s + sec.totalCap, 0);
+    const allTiles: Tile[] = [];
+    const allHeaders: typeof headersRef.current = [];
+    const SECTOR_H = 16;
+    const INDUSTRY_H = 12;
+
+    // Lay out sectors as vertical columns (like Finviz)
+    let sx = 0;
+    for (const sector of sectors) {
+      const sectorW = (sector.totalCap / totalCap) * dims.w;
+      if (sectorW < 2) { sx += sectorW; continue; }
+
+      // Sector header
+      allHeaders.push({ x: sx, y: 0, w: sectorW, h: SECTOR_H, label: sector.name.toUpperCase(), type: 'sector' });
+
+      // Group by industry
+      const industries: Record<string, TreemapStock[]> = {};
+      for (const s of sector.children) {
+        const ind = s.industry || 'Other';
+        if (!industries[ind]) industries[ind] = [];
+        industries[ind].push(s);
+      }
+      const industryEntries = Object.entries(industries)
+        .map(([name, stocks]) => ({ name, stocks, total: stocks.reduce((s, c) => s + c.size, 0) }))
+        .sort((a, b) => b.total - a.total);
+
+      // Squarify industries within the sector column
+      const sectorBodyY = SECTOR_H;
+      const sectorBodyH = dims.h - SECTOR_H;
+      const indLayout = squarify(
+        industryEntries.map(ie => ({ key: ie.name, size: ie.total })),
+        { x: sx, y: sectorBodyY, w: sectorW, h: sectorBodyH }
+      );
+
+      for (const ie of industryEntries) {
+        const indRect = indLayout.get(ie.name);
+        if (!indRect || indRect.w < 2 || indRect.h < 2) continue;
+
+        // Industry sub-header (only if big enough)
+        const showIndHeader = indRect.w > 50 && indRect.h > 30;
+        const indHeaderH = showIndHeader ? INDUSTRY_H : 0;
+        if (showIndHeader) {
+          const shortName = ie.name.replace(/-/g, ' - ').toUpperCase();
+          allHeaders.push({ x: indRect.x, y: indRect.y, w: indRect.w, h: indHeaderH, label: shortName, type: 'industry' });
+        }
+
+        // Squarify stocks within industry
+        const stockRect = { x: indRect.x, y: indRect.y + indHeaderH, w: indRect.w, h: indRect.h - indHeaderH };
+        const stockLayout = squarify(
+          ie.stocks.map(s => ({ key: s.ticker, size: s.size })),
+          stockRect
+        );
+
+        for (const stock of ie.stocks) {
+          const r = stockLayout.get(stock.ticker);
+          if (!r || r.w < 1 || r.h < 1) continue;
+          allTiles.push({ ...r, ticker: stock.ticker, name: stock.name, changePct: stock.changePct, sector: sector.name, industry: ie.name, size: stock.size });
+        }
+      }
+
+      sx += sectorW;
+    }
+
+    return { tiles: allTiles, headers: allHeaders };
+  }, [sectors, dims]);
+
+  // Store in refs for mouse handler
+  React.useEffect(() => { tilesRef.current = tiles; headersRef.current = headers; }, [tiles, headers]);
+
+  // Draw canvas
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || dims.w <= 0) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = dims.w * dpr;
+    canvas.height = dims.h * dpr;
+    canvas.style.width = `${dims.w}px`;
+    canvas.style.height = `${dims.h}px`;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.scale(dpr, dpr);
+
+    // Background
+    ctx.fillStyle = '#181818';
+    ctx.fillRect(0, 0, dims.w, dims.h);
+
+    // Draw tiles
+    for (const tile of tiles) {
+      ctx.fillStyle = getTreemapColor(tile.changePct);
+      ctx.fillRect(tile.x, tile.y, tile.w, tile.h);
+
+      // Border
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(tile.x + 0.5, tile.y + 0.5, tile.w - 1, tile.h - 1);
+
+      // Hover highlight
+      if (hovered && hovered.ticker === tile.ticker) {
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.fillRect(tile.x, tile.y, tile.w, tile.h);
+      }
+
+      // Adaptive text
+      const area = tile.w * tile.h;
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (area > 15000 && tile.w > 45 && tile.h > 30) {
+        const fs = Math.min(15, tile.w / 4.5, tile.h / 3.5);
+        ctx.font = `bold ${fs}px system-ui, -apple-system, sans-serif`;
+        ctx.fillText(tile.ticker, tile.x + tile.w / 2, tile.y + tile.h / 2 - fs * 0.5);
+        ctx.globalAlpha = 0.8;
+        ctx.font = `${fs * 0.75}px system-ui, -apple-system, sans-serif`;
+        ctx.fillText(`${tile.changePct >= 0 ? '+' : ''}${tile.changePct.toFixed(2)}%`, tile.x + tile.w / 2, tile.y + tile.h / 2 + fs * 0.45);
+        ctx.globalAlpha = 1;
+      } else if (area > 3000 && tile.w > 25 && tile.h > 16) {
+        const fs = Math.min(10, tile.w / 4, tile.h / 2.2);
+        ctx.font = `bold ${fs}px system-ui, -apple-system, sans-serif`;
+        ctx.fillText(tile.ticker, tile.x + tile.w / 2, tile.y + tile.h / 2);
+      }
+    }
+
+    // Draw sector headers
+    for (const h of headers) {
+      if (h.type === 'sector') {
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillRect(h.x, h.y, h.w, h.h);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(h.x, h.y, h.w, h.h);
+        if (h.w > 30) {
+          ctx.fillStyle = '#bbb';
+          ctx.font = 'bold 9px system-ui, -apple-system, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(h.label, h.x + 4, h.y + h.h / 2, h.w - 8);
+        }
+      } else {
+        // Industry sub-header — subtle overlay
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fillRect(h.x, h.y, h.w, h.h);
+        if (h.w > 40) {
+          ctx.fillStyle = '#999';
+          ctx.font = '7px system-ui, -apple-system, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(h.label, h.x + 3, h.y + h.h / 2, h.w - 6);
+        }
+      }
+    }
+
+    // Sector borders (thicker)
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    let bx = 0;
+    const totalCap = sectors.reduce((s, sec) => s + sec.totalCap, 0);
+    for (const sector of sectors) {
+      const sw = (sector.totalCap / totalCap) * dims.w;
+      ctx.strokeRect(bx, 0, sw, dims.h);
+      bx += sw;
+    }
+  }, [tiles, headers, hovered, dims, sectors]);
+
+  // Mouse handler
+  const handleMouseMove = React.useCallback((e: React.MouseEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    setMousePos({ x: e.clientX, y: e.clientY });
+    const hit = tilesRef.current.find(t => mx >= t.x && mx <= t.x + t.w && my >= t.y && my <= t.y + t.h);
+    setHovered(hit || null);
+  }, []);
+
+  return (
+    <div ref={containerRef}>
+      {/* Color legend */}
+      <div className="flex items-center justify-between px-3 py-1.5 bg-[#111] text-[10px] text-[#888]">
+        <span>Size = market cap · Color = daily change</span>
+        <div className="flex items-center gap-0">
+          <span className="mr-1.5 text-[#ef5350]">-3%</span>
+          {[
+            { c: '#7a1a1a', l: '-3%' }, { c: '#a02020', l: '-2%' }, { c: '#c03030', l: '-1%' },
+            { c: '#555', l: '0%' },
+            { c: '#407040', l: '+1%' }, { c: '#306030', l: '+2%' }, { c: '#205020', l: '+3%' },
+          ].map((s, i) => (
+            <div key={i} style={{ backgroundColor: s.c, width: 28, height: 14 }} className="flex items-center justify-center text-[8px] text-white/70">{s.l}</div>
+          ))}
+          <span className="ml-1.5 text-[#4caf50]">+3%</span>
+        </div>
+      </div>
+
+      {/* Canvas */}
+      <canvas
+        ref={canvasRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setHovered(null)}
+        className="block cursor-pointer"
+        style={{ width: dims.w, height: dims.h }}
+      />
+
+      {/* Sector legend */}
+      <div className="flex flex-wrap gap-x-3 gap-y-0.5 px-3 py-2 bg-[#111] border-t border-[#2a2a2a]">
+        {sectors.map(s => (
+          <span key={s.name} className="text-[10px] text-[#777] uppercase tracking-wider">
+            {s.name} <span className="text-[#555]">({s.children.length})</span>
+          </span>
+        ))}
+      </div>
+
+      {/* Tooltip */}
+      {hovered && (
+        <div
+          className="fixed z-[200] bg-[#1a1a1a] border border-[#444] shadow-2xl rounded px-4 py-3 text-[13px] min-w-[200px] pointer-events-none"
+          style={{ left: mousePos.x + 14, top: mousePos.y - 14 }}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-bold text-[16px] text-white">{hovered.ticker}</span>
+            <span className="text-[#888] text-[12px]">{hovered.name}</span>
+          </div>
+          <div className="text-[#666] text-[11px] mb-2">{hovered.sector} · {hovered.industry}</div>
+          <div className="flex items-center justify-between border-t border-[#333] pt-2">
+            <span className={`font-mono font-bold text-[18px] ${hovered.changePct >= 0 ? 'text-[#4caf50]' : 'text-[#ef5350]'}`}>
+              {hovered.changePct >= 0 ? '+' : ''}{hovered.changePct.toFixed(2)}%
+            </span>
+            <span className="text-[#666] text-[12px] font-mono">${(hovered.size / 1e9).toFixed(0)}B</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function StocksTable({ tickers, title }: { tickers: string[]; title: string }) {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
@@ -157,6 +537,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('changePct');
   const [sortAsc, setSortAsc] = useState(false);
+  const [profiles, setProfiles] = useState<Record<string, StockProfile>>({});
 
   const tickerSet = useMemo(() => new Set(tickers), [tickers]);
 
@@ -176,6 +557,46 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
     const interval = setInterval(fetchQuotes, 10_000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch stock profiles (sector/market cap) for treemap
+  useEffect(() => {
+    fetch('/api/stock-profiles')
+      .then(r => r.json())
+      .then(data => { if (data && typeof data === 'object' && !data.error) setProfiles(data); })
+      .catch(() => {});
+  }, []);
+
+  // Build treemap data grouped by sector → industry
+  const treemapData = useMemo(() => {
+    const sectors: Record<string, TreemapStock[]> = {};
+    for (const q of quotes) {
+      if (!q.id.startsWith('YF.STOCK.')) continue;
+      const ticker = q.id.replace('YF.STOCK.', '');
+      if (!tickerSet.has(ticker)) continue;
+      const profile = profiles[ticker];
+      if (!profile || !profile.marketCap) continue;
+      const sector = profile.sector || 'Other';
+      if (!sectors[sector]) sectors[sector] = [];
+      sectors[sector].push({
+        ticker,
+        name: COMPANY_NAMES[ticker] || ticker,
+        size: profile.marketCap,
+        changePct: q.changePct,
+        industry: profile.industry || '',
+      });
+    }
+    return Object.entries(sectors)
+      .map(([sector, children]) => ({
+        name: sector,
+        children: children.sort((a, b) => b.size - a.size),
+        totalCap: children.reduce((s, c) => s + c.size, 0),
+      }))
+      .sort((a, b) => {
+        const aSize = a.children.reduce((sum, c) => sum + c.size, 0);
+        const bSize = b.children.reduce((sum, c) => sum + c.size, 0);
+        return bSize - aSize;
+      });
+  }, [quotes, profiles, tickerSet]);
 
   const stockQuotes = useMemo(() => {
     let list = quotes.filter(q => {
@@ -249,7 +670,14 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
               </div>
             </div>
 
-            {/* Search */}
+            {/* Treemap */}
+            {treemapData.length > 0 && (
+              <div className="rounded-lg overflow-hidden bg-[#181818] mb-6">
+                <StockTreemap sectors={treemapData} profiles={profiles} />
+              </div>
+            )}
+
+            {/* Search + Export */}
             <div className="flex flex-wrap gap-3 mb-4">
               <input
                 type="text"
@@ -258,7 +686,18 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                 onChange={e => setSearch(e.target.value)}
                 className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-48"
               />
-              <span className="text-[12px] text-[#999] self-center ml-auto">{stockQuotes.length} stocks</span>
+              <span className="text-[12px] text-[#999] self-center ml-auto flex items-center gap-3">
+                {stockQuotes.length} stocks
+                <ExportButton
+                  filename={`sotw-${title.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}`}
+                  getData={() => ({
+                    headers: ['Ticker', 'Company', 'Price', 'Prev Close', 'Change', '% Change'],
+                    rows: stockQuotes.map(q => [
+                      q.label, COMPANY_NAMES[q.label] || '', q.price, q.previousClose, q.change, q.changePct,
+                    ]),
+                  })}
+                />
+              </span>
             </div>
 
             {/* Table */}
@@ -296,6 +735,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                           <td className="px-3 py-2 font-semibold">
                             <span className="flex items-center gap-1.5">
                               <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded2 ? 'rotate-90' : ''}`}>&#9654;</span>
+                              <StockLogo ticker={q.label} size={18} />
                               {q.label}
                             </span>
                           </td>

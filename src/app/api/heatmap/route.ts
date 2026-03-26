@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 
-const HEATMAP_PRESETS: Record<string, { label: string; indicators: { id: string; label: string; higherIsBetter: boolean }[] }> = {
+const HEATMAP_PRESETS: Record<string, { label: string; indicators: { id: string; label: string; higherIsBetter: boolean; neutral?: boolean }[] }> = {
   macro: {
     label: 'Macroeconomic',
     indicators: [
@@ -27,8 +27,8 @@ const HEATMAP_PRESETS: Record<string, { label: string; indicators: { id: string;
     label: 'Trade & Finance',
     indicators: [
       { id: 'NE.TRD.GNFS.ZS', label: 'Trade/GDP', higherIsBetter: true },
-      { id: 'BX.KLT.DINV.WD.GD.ZS', label: 'FDI Inflows', higherIsBetter: true },
-      { id: 'FI.RES.TOTL.CD', label: 'Reserves', higherIsBetter: true },
+      { id: 'BX.KLT.DINV.WD.GD.ZS', label: 'FDI/GDP', higherIsBetter: true },
+      { id: 'FI.RES.TOTL.CD', label: 'Reserves ($)', higherIsBetter: true },
       { id: 'NE.EXP.GNFS.ZS', label: 'Exports/GDP', higherIsBetter: true },
       { id: 'NE.IMP.GNFS.ZS', label: 'Imports/GDP', higherIsBetter: true },
       { id: 'CM.MKT.LCAP.GD.ZS', label: 'Market Cap/GDP', higherIsBetter: true },
@@ -37,9 +37,9 @@ const HEATMAP_PRESETS: Record<string, { label: string; indicators: { id: string;
   environment: {
     label: 'Energy & Environment',
     indicators: [
-      { id: 'EG.USE.PCAP.KG.OE', label: 'Energy/Capita', higherIsBetter: false },
+      { id: 'EG.USE.PCAP.KG.OE', label: 'Energy/Cap (kgoe)', higherIsBetter: false },
       { id: 'EG.FEC.RNEW.ZS', label: 'Renewable %', higherIsBetter: true },
-      { id: 'EG.ELC.ACCS.ZS', label: 'Electricity Access', higherIsBetter: true },
+      { id: 'EG.ELC.ACCS.ZS', label: 'Elec. Access %', higherIsBetter: true },
       { id: 'AG.LND.FRST.ZS', label: 'Forest %', higherIsBetter: true },
       { id: 'SH.H2O.BASW.ZS', label: 'Clean Water %', higherIsBetter: true },
       { id: 'ER.MRN.PTMR.ZS', label: 'Marine Protected %', higherIsBetter: true },
@@ -48,12 +48,12 @@ const HEATMAP_PRESETS: Record<string, { label: string; indicators: { id: string;
   military: {
     label: 'Military',
     indicators: [
-      { id: 'MS.MIL.XPND.CD', label: 'Spending (USD)', higherIsBetter: true },
-      { id: 'MS.MIL.XPND.GD.ZS', label: 'Spending/GDP', higherIsBetter: true },
-      { id: 'MS.MIL.TOTL.P1', label: 'Personnel', higherIsBetter: true },
-      { id: 'MS.MIL.TOTL.TF.ZS', label: 'Military/Pop %', higherIsBetter: true },
-      { id: 'MS.MIL.XPND.ZS', label: 'Mil/Govt Spend %', higherIsBetter: true },
-      { id: 'IMF.NGDPD', label: 'GDP (USD)', higherIsBetter: true },
+      { id: 'MS.MIL.XPND.CD', label: 'Spending (USD)', higherIsBetter: true, neutral: true },
+      { id: 'MS.MIL.XPND.GD.ZS', label: 'Spending/GDP', higherIsBetter: true, neutral: true },
+      { id: 'MS.MIL.TOTL.P1', label: 'Personnel', higherIsBetter: true, neutral: true },
+      { id: 'MS.MIL.TOTL.TF.ZS', label: 'Military/Pop %', higherIsBetter: true, neutral: true },
+      { id: 'MS.MIL.XPND.ZS', label: 'Mil/Govt Spend %', higherIsBetter: true, neutral: true },
+      { id: 'IMF.NGDPD', label: 'GDP (USD)', higherIsBetter: true, neutral: true },
     ],
   },
 };

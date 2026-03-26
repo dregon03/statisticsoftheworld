@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
+import ExportButton from '@/components/ExportButton';
 import SparklineChart from '@/components/charts/SparklineChart';
 import {
   ResponsiveContainer,
@@ -62,8 +63,6 @@ const SECTION_KEYWORDS: Record<string, string[]> = {
   'Precious Metals': ['gold', 'silver', 'platinum', 'palladium', 'precious metal'],
   'Industrial Metals': ['copper', 'aluminum', 'steel', 'iron', 'lithium', 'nickel', 'zinc'],
   'Agriculture': ['wheat', 'corn', 'soybean', 'coffee', 'cotton', 'sugar', 'cocoa', 'grain', 'food', 'crop', 'agriculture', 'farm'],
-  'Crypto': ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'hype'],
-  'Trade & Tariffs': ['tariff', 'trade war', 'sanctions', 'import', 'export', 'customs'],
 };
 
 const RANGES = [
@@ -74,6 +73,7 @@ const RANGES = [
   { key: '6mo', label: '6M' },
   { key: '1y', label: '1Y' },
   { key: '5y', label: '5Y' },
+  { key: 'max', label: 'All' },
 ] as const;
 
 const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string; slug: string }[] }[] = [
@@ -445,6 +445,20 @@ export default function CommoditiesPage() {
           <div className="text-center py-20 text-[#999]">Loading commodity prices...</div>
         ) : (
           <div className="space-y-8">
+            <div className="flex justify-end">
+              <ExportButton
+                filename={`sotw-commodities-${new Date().toISOString().slice(0, 10)}`}
+                getData={() => ({
+                  headers: ['Section', 'Commodity', 'Price', 'Change', '% Change'],
+                  rows: COMMODITY_SECTIONS.flatMap(s => s.items.map(item => {
+                    const d = data[item.id];
+                    const chg = d?.price != null && d?.previousClose != null ? d.price - d.previousClose : null;
+                    const chgPct = chg != null && d?.previousClose ? (chg / d.previousClose * 100) : null;
+                    return [s.title, item.label, d?.price ?? null, chg ? +chg.toFixed(2) : null, chgPct ? +chgPct.toFixed(2) : null];
+                  })),
+                })}
+              />
+            </div>
             {COMMODITY_SECTIONS.map(section => (
               <div key={section.title}>
                 <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">{section.title}</h2>
@@ -524,34 +538,6 @@ export default function CommoditiesPage() {
               </div>
             ))}
 
-            {/* Crypto & Trade prediction markets */}
-            {predictions.length > 0 && (
-              <>
-                {(() => {
-                  const cryptoKeywords = SECTION_KEYWORDS['Crypto'] || [];
-                  const tradeKeywords = SECTION_KEYWORDS['Trade & Tariffs'] || [];
-                  const allKw = [...cryptoKeywords, ...tradeKeywords];
-                  const matched = predictions.filter(m => {
-                    const q = m.question.toLowerCase();
-                    return allKw.some(kw => q.includes(kw));
-                  });
-                  if (matched.length === 0) return null;
-                  return (
-                    <div>
-                      <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">
-                        &#x1F52E; Crypto & Trade Predictions
-                      </h2>
-                      <p className="text-[12px] text-[#999] mb-3">
-                        Live prediction market odds from <a href="https://polymarket.com" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Polymarket</a>. Real-money forecasts on crypto prices, tariffs, and trade.
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {matched.slice(0, 8).map(m => <PredictionCard key={m.id} market={m} />)}
-                      </div>
-                    </div>
-                  );
-                })()}
-              </>
-            )}
           </div>
         )}
       </div>

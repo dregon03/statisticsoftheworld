@@ -1,19 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { INDICATORS, formatValue } from '@/lib/data';
 import Flag from './Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
-
-import IndicatorsTab from './IndicatorsTab';
-import LiveCounters from '@/components/LiveCounter';
-
-// Lazy-load heavy tab content
-const CompareContent = dynamic(() => import('./compare/page').then(m => ({ default: m.CompareContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div> });
-const MapContent = dynamic(() => import('./map/page').then(m => ({ default: m.MapContent })), { ssr: false, loading: () => <div className="text-center py-20 text-[#999] text-[13px]">Loading map...</div> });
+import ExportButton from '@/components/ExportButton';
+import Sparkline from '@/components/Sparkline';
+import HeroTabs from '@/components/HeroTabs';
 
 interface Country {
   id: string;
@@ -40,9 +35,13 @@ interface CountryStats {
 }
 
 type SortKey = 'name' | 'gdp' | 'population' | 'gdpPerCapita' | 'gdpGrowth' | 'inflation' | 'unemployment' | 'debtToGdp' | 'lifeExpectancy' | 'tradeOpenness';
-type ViewTab = 'countries' | 'indicators' | 'compare' | 'map' | 'live';
 
-// higherIsBetter: true = high values are good (blue), false = high values are bad (red)
+const SORT_KEY_TO_INDICATOR: Record<string, string> = {
+  gdp: 'IMF.NGDPD', population: 'SP.POP.TOTL', gdpPerCapita: 'IMF.NGDPDPC',
+  gdpGrowth: 'IMF.NGDP_RPCH', inflation: 'IMF.PCPIPCH', unemployment: 'IMF.LUR',
+  debtToGdp: 'IMF.GGXWDG_NGDP', lifeExpectancy: 'SP.DYN.LE00.IN', tradeOpenness: 'NE.TRD.GNFS.ZS',
+};
+
 const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number | undefined) => string; hideOnMobile?: boolean; outlier?: boolean; higherIsBetter?: boolean }[] = [
   { key: 'gdp', label: 'GDP (USD)', short: 'GDP', format: v => v ? formatValue(v, 'currency') : '-' },
   { key: 'population', label: 'Population', short: 'Pop.', format: v => v ? formatValue(v, 'number') : '-' },
@@ -57,9 +56,7 @@ const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number 
 
 function computePercentiles(values: number[]): { p10: number; p90: number } {
   const sorted = [...values].sort((a, b) => a - b);
-  const p10 = sorted[Math.floor(sorted.length * 0.1)] ?? -Infinity;
-  const p90 = sorted[Math.floor(sorted.length * 0.9)] ?? Infinity;
-  return { p10, p90 };
+  return { p10: sorted[Math.floor(sorted.length * 0.1)] ?? -Infinity, p90: sorted[Math.floor(sorted.length * 0.9)] ?? Infinity };
 }
 
 export default function Home() {
@@ -70,11 +67,22 @@ export default function Home() {
   const [sortKey, setSortKey] = useState<SortKey>('gdp');
   const [sortAsc, setSortAsc] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<ViewTab>('countries');
-  const [indicatorsData, setIndicatorsData] = useState<any[]>([]);
+  const [sparklines, setSparklines] = useState<Record<string, number[]>>({});
+  const [sparklineKey, setSparklineKey] = useState<string>('');
+
+  const fetchSparklines = useCallback((key: string) => {
+    const indicatorId = SORT_KEY_TO_INDICATOR[key];
+    if (!indicatorId || key === 'name') { setSparklines({}); setSparklineKey(''); return; }
+    if (key === sparklineKey) return;
+    fetch(`/api/sparklines?indicator=${encodeURIComponent(indicatorId)}`)
+      .then(r => r.json())
+      .then(data => { setSparklines(data); setSparklineKey(key); })
+      .catch(() => {});
+  }, [sparklineKey]);
+
+  useEffect(() => { fetchSparklines(sortKey); }, [sortKey, fetchSparklines]);
 
   useEffect(() => {
-    // Fetch countries (shown immediately)
     fetch('/api/countries')
       .then(r => r.json())
       .then(({ countries: list, stats: s }) => {
@@ -83,17 +91,10 @@ export default function Home() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-
-    // Prefetch indicators in background (ready when tab is clicked)
-    fetch('/api/indicators-overview')
-      .then(r => r.json())
-      .then(({ categories }) => setIndicatorsData(categories))
-      .catch(() => {});
   }, []);
 
   const regions = useMemo(() => [...new Set(countries.map(c => c.region))].sort(), [countries]);
 
-  // Compute outlier thresholds for rate columns
   const outlierThresholds = useMemo(() => {
     const thresholds: Record<string, { p10: number; p90: number }> = {};
     for (const col of COLUMNS) {
@@ -101,9 +102,7 @@ export default function Home() {
       const values = Object.values(stats)
         .map(s => (s as any)[col.key] as number | undefined)
         .filter((v): v is number => v != null && isFinite(v));
-      if (values.length > 10) {
-        thresholds[col.key] = computePercentiles(values);
-      }
+      if (values.length > 10) thresholds[col.key] = computePercentiles(values);
     }
     return thresholds;
   }, [stats]);
@@ -113,11 +112,11 @@ export default function Home() {
     const t = outlierThresholds[col.key];
     if (!t) return '';
     if (col.higherIsBetter) {
-      if (value >= t.p90) return 'text-[#0066cc] font-bold'; // good: high
-      if (value <= t.p10) return 'text-[#cc3333] font-bold'; // bad: low
+      if (value >= t.p90) return 'text-[#0066cc] font-bold';
+      if (value <= t.p10) return 'text-[#cc3333] font-bold';
     } else {
-      if (value <= t.p10) return 'text-[#0066cc] font-bold'; // good: low
-      if (value >= t.p90) return 'text-[#cc3333] font-bold'; // bad: high
+      if (value <= t.p10) return 'text-[#0066cc] font-bold';
+      if (value >= t.p90) return 'text-[#cc3333] font-bold';
     }
     return '';
   };
@@ -128,173 +127,122 @@ export default function Home() {
       const matchRegion = !filterRegion || c.region === filterRegion;
       return matchSearch && matchRegion;
     });
-
     list.sort((a, b) => {
-      if (sortKey === 'name') {
-        return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-      }
+      if (sortKey === 'name') return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
       const aVal = (stats[a.id] as any)?.[sortKey] ?? -Infinity;
       const bVal = (stats[b.id] as any)?.[sortKey] ?? -Infinity;
       return sortAsc ? aVal - bVal : bVal - aVal;
     });
-
     return list;
   }, [countries, stats, search, filterRegion, sortKey, sortAsc]);
 
   const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortAsc(!sortAsc);
-    } else {
-      setSortKey(key);
-      setSortAsc(key === 'name');
-    }
+    if (sortKey === key) setSortAsc(!sortAsc);
+    else { setSortKey(key); setSortAsc(key === 'name'); }
   };
 
-  const sortIcon = (key: SortKey) => {
-    if (sortKey !== key) return '';
-    return sortAsc ? ' \u2191' : ' \u2193';
-  };
-
-  const TABS: { key: ViewTab; label: string }[] = [
-    { key: 'countries', label: 'Countries' },
-    { key: 'indicators', label: 'Indicators' },
-    { key: 'compare', label: 'Compare' },
-    { key: 'map', label: 'Map' },
-    { key: 'live', label: 'Live' },
-  ];
+  const sortIcon = (key: SortKey) => sortKey !== key ? '' : sortAsc ? ' ↑' : ' ↓';
 
   return (
     <main className="min-h-screen bg-white text-[#333]">
       <Nav />
+      <HeroTabs countryCount={countries.length} indicatorCount={INDICATORS.length} />
 
-      {/* Hero */}
-      <section className="border-b border-[#e8e8e8]">
-        <div className="max-w-[1400px] mx-auto px-4 py-8 text-center">
-          <h1 className="text-[26px] font-bold mb-2">Statistics of the World</h1>
-          <p className="text-[13px] text-[#999] mb-5">{countries.length} countries. {INDICATORS.length} indicators. Free global data from IMF, World Bank, FRED, and more.</p>
-          <div className="flex flex-wrap justify-center gap-1 text-[13px]">
-            {TABS.map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-1.5 rounded-lg transition font-medium ${
-                  activeTab === tab.key
-                    ? 'bg-[#0066cc] text-white'
-                    : 'border border-[#e8e8e8] text-[#555] hover:bg-[#f5f7fa]'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Tab content */}
-      {activeTab === 'countries' && (
-        <section className="max-w-[1400px] mx-auto px-4 py-6">
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-4">
-            <input
-              type="text"
-              placeholder="Search countries..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
+      <section className="max-w-[1400px] mx-auto px-4 py-6">
+        <div className="flex flex-wrap gap-3 mb-4">
+          <input
+            type="text"
+            placeholder="Search countries..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
+          />
+          <select
+            value={filterRegion}
+            onChange={e => setFilterRegion(e.target.value)}
+            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
+          >
+            <option value="">All Regions</option>
+            {regions.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+          <span className="text-[12px] text-[#999] self-center ml-auto flex items-center gap-3">
+            {filtered.length} countries
+            <ExportButton
+              filename={`sotw-countries-${new Date().toISOString().slice(0, 10)}`}
+              getData={() => ({
+                headers: ['Country', 'Code', ...COLUMNS.map(c => c.label)],
+                rows: filtered.map(c => {
+                  const s = stats[c.id] || {};
+                  return [c.name, c.id, ...COLUMNS.map(col => (s as any)[col.key] ?? null)];
+                }),
+              })}
             />
-            <select
-              value={filterRegion}
-              onChange={(e) => setFilterRegion(e.target.value)}
-              className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
-            >
-              <option value="">All Regions</option>
-              {regions.map(r => <option key={r} value={r}>{r}</option>)}
-            </select>
-            <span className="text-[12px] text-[#999] self-center ml-auto">{filtered.length} countries</span>
-          </div>
+          </span>
+        </div>
 
-          {loading ? (
-            <div className="text-center py-20 text-[#999] text-[13px]">Loading countries...</div>
-          ) : (
-            <div className="border border-[#e8e8e8] rounded-xl overflow-x-auto">
-              <table className="w-full text-[13px]">
-                <thead>
-                  <tr className="bg-[#f8f9fa] border-b border-[#e8e8e8] text-[11px] text-[#999] uppercase tracking-wider">
-                    <th className="px-3 py-2.5 text-left font-medium sticky left-0 bg-[#f8f9fa] z-10 min-w-[180px]">
-                      <button onClick={() => handleSort('name')} className="hover:text-[#333] transition">
-                        Country{sortIcon('name')}
+        {loading ? (
+          <div className="text-center py-20 text-[#999] text-[13px]">Loading countries...</div>
+        ) : (
+          <div className="border border-[#e8e8e8] rounded-xl overflow-x-auto">
+            <table className="w-full text-[13px]">
+              <thead>
+                <tr className="bg-[#f8f9fa] border-b border-[#e8e8e8] text-[11px] text-[#999] uppercase tracking-wider">
+                  <th className="px-3 py-2.5 text-left font-medium sticky left-0 bg-[#f8f9fa] z-10 min-w-[180px]">
+                    <button onClick={() => handleSort('name')} className="hover:text-[#333] transition">
+                      Country{sortIcon('name')}
+                    </button>
+                  </th>
+                  {sortKey !== 'name' && (
+                    <th className="px-1 py-2.5 text-center font-medium hidden md:table-cell w-[70px]">Trend</th>
+                  )}
+                  {COLUMNS.map(col => (
+                    <th key={col.key} className={`px-3 py-2.5 text-right font-medium whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
+                      <button onClick={() => handleSort(col.key)} className="hover:text-[#333] transition">
+                        <span className="hidden md:inline">{col.label}</span>
+                        <span className="md:hidden">{col.short}</span>
+                        {sortIcon(col.key)}
                       </button>
                     </th>
-                    {COLUMNS.map(col => (
-                      <th
-                        key={col.key}
-                        className={`px-3 py-2.5 text-right font-medium whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
-                      >
-                        <button onClick={() => handleSort(col.key)} className="hover:text-[#333] transition">
-                          <span className="hidden md:inline">{col.label}</span>
-                          <span className="md:hidden">{col.short}</span>
-                          {sortIcon(col.key)}
-                        </button>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((c, i) => {
-                    const s = stats[c.id] || {};
-                    return (
-                      <tr
-                        key={c.id}
-                        className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition cursor-pointer ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}
-                        onClick={() => window.location.href = `/country/${c.id}`}
-                      >
-                        <td className="px-3 py-2 sticky left-0 bg-inherit z-10">
-                          <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium" onClick={e => e.stopPropagation()}>
-                            <Flag iso2={c.iso2} size={18} />
-                            {c.name}
-                          </Link>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((c, i) => {
+                  const s = stats[c.id] || {};
+                  return (
+                    <tr
+                      key={c.id}
+                      className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition cursor-pointer ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}
+                      onClick={() => window.location.href = `/country/${c.id}`}
+                    >
+                      <td className="px-3 py-2 sticky left-0 bg-inherit z-10">
+                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium" onClick={e => e.stopPropagation()}>
+                          <Flag iso2={c.iso2} size={18} />
+                          {c.name}
+                        </Link>
+                      </td>
+                      {sortKey !== 'name' && (
+                        <td className="px-1 py-2 text-center hidden md:table-cell">
+                          <Sparkline data={sparklines[c.id] || []} />
                         </td>
-                        {COLUMNS.map(col => {
-                          const val = (s as any)[col.key] as number | undefined;
-                          const outlierCls = getOutlierClass(col, val);
-                          return (
-                            <td
-                              key={col.key}
-                              className={`px-3 py-2 text-right font-mono text-[12px] ${outlierCls || 'text-[#555]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}
-                            >
-                              {col.format(val)}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
-
-      {activeTab === 'indicators' && <IndicatorsTab categories={indicatorsData} />}
-
-      {activeTab === 'compare' && (
-        <Suspense fallback={<div className="text-center py-20 text-[#999] text-[13px]">Loading compare...</div>}>
-          <CompareContent />
-        </Suspense>
-      )}
-
-      {activeTab === 'map' && (
-        <Suspense fallback={<div className="text-center py-20 text-[#999] text-[13px]">Loading map...</div>}>
-          <MapContent />
-        </Suspense>
-      )}
-
-      {activeTab === 'live' && (
-        <section className="max-w-[1000px] mx-auto px-4 py-10">
-          <LiveCounters />
-        </section>
-      )}
+                      )}
+                      {COLUMNS.map(col => {
+                        const val = (s as any)[col.key] as number | undefined;
+                        const outlierCls = getOutlierClass(col, val);
+                        return (
+                          <td key={col.key} className={`px-3 py-2 text-right font-mono text-[12px] ${outlierCls || 'text-[#555]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
+                            {col.format(val)}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <Footer />
     </main>

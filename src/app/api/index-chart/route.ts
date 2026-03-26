@@ -1,60 +1,65 @@
-const SOTW_TO_YAHOO: Record<string, string> = {
-  'YF.GOLD': 'GC=F',
-  'YF.SILVER': 'SI=F',
-  'YF.CRUDE_OIL': 'CL=F',
-  'YF.BRENT': 'BZ=F',
-  'YF.NATGAS': 'NG=F',
-  'YF.COPPER': 'HG=F',
-  'YF.PLATINUM': 'PL=F',
-  'YF.PALLADIUM': 'PA=F',
-  'YF.WHEAT': 'ZW=F',
-  'YF.CORN': 'ZC=F',
-  'YF.SOYBEANS': 'ZS=F',
-  'YF.COFFEE': 'KC=F',
-  'YF.COTTON': 'CT=F',
-  'YF.SUGAR': 'SB=F',
-  'YF.COCOA': 'CC=F',
-  'AV.ALUMINUM': 'ALI=F',
+// Yahoo Finance Index/Futures chart API
+const INDEX_SYMBOLS: Record<string, string> = {
+  // Indices
+  'YF.IDX.USA': '^GSPC', 'YF.IDX.CAN': '^GSPTSE', 'YF.IDX.BRA': '^BVSP',
+  'YF.IDX.MEX': '^MXX', 'YF.IDX.ARG': '^MERV',
+  'YF.IDX.GBR': '^FTSE', 'YF.IDX.DEU': '^GDAXI', 'YF.IDX.FRA': '^FCHI',
+  'YF.IDX.NLD': '^AEX', 'YF.IDX.ESP': '^IBEX', 'YF.IDX.ITA': 'FTSEMIB.MI',
+  'YF.IDX.CHE': '^SSMI',
+  'YF.IDX.JPN': '^N225', 'YF.IDX.HKG': '^HSI', 'YF.IDX.CHN': '000001.SS',
+  'YF.IDX.KOR': '^KS11', 'YF.IDX.IND': '^BSESN', 'YF.IDX.AUS': '^AXJO',
+  'YF.IDX.NZL': '^NZ50', 'YF.IDX.SGP': '^STI', 'YF.IDX.IDN': '^JKSE',
+  'YF.IDX.MYS': '^KLSE', 'YF.IDX.ISR': '^TA125.TA', 'YF.IDX.SAU': '^TASI.SR',
+  'YF.IDX.ZAF': '^J203.JO',
+  // Futures
+  'YF.FUT.SP500': 'ES=F', 'YF.FUT.NASDAQ': 'NQ=F',
+  'YF.FUT.DOW': 'YM=F', 'YF.FUT.RUSSELL': 'RTY=F',
+  // Stocks (use ticker directly)
 };
 
 const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y'] as const;
 
-// Pick interval based on range to keep data points reasonable
 function intervalForRange(range: string): string {
   switch (range) {
-    case '1d': return '2m';   // 2-minute candles for intraday
-    case '5d': return '15m';  // 15-minute candles for 5 days
-    case '1mo': return '1d';
-    case '3mo': return '1d';
-    case '6mo': return '1d';
-    case '1y': return '1d';
-    case '5y': return '1wk';
-    default: return '1d';
+    case '1d': return '2m';
+    case '5d': return '15m';
+    default: return range === '5y' ? '1wk' : '1d';
   }
 }
 
 let cache: Record<string, { data: any; ts: number }> = {};
-// Short cache for intraday, longer for historical
 function cacheTtl(range: string): number {
-  if (range === '1d') return 60 * 1000;       // 1 minute for intraday
-  if (range === '5d') return 2 * 60 * 1000;   // 2 minutes for 5-day
-  return 2 * 60 * 1000;                       // 2 minutes for all others
+  if (range === '1d') return 60_000;
+  if (range === '5d') return 2 * 60_000;
+  return 5 * 60_000;
+}
+
+function dateInTz(date: Date, tz: string): string {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(date);
+  } catch {
+    return date.toISOString().slice(0, 10);
+  }
 }
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id') || '';
+  const ticker = searchParams.get('ticker') || '';
   const range = searchParams.get('range') || '1y';
 
-  const yahooSymbol = SOTW_TO_YAHOO[id];
+  // Support both SOTW IDs and raw Yahoo tickers (for stocks)
+  const yahooSymbol = id ? INDEX_SYMBOLS[id] : ticker;
   if (!yahooSymbol) {
-    return Response.json({ error: 'Unknown commodity' }, { status: 400 });
+    return Response.json({ error: 'Unknown index' }, { status: 400 });
   }
   if (!VALID_RANGES.includes(range as any)) {
     return Response.json({ error: 'Invalid range' }, { status: 400 });
   }
 
-  const cacheKey = `${id}_${range}`;
+  const cacheKey = `idx_${yahooSymbol}_${range}`;
   const cached = cache[cacheKey];
   if (cached && Date.now() - cached.ts < cacheTtl(range)) {
     return Response.json(cached.data);
@@ -64,26 +69,16 @@ export async function GET(request: Request) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=${range}&interval=${interval}`;
 
   try {
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-    });
-
+    let res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
     if (!res.ok) {
-      // Fallback: try query2
-      const res2 = await fetch(url.replace('query1', 'query2'), {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-      });
-      if (!res2.ok) {
-        return Response.json({ error: 'Yahoo Finance unavailable' }, { status: 502 });
-      }
-      const json2 = await res2.json();
-      const result = parseYahooChart(json2, range);
-      cache[cacheKey] = { data: result, ts: Date.now() };
-      return Response.json(result);
+      res = await fetch(url.replace('query1', 'query2'), { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    }
+    if (!res.ok) {
+      return Response.json({ error: 'Yahoo Finance unavailable' }, { status: 502 });
     }
 
     const json = await res.json();
-    const result = parseYahooChart(json, range);
+    const result = parseChart(json, range);
     cache[cacheKey] = { data: result, ts: Date.now() };
     return Response.json(result);
   } catch {
@@ -91,23 +86,12 @@ export async function GET(request: Request) {
   }
 }
 
-// Get YYYY-MM-DD in a specific timezone
-function dateInTz(date: Date, tz: string): string {
-  try {
-    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
-    return parts; // en-CA gives YYYY-MM-DD format
-  } catch {
-    return date.toISOString().slice(0, 10);
-  }
-}
-
-function parseYahooChart(json: any, range: string = '1y') {
+function parseChart(json: any, range: string) {
   const result = json?.chart?.result?.[0];
   if (!result) return { points: [] };
 
   const timestamps: number[] = result.timestamp || [];
   const closes: (number | null)[] = result.indicators?.quote?.[0]?.close || [];
-  const currency = result.meta?.currency || 'USD';
   const tz = result.meta?.exchangeTimezoneName || 'America/New_York';
   const isIntraday = range === '1d' || range === '5d';
 
@@ -125,17 +109,13 @@ function parseYahooChart(json: any, range: string = '1y') {
     }
   }
 
-  // For daily+ charts, append today's live price from meta if it's newer than last point
   if (!isIntraday && result.meta?.regularMarketPrice) {
     const livePrice = Math.round(result.meta.regularMarketPrice * 100) / 100;
     const todayStr = dateInTz(new Date(), tz);
     const lastPoint = points[points.length - 1];
-
     if (lastPoint && lastPoint.date < todayStr) {
-      // Last candle is from a previous day — append today's live price
       points.push({ date: todayStr, value: livePrice });
     } else if (lastPoint && lastPoint.date === todayStr) {
-      // Today's candle exists but may be stale — update with live price
       lastPoint.value = livePrice;
     }
   }
@@ -148,11 +128,10 @@ function parseYahooChart(json: any, range: string = '1y') {
 
   return {
     points,
-    currency,
     regularMarketPrice: mktPrice,
+    previousClose: prevClose,
     regularMarketChange: mktChange != null ? Math.round(mktChange * 100) / 100 : null,
     regularMarketChangePercent: mktChangePct != null ? Math.round(mktChangePct * 100) / 100 : null,
-    previousClose: prevClose,
     regularMarketTime: meta.regularMarketTime ? new Date(meta.regularMarketTime * 1000).toISOString() : null,
   };
 }

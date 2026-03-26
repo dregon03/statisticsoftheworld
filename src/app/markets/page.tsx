@@ -1,11 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
-import { formatValue } from '@/lib/data';
 import MarketsHeader from './MarketsHeader';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from 'recharts';
 
 interface Quote {
   id: string;
@@ -66,10 +74,135 @@ function ChangeCell({ value, pct }: { value: number; pct: number }) {
   );
 }
 
+const RANGES = [
+  { key: '1d', label: '1D' },
+  { key: '5d', label: '5D' },
+  { key: '1mo', label: '1M' },
+  { key: '3mo', label: '3M' },
+  { key: '6mo', label: '6M' },
+  { key: '1y', label: '1Y' },
+  { key: '5y', label: '5Y' },
+] as const;
+
+interface ChartPoint { date: string; value: number }
+
+function IndexChart({ id, label }: { id: string; label: string }) {
+  const [range, setRange] = useState('1y');
+  const [points, setPoints] = useState<ChartPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchChart = useCallback(async (r: string, silent = false) => {
+    if (!silent) setLoading(true);
+    try {
+      const res = await fetch(`/api/index-chart?id=${encodeURIComponent(id)}&range=${r}`);
+      const data = await res.json();
+      setPoints(data.points || []);
+    } catch {
+      if (!silent) setPoints([]);
+    }
+    if (!silent) setLoading(false);
+  }, [id]);
+
+  useEffect(() => {
+    fetchChart(range);
+    const iv = setInterval(() => fetchChart(range, true), 60_000);
+    return () => clearInterval(iv);
+  }, [range, fetchChart]);
+
+  const first = points[0]?.value;
+  const last = points[points.length - 1]?.value;
+  const changeAmt = first && last ? last - first : 0;
+  const changePct = first ? ((last - first) / first) * 100 : 0;
+  const isUp = changeAmt >= 0;
+  const color = isUp ? '#16a34a' : '#dc2626';
+
+  const formatXTick = (date: string) => {
+    if (range === '1d' || range === '5d') return date.replace(/,.*,/, ',').split(', ').pop() || date;
+    const d = new Date(date + 'T12:00:00');
+    if (range === '5y') return d.toLocaleDateString('en', { year: '2-digit', month: 'short' });
+    return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+  };
+
+  return (
+    <div className="border-t border-[#e8e8e8] bg-[#fafbfc] px-4 py-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-[#333]">{label}</span>
+          {points.length > 1 && (
+            <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+              {isUp ? '+' : ''}{changeAmt.toLocaleString(undefined, { maximumFractionDigits: 2 })} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
+            </span>
+          )}
+        </div>
+        <div className="flex gap-1">
+          {RANGES.map(r => (
+            <button key={r.key} onClick={() => setRange(r.key)}
+              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0066cc] text-white' : 'bg-white border border-[#ddd] text-[#666] hover:bg-[#f0f0f0]'}`}>
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">Loading chart...</div>
+      ) : points.length < 2 ? (
+        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">No chart data</div>
+      ) : (
+        <div className="h-[200px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={points} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+              <defs>
+                <linearGradient id={`idxgrad-${id.replace(/\./g, '-')}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={color} stopOpacity={0.15} />
+                  <stop offset="95%" stopColor={color} stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="date"
+                tickFormatter={(date: string) => {
+                  if (points.length > 0 && date === points[points.length - 1].date) return 'Today';
+                  return formatXTick(date);
+                }}
+                tick={{ fontSize: 10, fill: '#999' }} tickLine={false} axisLine={{ stroke: '#e8e8e8' }}
+                ticks={(() => {
+                  if (points.length <= 2) return undefined;
+                  const n = Math.min(10, points.length);
+                  const step = Math.floor((points.length - 1) / n);
+                  const ticks: string[] = [];
+                  for (let i = 0; i < points.length - 1; i += step) ticks.push(points[i].date);
+                  ticks.push(points[points.length - 1].date);
+                  return ticks;
+                })()}
+              />
+              <YAxis domain={['auto', 'auto']} tick={{ fontSize: 10, fill: '#999' }} tickLine={false} axisLine={false}
+                tickFormatter={(v: number) => v.toLocaleString()} width={65} />
+              <Tooltip content={({ active, payload }) => {
+                if (!active || !payload?.[0]) return null;
+                const p = payload[0].payload as ChartPoint;
+                const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
+                const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
+                return (
+                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                    <div className="text-[#999] mb-0.5">{dateLabel}</div>
+                    <div className="font-mono font-semibold text-[14px]">{p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  </div>
+                );
+              }} />
+              <Area type="monotone" dataKey="value" stroke={color} strokeWidth={1.5} fill={`url(#idxgrad-${id.replace(/\./g, '-')})`} dot={false} activeDot={{ r: 3, fill: color, strokeWidth: 0 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MarketsPage() {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchQuotes = () => {
@@ -125,26 +258,42 @@ export default function MarketsPage() {
                           const q = quoteMap[id];
                           if (!q) return null;
                           const cid = ID_TO_COUNTRY[id] || '';
+                          const isExpanded = expanded === id;
                           return (
-                            <tr key={id} className="border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px]">
-                              <td className="px-3 py-2">
-                                <Link href={`/country/${cid}`} className="text-[#0066cc] hover:underline">
-                                  {COUNTRY_NAMES[cid] || cid}
-                                </Link>
-                              </td>
-                              <td className="px-3 py-2 text-[#666]">
-                                <Link href={`/country/${cid}/${encodeURIComponent(id)}`} className="hover:text-[#0066cc] transition">
-                                  {q.label}
-                                </Link>
-                              </td>
-                              <td className="px-3 py-2 text-right font-mono font-semibold">
-                                {q.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                              </td>
-                              <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
-                                {q.previousClose.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                              </td>
-                              <ChangeCell value={q.change} pct={q.changePct} />
-                            </tr>
+                            <React.Fragment key={id}>
+                              <tr
+                                className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
+                                onClick={() => setExpanded(isExpanded ? null : id)}
+                              >
+                                <td className="px-3 py-2">
+                                  <span className="flex items-center gap-1.5">
+                                    <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                    <Link href={`/country/${cid}`} className="text-[#0066cc] hover:underline" onClick={e => e.stopPropagation()}>
+                                      {COUNTRY_NAMES[cid] || cid}
+                                    </Link>
+                                  </span>
+                                </td>
+                                <td className="px-3 py-2 text-[#666]">
+                                  <Link href={`/country/${cid}/${encodeURIComponent(id)}`} className="hover:text-[#0066cc] transition" onClick={e => e.stopPropagation()}>
+                                    {q.label}
+                                  </Link>
+                                </td>
+                                <td className="px-3 py-2 text-right font-mono font-semibold">
+                                  {q.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                </td>
+                                <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
+                                  {q.previousClose.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                </td>
+                                <ChangeCell value={q.change} pct={q.changePct} />
+                              </tr>
+                              {isExpanded && (
+                                <tr>
+                                  <td colSpan={6} className="p-0">
+                                    <IndexChart id={id} label={q.label} />
+                                  </td>
+                                </tr>
+                              )}
+                            </React.Fragment>
                           );
                         })}
                       </tbody>

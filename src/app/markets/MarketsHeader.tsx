@@ -8,6 +8,7 @@ const TABS = [
   { href: '/markets/stocks/sp500', label: 'Stocks' },
   { href: '/markets/commodities', label: 'Commodities' },
   { href: '/markets/currencies', label: 'Currencies' },
+  { href: '/markets/crypto', label: 'Crypto' },
 ];
 
 export default function MarketsHeader({ updatedAt }: { updatedAt?: string | null }) {
@@ -39,7 +40,7 @@ export default function MarketsHeader({ updatedAt }: { updatedAt?: string | null
             key={t.href}
             href={t.href}
             className={`px-4 py-2 text-[13px] transition border-b-2 -mb-[1px] ${
-              pathname === t.href || (t.href.includes('/stocks/') && pathname.startsWith('/markets/stocks'))
+              pathname === t.href || (t.href !== '/markets' && pathname.startsWith(t.href))
                 ? 'border-[#0066cc] text-[#0066cc] font-medium'
                 : 'border-transparent text-[#666] hover:text-[#333]'
             }`}

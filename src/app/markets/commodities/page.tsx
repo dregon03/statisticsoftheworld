@@ -379,6 +379,7 @@ export default function CommoditiesPage() {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [predictions, setPredictions] = useState<PredictionMarket[]>([]);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
   // Fetch live prices from the commodity-chart API (uses Yahoo Finance meta.regularMarketPrice)
   const fetchPrices = useCallback(async () => {
@@ -390,6 +391,7 @@ export default function CommoditiesPage() {
           const json = await res.json();
           const price = json.regularMarketPrice ?? null;
           const previousClose = json.previousClose ?? null;
+          const marketTime = json.regularMarketTime ?? null;
 
           // Also fetch history for sparkline
           const histRes = await fetch(`/api/history?indicator=${encodeURIComponent(item.id)}&country=WLD`);
@@ -400,6 +402,7 @@ export default function CommoditiesPage() {
             label: item.label,
             price,
             previousClose,
+            marketTime,
             history: Array.isArray(history) ? history : [],
           };
         } catch {
@@ -408,8 +411,13 @@ export default function CommoditiesPage() {
       })
     );
     const d: Record<string, CommodityData> = {};
-    for (const r of results) d[r.id] = r;
+    let latestTime: string | null = null;
+    for (const r of results) {
+      d[r.id] = r;
+      if (r.marketTime && (!latestTime || r.marketTime > latestTime)) latestTime = r.marketTime;
+    }
     setData(d);
+    setUpdatedAt(latestTime || new Date().toISOString());
     setLoading(false);
   }, []);
 
@@ -431,7 +439,7 @@ export default function CommoditiesPage() {
       <Nav />
 
       <div className="max-w-[1200px] mx-auto px-4 py-8">
-        <MarketsHeader />
+        <MarketsHeader updatedAt={updatedAt} />
 
         {loading ? (
           <div className="text-center py-20 text-[#999]">Loading commodity prices...</div>

@@ -536,7 +536,7 @@ export default function CurrenciesPage() {
             marketTime: json.regularMarketTime ?? null,
           };
         } catch {
-          return { ...p, price: null, previousClose: null };
+          return { ...p, price: null, previousClose: null, marketTime: null };
         }
       })
     );

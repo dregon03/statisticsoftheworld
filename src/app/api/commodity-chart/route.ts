@@ -37,8 +37,8 @@ let cache: Record<string, { data: any; ts: number }> = {};
 // Short cache for intraday, longer for historical
 function cacheTtl(range: string): number {
   if (range === '1d') return 60 * 1000;       // 1 minute for intraday
-  if (range === '5d') return 5 * 60 * 1000;   // 5 minutes for 5-day
-  return 15 * 60 * 1000;                      // 15 minutes for rest
+  if (range === '5d') return 2 * 60 * 1000;   // 2 minutes for 5-day
+  return 2 * 60 * 1000;                       // 2 minutes for all others
 }
 
 export async function GET(request: Request) {
@@ -91,6 +91,16 @@ export async function GET(request: Request) {
   }
 }
 
+// Get YYYY-MM-DD in a specific timezone
+function dateInTz(date: Date, tz: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+    return parts; // en-CA gives YYYY-MM-DD format
+  } catch {
+    return date.toISOString().slice(0, 10);
+  }
+}
+
 function parseYahooChart(json: any, range: string = '1y') {
   const result = json?.chart?.result?.[0];
   if (!result) return { points: [] };
@@ -98,6 +108,7 @@ function parseYahooChart(json: any, range: string = '1y') {
   const timestamps: number[] = result.timestamp || [];
   const closes: (number | null)[] = result.indicators?.quote?.[0]?.close || [];
   const currency = result.meta?.currency || 'USD';
+  const tz = result.meta?.exchangeTimezoneName || 'America/New_York';
   const isIntraday = range === '1d' || range === '5d';
 
   const points: { date: string; value: number }[] = [];
@@ -107,12 +118,40 @@ function parseYahooChart(json: any, range: string = '1y') {
       const d = new Date(timestamps[i] * 1000);
       points.push({
         date: isIntraday
-          ? d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-          : d.toISOString().slice(0, 10),
+          ? d.toLocaleString('en-US', { timeZone: tz, month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+          : dateInTz(d, tz),
         value: Math.round(close * 100) / 100,
       });
     }
   }
 
-  return { points, currency };
+  // For daily+ charts, append today's live price from meta if it's newer than last point
+  if (!isIntraday && result.meta?.regularMarketPrice) {
+    const livePrice = Math.round(result.meta.regularMarketPrice * 100) / 100;
+    const todayStr = dateInTz(new Date(), tz);
+    const lastPoint = points[points.length - 1];
+
+    if (lastPoint && lastPoint.date < todayStr) {
+      // Last candle is from a previous day — append today's live price
+      points.push({ date: todayStr, value: livePrice });
+    } else if (lastPoint && lastPoint.date === todayStr) {
+      // Today's candle exists but may be stale — update with live price
+      lastPoint.value = livePrice;
+    }
+  }
+
+  const meta = result.meta || {};
+  const mktPrice = meta.regularMarketPrice ?? null;
+  const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? null;
+  const mktChange = (mktPrice != null && prevClose != null) ? mktPrice - prevClose : null;
+  const mktChangePct = (mktChange != null && prevClose) ? (mktChange / prevClose) * 100 : null;
+
+  return {
+    points,
+    currency,
+    regularMarketPrice: mktPrice,
+    regularMarketChange: mktChange != null ? Math.round(mktChange * 100) / 100 : null,
+    regularMarketChangePercent: mktChangePct != null ? Math.round(mktChangePct * 100) / 100 : null,
+    previousClose: prevClose,
+  };
 }

@@ -26,6 +26,8 @@ const COMMODITY_IDS = new Set([
 ]);
 
 const RANGES = [
+  { key: '1d', label: '1D' },
+  { key: '5d', label: '5D' },
   { key: '1mo', label: '1M' },
   { key: '3mo', label: '3M' },
   { key: '6mo', label: '6M' },
@@ -38,20 +40,22 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
   const [points, setPoints] = useState<ChartPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchChart = useCallback(async (r: string) => {
-    setLoading(true);
+  const fetchChart = useCallback(async (r: string, silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await fetch(`/api/commodity-chart?id=${encodeURIComponent(indicatorId)}&range=${r}`);
       const data = await res.json();
       setPoints(data.points || []);
     } catch {
-      setPoints([]);
+      if (!silent) setPoints([]);
     }
-    setLoading(false);
+    if (!silent) setLoading(false);
   }, [indicatorId]);
 
   useEffect(() => {
     fetchChart(range);
+    const iv = setInterval(() => fetchChart(range, true), 30_000);
+    return () => clearInterval(iv);
   }, [range, fetchChart]);
 
   const first = points[0]?.value;
@@ -62,7 +66,8 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
   const color = isUp ? '#16a34a' : '#dc2626';
 
   const formatXTick = (date: string) => {
-    const d = new Date(date);
+    if (range === '1d' || range === '5d') return date.replace(/,.*,/, ',').split(', ').pop() || date;
+    const d = new Date(date + 'T12:00:00');
     if (range === '5y') return d.toLocaleDateString('en', { year: '2-digit', month: 'short' });
     return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
   };
@@ -116,12 +121,24 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis
                 dataKey="date"
-                tickFormatter={formatXTick}
+                tickFormatter={(date: string) => {
+                  if (points.length > 0 && date === points[points.length - 1].date) return 'Today';
+                  return formatXTick(date);
+                }}
                 tick={{ fontSize: 11, fill: '#999' }}
                 tickLine={false}
                 axisLine={{ stroke: '#e8e8e8' }}
-                interval="preserveStartEnd"
-                minTickGap={60}
+                ticks={(() => {
+                  if (points.length <= 2) return undefined;
+                  const n = Math.min(10, points.length);
+                  const step = Math.floor((points.length - 1) / n);
+                  const ticks: string[] = [];
+                  for (let i = 0; i < points.length - 1; i += step) {
+                    ticks.push(points[i].date);
+                  }
+                  ticks.push(points[points.length - 1].date);
+                  return ticks;
+                })()}
               />
               <YAxis
                 domain={['auto', 'auto']}
@@ -135,12 +152,13 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
                 content={({ active, payload }) => {
                   if (!active || !payload?.[0]) return null;
                   const p = payload[0].payload as ChartPoint;
-                  const d = new Date(p.date);
+                  const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
+                  const dateLabel = isISO
+                    ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })
+                    : p.date;
                   return (
                     <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
-                      <div className="text-[#999] mb-0.5">
-                        {d.toLocaleDateString('en', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}
-                      </div>
+                      <div className="text-[#999] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[15px]">
                         ${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
@@ -176,7 +194,6 @@ function MonthlyChart({ indicatorId, countryId }: { indicatorId: string; country
   const [freq, setFreq] = useState('M');
 
   useEffect(() => {
-    // Try multiple possible monthly IDs (e.g., FRED.CPI for USA, FRED.CPI.GBR for UK)
     const possibleIds = [indicatorId, `${indicatorId}.${countryId}`];
 
     async function tryFetch() {

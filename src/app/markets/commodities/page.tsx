@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
-import { formatValue } from '@/lib/data';
 import MarketsHeader from '../MarketsHeader';
 import SparklineChart from '@/components/charts/SparklineChart';
 import {
@@ -20,8 +19,8 @@ import {
 interface CommodityData {
   id: string;
   label: string;
-  value: number | null;
-  year: string;
+  price: number | null;
+  previousClose: number | null;
   history: { year: number; value: number | null }[];
 }
 
@@ -58,7 +57,6 @@ interface PredictionMarket {
   url: string;
 }
 
-// Keywords to match Polymarket markets to commodity sections
 const SECTION_KEYWORDS: Record<string, string[]> = {
   'Energy': ['oil', 'crude', 'natural gas', 'energy', 'opec', 'petroleum', 'gasoline', 'fuel'],
   'Precious Metals': ['gold', 'silver', 'platinum', 'palladium', 'precious metal'],
@@ -78,41 +76,41 @@ const RANGES = [
   { key: '5y', label: '5Y' },
 ] as const;
 
-const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string }[] }[] = [
+const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string; slug: string }[] }[] = [
   {
     title: 'Energy',
     items: [
-      { id: 'YF.CRUDE_OIL', label: 'WTI Crude Oil' },
-      { id: 'YF.BRENT', label: 'Brent Crude Oil' },
-      { id: 'YF.NATGAS', label: 'Natural Gas' },
+      { id: 'YF.CRUDE_OIL', label: 'WTI Crude Oil', slug: 'crude-oil' },
+      { id: 'YF.BRENT', label: 'Brent Crude Oil', slug: 'brent' },
+      { id: 'YF.NATGAS', label: 'Natural Gas', slug: 'natural-gas' },
     ],
   },
   {
     title: 'Precious Metals',
     items: [
-      { id: 'YF.GOLD', label: 'Gold' },
-      { id: 'YF.SILVER', label: 'Silver' },
-      { id: 'YF.PLATINUM', label: 'Platinum' },
-      { id: 'YF.PALLADIUM', label: 'Palladium' },
+      { id: 'YF.GOLD', label: 'Gold', slug: 'gold' },
+      { id: 'YF.SILVER', label: 'Silver', slug: 'silver' },
+      { id: 'YF.PLATINUM', label: 'Platinum', slug: 'platinum' },
+      { id: 'YF.PALLADIUM', label: 'Palladium', slug: 'palladium' },
     ],
   },
   {
     title: 'Industrial Metals',
     items: [
-      { id: 'YF.COPPER', label: 'Copper' },
-      { id: 'AV.ALUMINUM', label: 'Aluminum' },
+      { id: 'YF.COPPER', label: 'Copper', slug: 'copper' },
+      { id: 'AV.ALUMINUM', label: 'Aluminum', slug: 'aluminum' },
     ],
   },
   {
     title: 'Agriculture',
     items: [
-      { id: 'YF.WHEAT', label: 'Wheat' },
-      { id: 'YF.CORN', label: 'Corn' },
-      { id: 'YF.SOYBEANS', label: 'Soybeans' },
-      { id: 'YF.COFFEE', label: 'Coffee' },
-      { id: 'YF.COTTON', label: 'Cotton' },
-      { id: 'YF.SUGAR', label: 'Sugar' },
-      { id: 'YF.COCOA', label: 'Cocoa' },
+      { id: 'YF.WHEAT', label: 'Wheat', slug: 'wheat' },
+      { id: 'YF.CORN', label: 'Corn', slug: 'corn' },
+      { id: 'YF.SOYBEANS', label: 'Soybeans', slug: 'soybeans' },
+      { id: 'YF.COFFEE', label: 'Coffee', slug: 'coffee' },
+      { id: 'YF.COTTON', label: 'Cotton', slug: 'cotton' },
+      { id: 'YF.SUGAR', label: 'Sugar', slug: 'sugar' },
+      { id: 'YF.COCOA', label: 'Cocoa', slug: 'cocoa' },
     ],
   },
 ];
@@ -233,20 +231,22 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
   const [points, setPoints] = useState<ChartPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchChart = useCallback(async (r: string) => {
-    setLoading(true);
+  const fetchChart = useCallback(async (r: string, silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await fetch(`/api/commodity-chart?id=${encodeURIComponent(id)}&range=${r}`);
       const data = await res.json();
       setPoints(data.points || []);
     } catch {
-      setPoints([]);
+      if (!silent) setPoints([]);
     }
-    setLoading(false);
+    if (!silent) setLoading(false);
   }, [id]);
 
   useEffect(() => {
     fetchChart(range);
+    const iv = setInterval(() => fetchChart(range, true), 30_000);
+    return () => clearInterval(iv);
   }, [range, fetchChart]);
 
   const first = points[0]?.value;
@@ -256,19 +256,15 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
   const isUp = changeAmt >= 0;
   const color = isUp ? '#16a34a' : '#dc2626';
 
-  // Format tick labels based on range
   const formatXTick = (date: string) => {
-    // Intraday dates are already formatted strings like "Mar 25, 3:30 PM"
     if (range === '1d' || range === '5d') return date.replace(/,.*,/, ',').split(', ').pop() || date;
-    const d = new Date(date);
+    const d = new Date(date + 'T12:00:00');
     if (range === '5y') return d.toLocaleDateString('en', { year: '2-digit', month: 'short' });
-    if (range === '1y' || range === '6mo') return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
     return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
   };
 
   return (
     <div className="border-t border-[#e8e8e8] bg-[#fafbfc] px-4 py-4">
-      {/* Range selector */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-[13px] font-semibold text-[#333]">{label}</span>
@@ -295,7 +291,6 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
         </div>
       </div>
 
-      {/* Chart */}
       {loading ? (
         <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">
           Loading chart...
@@ -317,12 +312,24 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis
                 dataKey="date"
-                tickFormatter={formatXTick}
+                tickFormatter={(date: string) => {
+                  if (points.length > 0 && date === points[points.length - 1].date) return 'Today';
+                  return formatXTick(date);
+                }}
                 tick={{ fontSize: 10, fill: '#999' }}
                 tickLine={false}
                 axisLine={{ stroke: '#e8e8e8' }}
-                interval="preserveStartEnd"
-                minTickGap={50}
+                ticks={(() => {
+                  if (points.length <= 2) return undefined;
+                  const n = Math.min(10, points.length);
+                  const step = Math.floor((points.length - 1) / n);
+                  const ticks: string[] = [];
+                  for (let i = 0; i < points.length - 1; i += step) {
+                    ticks.push(points[i].date);
+                  }
+                  ticks.push(points[points.length - 1].date);
+                  return ticks;
+                })()}
               />
               <YAxis
                 domain={['auto', 'auto']}
@@ -336,11 +343,9 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
                 content={({ active, payload }) => {
                   if (!active || !payload?.[0]) return null;
                   const p = payload[0].payload as ChartPoint;
-                  // For intraday, p.date is already formatted (e.g. "Mar 25, 3:30 PM")
-                  // For daily+, p.date is ISO (e.g. "2026-03-25")
                   const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
                   const dateLabel = isISO
-                    ? new Date(p.date).toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })
+                    ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })
                     : p.date;
                   return (
                     <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
@@ -375,33 +380,46 @@ export default function CommoditiesPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [predictions, setPredictions] = useState<PredictionMarket[]>([]);
 
-  useEffect(() => {
-    const allIds = COMMODITY_SECTIONS.flatMap(s => s.items.map(i => i.id));
+  // Fetch live prices from the commodity-chart API (uses Yahoo Finance meta.regularMarketPrice)
+  const fetchPrices = useCallback(async () => {
+    const allItems = COMMODITY_SECTIONS.flatMap(s => s.items);
+    const results = await Promise.all(
+      allItems.map(async item => {
+        try {
+          const res = await fetch(`/api/commodity-chart?id=${encodeURIComponent(item.id)}&range=1d`);
+          const json = await res.json();
+          const price = json.regularMarketPrice ?? null;
+          const previousClose = json.previousClose ?? null;
 
-    Promise.all(
-      allIds.map(async id => {
-        const [latest, history] = await Promise.all([
-          fetch(`/api/indicator?id=${encodeURIComponent(id)}`).then(r => r.json()).catch(() => []),
-          fetch(`/api/history?indicator=${encodeURIComponent(id)}&country=WLD`).then(r => r.json()).catch(() => []),
-        ]);
-        const entry = latest?.[0];
-        const item = COMMODITY_SECTIONS.flatMap(s => s.items).find(i => i.id === id);
-        return {
-          id,
-          label: item?.label || id,
-          value: entry?.value || null,
-          year: entry?.year || '',
-          history: Array.isArray(history) ? history : [],
-        };
+          // Also fetch history for sparkline
+          const histRes = await fetch(`/api/history?indicator=${encodeURIComponent(item.id)}&country=WLD`);
+          const history = await histRes.json().catch(() => []);
+
+          return {
+            id: item.id,
+            label: item.label,
+            price,
+            previousClose,
+            history: Array.isArray(history) ? history : [],
+          };
+        } catch {
+          return { id: item.id, label: item.label, price: null, previousClose: null, history: [] };
+        }
       })
-    ).then(results => {
-      const d: Record<string, CommodityData> = {};
-      for (const r of results) d[r.id] = r;
-      setData(d);
-      setLoading(false);
-    });
+    );
+    const d: Record<string, CommodityData> = {};
+    for (const r of results) d[r.id] = r;
+    setData(d);
+    setLoading(false);
+  }, []);
 
-    // Fetch prediction markets
+  useEffect(() => {
+    fetchPrices();
+    const iv = setInterval(fetchPrices, 30_000);
+    return () => clearInterval(iv);
+  }, [fetchPrices]);
+
+  useEffect(() => {
     fetch('/api/predictions?limit=200')
       .then(r => r.json())
       .then(d => setPredictions(d.markets || []))
@@ -428,14 +446,17 @@ export default function CommoditiesPage() {
                       <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
                         <th className="text-left px-3 py-2">Commodity</th>
                         <th className="text-right px-3 py-2">Price</th>
+                        <th className="text-right px-3 py-2 hidden md:table-cell">Change</th>
                         <th className="text-right px-3 py-2 w-[100px] hidden md:table-cell">Trend</th>
-                        <th className="text-right px-3 py-2">Year</th>
                       </tr>
                     </thead>
                     <tbody>
                       {section.items.map(item => {
                         const d = data[item.id];
                         const isExpanded = expanded === item.id;
+                        const change = (d?.price != null && d?.previousClose != null) ? d.price - d.previousClose : null;
+                        const changePct = (change != null && d?.previousClose) ? (change / d.previousClose) * 100 : null;
+                        const changeColor = change != null ? (change >= 0 ? 'text-green-600' : 'text-red-600') : '';
                         return (
                           <React.Fragment key={item.id}>
                             <tr
@@ -446,9 +467,9 @@ export default function CommoditiesPage() {
                             >
                               <td className="px-3 py-2">
                                 <span className="flex items-center gap-1.5">
-                                  <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>▶</span>
+                                  <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                   <Link
-                                    href={`/country/WLD/${encodeURIComponent(item.id)}`}
+                                    href={`/markets/commodities/${item.slug}`}
                                     className="text-[#0066cc] hover:underline font-medium"
                                     onClick={e => e.stopPropagation()}
                                   >
@@ -457,7 +478,17 @@ export default function CommoditiesPage() {
                                 </span>
                               </td>
                               <td className="px-3 py-2 text-right font-mono">
-                                {d?.value ? formatValue(d.value, 'currency', 2) : '—'}
+                                {d?.price != null ? `$${d.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                              </td>
+                              <td className={`px-3 py-2 text-right font-mono hidden md:table-cell ${changeColor}`}>
+                                {change != null ? (
+                                  <>
+                                    {change >= 0 ? '+' : ''}{change.toFixed(2)}
+                                    {changePct != null && (
+                                      <span className="text-[11px] ml-1">({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)</span>
+                                    )}
+                                  </>
+                                ) : '—'}
                               </td>
                               <td className="px-3 py-2 text-right hidden md:table-cell">
                                 {d?.history && d.history.length > 2 && (
@@ -466,7 +497,6 @@ export default function CommoditiesPage() {
                                   </div>
                                 )}
                               </td>
-                              <td className="px-3 py-2 text-right text-[#999]">{d?.year || '—'}</td>
                             </tr>
                             {isExpanded && (
                               <tr>

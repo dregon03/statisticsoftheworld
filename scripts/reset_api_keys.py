@@ -34,15 +34,21 @@ def main():
     """)
     reset_count = cur.rowcount
 
-    # Deactivate keys that haven't been used in 90 days
+    # Deactivate keys that haven't been used in 90 days (only if column exists)
     cur.execute("""
-        UPDATE sotw_api_keys
-        SET active = FALSE
-        WHERE active = TRUE
-        AND last_used_at IS NOT NULL
-        AND last_used_at < NOW() - INTERVAL '90 days'
+        SELECT column_name FROM information_schema.columns
+        WHERE table_name = 'sotw_api_keys' AND column_name = 'last_used_at'
     """)
-    deactivated = cur.rowcount
+    deactivated = 0
+    if cur.fetchone():
+        cur.execute("""
+            UPDATE sotw_api_keys
+            SET active = FALSE
+            WHERE active = TRUE
+            AND last_used_at IS NOT NULL
+            AND last_used_at < NOW() - INTERVAL '90 days'
+        """)
+        deactivated = cur.rowcount
 
     # Report usage stats
     cur.execute("""

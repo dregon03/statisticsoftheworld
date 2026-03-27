@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 
-export const revalidate = 300; // Cache for 5 minutes
+export const dynamic = 'force-dynamic'; // No caching — always fresh from DB
+export const revalidate = 0;
 
 export async function GET() {
   const { data, error } = await supabase
@@ -23,5 +24,7 @@ export async function GET() {
       change: q.change,
       changePct: q.change_pct,
     })),
+  }, {
+    headers: { 'Cache-Control': 'no-store, max-age=0' },
   });
 }

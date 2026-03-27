@@ -28,22 +28,63 @@ interface IndicatorMeta {
 }
 
 const SLUG_MAP: Record<string, { id: string; label: string; category: string }> = {
-  'gold': { id: 'YF.GOLD', label: 'Gold', category: 'Precious Metals' },
-  'silver': { id: 'YF.SILVER', label: 'Silver', category: 'Precious Metals' },
+  // Energy
   'crude-oil': { id: 'YF.CRUDE_OIL', label: 'WTI Crude Oil', category: 'Energy' },
   'brent': { id: 'YF.BRENT', label: 'Brent Crude Oil', category: 'Energy' },
   'natural-gas': { id: 'YF.NATGAS', label: 'Natural Gas', category: 'Energy' },
-  'copper': { id: 'YF.COPPER', label: 'Copper', category: 'Industrial Metals' },
+  'gasoline': { id: 'YF.GASOLINE', label: 'Gasoline (RBOB)', category: 'Energy' },
+  'heating-oil': { id: 'YF.HEATING_OIL', label: 'Heating Oil', category: 'Energy' },
+  // Precious Metals
+  'gold': { id: 'YF.GOLD', label: 'Gold', category: 'Precious Metals' },
+  'silver': { id: 'YF.SILVER', label: 'Silver', category: 'Precious Metals' },
   'platinum': { id: 'YF.PLATINUM', label: 'Platinum', category: 'Precious Metals' },
   'palladium': { id: 'YF.PALLADIUM', label: 'Palladium', category: 'Precious Metals' },
-  'wheat': { id: 'YF.WHEAT', label: 'Wheat', category: 'Agriculture' },
-  'corn': { id: 'YF.CORN', label: 'Corn', category: 'Agriculture' },
-  'soybeans': { id: 'YF.SOYBEANS', label: 'Soybeans', category: 'Agriculture' },
-  'coffee': { id: 'YF.COFFEE', label: 'Coffee', category: 'Agriculture' },
-  'cotton': { id: 'YF.COTTON', label: 'Cotton', category: 'Agriculture' },
-  'sugar': { id: 'YF.SUGAR', label: 'Sugar', category: 'Agriculture' },
-  'cocoa': { id: 'YF.COCOA', label: 'Cocoa', category: 'Agriculture' },
-  'aluminum': { id: 'AV.ALUMINUM', label: 'Aluminum', category: 'Industrial Metals' },
+  // Industrial Metals
+  'copper': { id: 'YF.COPPER', label: 'Copper', category: 'Industrial Metals' },
+  'aluminum': { id: 'YF.ALUMINUM', label: 'Aluminum', category: 'Industrial Metals' },
+  'steel': { id: 'YF.STEEL', label: 'Steel (HRC)', category: 'Industrial Metals' },
+  'iron-ore': { id: 'YF.IRON_ORE', label: 'Iron Ore', category: 'Industrial Metals' },
+  'nickel': { id: 'YF.NICKEL_ETC', label: 'Nickel (ETC)', category: 'Industrial Metals' },
+  'zinc': { id: 'YF.ZINC_ETC', label: 'Zinc (ETC)', category: 'Industrial Metals' },
+  // Grains
+  'wheat': { id: 'YF.WHEAT', label: 'Wheat (Chicago)', category: 'Grains' },
+  'wheat-kc': { id: 'YF.WHEAT_KC', label: 'Wheat (KC HRW)', category: 'Grains' },
+  'corn': { id: 'YF.CORN', label: 'Corn', category: 'Grains' },
+  'soybeans': { id: 'YF.SOYBEANS', label: 'Soybeans', category: 'Grains' },
+  'soybean-meal': { id: 'YF.SOYBEAN_MEAL', label: 'Soybean Meal', category: 'Grains' },
+  'soybean-oil': { id: 'YF.SOYBEAN_OIL', label: 'Soybean Oil', category: 'Grains' },
+  'oats': { id: 'YF.OATS', label: 'Oats', category: 'Grains' },
+  'rice': { id: 'YF.RICE', label: 'Rough Rice', category: 'Grains' },
+  // Softs
+  'coffee': { id: 'YF.COFFEE', label: 'Coffee', category: 'Softs' },
+  'cocoa': { id: 'YF.COCOA', label: 'Cocoa', category: 'Softs' },
+  'sugar': { id: 'YF.SUGAR', label: 'Sugar #11', category: 'Softs' },
+  'cotton': { id: 'YF.COTTON', label: 'Cotton', category: 'Softs' },
+  'orange-juice': { id: 'YF.OJ', label: 'Orange Juice', category: 'Softs' },
+  'lumber': { id: 'YF.LUMBER', label: 'Lumber', category: 'Softs' },
+  // Livestock
+  'live-cattle': { id: 'YF.LIVE_CATTLE', label: 'Live Cattle', category: 'Livestock' },
+  'lean-hogs': { id: 'YF.LEAN_HOGS', label: 'Lean Hogs', category: 'Livestock' },
+  'feeder-cattle': { id: 'YF.FEEDER_CATTLE', label: 'Feeder Cattle', category: 'Livestock' },
+  // Dairy
+  'milk': { id: 'YF.MILK', label: 'Milk (Class III)', category: 'Dairy' },
+  'butter': { id: 'YF.BUTTER', label: 'Butter', category: 'Dairy' },
+  'cheese': { id: 'YF.CHEESE', label: 'Cheese', category: 'Dairy' },
+  // China (SHFE/DCE/ZCE)
+  'nickel-cn': { id: 'SINA.NICKEL', label: 'Nickel (SHFE)', category: 'China (SHFE)' },
+  'zinc-cn': { id: 'SINA.ZINC', label: 'Zinc (SHFE)', category: 'China (SHFE)' },
+  'tin-cn': { id: 'SINA.TIN', label: 'Tin (SHFE)', category: 'China (SHFE)' },
+  'lead-cn': { id: 'SINA.LEAD', label: 'Lead (SHFE)', category: 'China (SHFE)' },
+  'rebar-cn': { id: 'SINA.REBAR', label: 'Rebar Steel (SHFE)', category: 'China (SHFE)' },
+  'stainless-cn': { id: 'SINA.STAINLESS', label: 'Stainless Steel (SHFE)', category: 'China (SHFE)' },
+  'iron-ore-cn': { id: 'SINA.IRON_ORE_CN', label: 'Iron Ore (DCE)', category: 'China (DCE)' },
+  'coking-coal': { id: 'SINA.COKING_COAL', label: 'Coking Coal (DCE)', category: 'China (DCE)' },
+  'rubber': { id: 'SINA.RUBBER', label: 'Rubber (SHFE)', category: 'China (SHFE)' },
+  'palm-oil': { id: 'SINA.PALM_OIL', label: 'Palm Oil (DCE)', category: 'China (DCE)' },
+  'methanol': { id: 'SINA.METHANOL', label: 'Methanol (ZCE)', category: 'China (ZCE)' },
+  'urea': { id: 'SINA.UREA', label: 'Urea (ZCE)', category: 'China (ZCE)' },
+  'soda-ash': { id: 'SINA.SODA_ASH', label: 'Soda Ash (ZCE)', category: 'China (ZCE)' },
+  'glass': { id: 'SINA.GLASS', label: 'Glass (ZCE)', category: 'China (ZCE)' },
 };
 
 const RANGES = [
@@ -54,9 +95,9 @@ const RANGES = [
   { key: 'max', label: 'All' },
 ] as const;
 
-function fmt(v: number | null) {
+function fmt(v: number | null, currency = '$') {
   if (v == null) return '—';
-  return '$' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return currency + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function FuturesCurve({ id }: { id: string }) {
@@ -110,11 +151,15 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
   const [history, setHistory] = useState<HistoryPoint[]>([]);
   const [meta, setMeta] = useState<IndicatorMeta | null>(null);
 
+  const isCN = commodity?.id.startsWith('SINA.') ?? false;
+  const curr = isCN ? '¥' : '$';
+
   const fetchChart = useCallback(async (r: string, silent = false) => {
     if (!commodity) return;
     if (!silent) setLoading(true);
     try {
-      const res = await fetch(`/api/commodity-chart?id=${encodeURIComponent(commodity.id)}&range=${r}`);
+      const endpoint = commodity.id.startsWith('SINA.') ? '/api/china-chart' : '/api/commodity-chart';
+      const res = await fetch(`${endpoint}?id=${encodeURIComponent(commodity.id)}&range=${r}`);
       const data = await res.json();
       setPoints(data.points || []);
     } catch { if (!silent) setPoints([]); }
@@ -193,7 +238,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
           <div className="text-[12px] text-[#999] mt-0.5">Category: {commodity.category}</div>
           {last != null && (
             <div className="flex items-baseline gap-3 mt-2">
-              <span className="text-[28px] font-bold font-mono">{fmt(last)}</span>
+              <span className="text-[28px] font-bold font-mono">{fmt(last, curr)}</span>
               {points.length > 1 && (
                 <span className={`text-[14px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
                   {isUp ? '+' : ''}{changeAmt.toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
@@ -210,7 +255,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
               <div className="text-xs text-gray-400 mb-1">
                 {latestH?.year === new Date().getFullYear() ? 'Latest Close' : 'Year-End Close'}
               </div>
-              <div className="text-xl font-bold text-blue-600">{fmt(latestH?.value)}</div>
+              <div className="text-xl font-bold text-blue-600">{fmt(latestH?.value, curr)}</div>
               <div className="text-xs text-gray-400">{latestH?.year}</div>
             </div>
             {yoyChange != null && (
@@ -225,14 +270,14 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
             {maxH && (
               <div className="border border-gray-100 rounded-xl p-4">
                 <div className="text-xs text-gray-400 mb-1">Maximum</div>
-                <div className="text-lg font-bold text-gray-900">{fmt(maxH.value)}</div>
+                <div className="text-lg font-bold text-gray-900">{fmt(maxH.value, curr)}</div>
                 <div className="text-xs text-gray-400">{maxH.year}</div>
               </div>
             )}
             {minH && minH.value !== Infinity && (
               <div className="border border-gray-100 rounded-xl p-4">
                 <div className="text-xs text-gray-400 mb-1">Minimum</div>
-                <div className="text-lg font-bold text-gray-900">{fmt(minH.value)}</div>
+                <div className="text-lg font-bold text-gray-900">{fmt(minH.value, curr)}</div>
                 <div className="text-xs text-gray-400">{minH.year}</div>
               </div>
             )}
@@ -252,10 +297,10 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
         {validHistory.length > 0 && (
           <div className="flex flex-wrap gap-0 border border-gray-100 rounded-xl overflow-hidden mb-6">
             {[
-              { label: 'Last', val: fmt(latestH?.value) },
-              { label: 'Previous', val: fmt(prevH?.value ?? null) },
-              { label: 'Highest', val: fmt(maxH?.value) },
-              { label: 'Lowest', val: minH?.value !== Infinity ? fmt(minH?.value) : '—' },
+              { label: 'Last', val: fmt(latestH?.value, curr) },
+              { label: 'Previous', val: fmt(prevH?.value ?? null, curr) },
+              { label: 'Highest', val: fmt(maxH?.value, curr) },
+              { label: 'Lowest', val: minH?.value !== Infinity ? fmt(minH?.value, curr) : '—' },
               { label: 'Unit', val: meta?.unit || 'USD' },
               { label: 'Source', val: meta?.sourceName || 'Yahoo Finance' },
             ].map((s, i) => (
@@ -322,7 +367,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
                   return (
                     <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
                       <div className="text-[#999] mb-0.5">{dateLabel}</div>
-                      <div className="font-mono font-semibold text-[15px]">{fmt(p.value)}</div>
+                      <div className="font-mono font-semibold text-[15px]">{fmt(p.value, curr)}</div>
                     </div>
                   );
                 }} />
@@ -332,11 +377,11 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
           </div>
         )}
         <div className="text-[11px] text-[#999] mt-2">
-          {points.length > 0 && `${points.length} data points`} · Source: Yahoo Finance (15-min delayed) · Auto-refreshes every 30s
+          {points.length > 0 && `${points.length} data points`} · Source: {isCN ? 'Sina Finance' : 'Yahoo Finance (15-min delayed)'} · Auto-refreshes every 30s
         </div>
 
-        {/* Futures Curve */}
-        <FuturesCurve id={commodity.id} />
+        {/* Futures Curve (YF commodities only) */}
+        {!isCN && <FuturesCurve id={commodity.id} />}
 
         {/* Historical Data Table */}
         {validHistory.length > 0 && (
@@ -359,7 +404,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
                     return (
                       <tr key={d.year} className="border-b border-gray-50 hover:bg-gray-50 transition">
                         <td className="px-5 py-2.5 text-sm font-medium">{d.year}</td>
-                        <td className="px-5 py-2.5 text-right font-mono text-sm">{fmt(d.value)}</td>
+                        <td className="px-5 py-2.5 text-right font-mono text-sm">{fmt(d.value, curr)}</td>
                         <td className="px-5 py-2.5 text-right text-sm">
                           {change != null && (
                             <span className={change >= 0 ? 'text-green-600' : 'text-red-600'}>

@@ -33,7 +33,7 @@ jobs:
         run: python scripts/fetch_live_quotes.py --loop --interval 30
 
   sp500:
-    name: S&P 500 Stocks (30s)
+    name: S&P 500 Stocks (5s)
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -41,6 +41,41 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install psycopg2-binary yfinance pandas
-      - name: Fetch S&P 500 stocks every 30s
-        run: python scripts/fetch_sp500_quotes.py --loop --interval 30
+      - run: pip install psycopg2-binary
+      - name: Fetch S&P 500 stocks every 5s
+        run: python scripts/fetch_sp500_quotes.py --loop --interval 5
+
+  china-commodities:
+    name: China Commodity Futures (30s)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary
+      - name: Fetch Chinese commodity futures every 30s
+        run: |
+          # Chinese markets: 9:00-15:00 CST = 1:00-7:00 UTC
+          # Run in a loop during those hours
+          python -c "
+          import time, datetime, subprocess, sys
+          start = time.time()
+          max_runtime = 5.5 * 3600
+          iteration = 0
+          while time.time() - start < max_runtime:
+              now = datetime.datetime.utcnow()
+              # Only fetch during Chinese market hours (1:00-7:00 UTC, roughly)
+              if 0 <= now.hour <= 8:
+                  try:
+                      subprocess.run([sys.executable, 'scripts/fetch_china_quotes.py'], timeout=20)
+                      iteration += 1
+                      print(f'[{now.strftime(\"%H:%M:%S\")}] #{iteration} done', flush=True)
+                  except Exception as e:
+                      print(f'Error: {e}', flush=True)
+              else:
+                  print(f'[{now.strftime(\"%H:%M:%S\")}] Outside China market hours, sleeping', flush=True)
+              time.sleep(30)
+          print(f'Done: {iteration} iterations')
+          "

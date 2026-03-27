@@ -5,6 +5,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
 import ExportButton from '@/components/ExportButton';
+import AnimatedPrice from '@/components/AnimatedPrice';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -372,7 +373,7 @@ export default function CryptoPage() {
             </div>
             <div className="flex items-baseline gap-3">
               <span className="text-[28px] font-bold font-mono text-[#333]">
-                {btc?.price != null ? `$${btc.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '—'}
+                {btc?.price != null ? <AnimatedPrice value={btc.price} format={v => `$${v.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} /> : '—'}
               </span>
               {btcChange != null && (
                 <span className={`text-[14px] font-mono ${btcChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -393,7 +394,7 @@ export default function CryptoPage() {
             </div>
             <div className="flex items-baseline gap-3">
               <span className="text-[28px] font-bold font-mono text-[#333]">
-                {eth?.price != null ? `$${eth.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '—'}
+                {eth?.price != null ? <AnimatedPrice value={eth.price} format={v => `$${v.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} /> : '—'}
               </span>
               {ethChange != null && (
                 <span className={`text-[14px] font-mono ${ethChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -472,7 +473,7 @@ export default function CryptoPage() {
                               </span>
                             </td>
                             <td className="px-3 py-2 text-right font-mono font-semibold">
-                              {d?.price != null ? `$${d.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                              {d?.price != null ? <AnimatedPrice value={d.price} format={v => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} /> : '—'}
                             </td>
                             <td className="px-3 py-2 text-right text-[12px]"><ChangeSpan value={dayChg} /></td>
                             <td className="px-3 py-2 text-right text-[12px] hidden md:table-cell"><ChangeSpan value={d?.weeklyChg ?? null} /></td>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -109,17 +109,22 @@ export default function PredictionsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch('/api/predictions?limit=500')
-      .then(r => r.json())
-      .then(data => {
-        setMarkets(data.markets || []);
-        setByCategory(data.byCategory || {});
-        setUpdatedAt(data.updatedAt);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+  const fetchPredictions = useCallback(async (silent = false) => {
+    try {
+      const r = await fetch('/api/predictions?limit=500');
+      const data = await r.json();
+      setMarkets(data.markets || []);
+      setByCategory(data.byCategory || {});
+      setUpdatedAt(data.updatedAt);
+    } catch {}
+    if (!silent) setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchPredictions();
+    const iv = setInterval(() => fetchPredictions(true), 60_000);
+    return () => clearInterval(iv);
+  }, [fetchPredictions]);
 
   const filtered = selectedCategory
     ? (byCategory[selectedCategory] || [])

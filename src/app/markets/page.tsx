@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import ExportButton from '@/components/ExportButton';
+import AnimatedPrice from '@/components/AnimatedPrice';
 import MarketsHeader from './MarketsHeader';
 import {
   ResponsiveContainer,
@@ -219,7 +220,7 @@ export default function MarketsPage() {
     };
 
     fetchQuotes();
-    const interval = setInterval(fetchQuotes, 10_000);
+    const interval = setInterval(fetchQuotes, 5_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -297,7 +298,7 @@ export default function MarketsPage() {
                                   </Link>
                                 </td>
                                 <td className="px-3 py-2 text-right font-mono font-semibold">
-                                  {q.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                  <AnimatedPrice value={q.price} />
                                 </td>
                                 <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
                                   {q.previousClose.toLocaleString(undefined, { maximumFractionDigits: 2 })}

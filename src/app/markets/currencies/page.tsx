@@ -5,6 +5,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
 import ExportButton from '@/components/ExportButton';
+import AnimatedPrice from '@/components/AnimatedPrice';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -587,7 +588,7 @@ export default function CurrenciesPage() {
 
   useEffect(() => {
     fetchPrices().then(() => fetchMultiTimeframe());
-    const iv = setInterval(fetchPrices, 300_000); // 5 min
+    const iv = setInterval(fetchPrices, 30_000); // 30s — matches backend fetch interval
     return () => clearInterval(iv);
   }, [fetchPrices, fetchMultiTimeframe]);
 
@@ -682,7 +683,7 @@ export default function CurrenciesPage() {
                                 </span>
                               </td>
                               <td className="px-3 py-2 text-right font-mono font-semibold">
-                                {d?.price != null ? d.price.toFixed(p.decimals) : '—'}
+                                {d?.price != null ? <AnimatedPrice value={d.price} format={v => v.toFixed(p.decimals)} /> : '—'}
                               </td>
                               <td className="px-3 py-2 text-right text-[12px]">
                                 <ChangeSpan value={changePct ?? null} />

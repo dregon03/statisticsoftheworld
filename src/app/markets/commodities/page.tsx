@@ -6,7 +6,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
 import ExportButton from '@/components/ExportButton';
-import SparklineChart from '@/components/charts/SparklineChart';
+import AnimatedPrice from '@/components/AnimatedPrice';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -23,6 +23,7 @@ interface CommodityData {
   price: number | null;
   previousClose: number | null;
   history: { year: number; value: number | null }[];
+  intradayPoints: number[];
 }
 
 interface ChartPoint {
@@ -65,6 +66,24 @@ const SECTION_KEYWORDS: Record<string, string[]> = {
   'Agriculture': ['wheat', 'corn', 'soybean', 'coffee', 'cotton', 'sugar', 'cocoa', 'grain', 'food', 'crop', 'agriculture', 'farm'],
 };
 
+function IntradaySparkline({ points, change }: { points: number[]; change: number | null }) {
+  const w = 80, h = 24;
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+  const pathPoints = points.map((v, i) => {
+    const x = (i / (points.length - 1)) * w;
+    const y = h - ((v - min) / range) * (h - 2) - 1;
+    return `${x},${y}`;
+  }).join(' ');
+  const color = change != null ? (change >= 0 ? '#16a34a' : '#dc2626') : '#3b82f6';
+  return (
+    <svg width={w} height={h} className="inline-block">
+      <polyline points={pathPoints} fill="none" stroke={color} strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 const RANGES = [
   { key: '1d', label: '1D' },
   { key: '5d', label: '5D' },
@@ -83,6 +102,8 @@ const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string; s
       { id: 'YF.CRUDE_OIL', label: 'WTI Crude Oil', slug: 'crude-oil' },
       { id: 'YF.BRENT', label: 'Brent Crude Oil', slug: 'brent' },
       { id: 'YF.NATGAS', label: 'Natural Gas', slug: 'natural-gas' },
+      { id: 'YF.GASOLINE', label: 'Gasoline (RBOB)', slug: 'gasoline' },
+      { id: 'YF.HEATING_OIL', label: 'Heating Oil', slug: 'heating-oil' },
     ],
   },
   {
@@ -98,19 +119,70 @@ const COMMODITY_SECTIONS: { title: string; items: { id: string; label: string; s
     title: 'Industrial Metals',
     items: [
       { id: 'YF.COPPER', label: 'Copper', slug: 'copper' },
-      { id: 'AV.ALUMINUM', label: 'Aluminum', slug: 'aluminum' },
+      { id: 'YF.ALUMINUM', label: 'Aluminum', slug: 'aluminum' },
+      { id: 'YF.STEEL', label: 'Steel (HRC)', slug: 'steel' },
+      { id: 'YF.IRON_ORE', label: 'Iron Ore', slug: 'iron-ore' },
+      { id: 'YF.NICKEL_ETC', label: 'Nickel (ETC)', slug: 'nickel' },
+      { id: 'YF.ZINC_ETC', label: 'Zinc (ETC)', slug: 'zinc' },
     ],
   },
   {
-    title: 'Agriculture',
+    title: 'Grains',
     items: [
-      { id: 'YF.WHEAT', label: 'Wheat', slug: 'wheat' },
+      { id: 'YF.WHEAT', label: 'Wheat (Chicago)', slug: 'wheat' },
+      { id: 'YF.WHEAT_KC', label: 'Wheat (KC HRW)', slug: 'wheat-kc' },
       { id: 'YF.CORN', label: 'Corn', slug: 'corn' },
       { id: 'YF.SOYBEANS', label: 'Soybeans', slug: 'soybeans' },
+      { id: 'YF.SOYBEAN_MEAL', label: 'Soybean Meal', slug: 'soybean-meal' },
+      { id: 'YF.SOYBEAN_OIL', label: 'Soybean Oil', slug: 'soybean-oil' },
+      { id: 'YF.OATS', label: 'Oats', slug: 'oats' },
+      { id: 'YF.RICE', label: 'Rough Rice', slug: 'rice' },
+    ],
+  },
+  {
+    title: 'Softs',
+    items: [
       { id: 'YF.COFFEE', label: 'Coffee', slug: 'coffee' },
-      { id: 'YF.COTTON', label: 'Cotton', slug: 'cotton' },
-      { id: 'YF.SUGAR', label: 'Sugar', slug: 'sugar' },
       { id: 'YF.COCOA', label: 'Cocoa', slug: 'cocoa' },
+      { id: 'YF.SUGAR', label: 'Sugar #11', slug: 'sugar' },
+      { id: 'YF.COTTON', label: 'Cotton', slug: 'cotton' },
+      { id: 'YF.OJ', label: 'Orange Juice', slug: 'orange-juice' },
+      { id: 'YF.LUMBER', label: 'Lumber', slug: 'lumber' },
+    ],
+  },
+  {
+    title: 'Livestock',
+    items: [
+      { id: 'YF.LIVE_CATTLE', label: 'Live Cattle', slug: 'live-cattle' },
+      { id: 'YF.LEAN_HOGS', label: 'Lean Hogs', slug: 'lean-hogs' },
+      { id: 'YF.FEEDER_CATTLE', label: 'Feeder Cattle', slug: 'feeder-cattle' },
+    ],
+  },
+  {
+    title: 'Dairy',
+    items: [
+      { id: 'YF.MILK', label: 'Milk (Class III)', slug: 'milk' },
+      { id: 'YF.BUTTER', label: 'Butter', slug: 'butter' },
+      { id: 'YF.CHEESE', label: 'Cheese', slug: 'cheese' },
+    ],
+  },
+  {
+    title: 'China (SHFE/DCE/ZCE)',
+    items: [
+      { id: 'SINA.NICKEL', label: 'Nickel (SHFE)', slug: 'nickel-cn' },
+      { id: 'SINA.ZINC', label: 'Zinc (SHFE)', slug: 'zinc-cn' },
+      { id: 'SINA.TIN', label: 'Tin (SHFE)', slug: 'tin-cn' },
+      { id: 'SINA.LEAD', label: 'Lead (SHFE)', slug: 'lead-cn' },
+      { id: 'SINA.REBAR', label: 'Rebar Steel (SHFE)', slug: 'rebar-cn' },
+      { id: 'SINA.STAINLESS', label: 'Stainless Steel (SHFE)', slug: 'stainless-cn' },
+      { id: 'SINA.IRON_ORE_CN', label: 'Iron Ore (DCE)', slug: 'iron-ore-cn' },
+      { id: 'SINA.COKING_COAL', label: 'Coking Coal (DCE)', slug: 'coking-coal' },
+      { id: 'SINA.RUBBER', label: 'Rubber (SHFE)', slug: 'rubber' },
+      { id: 'SINA.PALM_OIL', label: 'Palm Oil (DCE)', slug: 'palm-oil' },
+      { id: 'SINA.METHANOL', label: 'Methanol (ZCE)', slug: 'methanol' },
+      { id: 'SINA.UREA', label: 'Urea (ZCE)', slug: 'urea' },
+      { id: 'SINA.SODA_ASH', label: 'Soda Ash (ZCE)', slug: 'soda-ash' },
+      { id: 'SINA.GLASS', label: 'Glass (ZCE)', slug: 'glass' },
     ],
   },
 ];
@@ -226,7 +298,7 @@ function FuturesCurve({ id }: { id: string }) {
   );
 }
 
-function CommodityChart({ id, label }: { id: string; label: string }) {
+function CommodityChart({ id, label, currency = '$' }: { id: string; label: string; currency?: string }) {
   const [range, setRange] = useState('1y');
   const [points, setPoints] = useState<ChartPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -234,7 +306,8 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
   const fetchChart = useCallback(async (r: string, silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const res = await fetch(`/api/commodity-chart?id=${encodeURIComponent(id)}&range=${r}`);
+      const endpoint = id.startsWith('SINA.') ? '/api/china-chart' : '/api/commodity-chart';
+      const res = await fetch(`${endpoint}?id=${encodeURIComponent(id)}&range=${r}`);
       const data = await res.json();
       setPoints(data.points || []);
     } catch {
@@ -351,7 +424,7 @@ function CommodityChart({ id, label }: { id: string; label: string }) {
                     <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
                       <div className="text-[#999] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[14px]">
-                        ${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {currency}{p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                     </div>
                   );
@@ -381,35 +454,54 @@ export default function CommoditiesPage() {
   const [predictions, setPredictions] = useState<PredictionMarket[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
-  // Fetch live prices from the commodity-chart API (uses Yahoo Finance meta.regularMarketPrice)
+  // Fetch live prices — Yahoo chart API for YF.* IDs, Sina Finance for SINA.* IDs
   const fetchPrices = useCallback(async () => {
     const allItems = COMMODITY_SECTIONS.flatMap(s => s.items);
-    const results = await Promise.all(
-      allItems.map(async item => {
+    const yfItems = allItems.filter(i => !i.id.startsWith('SINA.'));
+    const sinaItems = allItems.filter(i => i.id.startsWith('SINA.'));
+
+    // Fetch YF and SINA data in parallel
+    const [yfResults, sinaResults] = await Promise.all([
+      // YF commodities: fetch 1D chart for each (price + sparkline)
+      Promise.all(yfItems.map(async item => {
         try {
           const res = await fetch(`/api/commodity-chart?id=${encodeURIComponent(item.id)}&range=1d`);
           const json = await res.json();
           const price = json.regularMarketPrice ?? null;
           const previousClose = json.previousClose ?? null;
           const marketTime = json.regularMarketTime ?? null;
-
-          // Also fetch history for sparkline
-          const histRes = await fetch(`/api/history?indicator=${encodeURIComponent(item.id)}&country=WLD`);
-          const history = await histRes.json().catch(() => []);
-
-          return {
-            id: item.id,
-            label: item.label,
-            price,
-            previousClose,
-            marketTime,
-            history: Array.isArray(history) ? history : [],
-          };
+          const rawPoints = (json.points || []).map((p: { value: number }) => p.value);
+          const intradayPoints = previousClose != null ? [previousClose, ...rawPoints] : rawPoints;
+          return { id: item.id, label: item.label, price, previousClose, history: [] as any[], intradayPoints, marketTime };
         } catch {
-          return { id: item.id, label: item.label, price: null, previousClose: null, history: [] };
+          return { id: item.id, label: item.label, price: null, previousClose: null, history: [], intradayPoints: [] as number[], marketTime: null };
         }
-      })
-    );
+      })),
+      // SINA commodities: one quotes call + one chart call per item (all in parallel)
+      (async () => {
+        let sinaQuotes: Record<string, { price: number; previousClose: number }> = {};
+        try {
+          const qRes = await fetch('/api/china-quotes');
+          const qData = await qRes.json();
+          if (qData.quotes) sinaQuotes = qData.quotes;
+        } catch {}
+
+        return Promise.all(sinaItems.map(async item => {
+          const sq = sinaQuotes[item.id];
+          let intradayPoints: number[] = [];
+          try {
+            const chartRes = await fetch(`/api/china-chart?id=${encodeURIComponent(item.id)}&range=1d`);
+            const chartJson = await chartRes.json();
+            const rawPoints = (chartJson.points || []).map((p: { value: number }) => p.value);
+            const prevClose = sq?.previousClose ?? chartJson.previousClose;
+            intradayPoints = prevClose != null ? [prevClose, ...rawPoints] : rawPoints;
+          } catch {}
+          return { id: item.id, label: item.label, price: sq?.price ?? null, previousClose: sq?.previousClose ?? null, history: [] as any[], intradayPoints, marketTime: null };
+        }));
+      })(),
+    ]);
+
+    const results = [...yfResults, ...sinaResults];
     const d: Record<string, CommodityData> = {};
     let latestTime: string | null = null;
     for (const r of results) {
@@ -469,7 +561,7 @@ export default function CommoditiesPage() {
                         <th className="text-left px-3 py-2">Commodity</th>
                         <th className="text-right px-3 py-2">Price</th>
                         <th className="text-right px-3 py-2 hidden md:table-cell">Change</th>
-                        <th className="text-right px-3 py-2 w-[100px] hidden md:table-cell">Trend</th>
+                        <th className="text-right px-3 py-2 w-[100px] hidden md:table-cell">1D Trend</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -479,6 +571,8 @@ export default function CommoditiesPage() {
                         const change = (d?.price != null && d?.previousClose != null) ? d.price - d.previousClose : null;
                         const changePct = (change != null && d?.previousClose) ? (change / d.previousClose) * 100 : null;
                         const changeColor = change != null ? (change >= 0 ? 'text-green-600' : 'text-red-600') : '';
+                        const isCN = item.id.startsWith('SINA.');
+                        const curr = isCN ? '¥' : '$';
                         return (
                           <React.Fragment key={item.id}>
                             <tr
@@ -500,7 +594,7 @@ export default function CommoditiesPage() {
                                 </span>
                               </td>
                               <td className="px-3 py-2 text-right font-mono">
-                                {d?.price != null ? `$${d.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+                                {d?.price != null ? <AnimatedPrice value={d.price} format={v => `${curr}${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} /> : '—'}
                               </td>
                               <td className={`px-3 py-2 text-right font-mono hidden md:table-cell ${changeColor}`}>
                                 {change != null ? (
@@ -513,9 +607,9 @@ export default function CommoditiesPage() {
                                 ) : '—'}
                               </td>
                               <td className="px-3 py-2 text-right hidden md:table-cell">
-                                {d?.history && d.history.length > 2 && (
+                                {d?.intradayPoints && d.intradayPoints.length > 2 && (
                                   <div className="flex justify-end">
-                                    <SparklineChart data={d.history} width={80} height={24} />
+                                    <IntradaySparkline points={d.intradayPoints} change={change} />
                                   </div>
                                 )}
                               </td>
@@ -523,8 +617,8 @@ export default function CommoditiesPage() {
                             {isExpanded && (
                               <tr>
                                 <td colSpan={4} className="p-0">
-                                  <CommodityChart id={item.id} label={item.label} />
-                                  <FuturesCurve id={item.id} />
+                                  <CommodityChart id={item.id} label={item.label} currency={curr} />
+                                  {!isCN && <FuturesCurve id={item.id} />}
                                 </td>
                               </tr>
                             )}

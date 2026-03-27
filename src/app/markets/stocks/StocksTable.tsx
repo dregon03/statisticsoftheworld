@@ -5,6 +5,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
 import ExportButton from '@/components/ExportButton';
+import AnimatedPrice from '@/components/AnimatedPrice';
 import StocksHeader from './StocksHeader';
 import { COMPANY_NAMES } from './tickers';
 import {
@@ -554,7 +555,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
     };
 
     fetchQuotes();
-    const interval = setInterval(fetchQuotes, 10_000);
+    const interval = setInterval(fetchQuotes, 5_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -741,7 +742,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                           </td>
                           <td className="px-3 py-2 text-[12px] text-[#666] hidden md:table-cell">{COMPANY_NAMES[q.label] || ''}</td>
                           <td className="px-3 py-2 text-right font-mono font-semibold">
-                            ${q.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            <AnimatedPrice value={q.price} format={v => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
                           </td>
                           <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999] hidden sm:table-cell">
                             ${q.previousClose.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

@@ -4,7 +4,7 @@ name: ETL Data Pipeline
 # FULL AUTOMATION — managed by 1 person, runs 100% unattended
 #
 #   Every 15 min (market hours) — Live quotes (separate: live-quotes.yml)
-#   Every 4 hours               — Polymarket predictions
+#   Every hour                   — Polymarket predictions
 #   Daily midnight UTC          — API key reset
 #   Daily 7AM UTC               — All daily jobs (YF, FRED, etc.)
 #   1st of month 9AM UTC        — Intl org data (IMF, WB, UN, WHO, COMTRADE, history)
@@ -15,7 +15,7 @@ on:
     - cron: '0 0 * * *'       # Daily midnight UTC (API key reset)
     - cron: '0 7 * * *'       # Daily at 7 AM UTC
     - cron: '0 9 1 * *'       # 1st of month at 9 AM UTC (intl org annual data)
-    - cron: '0 */4 * * *'     # Every 4 hours (Polymarket)
+    - cron: '0 * * * *'        # Every hour (Polymarket)
     - cron: '30,45 12 * * 1-5'     # Weekdays 8:30AM, 8:45AM ET (BMO earnings + 8:30 macro)
     - cron: '0,15,30 13 * * 1-5'  # Weekdays 9:00, 9:15, 9:30AM ET (BMO actuals trickle in)
     - cron: '15 14 * * 1-5'       # Weekdays 10:15AM ET (after 10AM macro releases)
@@ -55,6 +55,7 @@ on:
           - clean-trade
           - stock-profiles
           - correlations
+          - china-quotes
       trade_batch:
         description: 'Trade batch number (0-6, empty=auto)'
         required: false
@@ -383,11 +384,11 @@ jobs:
   # EVERY 4 HOURS: Polymarket prediction markets
   # ════════════════════════════════════════════════════════════
   polymarket:
-    name: "4-Hourly: Polymarket Predictions"
+    name: "Hourly: Polymarket Predictions"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: >
-      github.event.schedule == '0 */4 * * *' ||
+      github.event.schedule == '0 * * * *' ||
       github.event.schedule == '0 7 * * *' ||
       github.event.inputs.pipeline == 'all' ||
       github.event.inputs.pipeline == 'polymarket'

@@ -28,3 +28,34 @@ table {
 th {
   font-weight: 600;
 }
+
+/* Price tick animations */
+@keyframes slide-up {
+  0% { transform: translateY(100%); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(0); }
+}
+
+@keyframes price-up {
+  0% { background-color: rgba(46, 204, 64, 0.25); }
+  100% { background-color: transparent; }
+}
+
+@keyframes price-down {
+  0% { background-color: rgba(231, 76, 60, 0.25); }
+  100% { background-color: transparent; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.35s ease-out;
+}
+
+.animate-price-up {
+  animation: price-up 0.6s ease-out;
+  border-radius: 2px;
+}
+
+.animate-price-down {
+  animation: price-down 0.6s ease-out;
+  border-radius: 2px;
+}

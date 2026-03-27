@@ -29,7 +29,7 @@ function intervalForRange(range: string): string {
 
 let cache: Record<string, { data: any; ts: number }> = {};
 function cacheTtl(range: string): number {
-  if (range === '1d') return 60_000;
+  if (range === '1d') return 25_000; // 25s — ensures every 30s poll gets fresh data
   if (range === '5d') return 2 * 60_000;
   return 5 * 60_000;
 }
@@ -106,6 +106,21 @@ function parseChart(json: any, range: string) {
           : dateInTz(d, tz),
         value: Math.round(close * 100) / 100,
       });
+    }
+  }
+
+  // For 1d charts, prepend previousClose so chart direction matches daily change %
+  if (range === '1d' && points.length > 0) {
+    const prevClose = result.meta?.chartPreviousClose ?? result.meta?.previousClose;
+    if (prevClose != null && !isNaN(prevClose)) {
+      const firstTimestamp = timestamps[0];
+      if (firstTimestamp) {
+        const prevDate = new Date((firstTimestamp - 60) * 1000);
+        points.unshift({
+          date: prevDate.toLocaleString('en-US', { timeZone: tz, month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+          value: Math.round(prevClose * 100) / 100,
+        });
+      }
     }
   }
 

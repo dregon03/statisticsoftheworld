@@ -1,29 +1,24 @@
 #!/usr/bin/env python3
 """
-Fetch live quotes for major stock indices via Yahoo Finance batch download.
+Fetch live quotes for major stock indices via Yahoo Finance quote API.
 
-Covers: S&P 500, Nasdaq 100, Russell 1000 (top ~500 beyond S&P), TSX 60, FTSE 100
-~1,200 unique tickers, fetched in one yf.download() call (~15-20 seconds).
+Covers: S&P 500, Nasdaq 100, TSX 60, FTSE 100
+~1,200 unique tickers, fetched via direct HTTP in batches of 200 (~2-3s total).
 Stores as YF.STOCK.{TICKER} in sotw_live_quotes.
 
 Modes:
   --once     Single fetch (default)
-  --loop     Continuous loop every 30 seconds
+  --loop     Continuous loop (default 5s for real-time during market hours)
 """
 
 import argparse
 import datetime
+import json
 import os
 import time
-import io
-import contextlib
+import urllib.request
 import psycopg2
-
-try:
-    import yfinance as yf
-except ImportError:
-    print("ERROR: pip install yfinance")
-    exit(1)
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
@@ -124,73 +119,86 @@ def get_all_unique_tickers():
     return sorted(all_tickers)
 
 
+BATCH_SIZE = 200  # Yahoo quote API handles up to ~200 symbols per request
+YAHOO_HEADERS = {"User-Agent": "Mozilla/5.0"}
+
+
+def fetch_yahoo_batch(symbols):
+    """Fetch a batch of quotes from Yahoo Finance v7 quote API. Returns list of quote dicts."""
+    syms_str = ",".join(symbols)
+    url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={syms_str}&fields=regularMarketPrice,regularMarketPreviousClose,regularMarketChange,regularMarketChangePercent"
+    req = urllib.request.Request(url, headers=YAHOO_HEADERS)
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            data = json.loads(resp.read().decode())
+        return data.get("quoteResponse", {}).get("result", [])
+    except Exception:
+        # Fallback to query2
+        try:
+            url2 = url.replace("query1", "query2")
+            req2 = urllib.request.Request(url2, headers=YAHOO_HEADERS)
+            with urllib.request.urlopen(req2, timeout=8) as resp:
+                data = json.loads(resp.read().decode())
+            return data.get("quoteResponse", {}).get("result", [])
+        except Exception:
+            return []
+
+
 def fetch_once(conn):
-    """Batch fetch all stock quotes using yf.download()."""
+    """Batch fetch all stock quotes using Yahoo quote API with concurrent requests."""
     cur = conn.cursor()
     all_tickers = get_all_unique_tickers()
     count = 0
 
-    try:
-        with contextlib.redirect_stderr(io.StringIO()):
-            data = yf.download(all_tickers, period="2d", group_by="ticker", progress=False, threads=True)
+    # Split into batches
+    batches = [all_tickers[i:i + BATCH_SIZE] for i in range(0, len(all_tickers), BATCH_SIZE)]
 
-        if data.empty:
-            return 0, 0
+    # Fetch all batches concurrently
+    all_quotes = []
+    with ThreadPoolExecutor(max_workers=len(batches)) as executor:
+        futures = {executor.submit(fetch_yahoo_batch, batch): batch for batch in batches}
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                all_quotes.extend(result)
 
-        for symbol in all_tickers:
-            try:
-                if len(all_tickers) == 1:
-                    ticker_data = data
-                elif symbol not in data.columns.get_level_values(0):
-                    continue
-                else:
-                    ticker_data = data[symbol]
+    for q in all_quotes:
+        try:
+            symbol = q.get("symbol", "")
+            price = q.get("regularMarketPrice")
+            prev = q.get("regularMarketPreviousClose")
 
-                if ticker_data.empty or len(ticker_data) < 1:
-                    continue
+            if not symbol or not price or price <= 0:
+                continue
 
-                # Get latest close and previous close
-                closes = ticker_data["Close"].dropna()
-                if len(closes) < 1:
-                    continue
+            prev = prev or price
+            change = price - prev
+            change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
 
-                price = float(closes.iloc[-1])
-                prev = float(closes.iloc[-2]) if len(closes) >= 2 else price
+            sotw_id = f"YF.STOCK.{symbol}"
 
-                if price <= 0:
-                    continue
+            cur.execute(f"""
+                INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
+                VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                ON CONFLICT (id) DO UPDATE SET
+                    price = EXCLUDED.price,
+                    previous_close = EXCLUDED.previous_close,
+                    change = EXCLUDED.change,
+                    change_pct = EXCLUDED.change_pct,
+                    updated_at = NOW()
+            """, (sotw_id, symbol, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
+            count += 1
+        except Exception:
+            pass
 
-                change = price - prev
-                change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
-
-                sotw_id = f"YF.STOCK.{symbol}"
-
-                cur.execute(f"""
-                    INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, NOW())
-                    ON CONFLICT (id) DO UPDATE SET
-                        price = EXCLUDED.price,
-                        previous_close = EXCLUDED.previous_close,
-                        change = EXCLUDED.change,
-                        change_pct = EXCLUDED.change_pct,
-                        updated_at = NOW()
-                """, (sotw_id, symbol, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
-                count += 1
-            except Exception:
-                pass
-
-        conn.commit()
-    except Exception as e:
-        print(f"  Download error: {e}", flush=True)
-        return 0, 1
-
+    conn.commit()
     return count, 0
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--loop", action="store_true")
-    parser.add_argument("--interval", type=int, default=30)
+    parser.add_argument("--interval", type=int, default=5)
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB)

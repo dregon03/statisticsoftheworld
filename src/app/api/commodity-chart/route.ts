@@ -1,20 +1,25 @@
 const SOTW_TO_YAHOO: Record<string, string> = {
-  'YF.GOLD': 'GC=F',
-  'YF.SILVER': 'SI=F',
-  'YF.CRUDE_OIL': 'CL=F',
-  'YF.BRENT': 'BZ=F',
-  'YF.NATGAS': 'NG=F',
-  'YF.COPPER': 'HG=F',
-  'YF.PLATINUM': 'PL=F',
-  'YF.PALLADIUM': 'PA=F',
-  'YF.WHEAT': 'ZW=F',
-  'YF.CORN': 'ZC=F',
-  'YF.SOYBEANS': 'ZS=F',
-  'YF.COFFEE': 'KC=F',
-  'YF.COTTON': 'CT=F',
-  'YF.SUGAR': 'SB=F',
-  'YF.COCOA': 'CC=F',
-  'AV.ALUMINUM': 'ALI=F',
+  // Precious Metals
+  'YF.GOLD': 'GC=F', 'YF.SILVER': 'SI=F', 'YF.PLATINUM': 'PL=F', 'YF.PALLADIUM': 'PA=F',
+  // Industrial Metals
+  'YF.COPPER': 'HG=F', 'YF.ALUMINUM': 'ALI=F', 'AV.ALUMINUM': 'ALI=F',
+  'YF.STEEL': 'HRC=F', 'YF.IRON_ORE': 'TIO=F',
+  // LME Proxy ETCs
+  'YF.NICKEL_ETC': 'NICK.L', 'YF.ZINC_ETC': 'ZINC.L',
+  // Energy
+  'YF.CRUDE_OIL': 'CL=F', 'YF.BRENT': 'BZ=F', 'YF.NATGAS': 'NG=F',
+  'YF.GASOLINE': 'RB=F', 'YF.HEATING_OIL': 'HO=F',
+  // Grains
+  'YF.WHEAT': 'ZW=F', 'YF.WHEAT_KC': 'KE=F', 'YF.CORN': 'ZC=F',
+  'YF.SOYBEANS': 'ZS=F', 'YF.SOYBEAN_MEAL': 'ZM=F', 'YF.SOYBEAN_OIL': 'ZL=F',
+  'YF.OATS': 'ZO=F', 'YF.RICE': 'ZR=F',
+  // Softs
+  'YF.COFFEE': 'KC=F', 'YF.COCOA': 'CC=F', 'YF.SUGAR': 'SB=F',
+  'YF.COTTON': 'CT=F', 'YF.OJ': 'OJ=F', 'YF.LUMBER': 'LBR=F',
+  // Livestock
+  'YF.LIVE_CATTLE': 'LE=F', 'YF.LEAN_HOGS': 'HE=F', 'YF.FEEDER_CATTLE': 'GF=F',
+  // Dairy
+  'YF.MILK': 'DC=F', 'YF.BUTTER': 'CB=F', 'YF.CHEESE': 'CSC=F',
 };
 
 const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y', 'max'] as const;
@@ -37,7 +42,7 @@ function intervalForRange(range: string): string {
 let cache: Record<string, { data: any; ts: number }> = {};
 // Short cache for intraday, longer for historical
 function cacheTtl(range: string): number {
-  if (range === '1d') return 60 * 1000;       // 1 minute for intraday
+  if (range === '1d') return 25 * 1000;       // 25s — ensures every 30s poll gets fresh data
   if (range === '5d') return 2 * 60 * 1000;   // 2 minutes for 5-day
   return 2 * 60 * 1000;                       // 2 minutes for all others
 }
@@ -123,6 +128,22 @@ function parseYahooChart(json: any, range: string = '1y') {
           : dateInTz(d, tz),
         value: Math.round(close * 100) / 100,
       });
+    }
+  }
+
+  // For 1d charts, prepend previousClose so the chart starts from yesterday's close
+  // This ensures the chart direction matches the daily change %
+  if (range === '1d' && points.length > 0) {
+    const prevClose = result.meta?.chartPreviousClose ?? result.meta?.previousClose;
+    if (prevClose != null && !isNaN(prevClose)) {
+      const firstTimestamp = timestamps[0];
+      if (firstTimestamp) {
+        const prevDate = new Date((firstTimestamp - 60) * 1000);
+        points.unshift({
+          date: prevDate.toLocaleString('en-US', { timeZone: tz, month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+          value: Math.round(prevClose * 100) / 100,
+        });
+      }
     }
   }
 

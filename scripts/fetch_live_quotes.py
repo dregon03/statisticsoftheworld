@@ -68,18 +68,49 @@ SYMBOLS = {
     "^TA125.TA": ("YF.IDX.ISR", "TA-125"),
     "^TASI.SR": ("YF.IDX.SAU", "Tadawul"),
     "^J203.JO": ("YF.IDX.ZAF", "JSE"),
-    # Commodities
+    # Commodities — Precious Metals
     "GC=F": ("YF.GOLD", "Gold"),
     "SI=F": ("YF.SILVER", "Silver"),
+    "PL=F": ("YF.PLATINUM", "Platinum"),
+    "PA=F": ("YF.PALLADIUM", "Palladium"),
+    # Commodities — Industrial Metals
+    "HG=F": ("YF.COPPER", "Copper"),
+    "ALI=F": ("YF.ALUMINUM", "Aluminum"),
+    "HRC=F": ("YF.STEEL", "Steel HRC"),
+    "TIO=F": ("YF.IRON_ORE", "Iron Ore"),
+    # Commodities — LME Proxy ETCs (London, track LME spot prices)
+    "NICK.L": ("YF.NICKEL_ETC", "Nickel ETC"),
+    "ZINC.L": ("YF.ZINC_ETC", "Zinc ETC"),
+    # Commodities — Energy
     "CL=F": ("YF.CRUDE_OIL", "WTI Crude"),
     "BZ=F": ("YF.BRENT", "Brent Crude"),
     "NG=F": ("YF.NATGAS", "Natural Gas"),
-    "HG=F": ("YF.COPPER", "Copper"),
-    "PL=F": ("YF.PLATINUM", "Platinum"),
+    "RB=F": ("YF.GASOLINE", "Gasoline RBOB"),
+    "HO=F": ("YF.HEATING_OIL", "Heating Oil"),
+    # Commodities — Grains
     "ZW=F": ("YF.WHEAT", "Wheat"),
+    "KE=F": ("YF.WHEAT_KC", "KC HRW Wheat"),
     "ZC=F": ("YF.CORN", "Corn"),
+    "ZS=F": ("YF.SOYBEANS", "Soybeans"),
+    "ZM=F": ("YF.SOYBEAN_MEAL", "Soybean Meal"),
+    "ZL=F": ("YF.SOYBEAN_OIL", "Soybean Oil"),
+    "ZO=F": ("YF.OATS", "Oats"),
+    "ZR=F": ("YF.RICE", "Rough Rice"),
+    # Commodities — Softs
     "KC=F": ("YF.COFFEE", "Coffee"),
     "CC=F": ("YF.COCOA", "Cocoa"),
+    "SB=F": ("YF.SUGAR", "Sugar"),
+    "CT=F": ("YF.COTTON", "Cotton"),
+    "OJ=F": ("YF.OJ", "Orange Juice"),
+    "LBR=F": ("YF.LUMBER", "Lumber"),
+    # Commodities — Livestock
+    "LE=F": ("YF.LIVE_CATTLE", "Live Cattle"),
+    "HE=F": ("YF.LEAN_HOGS", "Lean Hogs"),
+    "GF=F": ("YF.FEEDER_CATTLE", "Feeder Cattle"),
+    # Commodities — Dairy
+    "DC=F": ("YF.MILK", "Milk Class III"),
+    "CB=F": ("YF.BUTTER", "Butter"),
+    "CSC=F": ("YF.CHEESE", "Cheese"),
     # Forex
     "EURUSD=X": ("YF.FX.EUR", "EUR/USD"),
     "GBPUSD=X": ("YF.FX.GBP", "GBP/USD"),

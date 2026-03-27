@@ -223,15 +223,15 @@ export default function CalendarPage() {
   const earningsThisWeek = weekEvents.filter(e => e.type === 'earnings').length;
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
 
       <section className="max-w-[1100px] mx-auto px-4 py-6">
         {/* Header row: title + week nav */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-[24px] font-bold">Economic Calendar</h1>
-            <p className="text-[12px] text-[#999]">
+            <h1 className="text-[28px] font-extrabold text-[#0d1b2a] tracking-tight">Economic Calendar</h1>
+            <p className="text-[13px] text-[#64748b]">
               {totalThisWeek} events · {highThisWeek} high impact · {earningsThisWeek} earnings
               {meta.updatedAt && <span className="ml-2">· Updated {new Date(meta.updatedAt).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}</span>}
             </p>
@@ -240,13 +240,13 @@ export default function CalendarPage() {
             <button onClick={() => setWeekOffset(w => w - 1)} className="px-2.5 py-1 border border-[#e0e0e0] rounded text-[11px] hover:bg-[#f5f5f5] transition">←</button>
             <button onClick={() => setWeekOffset(0)} className={`px-3 py-1 border rounded text-[11px] transition ${weekOffset === 0 ? 'bg-[#333] text-white border-[#333]' : 'border-[#e0e0e0] hover:bg-[#f5f5f5]'}`}>This Week</button>
             <button onClick={() => setWeekOffset(w => w + 1)} className="px-2.5 py-1 border border-[#e0e0e0] rounded text-[11px] hover:bg-[#f5f5f5] transition">→</button>
-            <span className="text-[12px] font-medium text-[#666] ml-2 hidden sm:inline">{formatWeekRange(week.dates)}</span>
+            <span className="text-[12px] font-medium text-[#64748b] ml-2 hidden sm:inline">{formatWeekRange(week.dates)}</span>
           </div>
         </div>
 
         {/* Tabs + Filters — single row */}
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          <div className="flex items-center gap-0 border-b border-[#e8e8e8]">
+          <div className="flex items-center gap-0 border-b border-[#d5dce6]">
             {([
               { id: 'all' as TabType, label: 'All', count: totalThisWeek },
               { id: 'macro' as TabType, label: 'Macro', count: weekEvents.filter(e => e.type === 'economic').length },
@@ -256,7 +256,7 @@ export default function CalendarPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-3 py-1.5 text-[11px] font-medium border-b-2 -mb-px transition ${
-                  activeTab === tab.id ? 'border-[#333] text-[#333]' : 'border-transparent text-[#999] hover:text-[#666]'
+                  activeTab === tab.id ? 'border-[#333] text-[#0d1b2a]' : 'border-transparent text-[#64748b] hover:text-[#64748b]'
                 }`}
               >
                 {tab.label} <span className="opacity-50">({tab.count})</span>
@@ -275,7 +275,7 @@ export default function CalendarPage() {
               <option value="low">Low</option>
             </select>
             {(filterCountry || filterImpact) && (
-              <button onClick={() => { setFilterCountry(''); setFilterImpact(''); }} className="text-[10px] text-[#999] hover:text-[#333]">Clear</button>
+              <button onClick={() => { setFilterCountry(''); setFilterImpact(''); }} className="text-[10px] text-[#64748b] hover:text-[#0d1b2a]">Clear</button>
             )}
             <ExportButton
               filename={`sotw-calendar-${week.from}`}
@@ -293,11 +293,11 @@ export default function CalendarPage() {
 
         {/* Calendar table */}
         {loading ? (
-          <div className="text-center py-16 text-[#999] text-[13px]">Loading calendar...</div>
+          <div className="text-center py-16 text-[#64748b] text-[13px]">Loading calendar...</div>
         ) : (
-          <div className="border border-[#e8e8e8] rounded-lg overflow-visible">
+          <div className="border border-[#d5dce6] rounded-lg overflow-visible">
             {/* Column headers */}
-            <div className="hidden sm:flex items-center px-3 py-1.5 bg-[#f8f8f8] border-b border-[#e8e8e8] text-[10px] font-medium text-[#999] uppercase tracking-wider gap-2">
+            <div className="hidden sm:flex items-center px-3 py-1.5 bg-[#f8f8f8] border-b border-[#d5dce6] text-[10px] font-medium text-[#64748b] uppercase tracking-wider gap-2">
               <span className="w-2 shrink-0" />
               <span className="w-11 shrink-0">Time</span>
               <span className="w-6 shrink-0"></span>
@@ -318,11 +318,11 @@ export default function CalendarPage() {
               return (
                 <div key={dateStr} ref={el => { dayRefs.current[dateStr] = el; }}>
                   {/* Day header */}
-                  <div className={`px-3 py-1.5 border-b border-[#e8e8e8] flex items-center justify-between ${
+                  <div className={`px-3 py-1.5 border-b border-[#d5dce6] flex items-center justify-between ${
                     isToday ? 'bg-blue-50' : 'bg-[#fafafa]'
                   }`}>
                     <div className="flex items-center gap-2">
-                      <span className={`text-[12px] font-semibold ${isToday ? 'text-blue-600' : isPastDay ? 'text-[#999]' : 'text-[#333]'}`}>
+                      <span className={`text-[12px] font-semibold ${isToday ? 'text-blue-600' : isPastDay ? 'text-[#64748b]' : 'text-[#0d1b2a]'}`}>
                         {d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}
                       </span>
                       {isToday && <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-medium">TODAY</span>}
@@ -377,7 +377,7 @@ export default function CalendarPage() {
                                 {(() => {
                                   const tip = event.detail || getMacroTooltip(event.name);
                                   return tip ? (
-                                    <span className="cal-tip hidden absolute left-0 top-full mt-1.5 z-[100] bg-white text-[#333] text-[12px] px-3 py-2.5 rounded-lg shadow-lg whitespace-normal w-[340px] leading-relaxed pointer-events-none border border-[#d0d0d0]">
+                                    <span className="cal-tip hidden absolute left-0 top-full mt-1.5 z-[100] bg-white text-[#0d1b2a] text-[12px] px-3 py-2.5 rounded-lg shadow-lg whitespace-normal w-[340px] leading-relaxed pointer-events-none border border-[#d0d0d0]">
                                       {tip}
                                     </span>
                                   ) : null;

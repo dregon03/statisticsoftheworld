@@ -56,25 +56,25 @@ export default function CountryForecastPage() {
 
         {/* Sub-nav */}
         <div className="flex gap-1 mb-6 border-b border-gray-100">
-          <Link href={`/country/${countryId}`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333]">Overview</Link>
+          <Link href={`/country/${countryId}`} className="px-4 py-2 text-[13px] text-[#64748b] hover:text-[#0d1b2a]">Overview</Link>
           <span className="px-4 py-2 text-[13px] font-medium text-[#0066cc] border-b-2 border-[#0066cc]">Forecasts</span>
-          <Link href={`/country/${countryId}/trade-data`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333]">Trade</Link>
+          <Link href={`/country/${countryId}/trade-data`} className="px-4 py-2 text-[13px] text-[#64748b] hover:text-[#0d1b2a]">Trade</Link>
         </div>
 
         {/* Indicator buttons */}
         <div className="flex flex-wrap gap-2 mb-6">
           {indicators.map(ind => (
             <button key={ind.id} onClick={() => setSelectedId(ind.id)}
-              className={`px-3 py-1.5 text-[12px] rounded-lg border transition ${selectedId === ind.id ? 'bg-[#0066cc] text-white border-[#0066cc]' : 'border-[#e8e8e8] text-[#666] hover:bg-[#f5f7fa]'}`}>
+              className={`px-3 py-1.5 text-[12px] rounded-lg border transition ${selectedId === ind.id ? 'bg-[#0066cc] text-white border-[#0066cc]' : 'border-[#d5dce6] text-[#64748b] hover:bg-[#f4f6f9]'}`}>
               {ind.label}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <div className="text-center py-16 text-[#999]">Loading forecasts...</div>
+          <div className="text-center py-16 text-[#64748b]">Loading forecasts...</div>
         ) : !countryData ? (
-          <div className="text-center py-16 text-[#999]">No forecast data available for this country.</div>
+          <div className="text-center py-16 text-[#64748b]">No forecast data available for this country.</div>
         ) : (
           <div className="border border-gray-100 rounded-xl overflow-hidden">
             <table className="w-full">
@@ -99,7 +99,7 @@ export default function CountryForecastPage() {
           </div>
         )}
 
-        <div className="mt-4 text-[11px] text-[#999]">
+        <div className="mt-4 text-[11px] text-[#64748b]">
           Source: <a href="https://www.imf.org/en/publications/weo" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">IMF World Economic Outlook</a>
         </div>
       </section>

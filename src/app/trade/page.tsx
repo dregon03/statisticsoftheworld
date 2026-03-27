@@ -35,11 +35,11 @@ function BarList({ items, maxValue, color }: { items: { label: string; value: nu
         const pct = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
         return (
           <div key={i} className="flex items-center gap-2">
-            <span className="text-[11px] text-[#999] w-5 text-right shrink-0">{i + 1}</span>
+            <span className="text-[11px] text-[#64748b] w-5 text-right shrink-0">{i + 1}</span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-0.5">
-                <span className="text-[12px] text-[#333] truncate" title={item.label}>{item.label}</span>
-                <span className="text-[11px] font-mono text-[#666] shrink-0 ml-2">{formatUSD(item.value)}</span>
+                <span className="text-[12px] text-[#0d1b2a] truncate" title={item.label}>{item.label}</span>
+                <span className="text-[11px] font-mono text-[#64748b] shrink-0 ml-2">{formatUSD(item.value)}</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-1">
                 <div className={`${color} h-1 rounded-full transition-all duration-500`} style={{ width: `${Math.min(pct, 100)}%` }} />
@@ -75,44 +75,44 @@ export default function TradePage() {
   }, [countryId]);
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
 
       <section className="max-w-[1200px] mx-auto px-4 py-8">
         <div className="flex items-start justify-between mb-6">
           <div>
             <h1 className="text-[28px] font-bold mb-1">International Trade</h1>
-            <p className="text-[13px] text-[#999]">
+            <p className="text-[13px] text-[#64748b]">
               Top trading partners and export/import commodities from UN COMTRADE.
             </p>
           </div>
           <select
             value={countryId}
             onChange={e => setCountryId(e.target.value)}
-            className="border border-[#e8e8e8] rounded-lg px-3 py-2 text-[13px] outline-none"
+            className="border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] outline-none"
           >
             {countries.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-[#999]">Loading trade data...</div>
+          <div className="text-center py-20 text-[#64748b]">Loading trade data...</div>
         ) : !data ? (
-          <div className="text-center py-20 text-[#999]">Trade data not available for this country.</div>
+          <div className="text-center py-20 text-[#64748b]">Trade data not available for this country.</div>
         ) : (
           <>
             {/* Summary cards */}
             <div className="grid grid-cols-3 gap-4 mb-8">
               <div className="border border-gray-100 rounded-xl p-5">
-                <div className="text-[12px] text-[#999] mb-1">Total Exports ({data.year})</div>
+                <div className="text-[12px] text-[#64748b] mb-1">Total Exports ({data.year})</div>
                 <div className="text-[22px] font-bold text-green-600">{formatUSD(data.totalExports)}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-5">
-                <div className="text-[12px] text-[#999] mb-1">Total Imports ({data.year})</div>
+                <div className="text-[12px] text-[#64748b] mb-1">Total Imports ({data.year})</div>
                 <div className="text-[22px] font-bold text-red-500">{formatUSD(data.totalImports)}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-5">
-                <div className="text-[12px] text-[#999] mb-1">Trade Balance ({data.year})</div>
+                <div className="text-[12px] text-[#64748b] mb-1">Trade Balance ({data.year})</div>
                 <div className={`text-[22px] font-bold ${data.tradeBalance >= 0 ? 'text-green-600' : 'text-red-500'}`}>
                   {data.tradeBalance >= 0 ? '+' : ''}{formatUSD(data.tradeBalance)}
                 </div>
@@ -159,7 +159,7 @@ export default function TradePage() {
               </div>
             </div>
 
-            <div className="mt-6 text-[11px] text-[#999]">
+            <div className="mt-6 text-[11px] text-[#64748b]">
               Source: <a href="https://comtrade.un.org/" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">UN COMTRADE</a> ({data.year} data).
               Values in current USD. HS classification.
             </div>

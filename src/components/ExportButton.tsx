@@ -60,11 +60,11 @@ export default function ExportButton({ getData, filename }: ExportButtonProps) {
       {showMenu && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-          <div className="absolute right-0 top-full mt-1 bg-white border border-[#e8e8e8] rounded-lg shadow-lg z-50 min-w-[120px]">
-            <button onClick={exportCSV} className="w-full text-left px-3 py-2 text-[12px] hover:bg-[#f5f7fa] transition">
+          <div className="absolute right-0 top-full mt-1 bg-white border border-[#d5dce6] rounded-lg shadow-lg z-50 min-w-[120px]">
+            <button onClick={exportCSV} className="w-full text-left px-3 py-2 text-[12px] hover:bg-[#f4f6f9] transition">
               Download CSV
             </button>
-            <button onClick={exportJSON} className="w-full text-left px-3 py-2 text-[12px] hover:bg-[#f5f7fa] transition border-t border-[#f0f0f0]">
+            <button onClick={exportJSON} className="w-full text-left px-3 py-2 text-[12px] hover:bg-[#f4f6f9] transition border-t border-[#edf0f5]">
               Download JSON
             </button>
           </div>

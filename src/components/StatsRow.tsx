@@ -21,25 +21,25 @@ export default function StatsRow({ last, previous, highest, lowest, format, deci
   ];
 
   return (
-    <div className="flex flex-wrap border border-[#e8e8e8] rounded-lg overflow-hidden text-[13px]">
+    <div className="flex flex-wrap border border-[#d5dce6] rounded-lg overflow-hidden text-[13px]">
       {items.map((item, i) => (
-        <div key={item.label} className={`flex-1 min-w-[100px] px-4 py-3 ${i > 0 ? 'border-l border-[#e8e8e8]' : ''}`}>
-          <div className="text-[11px] text-[#999] uppercase tracking-wider">{item.label}</div>
-          <div className="font-semibold text-[#333] mt-0.5">
+        <div key={item.label} className={`flex-1 min-w-[100px] px-4 py-3 ${i > 0 ? 'border-l border-[#d5dce6]' : ''}`}>
+          <div className="text-[11px] text-[#64748b] uppercase tracking-wider">{item.label}</div>
+          <div className="font-semibold text-[#0d1b2a] mt-0.5">
             {item.value !== null ? formatValue(item.value, format, decimals) : '—'}
           </div>
         </div>
       ))}
       {unit && (
-        <div className="flex-1 min-w-[100px] px-4 py-3 border-l border-[#e8e8e8]">
-          <div className="text-[11px] text-[#999] uppercase tracking-wider">Unit</div>
-          <div className="text-[#333] mt-0.5">{unit}</div>
+        <div className="flex-1 min-w-[100px] px-4 py-3 border-l border-[#d5dce6]">
+          <div className="text-[11px] text-[#64748b] uppercase tracking-wider">Unit</div>
+          <div className="text-[#0d1b2a] mt-0.5">{unit}</div>
         </div>
       )}
       {source && (
-        <div className="flex-1 min-w-[100px] px-4 py-3 border-l border-[#e8e8e8]">
-          <div className="text-[11px] text-[#999] uppercase tracking-wider">Source</div>
-          <div className="text-[#333] mt-0.5">{source}</div>
+        <div className="flex-1 min-w-[100px] px-4 py-3 border-l border-[#d5dce6]">
+          <div className="text-[11px] text-[#64748b] uppercase tracking-wider">Source</div>
+          <div className="text-[#0d1b2a] mt-0.5">{source}</div>
         </div>
       )}
     </div>

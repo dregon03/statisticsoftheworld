@@ -259,7 +259,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
         {forecastData.length > 0 && (
           <div className="mt-8">
             <h2 className="text-lg font-semibold mb-3">IMF Forecast</h2>
-            <p className="text-[12px] text-[#999] mb-3">
+            <p className="text-[12px] text-[#64748b] mb-3">
               Projections from the IMF World Economic Outlook. These are staff estimates, not guarantees.
             </p>
             <div className="border border-gray-100 rounded-xl overflow-hidden">

@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
+/* ── SOTW Design Tokens ── */
 :root {
-  --background: #ffffff;
-  --foreground: #333333;
+  --sotw-navy: #0d1b2a;
+  --sotw-navy-light: #162d4a;
+  --sotw-blue: #0066cc;
+  --sotw-text: #1a1a2e;
+  --sotw-text-secondary: #64748b;
+  --sotw-text-muted: #94a3b8;
+  --sotw-border: #d5dce6;
+  --sotw-surface: #ffffff;
+  --sotw-page-bg: #f8f9fb;
+  --sotw-card-header: #f4f6f9;
+  --sotw-green: #16a34a;
+  --sotw-red: #dc2626;
+
+  --background: var(--sotw-page-bg);
+  --foreground: var(--sotw-text);
 }
 
 @theme inline {
@@ -16,8 +30,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', var(--font-sans), sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
 }
 
 /* TE-style table defaults */
@@ -37,12 +51,12 @@ th {
 }
 
 @keyframes price-up {
-  0% { background-color: rgba(46, 204, 64, 0.25); }
+  0% { background-color: rgba(22, 163, 74, 0.25); }
   100% { background-color: transparent; }
 }
 
 @keyframes price-down {
-  0% { background-color: rgba(231, 76, 60, 0.25); }
+  0% { background-color: rgba(220, 38, 38, 0.25); }
   100% { background-color: transparent; }
 }
 

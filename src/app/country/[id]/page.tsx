@@ -79,21 +79,21 @@ export default async function CountryPage({ params }: Props) {
       <Nav />
 
       <section className="max-w-6xl mx-auto px-6 py-10">
-        <div className="mb-4 text-sm text-gray-400">
-          <Link href="/" className="hover:text-gray-600 transition">Home</Link>
+        <div className="mb-4 text-[14px] text-[#94a3b8]">
+          <Link href="/" className="hover:text-[#0d1b2a] transition">Home</Link>
           <span className="mx-2">/</span>
-          <Link href="/countries" className="hover:text-gray-600 transition">Countries</Link>
+          <Link href="/countries" className="hover:text-[#0d1b2a] transition">Countries</Link>
           <span className="mx-2">/</span>
-          <span className="text-gray-600">{country.name}</span>
+          <span className="text-[#64748b]">{country.name}</span>
         </div>
 
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+            <h1 className="text-[34px] font-extrabold text-[#0d1b2a] mb-2 flex items-center gap-3 tracking-tight">
               <Flag iso2={country.iso2} size={40} />
               {country.name}
             </h1>
-            <div className="flex gap-4 text-sm text-gray-400">
+            <div className="flex gap-4 text-[14px] text-[#64748b]">
               {country.capitalCity && <span>Capital: {country.capitalCity}</span>}
               <span>Region: {country.region}</span>
               <span>Income: {country.incomeLevel}</span>
@@ -102,20 +102,20 @@ export default async function CountryPage({ params }: Props) {
         </div>
 
         {/* Sub-navigation */}
-        <div className="flex gap-1 mb-6 border-b border-gray-100">
-          <span className="px-4 py-2 text-[13px] font-medium text-[#0066cc] border-b-2 border-[#0066cc]">
+        <div className="flex gap-1 mb-6 border-b border-[#d5dce6]">
+          <span className="px-4 py-2.5 text-[14px] font-semibold text-[#0d1b2a] border-b-2 border-[#0d1b2a]">
             Overview
           </span>
-          <Link href={`/country/${id}/forecast`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+          <Link href={`/country/${id}/forecast`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
             Forecasts
           </Link>
-          <Link href={`/country/${id}/trade-data`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+          <Link href={`/country/${id}/trade-data`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
             Trade
           </Link>
-          <Link href={`/calendar`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+          <Link href={`/calendar`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
             Calendar
           </Link>
-          <Link href={`/indicators`} className="px-4 py-2 text-[13px] text-[#666] hover:text-[#333] transition">
+          <Link href={`/indicators`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
             All Indicators
           </Link>
         </div>
@@ -132,13 +132,13 @@ export default async function CountryPage({ params }: Props) {
               <Link
                 key={stat.id}
                 href={`/country/${id}/${encodeURIComponent(stat.id)}`}
-                className="border border-gray-100 rounded-xl p-5 hover:border-gray-300 transition group"
+                className="bg-white border border-[#d5dce6] rounded-xl p-5 hover:border-[#b0bdd0] hover:shadow-md transition-all group"
               >
-                <div className="text-sm text-gray-400 mb-1">{stat.label}</div>
-                <div className="text-2xl font-bold text-blue-600 group-hover:text-blue-700 transition">
+                <div className="text-[14px] text-[#64748b] mb-1">{stat.label}</div>
+                <div className="text-[24px] font-extrabold text-[#0d1b2a] group-hover:text-[#0066cc] transition">
                   {d && ind ? formatValue(d.value, ind.format, ind.decimals) : 'N/A'}
                 </div>
-                {d && <div className="text-xs text-gray-400 mt-1">{d.year}</div>}
+                {d && <div className="text-[12px] text-[#94a3b8] mt-1">{d.year}</div>}
               </Link>
             );
           })}
@@ -160,11 +160,11 @@ export default async function CountryPage({ params }: Props) {
 
             return (
               <div key={category}>
-                <h2 className="text-lg font-semibold mb-3 text-gray-900">{category}</h2>
-                <div className="border border-gray-100 rounded-xl overflow-hidden">
+                <h2 className="text-[18px] font-bold mb-3 text-[#0d1b2a]">{category}</h2>
+                <div className="bg-white border border-[#d5dce6] rounded-xl overflow-hidden shadow-sm">
                   <table className="w-full">
                     <thead>
-                      <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                      <tr className="text-left text-[12px] text-[#64748b] border-b border-[#d5dce6] bg-[#f4f6f9]">
                         <th className="px-5 py-2.5">Indicator</th>
                         <th className="px-5 py-2.5 text-right">Value</th>
                         <th className="px-5 py-2.5 text-right">Year</th>
@@ -175,17 +175,17 @@ export default async function CountryPage({ params }: Props) {
                         const d = indicators[ind.id];
                         if (!d) return null;
                         return (
-                          <tr key={ind.id} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                            <td className="px-5 py-2.5 text-sm">
+                          <tr key={ind.id} className="border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition">
+                            <td className="px-5 py-2.5 text-[14px]">
                               <Link
                                 href={`/country/${id}/${encodeURIComponent(ind.id)}`}
-                                className="text-gray-900 hover:text-blue-600 transition"
+                                className="text-[#0d1b2a] hover:text-[#0066cc] transition"
                               >
                                 {ind.label}
                               </Link>
                             </td>
-                            <td className="px-5 py-2.5 text-right font-mono text-sm">{formatValue(d.value, ind.format, ind.decimals)}</td>
-                            <td className="px-5 py-2.5 text-right text-gray-400 text-xs">{d.year}</td>
+                            <td className="px-5 py-2.5 text-right font-mono text-[14px]">{formatValue(d.value, ind.format, ind.decimals)}</td>
+                            <td className="px-5 py-2.5 text-right text-[#94a3b8] text-[12px]">{d.year}</td>
                           </tr>
                         );
                       })}

@@ -91,7 +91,7 @@ export default async function RankingPage({ params }: Props) {
         </div>
 
         <h1 className="text-[28px] font-bold mb-2">{config.title}</h1>
-        <p className="text-[14px] text-[#666] mb-6 leading-relaxed max-w-[700px]">{config.description}</p>
+        <p className="text-[14px] text-[#64748b] mb-6 leading-relaxed max-w-[700px]">{config.description}</p>
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -168,7 +168,7 @@ export default async function RankingPage({ params }: Props) {
               <Link
                 key={s}
                 href={`/ranking/${s}`}
-                className="text-[12px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-[#666]"
+                className="text-[12px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-[#64748b]"
               >
                 {cfg.title}
               </Link>

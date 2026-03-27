@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import ExportButton from '@/components/ExportButton';
 import AnimatedPrice from '@/components/AnimatedPrice';
 import MarketsHeader from './MarketsHeader';
+import Flag from '../Flag';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -51,6 +52,14 @@ const COUNTRY_NAMES: Record<string, string> = {
   'ESP': 'Spain', 'ITA': 'Italy', 'CHE': 'Switzerland', 'NLD': 'Netherlands',
   'NZL': 'New Zealand', 'SGP': 'Singapore', 'IDN': 'Indonesia', 'MYS': 'Malaysia',
   'ISR': 'Israel', 'SAU': 'Saudi Arabia', 'ZAF': 'South Africa',
+};
+
+const COUNTRY_ISO2: Record<string, string> = {
+  'USA': 'us', 'GBR': 'gb', 'DEU': 'de', 'FRA': 'fr', 'JPN': 'jp', 'CHN': 'cn',
+  'HKG': 'hk', 'IND': 'in', 'KOR': 'kr', 'CAN': 'ca', 'AUS': 'au', 'BRA': 'br',
+  'MEX': 'mx', 'ARG': 'ar', 'ESP': 'es', 'ITA': 'it', 'CHE': 'ch', 'NLD': 'nl',
+  'NZL': 'nz', 'SGP': 'sg', 'IDN': 'id', 'MYS': 'my', 'ISR': 'il', 'SAU': 'sa',
+  'ZAF': 'za',
 };
 
 const REGIONS: Record<string, string[]> = {
@@ -127,10 +136,10 @@ function IndexChart({ id, label }: { id: string; label: string }) {
   };
 
   return (
-    <div className="border-t border-[#e8e8e8] bg-[#fafbfc] px-4 py-4">
+    <div className="border-t border-[#d5dce6] bg-[#f4f6f9] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#333]">{label}</span>
+          <span className="text-[14px] font-bold text-[#0d1b2a]">{label}</span>
           {points.length > 1 && (
             <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}{changeAmt.toLocaleString(undefined, { maximumFractionDigits: 2 })} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
@@ -140,7 +149,7 @@ function IndexChart({ id, label }: { id: string; label: string }) {
         <div className="flex gap-1">
           {RANGES.map(r => (
             <button key={r.key} onClick={() => setRange(r.key)}
-              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0066cc] text-white' : 'bg-white border border-[#ddd] text-[#666] hover:bg-[#f0f0f0]'}`}>
+              className={`px-2.5 py-1 text-[12px] rounded-lg ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#d5dce6] text-[#64748b] hover:bg-[#f4f6f9]'}`}>
               {r.label}
             </button>
           ))}
@@ -227,14 +236,14 @@ export default function MarketsPage() {
   const quoteMap = Object.fromEntries(quotes.map(q => [q.id, q]));
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
 
       <div className="max-w-[1200px] mx-auto px-4 py-8">
         <MarketsHeader updatedAt={updatedAt} />
 
         {loading ? (
-          <div className="text-center py-20 text-[#999]">Loading market data...</div>
+          <div className="text-center py-20 text-[#64748b]">Loading market data...</div>
         ) : (
           <div className="space-y-8">
             <div className="flex justify-end">
@@ -259,11 +268,11 @@ export default function MarketsPage() {
               if (regionQuotes.length === 0) return null;
               return (
                 <div key={region}>
-                  <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">{region}</h2>
-                  <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
+                  <h2 className="text-[15px] font-bold text-[#0d1b2a] uppercase tracking-wider mb-3">{region}</h2>
+                  <div className="bg-white border border-[#d5dce6] rounded-xl overflow-hidden shadow-sm">
                     <table className="w-full">
                       <thead>
-                        <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
+                        <tr className="text-[12px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                           <th className="text-left px-3 py-2">Country</th>
                           <th className="text-left px-3 py-2">Index</th>
                           <th className="text-right px-3 py-2">Price</th>
@@ -281,18 +290,19 @@ export default function MarketsPage() {
                           return (
                             <React.Fragment key={id}>
                               <tr
-                                className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
+                                className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[14px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
                                 onClick={() => setExpanded(isExpanded ? null : id)}
                               >
                                 <td className="px-3 py-2">
                                   <span className="flex items-center gap-1.5">
-                                    <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                    <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                    {COUNTRY_ISO2[cid] && <Flag iso2={COUNTRY_ISO2[cid]} size={16} />}
                                     <Link href={`/country/${cid}`} className="text-[#0066cc] hover:underline" onClick={e => e.stopPropagation()}>
                                       {COUNTRY_NAMES[cid] || cid}
                                     </Link>
                                   </span>
                                 </td>
-                                <td className="px-3 py-2 text-[#666]">
+                                <td className="px-3 py-2 text-[#64748b]">
                                   <Link href={`/country/${cid}/${encodeURIComponent(id)}`} className="hover:text-[#0066cc] transition" onClick={e => e.stopPropagation()}>
                                     {q.label}
                                   </Link>
@@ -300,7 +310,7 @@ export default function MarketsPage() {
                                 <td className="px-3 py-2 text-right font-mono font-semibold">
                                   <AnimatedPrice value={q.price} />
                                 </td>
-                                <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999]">
+                                <td className="px-3 py-2 text-right font-mono text-[13px] text-[#94a3b8]">
                                   {q.previousClose.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                 </td>
                                 <ChangeCell value={q.change} pct={q.changePct} />

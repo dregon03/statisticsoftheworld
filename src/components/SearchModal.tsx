@@ -181,7 +181,7 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
               >
                 <span className="text-[14px] w-6 text-center shrink-0">{TYPE_ICONS[r.type]}</span>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-medium text-[#333] truncate">{r.label}</div>
+                  <div className="text-[13px] font-medium text-[#0d1b2a] truncate">{r.label}</div>
                   {r.sublabel && (
                     <div className="text-[11px] text-gray-400 truncate">{r.sublabel}</div>
                   )}

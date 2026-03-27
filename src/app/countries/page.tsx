@@ -59,7 +59,7 @@ export default function CountriesPage() {
   }, [countries, search, filterRegion]);
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
       <HeroTabs active="/countries" countryCount={countries.length} indicatorCount={INDICATORS.length} />
 
@@ -70,17 +70,17 @@ export default function CountriesPage() {
             placeholder="Search countries..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
+            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
           />
           <select
             value={filterRegion}
             onChange={e => setFilterRegion(e.target.value)}
-            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
+            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
           >
             <option value="">All Regions</option>
             {regions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <span className="text-[12px] text-[#999] self-center ml-auto flex items-center gap-3">
+          <span className="text-[12px] text-[#64748b] self-center ml-auto flex items-center gap-3">
             {filtered.length} countries
             <ExportButton
               filename={`sotw-countries-${new Date().toISOString().slice(0, 10)}`}
@@ -96,18 +96,18 @@ export default function CountriesPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-[#999] text-[13px]">Loading countries...</div>
+          <div className="text-center py-20 text-[#64748b] text-[13px]">Loading countries...</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filtered.map(c => {
               const s = stats[c.id] || {};
               const growth = s.gdpGrowth;
-              const growthColor = growth != null ? (growth >= 0 ? 'text-green-600' : 'text-red-500') : 'text-[#999]';
+              const growthColor = growth != null ? (growth >= 0 ? 'text-green-600' : 'text-red-500') : 'text-[#64748b]';
               return (
                 <Link
                   key={c.id}
                   href={`/country/${c.id}`}
-                  className="border border-[#e8e8e8] rounded-xl p-4 hover:border-[#ccc] hover:bg-[#fafbfc] transition group"
+                  className="border border-[#d5dce6] rounded-xl p-4 hover:border-[#ccc] hover:bg-[#fafbfd] transition group"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -115,38 +115,38 @@ export default function CountriesPage() {
                         <Flag iso2={c.iso2} size={22} />
                         {c.name}
                       </h3>
-                      <div className="text-[11px] text-[#999]">{c.capitalCity || c.region}</div>
+                      <div className="text-[11px] text-[#64748b]">{c.capitalCity || c.region}</div>
                     </div>
-                    <span className="text-[10px] bg-[#f5f5f5] px-1.5 py-0.5 rounded text-[#999]">{c.id}</span>
+                    <span className="text-[10px] bg-[#f5f5f5] px-1.5 py-0.5 rounded text-[#64748b]">{c.id}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[12px]">
                     <div>
-                      <div className="text-[#999] text-[10px]">GDP</div>
+                      <div className="text-[#64748b] text-[10px]">GDP</div>
                       <div className="font-mono text-[#0066cc] font-medium">{s.gdp ? formatValue(s.gdp, 'currency') : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#999] text-[10px]">Population</div>
+                      <div className="text-[#64748b] text-[10px]">Population</div>
                       <div className="font-mono">{s.population ? formatValue(s.population, 'number') : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#999] text-[10px]">GDP/Capita</div>
+                      <div className="text-[#64748b] text-[10px]">GDP/Capita</div>
                       <div className="font-mono">{s.gdpPerCapita ? formatValue(s.gdpPerCapita, 'currency') : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#999] text-[10px]">GDP Growth</div>
+                      <div className="text-[#64748b] text-[10px]">GDP Growth</div>
                       <div className={`font-mono ${growthColor}`}>{growth != null ? `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%` : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#999] text-[10px]">Inflation</div>
+                      <div className="text-[#64748b] text-[10px]">Inflation</div>
                       <div className="font-mono">{s.inflation != null ? `${s.inflation.toFixed(1)}%` : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#999] text-[10px]">Life Exp.</div>
+                      <div className="text-[#64748b] text-[10px]">Life Exp.</div>
                       <div className="font-mono">{s.lifeExpectancy ? `${s.lifeExpectancy.toFixed(1)}y` : '—'}</div>
                     </div>
                   </div>
                   <div className="mt-3">
-                    <span className="text-[10px] bg-[#f0f0f0] px-2 py-0.5 rounded text-[#999]">{c.region}</span>
+                    <span className="text-[10px] bg-[#f0f0f0] px-2 py-0.5 rounded text-[#64748b]">{c.region}</span>
                   </div>
                 </Link>
               );

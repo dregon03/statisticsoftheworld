@@ -74,7 +74,7 @@ export default function AskSOTW() {
 
     const flushTable = () => {
       if (tableLines.length < 2) {
-        tableLines.forEach((l, i) => elements.push(<p key={`t-${elements.length}-${i}`} className="text-[13px] text-[#333]">{l}</p>));
+        tableLines.forEach((l, i) => elements.push(<p key={`t-${elements.length}-${i}`} className="text-[13px] text-[#0d1b2a]">{l}</p>));
         tableLines = [];
         return;
       }
@@ -124,7 +124,7 @@ export default function AskSOTW() {
         }
 
         if (line.startsWith('**') && line.endsWith('**')) {
-          elements.push(<p key={`b-${elements.length}`} className="text-[13px] font-semibold text-[#333] mt-2">{line.replace(/\*\*/g, '')}</p>);
+          elements.push(<p key={`b-${elements.length}`} className="text-[13px] font-semibold text-[#0d1b2a] mt-2">{line.replace(/\*\*/g, '')}</p>);
         } else if (line.startsWith('- ')) {
           const text = line.slice(2).replace(/\*\*(.+?)\*\*/g, '$1').replace(/`(.+?)`/g, '$1');
           elements.push(<p key={`li-${elements.length}`} className="text-[12px] text-[#555] pl-3">{text}</p>);
@@ -132,7 +132,7 @@ export default function AskSOTW() {
           elements.push(<div key={`br-${elements.length}`} className="h-1" />);
         } else {
           const text = line.replace(/\*\*(.+?)\*\*/g, '$1').replace(/`(.+?)`/g, '$1');
-          elements.push(<p key={`p-${elements.length}`} className="text-[13px] text-[#333]">{text}</p>);
+          elements.push(<p key={`p-${elements.length}`} className="text-[13px] text-[#0d1b2a]">{text}</p>);
         }
       }
     }
@@ -177,13 +177,13 @@ export default function AskSOTW() {
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-[200px] max-h-[420px]">
             {messages.length === 0 && (
               <div className="text-center py-6">
-                <p className="text-[13px] text-[#999] mb-4">Ask anything about global statistics</p>
+                <p className="text-[13px] text-[#64748b] mb-4">Ask anything about global statistics</p>
                 <div className="space-y-1.5">
                   {EXAMPLE_QUERIES.map((q, i) => (
                     <button
                       key={i}
                       onClick={() => sendMessage(q)}
-                      className="block w-full text-left px-3 py-2 text-[12px] text-[#666] border border-gray-100 rounded-lg hover:bg-gray-50 hover:border-gray-200 transition"
+                      className="block w-full text-left px-3 py-2 text-[12px] text-[#64748b] border border-gray-100 rounded-lg hover:bg-gray-50 hover:border-gray-200 transition"
                     >
                       {q}
                     </button>
@@ -198,7 +198,7 @@ export default function AskSOTW() {
                   className={`max-w-[85%] px-3 py-2 rounded-lg ${
                     msg.role === 'user'
                       ? 'bg-[#0066cc] text-white text-[13px]'
-                      : 'bg-gray-50 text-[#333]'
+                      : 'bg-gray-50 text-[#0d1b2a]'
                   }`}
                 >
                   {msg.role === 'user' ? msg.content : renderContent(msg.content)}
@@ -243,7 +243,7 @@ export default function AskSOTW() {
                 Send
               </button>
             </form>
-            <div className="text-[10px] text-[#ccc] text-center mt-1">
+            <div className="text-[10px] text-[#94a3b8] text-center mt-1">
               Powered by SOTW data + Mistral AI
             </div>
           </div>

@@ -112,7 +112,7 @@ export default async function ChartPage({ params }: Props) {
           <Flag iso2={country.iso2} size={32} />
           {country.name} {ind.label}
         </h1>
-        <p className="text-[14px] text-[#666] mb-6">
+        <p className="text-[14px] text-[#64748b] mb-6">
           Historical data from {first.year} to {latest.year}. Latest value: <strong>{formatValue(latest.value, ind.format, ind.decimals)}</strong> ({latest.year}).
           Source: {sourceName}.
         </p>
@@ -191,7 +191,7 @@ export default async function ChartPage({ params }: Props) {
               .map(([s, id]) => {
                 const label = INDICATORS.find(i => i.id === id)?.label || s;
                 return (
-                  <Link key={s} href={`/chart/${countrySlug}/${s}`} className="text-[12px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-[#666]">
+                  <Link key={s} href={`/chart/${countrySlug}/${s}`} className="text-[12px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-[#64748b]">
                     {label}
                   </Link>
                 );

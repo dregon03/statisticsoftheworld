@@ -144,7 +144,7 @@ export default function Home() {
   const sortIcon = (key: SortKey) => sortKey !== key ? '' : sortAsc ? ' ↑' : ' ↓';
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
       <HeroTabs countryCount={countries.length} indicatorCount={INDICATORS.length} />
 
@@ -155,17 +155,17 @@ export default function Home() {
             placeholder="Search countries..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
+            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#0066cc] transition w-56"
           />
           <select
             value={filterRegion}
             onChange={e => setFilterRegion(e.target.value)}
-            className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
+            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-2 text-[14px] outline-none cursor-pointer"
           >
             <option value="">All Regions</option>
             {regions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <span className="text-[12px] text-[#999] self-center ml-auto flex items-center gap-3">
+          <span className="text-[13px] text-[#64748b] self-center ml-auto flex items-center gap-3">
             {filtered.length} countries
             <ExportButton
               filename={`sotw-countries-${new Date().toISOString().slice(0, 10)}`}
@@ -181,23 +181,23 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-[#999] text-[13px]">Loading countries...</div>
+          <div className="text-center py-20 text-[#64748b] text-[14px]">Loading countries...</div>
         ) : (
-          <div className="border border-[#e8e8e8] rounded-xl overflow-x-auto">
-            <table className="w-full text-[13px]">
+          <div className="bg-white border border-[#d5dce6] rounded-xl overflow-x-auto shadow-sm">
+            <table className="w-full text-[14px]">
               <thead>
-                <tr className="bg-[#f8f9fa] border-b border-[#e8e8e8] text-[11px] text-[#999] uppercase tracking-wider">
-                  <th className="px-3 py-2.5 text-left font-medium sticky left-0 bg-[#f8f9fa] z-10 min-w-[180px]">
-                    <button onClick={() => handleSort('name')} className="hover:text-[#333] transition">
+                <tr className="bg-[#f4f6f9] border-b border-[#d5dce6] text-[12px] text-[#64748b] uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left font-semibold sticky left-0 bg-[#f4f6f9] z-10 min-w-[180px]">
+                    <button onClick={() => handleSort('name')} className="hover:text-[#0d1b2a] transition">
                       Country{sortIcon('name')}
                     </button>
                   </th>
                   {sortKey !== 'name' && (
-                    <th className="px-1 py-2.5 text-center font-medium hidden md:table-cell w-[70px]">Trend</th>
+                    <th className="px-1 py-3 text-center font-semibold hidden md:table-cell w-[70px]">Trend</th>
                   )}
                   {COLUMNS.map(col => (
-                    <th key={col.key} className={`px-3 py-2.5 text-right font-medium whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
-                      <button onClick={() => handleSort(col.key)} className="hover:text-[#333] transition">
+                    <th key={col.key} className={`px-3 py-3 text-right font-semibold whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
+                      <button onClick={() => handleSort(col.key)} className="hover:text-[#0d1b2a] transition">
                         <span className="hidden md:inline">{col.label}</span>
                         <span className="md:hidden">{col.short}</span>
                         {sortIcon(col.key)}
@@ -212,25 +212,25 @@ export default function Home() {
                   return (
                     <tr
                       key={c.id}
-                      className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition cursor-pointer ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}
+                      className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition cursor-pointer ${i % 2 === 0 ? 'bg-white' : 'bg-[#fafbfd]'}`}
                       onClick={() => window.location.href = `/country/${c.id}`}
                     >
-                      <td className="px-3 py-2 sticky left-0 bg-inherit z-10">
-                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium" onClick={e => e.stopPropagation()}>
+                      <td className="px-3 py-2.5 sticky left-0 bg-inherit z-10">
+                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium text-[#0d1b2a]" onClick={e => e.stopPropagation()}>
                           <Flag iso2={c.iso2} size={18} />
                           {c.name}
                         </Link>
                       </td>
                       {sortKey !== 'name' && (
-                        <td className="px-1 py-2 text-center hidden md:table-cell">
-                          <Sparkline data={sparklines[c.id] || []} />
+                        <td className="px-1 py-2.5 text-center hidden md:table-cell">
+                          <Sparkline data={(s as any)[sortKey] != null ? (sparklines[c.id] || []) : []} />
                         </td>
                       )}
                       {COLUMNS.map(col => {
                         const val = (s as any)[col.key] as number | undefined;
                         const outlierCls = getOutlierClass(col, val);
                         return (
-                          <td key={col.key} className={`px-3 py-2 text-right font-mono text-[12px] ${outlierCls || 'text-[#555]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
+                          <td key={col.key} className={`px-3 py-2.5 text-right font-mono text-[13px] ${outlierCls || 'text-[#475569]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
                             {col.format(val)}
                           </td>
                         );

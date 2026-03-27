@@ -160,7 +160,7 @@ export default function PricingPage() {
       <section className="max-w-[1100px] mx-auto px-4 py-10">
         <div className="text-center mb-10">
           <h1 className="text-[32px] font-bold mb-2">API Pricing</h1>
-          <p className="text-[15px] text-[#666] max-w-[600px] mx-auto">
+          <p className="text-[15px] text-[#64748b] max-w-[600px] mx-auto">
             Access 490+ indicators for 218 countries. Free for everyone.
             Pay only if you need higher rate limits.
           </p>
@@ -174,25 +174,25 @@ export default function PricingPage() {
               className={`border rounded-xl p-5 flex flex-col ${
                 plan.highlighted
                   ? 'border-[#0066cc] ring-2 ring-[#0066cc]/10 bg-[#f8fbff]'
-                  : 'border-[#e8e8e8]'
+                  : 'border-[#d5dce6]'
               }`}
             >
               <div className="mb-4">
                 <h3 className="text-[16px] font-bold">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="text-[28px] font-bold">{plan.price}</span>
-                  <span className="text-[13px] text-[#999]">{plan.period}</span>
+                  <span className="text-[13px] text-[#64748b]">{plan.period}</span>
                 </div>
-                <p className="text-[12px] text-[#666] mt-1">{plan.description}</p>
+                <p className="text-[12px] text-[#64748b] mt-1">{plan.description}</p>
               </div>
 
-              <div className="bg-[#f8f9fa] rounded-lg px-3 py-2 mb-4 text-center">
+              <div className="bg-[#f4f6f9] rounded-lg px-3 py-2 mb-4 text-center">
                 <span className="text-[14px] font-bold text-[#0066cc]">{plan.rateLimit}</span>
               </div>
 
               <ul className="space-y-2 mb-6 flex-1">
                 {plan.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[12px] text-[#666]">
+                  <li key={i} className="flex items-start gap-2 text-[12px] text-[#64748b]">
                     <span className="text-[#2ecc40] mt-0.5 shrink-0">&#10003;</span>
                     {f}
                   </li>
@@ -202,14 +202,14 @@ export default function PricingPage() {
               {plan.ctaLink ? (
                 <Link
                   href={plan.ctaLink}
-                  className="block text-center px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#f0f0f0] text-[#333] hover:bg-[#e0e0e0]"
+                  className="block text-center px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#f0f0f0] text-[#0d1b2a] hover:bg-[#e0e0e0]"
                 >
                   {plan.cta}
                 </Link>
               ) : plan.ctaAction === 'signup' ? (
                 <button
                   onClick={() => setShowSignup(true)}
-                  className="w-full px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#0066cc] text-white hover:bg-[#0055aa]"
+                  className="w-full px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#0d1b2a] text-white hover:bg-[#0055aa]"
                 >
                   {plan.cta}
                 </button>
@@ -255,20 +255,20 @@ export default function PricingPage() {
           <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center" onClick={() => setShowSignup(false)}>
             <div className="bg-white rounded-xl shadow-2xl p-6 w-[420px] max-w-[90vw]" onClick={e => e.stopPropagation()}>
               <h3 className="text-[18px] font-bold mb-1">Get Your Free API Key</h3>
-              <p className="text-[12px] text-[#999] mb-4">1,000 requests/day. No credit card required.</p>
+              <p className="text-[12px] text-[#64748b] mb-4">1,000 requests/day. No credit card required.</p>
 
               {apiKey ? (
                 <div>
                   <div className="text-[12px] text-[#2ecc40] font-medium mb-2">{message}</div>
-                  <div className="bg-[#f8f9fa] border border-[#e8e8e8] rounded-lg p-3 mb-3">
-                    <div className="text-[11px] text-[#999] mb-1">Your API Key</div>
-                    <div className="font-mono text-[13px] text-[#333] break-all">{apiKey}</div>
+                  <div className="bg-[#f4f6f9] border border-[#d5dce6] rounded-lg p-3 mb-3">
+                    <div className="text-[11px] text-[#64748b] mb-1">Your API Key</div>
+                    <div className="font-mono text-[13px] text-[#0d1b2a] break-all">{apiKey}</div>
                   </div>
-                  <button onClick={copyKey} className="w-full px-4 py-2 bg-[#0066cc] text-white rounded-lg text-[13px] font-medium hover:bg-[#0055aa] transition">
+                  <button onClick={copyKey} className="w-full px-4 py-2 bg-[#0d1b2a] text-white rounded-lg text-[13px] font-medium hover:bg-[#0055aa] transition">
                     {copied ? 'Copied!' : 'Copy to Clipboard'}
                   </button>
-                  <div className="mt-3 text-[11px] text-[#999]">
-                    Usage: <code className="bg-[#f8f9fa] px-1 rounded">curl -H &quot;X-API-Key: {apiKey.slice(0, 12)}...&quot; https://statisticsoftheworld.com/api/v1/countries</code>
+                  <div className="mt-3 text-[11px] text-[#64748b]">
+                    Usage: <code className="bg-[#f4f6f9] px-1 rounded">curl -H &quot;X-API-Key: {apiKey.slice(0, 12)}...&quot; https://statisticsoftheworld.com/api/v1/countries</code>
                   </div>
                 </div>
               ) : (
@@ -278,20 +278,20 @@ export default function PricingPage() {
                     placeholder="your@email.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full border border-[#e8e8e8] rounded-lg px-3 py-2 text-[13px] mb-2 outline-none focus:border-[#0066cc]"
+                    className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] mb-2 outline-none focus:border-[#0066cc]"
                   />
                   <input
                     type="text"
                     placeholder="Name or project (optional)"
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    className="w-full border border-[#e8e8e8] rounded-lg px-3 py-2 text-[13px] mb-3 outline-none focus:border-[#0066cc]"
+                    className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] mb-3 outline-none focus:border-[#0066cc]"
                   />
                   {message && <div className="text-[12px] text-[#e74c3c] mb-2">{message}</div>}
                   <button
                     onClick={handleSignup}
                     disabled={loading}
-                    className="w-full px-4 py-2 bg-[#0066cc] text-white rounded-lg text-[13px] font-medium hover:bg-[#0055aa] transition disabled:opacity-50"
+                    className="w-full px-4 py-2 bg-[#0d1b2a] text-white rounded-lg text-[13px] font-medium hover:bg-[#0055aa] transition disabled:opacity-50"
                   >
                     {loading ? 'Creating...' : 'Generate API Key'}
                   </button>
@@ -302,11 +302,11 @@ export default function PricingPage() {
         )}
 
         {/* Comparison table */}
-        <div className="border border-[#e8e8e8] rounded-xl overflow-hidden mb-10">
+        <div className="border border-[#d5dce6] rounded-xl overflow-hidden mb-10">
           <div className="overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead>
-              <tr className="text-[11px] text-[#999] uppercase bg-[#f8f9fa] border-b border-[#e8e8e8]">
+              <tr className="text-[11px] text-[#64748b] uppercase bg-[#f4f6f9] border-b border-[#d5dce6]">
                 <th className="px-3 py-3 text-left">Feature</th>
                 <th className="px-3 py-3 text-center">Free</th>
                 <th className="px-3 py-3 text-center bg-[#f0f7ff]">Developer</th>
@@ -334,11 +334,11 @@ export default function PricingPage() {
                 ['Support', 'Docs', 'Email', 'Email (24hr)', 'Priority (4hr)', 'Dedicated manager'],
                 ['SLA', 'None', 'None', 'None', '99.9%', 'Custom'],
               ].map(([feature, ...values], i) => (
-                <tr key={i} className="border-b border-[#f0f0f0]">
-                  <td className="px-3 py-2.5 text-[#333] font-medium">{feature}</td>
+                <tr key={i} className="border-b border-[#edf0f5]">
+                  <td className="px-3 py-2.5 text-[#0d1b2a] font-medium">{feature}</td>
                   {values.map((v, j) => (
-                    <td key={j} className={`px-3 py-2.5 text-center text-[#666] ${j === 1 ? 'bg-[#f8fbff]' : ''}`}>
-                      {v === 'Yes' ? <span className="text-[#2ecc40]">&#10003;</span> : v === 'No' ? <span className="text-[#ccc]">&mdash;</span> : v}
+                    <td key={j} className={`px-3 py-2.5 text-center text-[#64748b] ${j === 1 ? 'bg-[#f8fbff]' : ''}`}>
+                      {v === 'Yes' ? <span className="text-[#2ecc40]">&#10003;</span> : v === 'No' ? <span className="text-[#94a3b8]">&mdash;</span> : v}
                     </td>
                   ))}
                 </tr>
@@ -349,7 +349,7 @@ export default function PricingPage() {
         </div>
 
         {/* Look up existing key */}
-        <div className="border border-[#e8e8e8] rounded-xl p-5 bg-[#f8f9fa] mb-10">
+        <div className="border border-[#d5dce6] rounded-xl p-5 bg-[#f4f6f9] mb-10">
           <h3 className="text-[14px] font-semibold mb-2">Already have a key?</h3>
           <div className="flex gap-2">
             <input
@@ -357,7 +357,7 @@ export default function PricingPage() {
               placeholder="Enter your email to look up your key"
               value={lookupEmail}
               onChange={e => setLookupEmail(e.target.value)}
-              className="flex-1 border border-[#e8e8e8] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#0066cc] bg-white"
+              className="flex-1 border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#0066cc] bg-white"
             />
             <button
               onClick={handleLookup}
@@ -370,9 +370,9 @@ export default function PricingPage() {
             <div className="mt-3 text-[13px]">
               {lookupResult.keys?.length > 0 ? (
                 lookupResult.keys.map((k: any, i: number) => (
-                  <div key={i} className="bg-white border border-[#e8e8e8] rounded-lg p-3 mt-2">
+                  <div key={i} className="bg-white border border-[#d5dce6] rounded-lg p-3 mt-2">
                     <div className="font-mono text-[12px] break-all">{k.api_key}</div>
-                    <div className="flex gap-4 mt-1 text-[11px] text-[#999]">
+                    <div className="flex gap-4 mt-1 text-[11px] text-[#64748b]">
                       <span>Tier: {k.tier}</span>
                       <span>Limit: {k.rate_limit?.toLocaleString()}/day</span>
                       <span>Used today: {k.requests_today || 0}</span>
@@ -381,7 +381,7 @@ export default function PricingPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-[#999] mt-2">No keys found for this email.</div>
+                <div className="text-[#64748b] mt-2">No keys found for this email.</div>
               )}
             </div>
           )}
@@ -392,24 +392,24 @@ export default function PricingPage() {
           <h2 className="text-[18px] font-bold mb-4 text-center">Frequently Asked Questions</h2>
           <div className="space-y-4 text-[13px]">
             <div>
-              <h3 className="font-semibold text-[#333] mb-1">Is the data really free?</h3>
-              <p className="text-[#666]">Yes. All data comes from public international organizations (IMF, World Bank, WHO, UN) and free APIs (Yahoo Finance, FRED). We believe global statistics should be accessible to everyone.</p>
+              <h3 className="font-semibold text-[#0d1b2a] mb-1">Is the data really free?</h3>
+              <p className="text-[#64748b]">Yes. All data comes from public international organizations (IMF, World Bank, WHO, UN) and free APIs (Yahoo Finance, FRED). We believe global statistics should be accessible to everyone.</p>
             </div>
             <div>
-              <h3 className="font-semibold text-[#333] mb-1">Why pay for higher tiers?</h3>
-              <p className="text-[#666]">The free tier is generous for most use cases. Paid tiers are for production applications that need higher rate limits, commercial use licenses, and dedicated support.</p>
+              <h3 className="font-semibold text-[#0d1b2a] mb-1">Why pay for higher tiers?</h3>
+              <p className="text-[#64748b]">The free tier is generous for most use cases. Paid tiers are for production applications that need higher rate limits, commercial use licenses, and dedicated support.</p>
             </div>
             <div>
-              <h3 className="font-semibold text-[#333] mb-1">Can I use the API in my commercial product?</h3>
-              <p className="text-[#666]">Free and Developer tiers are for personal/educational use. Pro ($49/mo) and above include a commercial use license.</p>
+              <h3 className="font-semibold text-[#0d1b2a] mb-1">Can I use the API in my commercial product?</h3>
+              <p className="text-[#64748b]">Free and Developer tiers are for personal/educational use. Pro ($49/mo) and above include a commercial use license.</p>
             </div>
             <div>
-              <h3 className="font-semibold text-[#333] mb-1">How do I authenticate?</h3>
-              <p className="text-[#666]">Add your API key as an <code className="bg-[#f0f0f0] px-1 rounded">X-API-Key</code> header. Example: <code className="bg-[#f0f0f0] px-1 rounded">curl -H &quot;X-API-Key: sotw_abc123...&quot; https://statisticsoftheworld.com/api/v1/countries</code></p>
+              <h3 className="font-semibold text-[#0d1b2a] mb-1">How do I authenticate?</h3>
+              <p className="text-[#64748b]">Add your API key as an <code className="bg-[#f0f0f0] px-1 rounded">X-API-Key</code> header. Example: <code className="bg-[#f0f0f0] px-1 rounded">curl -H &quot;X-API-Key: sotw_abc123...&quot; https://statisticsoftheworld.com/api/v1/countries</code></p>
             </div>
             <div>
-              <h3 className="font-semibold text-[#333] mb-1">What happens if I exceed my rate limit?</h3>
-              <p className="text-[#666]">You&apos;ll receive a 429 response with details on when your limit resets. Rate limits reset daily at midnight UTC.</p>
+              <h3 className="font-semibold text-[#0d1b2a] mb-1">What happens if I exceed my rate limit?</h3>
+              <p className="text-[#64748b]">You&apos;ll receive a 429 response with details on when your limit resets. Rate limits reset daily at midnight UTC.</p>
             </div>
           </div>
         </div>

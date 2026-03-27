@@ -191,14 +191,14 @@ function ScatterContent() {
       <section className="max-w-[1200px] mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-[28px] font-bold mb-1">Scatter Plot Explorer</h1>
-          <p className="text-[13px] text-[#999]">
+          <p className="text-[13px] text-[#64748b]">
             Explore relationships between any two indicators across 218 countries. Bubble size represents population. Inspired by Gapminder.
           </p>
         </div>
 
         {/* Discover Correlations */}
         {correlations.length > 0 && (
-          <div className="mb-8 border border-[#e8e8e8] rounded-xl p-4">
+          <div className="mb-8 border border-[#d5dce6] rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-[15px] font-semibold">Discover Correlations</h2>
               <div className="flex gap-0.5 bg-[#f0f0f0] rounded-lg p-0.5">
@@ -211,7 +211,7 @@ function ScatterContent() {
                     key={tab.key}
                     onClick={() => setCorrFilter(tab.key)}
                     className={`px-2.5 py-1 text-[11px] rounded transition ${
-                      corrFilter === tab.key ? 'bg-white shadow-sm font-medium text-[#333]' : 'text-[#666]'
+                      corrFilter === tab.key ? 'bg-white shadow-sm font-medium text-[#0d1b2a]' : 'text-[#64748b]'
                     }`}
                   >
                     {tab.label}
@@ -224,18 +224,18 @@ function ScatterContent() {
                 <button
                   key={i}
                   onClick={() => { setXIndicatorId(c.x); setYIndicatorId(c.y); setLogX(false); setLogY(false); }}
-                  className={`text-left border rounded-lg p-2.5 hover:border-[#0066cc] hover:bg-[#f5f7fa] transition ${
-                    xIndicatorId === c.x && yIndicatorId === c.y ? 'border-[#0066cc] bg-[#f0f5ff]' : 'border-[#e8e8e8]'
+                  className={`text-left border rounded-lg p-2.5 hover:border-[#0066cc] hover:bg-[#f4f6f9] transition ${
+                    xIndicatorId === c.x && yIndicatorId === c.y ? 'border-[#0066cc] bg-[#f0f5ff]' : 'border-[#d5dce6]'
                   }`}
                 >
-                  <div className="text-[11px] text-[#666] leading-tight mb-1.5">
-                    {c.labelX} <span className="text-[#999]">vs</span> {c.labelY}
+                  <div className="text-[11px] text-[#64748b] leading-tight mb-1.5">
+                    {c.labelX} <span className="text-[#64748b]">vs</span> {c.labelY}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`text-[13px] font-mono font-bold ${c.r >= 0 ? 'text-[#0066cc]' : 'text-red-500'}`}>
                       {c.r >= 0 ? '+' : ''}{c.r.toFixed(2)}
                     </span>
-                    <span className="text-[9px] text-[#999]">R²={c.rSquared.toFixed(2)}</span>
+                    <span className="text-[9px] text-[#64748b]">R²={c.rSquared.toFixed(2)}</span>
                     <span className="text-[9px] text-[#bbb]">{c.n} countries</span>
                   </div>
                 </button>
@@ -246,7 +246,7 @@ function ScatterContent() {
 
         {/* Presets */}
         <div className="mb-6">
-          <div className="text-[12px] text-[#999] mb-2">Popular correlations:</div>
+          <div className="text-[12px] text-[#64748b] mb-2">Popular correlations:</div>
           <div className="flex flex-wrap gap-1.5">
             {PRESETS.map((p, i) => (
               <button
@@ -254,8 +254,8 @@ function ScatterContent() {
                 onClick={() => applyPreset(p)}
                 className={`px-3 py-1 rounded-full text-[11px] transition ${
                   xIndicatorId === p.x && yIndicatorId === p.y
-                    ? 'bg-[#0066cc] text-white'
-                    : 'bg-[#f0f0f0] text-[#666] hover:bg-[#e0e0e0]'
+                    ? 'bg-[#0d1b2a] text-white'
+                    : 'bg-[#f0f0f0] text-[#64748b] hover:bg-[#e0e0e0]'
                 }`}
               >
                 {p.label}
@@ -267,8 +267,8 @@ function ScatterContent() {
         {/* Axis selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* X axis */}
-          <div className="border border-[#e8e8e8] rounded-lg p-3">
-            <div className="text-[11px] text-[#999] uppercase mb-1">X-Axis</div>
+          <div className="border border-[#d5dce6] rounded-lg p-3">
+            <div className="text-[11px] text-[#64748b] uppercase mb-1">X-Axis</div>
             <div className="relative">
               <button
                 onClick={() => { setShowXPicker(!showXPicker); setShowYPicker(false); }}
@@ -287,15 +287,15 @@ function ScatterContent() {
                 />
               )}
             </div>
-            <label className="flex items-center gap-1.5 mt-2 text-[11px] text-[#999]">
+            <label className="flex items-center gap-1.5 mt-2 text-[11px] text-[#64748b]">
               <input type="checkbox" checked={logX} onChange={e => setLogX(e.target.checked)} className="rounded" />
               Log scale
             </label>
           </div>
 
           {/* Y axis */}
-          <div className="border border-[#e8e8e8] rounded-lg p-3">
-            <div className="text-[11px] text-[#999] uppercase mb-1">Y-Axis</div>
+          <div className="border border-[#d5dce6] rounded-lg p-3">
+            <div className="text-[11px] text-[#64748b] uppercase mb-1">Y-Axis</div>
             <div className="relative">
               <button
                 onClick={() => { setShowYPicker(!showYPicker); setShowXPicker(false); }}
@@ -314,7 +314,7 @@ function ScatterContent() {
                 />
               )}
             </div>
-            <label className="flex items-center gap-1.5 mt-2 text-[11px] text-[#999]">
+            <label className="flex items-center gap-1.5 mt-2 text-[11px] text-[#64748b]">
               <input type="checkbox" checked={logY} onChange={e => setLogY(e.target.checked)} className="rounded" />
               Log scale
             </label>
@@ -326,7 +326,7 @@ function ScatterContent() {
           <select
             value={regionFilter}
             onChange={e => setRegionFilter(e.target.value)}
-            className="border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[12px] outline-none"
+            className="border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[12px] outline-none"
           >
             <option value="">All Regions ({scatterData.length} countries)</option>
             {regions.map(r => (
@@ -337,11 +337,11 @@ function ScatterContent() {
 
         {/* Chart */}
         {loading ? (
-          <div className="text-center py-20 text-[#999]">Loading data...</div>
+          <div className="text-center py-20 text-[#64748b]">Loading data...</div>
         ) : scatterData.length === 0 ? (
-          <div className="text-center py-20 text-[#999]">No overlapping data for these indicators.</div>
+          <div className="text-center py-20 text-[#64748b]">No overlapping data for these indicators.</div>
         ) : (
-          <div className="border border-[#e8e8e8] rounded-xl p-4">
+          <div className="border border-[#d5dce6] rounded-xl p-4">
             <ScatterPlotChart
               data={scatterData}
               xLabel={xInd?.label || ''}
@@ -359,31 +359,31 @@ function ScatterContent() {
 
         {/* Insights */}
         {scatterData.length > 5 && (
-          <div className="mt-6 border border-[#e8e8e8] rounded-xl p-5 bg-[#f8f9fa]">
+          <div className="mt-6 border border-[#d5dce6] rounded-xl p-5 bg-[#f4f6f9]">
             <h3 className="text-[14px] font-semibold mb-3">Quick Statistics</h3>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-[13px]">
               <div>
-                <div className="text-[#999] text-[11px]">Countries plotted</div>
+                <div className="text-[#64748b] text-[11px]">Countries plotted</div>
                 <div className="font-mono font-semibold">{scatterData.length}</div>
               </div>
               <div>
-                <div className="text-[#999] text-[11px]">Correlation (r)</div>
+                <div className="text-[#64748b] text-[11px]">Correlation (r)</div>
                 <div className={`font-mono font-semibold ${currentR && currentR.r >= 0 ? 'text-[#0066cc]' : 'text-red-500'}`}>
                   {currentR ? `${currentR.r >= 0 ? '+' : ''}${currentR.r.toFixed(3)}` : '—'}
                 </div>
               </div>
               <div>
-                <div className="text-[#999] text-[11px]">R² (variance explained)</div>
+                <div className="text-[#64748b] text-[11px]">R² (variance explained)</div>
                 <div className="font-mono font-semibold">{currentR ? `${(currentR.rSquared * 100).toFixed(1)}%` : '—'}</div>
               </div>
               <div>
-                <div className="text-[#999] text-[11px]">{xInd?.label} range</div>
+                <div className="text-[#64748b] text-[11px]">{xInd?.label} range</div>
                 <div className="font-mono text-[12px]">
                   {formatValue(Math.min(...scatterData.map(d => d.x)), xInd?.format || 'number', xInd?.decimals)} — {formatValue(Math.max(...scatterData.map(d => d.x)), xInd?.format || 'number', xInd?.decimals)}
                 </div>
               </div>
               <div>
-                <div className="text-[#999] text-[11px]">{yInd?.label} range</div>
+                <div className="text-[#64748b] text-[11px]">{yInd?.label} range</div>
                 <div className="font-mono text-[12px]">
                   {formatValue(Math.min(...scatterData.map(d => d.y)), yInd?.format || 'number', yInd?.decimals)} — {formatValue(Math.max(...scatterData.map(d => d.y)), yInd?.format || 'number', yInd?.decimals)}
                 </div>
@@ -411,14 +411,14 @@ function IndicatorPicker({
   return (
     <>
       <div className="fixed inset-0 z-40" onClick={onClose} />
-      <div className="absolute left-0 top-full mt-1 w-[320px] bg-white border border-[#e8e8e8] rounded-lg shadow-lg z-50 max-h-[400px] overflow-hidden">
-        <div className="p-2 border-b border-[#e8e8e8]">
+      <div className="absolute left-0 top-full mt-1 w-[320px] bg-white border border-[#d5dce6] rounded-lg shadow-lg z-50 max-h-[400px] overflow-hidden">
+        <div className="p-2 border-b border-[#d5dce6]">
           <input
             type="text"
             placeholder="Search indicators..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full border border-[#e8e8e8] rounded px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc]"
+            className="w-full border border-[#d5dce6] rounded px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc]"
             autoFocus
           />
         </div>
@@ -428,13 +428,13 @@ function IndicatorPicker({
             if (inds.length === 0) return null;
             return (
               <div key={cat}>
-                <div className="px-3 py-1.5 text-[10px] font-bold text-[#999] uppercase bg-[#f8f9fa] sticky top-0">{cat}</div>
+                <div className="px-3 py-1.5 text-[10px] font-bold text-[#64748b] uppercase bg-[#f4f6f9] sticky top-0">{cat}</div>
                 {inds.map(ind => (
                   <button
                     key={ind.id}
                     onClick={() => onSelect(ind.id)}
-                    className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-[#f5f7fa] transition ${
-                      ind.id === selectedId ? 'bg-[#f0f7ff] text-[#0066cc] font-medium' : 'text-[#333]'
+                    className={`w-full text-left px-3 py-1.5 text-[12px] hover:bg-[#f4f6f9] transition ${
+                      ind.id === selectedId ? 'bg-[#f0f7ff] text-[#0066cc] font-medium' : 'text-[#0d1b2a]'
                     }`}
                   >
                     {ind.label}

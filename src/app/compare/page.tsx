@@ -30,7 +30,7 @@ const DEFAULT_INDICATORS = [
 
 export default function ComparePage() {
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
       <HeroTabs active="/compare" />
       <Suspense>
@@ -173,7 +173,7 @@ export function CompareContent() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-[28px] font-bold mb-1">Compare Countries</h1>
-          <p className="text-[13px] text-[#999]">
+          <p className="text-[13px] text-[#64748b]">
             Select up to 8 countries to compare side-by-side across 300+ indicators with 20+ years of historical data. Free — no account required.
           </p>
         </div>
@@ -189,7 +189,7 @@ export function CompareContent() {
                   <span className="font-medium text-[#0066cc]">{c?.name || id}</span>
                   <button
                     onClick={() => removeCountry(id)}
-                    className="ml-1 text-[#999] hover:text-[#e74c3c] transition text-[16px] leading-none"
+                    className="ml-1 text-[#64748b] hover:text-[#e74c3c] transition text-[16px] leading-none"
                   >
                     &times;
                   </button>
@@ -200,19 +200,19 @@ export function CompareContent() {
               <div className="relative">
                 <button
                   onClick={() => setShowCountryPicker(!showCountryPicker)}
-                  className="flex items-center gap-1 bg-white border border-dashed border-[#ccc] rounded-lg px-3 py-1.5 text-[13px] text-[#999] hover:border-[#0066cc] hover:text-[#0066cc] transition"
+                  className="flex items-center gap-1 bg-white border border-dashed border-[#ccc] rounded-lg px-3 py-1.5 text-[13px] text-[#64748b] hover:border-[#0066cc] hover:text-[#0066cc] transition"
                 >
                   + Add Country
                 </button>
                 {showCountryPicker && (
-                  <div className="absolute top-full left-0 mt-1 w-[280px] bg-white border border-[#e8e8e8] rounded-lg shadow-lg z-50 max-h-[300px] overflow-hidden">
-                    <div className="p-2 border-b border-[#e8e8e8]">
+                  <div className="absolute top-full left-0 mt-1 w-[280px] bg-white border border-[#d5dce6] rounded-lg shadow-lg z-50 max-h-[300px] overflow-hidden">
+                    <div className="p-2 border-b border-[#d5dce6]">
                       <input
                         type="text"
                         placeholder="Search countries..."
                         value={countrySearch}
                         onChange={e => setCountrySearch(e.target.value)}
-                        className="w-full border border-[#e8e8e8] rounded px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc]"
+                        className="w-full border border-[#d5dce6] rounded px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc]"
                         autoFocus
                       />
                     </div>
@@ -221,11 +221,11 @@ export function CompareContent() {
                         <button
                           key={c.id}
                           onClick={() => addCountry(c.id)}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-left hover:bg-[#f5f7fa] transition"
+                          className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-left hover:bg-[#f4f6f9] transition"
                         >
                           <Flag iso2={c.iso2} size={18} />
                           <span>{c.name}</span>
-                          <span className="ml-auto text-[#ccc] text-[11px]">{c.id}</span>
+                          <span className="ml-auto text-[#94a3b8] text-[11px]">{c.id}</span>
                         </button>
                       ))}
                     </div>
@@ -237,7 +237,7 @@ export function CompareContent() {
 
           {/* Quick presets */}
           <div className="flex flex-wrap gap-2 text-[12px]">
-            <span className="text-[#999]">Quick:</span>
+            <span className="text-[#64748b]">Quick:</span>
             <button onClick={() => setSelectedCountries(['USA', 'CHN', 'JPN', 'DEU', 'IND'])} className="text-[#0066cc] hover:underline">G5 Economies</button>
             <button onClick={() => setSelectedCountries(['USA', 'GBR', 'FRA', 'DEU', 'JPN', 'ITA', 'CAN'])} className="text-[#0066cc] hover:underline">G7</button>
             <button onClick={() => setSelectedCountries(['BRA', 'RUS', 'IND', 'CHN', 'ZAF'])} className="text-[#0066cc] hover:underline">BRICS</button>
@@ -249,7 +249,7 @@ export function CompareContent() {
         </div>
 
         {selectedCountries.length === 0 ? (
-          <div className="text-center py-20 text-[#999]">
+          <div className="text-center py-20 text-[#64748b]">
             <div className="text-[48px] mb-4">&#127760;</div>
             <div className="text-[16px] font-medium mb-2">Select countries to compare</div>
             <div className="text-[13px]">Use the selector above or try a quick preset like G7 or BRICS</div>
@@ -257,7 +257,7 @@ export function CompareContent() {
         ) : (
           <>
             {/* Chart section */}
-            <div className="border border-[#e8e8e8] rounded-xl p-5 mb-6">
+            <div className="border border-[#d5dce6] rounded-xl p-5 mb-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[15px] font-semibold">
                   {currentIndicator?.label || selectedIndicator}
@@ -270,14 +270,14 @@ export function CompareContent() {
                     Change indicator &#9662;
                   </button>
                   {showIndicatorPicker && (
-                    <div className="absolute top-full right-0 mt-1 w-[320px] bg-white border border-[#e8e8e8] rounded-lg shadow-lg z-50 max-h-[400px] overflow-hidden">
-                      <div className="p-2 border-b border-[#e8e8e8]">
+                    <div className="absolute top-full right-0 mt-1 w-[320px] bg-white border border-[#d5dce6] rounded-lg shadow-lg z-50 max-h-[400px] overflow-hidden">
+                      <div className="p-2 border-b border-[#d5dce6]">
                         <input
                           type="text"
                           placeholder="Search indicators..."
                           value={indicatorSearch}
                           onChange={e => setIndicatorSearch(e.target.value)}
-                          className="w-full border border-[#e8e8e8] rounded px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc]"
+                          className="w-full border border-[#d5dce6] rounded px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc]"
                           autoFocus
                         />
                       </div>
@@ -287,13 +287,13 @@ export function CompareContent() {
                           if (inds.length === 0) return null;
                           return (
                             <div key={cat}>
-                              <div className="px-3 py-1.5 text-[10px] font-bold text-[#999] uppercase bg-[#f8f9fa] sticky top-0">{cat}</div>
+                              <div className="px-3 py-1.5 text-[10px] font-bold text-[#64748b] uppercase bg-[#f4f6f9] sticky top-0">{cat}</div>
                               {inds.map(ind => (
                                 <button
                                   key={ind.id}
                                   onClick={() => { setSelectedIndicator(ind.id); setShowIndicatorPicker(false); setIndicatorSearch(''); }}
-                                  className={`w-full text-left px-3 py-1.5 text-[13px] hover:bg-[#f5f7fa] transition ${
-                                    ind.id === selectedIndicator ? 'bg-[#f0f7ff] text-[#0066cc] font-medium' : 'text-[#333]'
+                                  className={`w-full text-left px-3 py-1.5 text-[13px] hover:bg-[#f4f6f9] transition ${
+                                    ind.id === selectedIndicator ? 'bg-[#f0f7ff] text-[#0066cc] font-medium' : 'text-[#0d1b2a]'
                                   }`}
                                 >
                                   {ind.label}
@@ -309,7 +309,7 @@ export function CompareContent() {
               </div>
 
               {loading ? (
-                <div className="text-center py-12 text-[#999]">Loading chart data...</div>
+                <div className="text-center py-12 text-[#64748b]">Loading chart data...</div>
               ) : Object.keys(chartData).length > 0 ? (
                 <MultiCountryChart
                   data={chartData}
@@ -319,7 +319,7 @@ export function CompareContent() {
                   height={380}
                 />
               ) : (
-                <div className="text-center py-12 text-[#999] text-[13px]">No historical data available for this indicator</div>
+                <div className="text-center py-12 text-[#64748b] text-[13px]">No historical data available for this indicator</div>
               )}
             </div>
 
@@ -334,8 +334,8 @@ export function CompareContent() {
                     onClick={() => setSelectedIndicator(id)}
                     className={`px-3 py-1 rounded-full text-[12px] transition ${
                       id === selectedIndicator
-                        ? 'bg-[#0066cc] text-white'
-                        : 'bg-[#f0f0f0] text-[#666] hover:bg-[#e0e0e0]'
+                        ? 'bg-[#0d1b2a] text-white'
+                        : 'bg-[#f0f0f0] text-[#64748b] hover:bg-[#e0e0e0]'
                     }`}
                   >
                     {ind.label.replace(/ \(.*\)/, '').replace(/ —.*/, '')}
@@ -345,8 +345,8 @@ export function CompareContent() {
             </div>
 
             {/* Data table */}
-            <div className="border border-[#e8e8e8] rounded-xl overflow-hidden mb-6">
-              <div className="flex items-center justify-between px-4 py-3 bg-[#f8f9fa] border-b border-[#e8e8e8]">
+            <div className="border border-[#d5dce6] rounded-xl overflow-hidden mb-6">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#f4f6f9] border-b border-[#d5dce6]">
                 <h2 className="text-[14px] font-semibold">Key Indicators</h2>
                 <button
                   onClick={exportCSV}
@@ -358,7 +358,7 @@ export function CompareContent() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-left text-[11px] text-[#999] uppercase border-b border-[#e8e8e8]">
+                    <tr className="text-left text-[11px] text-[#64748b] uppercase border-b border-[#d5dce6]">
                       <th className="px-4 py-2.5 sticky left-0 bg-white z-10 min-w-[200px]">Indicator</th>
                       {selectedCountries.map(id => {
                         const c = countryMap[id];
@@ -375,9 +375,9 @@ export function CompareContent() {
                   </thead>
                   <tbody>
                     {tableIndicators.map((ind, i) => (
-                      <tr key={ind.id} className={`border-b border-[#f0f0f0] hover:bg-[#f8f9fa] transition ${i % 2 === 0 ? '' : 'bg-[#fafbfc]'}`}>
+                      <tr key={ind.id} className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition ${i % 2 === 0 ? '' : 'bg-[#fafbfd]'}`}>
                         <td className="px-4 py-2.5 text-[13px] sticky left-0 bg-inherit z-10">
-                          <Link href={`/indicators?id=${encodeURIComponent(ind.id)}`} className="text-[#333] hover:text-[#0066cc] transition">
+                          <Link href={`/indicators?id=${encodeURIComponent(ind.id)}`} className="text-[#0d1b2a] hover:text-[#0066cc] transition">
                             {ind.label}
                           </Link>
                         </td>
@@ -388,7 +388,7 @@ export function CompareContent() {
                               {d?.value != null ? (
                                 <Link href={`/country/${cid}/${encodeURIComponent(ind.id)}`} className="hover:text-[#0066cc] transition">
                                   {formatValue(d.value, ind.format, ind.decimals)}
-                                  <span className="text-[#ccc] text-[10px] ml-1">{d.year}</span>
+                                  <span className="text-[#94a3b8] text-[10px] ml-1">{d.year}</span>
                                 </Link>
                               ) : (
                                 <span className="text-[#ddd]">&mdash;</span>
@@ -450,19 +450,19 @@ function AllCategoriesComparison({
 
         const isExpanded = expandedCats.has(cat);
         return (
-          <div key={cat} className="border border-[#e8e8e8] rounded-lg overflow-hidden">
+          <div key={cat} className="border border-[#d5dce6] rounded-lg overflow-hidden">
             <button
               onClick={() => toggleCat(cat)}
-              className="w-full flex items-center justify-between px-4 py-3 bg-[#f8f9fa] hover:bg-[#f0f2f5] transition text-left"
+              className="w-full flex items-center justify-between px-4 py-3 bg-[#f4f6f9] hover:bg-[#f0f2f5] transition text-left"
             >
-              <span className="text-[13px] font-semibold text-[#333]">{cat}</span>
-              <span className="text-[#999] text-[12px]">{isExpanded ? '▲' : '▼'} {catIndicators.length} indicators</span>
+              <span className="text-[13px] font-semibold text-[#0d1b2a]">{cat}</span>
+              <span className="text-[#64748b] text-[12px]">{isExpanded ? '▲' : '▼'} {catIndicators.length} indicators</span>
             </button>
             {isExpanded && (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-[11px] text-[#999] uppercase border-b border-[#e8e8e8]">
+                    <tr className="text-[11px] text-[#64748b] uppercase border-b border-[#d5dce6]">
                       <th className="px-4 py-2 text-left sticky left-0 bg-white z-10 min-w-[200px]">Indicator</th>
                       {selectedCountries.map(id => {
                         const c = countryMap[id];
@@ -482,8 +482,8 @@ function AllCategoriesComparison({
                       const anyData = selectedCountries.some(cid => latestData[cid]?.[ind.id]?.value != null);
                       if (!anyData) return null;
                       return (
-                        <tr key={ind.id} className="border-b border-[#f0f0f0] hover:bg-[#f8f9fa] transition">
-                          <td className="px-4 py-2 text-[12px] text-[#333] sticky left-0 bg-inherit z-10">{ind.label}</td>
+                        <tr key={ind.id} className="border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition">
+                          <td className="px-4 py-2 text-[12px] text-[#0d1b2a] sticky left-0 bg-inherit z-10">{ind.label}</td>
                           {selectedCountries.map(cid => {
                             const d = latestData[cid]?.[ind.id];
                             return (

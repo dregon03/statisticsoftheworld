@@ -197,13 +197,13 @@ function PredictionCard({ market }: { market: PredictionMarket }) {
       href={market.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#e8e8e8] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group"
+      className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#d5dce6] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group"
     >
       <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-[#333] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">
+        <div className="text-[12px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">
           {market.question}
         </div>
-        <div className="text-[10px] text-[#999] mt-0.5">
+        <div className="text-[10px] text-[#64748b] mt-0.5">
           Vol: {vol}{end ? ` · Resolves ${end}` : ''}
         </div>
       </div>
@@ -235,7 +235,7 @@ function SectionPredictions({ sectionTitle, markets }: { sectionTitle: string; m
     <div className="mt-3 mb-1">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-[#7c3aed]">&#x1F52E; Market Predictions</span>
-        <span className="text-[10px] text-[#ccc]">Polymarket</span>
+        <span className="text-[10px] text-[#94a3b8]">Polymarket</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {matched.slice(0, 4).map(m => <PredictionCard key={m.id} market={m} />)}
@@ -255,33 +255,33 @@ function FuturesCurve({ id }: { id: string }) {
       .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="px-4 py-3 text-[11px] text-[#999]">Loading futures curve...</div>;
+  if (loading) return <div className="px-4 py-3 text-[11px] text-[#64748b]">Loading futures curve...</div>;
   if (!data || data.contracts.length < 2) return null;
 
   const structureColor = data.structure === 'backwardation' ? '#dc2626' : data.structure === 'contango' ? '#16a34a' : '#666';
   const structureLabel = data.structure === 'backwardation' ? 'Backwardation' : data.structure === 'contango' ? 'Contango' : 'Flat';
 
   return (
-    <div className="border-t border-[#e8e8e8] bg-white px-4 py-4">
+    <div className="border-t border-[#d5dce6] bg-white px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[12px] font-semibold text-[#333]">Futures Curve</span>
+          <span className="text-[12px] font-semibold text-[#0d1b2a]">Futures Curve</span>
           <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
             style={{ color: structureColor, backgroundColor: `${structureColor}12` }}>
             {structureLabel}
           </span>
         </div>
-        <span className="text-[10px] text-[#ccc]">CME settlements via Yahoo Finance</span>
+        <span className="text-[10px] text-[#94a3b8]">CME settlements via Yahoo Finance</span>
       </div>
-      <p className="text-[11px] text-[#999] mb-3">{data.structureDescription}</p>
+      <p className="text-[11px] text-[#64748b] mb-3">{data.structureDescription}</p>
       <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1.5">
         {data.contracts.map((c, i) => {
           const isFirst = i === 0;
           const changeColor = c.changeFromFront >= 0 ? '#16a34a' : '#dc2626';
           return (
-            <div key={c.label} className={`border rounded-lg p-2 text-center ${isFirst ? 'border-[#0066cc] bg-[#f8fbff]' : 'border-[#e8e8e8]'}`}>
-              <div className="text-[10px] text-[#999] mb-0.5">{c.label}</div>
-              <div className="text-[13px] font-mono font-semibold text-[#333]">
+            <div key={c.label} className={`border rounded-lg p-2 text-center ${isFirst ? 'border-[#0066cc] bg-[#f8fbff]' : 'border-[#d5dce6]'}`}>
+              <div className="text-[10px] text-[#64748b] mb-0.5">{c.label}</div>
+              <div className="text-[13px] font-mono font-semibold text-[#0d1b2a]">
                 ${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               {!isFirst && (
@@ -337,10 +337,10 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
   };
 
   return (
-    <div className="border-t border-[#e8e8e8] bg-[#fafbfc] px-4 py-4">
+    <div className="border-t border-[#d5dce6] bg-[#fafbfd] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#333]">{label}</span>
+          <span className="text-[13px] font-semibold text-[#0d1b2a]">{label}</span>
           {points.length > 1 && (
             <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}{changeAmt.toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
@@ -354,8 +354,8 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
               onClick={() => setRange(r.key)}
               className={`px-2 py-0.5 text-[11px] rounded ${
                 range === r.key
-                  ? 'bg-[#0066cc] text-white'
-                  : 'bg-white border border-[#ddd] text-[#666] hover:bg-[#f0f0f0]'
+                  ? 'bg-[#0d1b2a] text-white'
+                  : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'
               }`}
             >
               {r.label}
@@ -365,11 +365,11 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">
           Loading chart...
         </div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">
           No chart data available
         </div>
       ) : (
@@ -422,7 +422,7 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
                     : p.date;
                   return (
                     <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
-                      <div className="text-[#999] mb-0.5">{dateLabel}</div>
+                      <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[14px]">
                         {currency}{p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
@@ -527,14 +527,14 @@ export default function CommoditiesPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
 
       <div className="max-w-[1200px] mx-auto px-4 py-8">
         <MarketsHeader updatedAt={updatedAt} />
 
         {loading ? (
-          <div className="text-center py-20 text-[#999]">Loading commodity prices...</div>
+          <div className="text-center py-20 text-[#64748b]">Loading commodity prices...</div>
         ) : (
           <div className="space-y-8">
             <div className="flex justify-end">
@@ -553,11 +553,11 @@ export default function CommoditiesPage() {
             </div>
             {COMMODITY_SECTIONS.map(section => (
               <div key={section.title}>
-                <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">{section.title}</h2>
-                <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
+                <h2 className="text-[14px] font-semibold text-[#64748b] uppercase tracking-wider mb-3">{section.title}</h2>
+                <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
                   <table className="w-full">
                     <thead>
-                      <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
+                      <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                         <th className="text-left px-3 py-2">Commodity</th>
                         <th className="text-right px-3 py-2">Price</th>
                         <th className="text-right px-3 py-2 hidden md:table-cell">Change</th>
@@ -576,14 +576,14 @@ export default function CommoditiesPage() {
                         return (
                           <React.Fragment key={item.id}>
                             <tr
-                              className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px] cursor-pointer ${
+                              className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[13px] cursor-pointer ${
                                 isExpanded ? 'bg-[#f5f7fa]' : ''
                               }`}
                               onClick={() => setExpanded(isExpanded ? null : item.id)}
                             >
                               <td className="px-3 py-2">
                                 <span className="flex items-center gap-1.5">
-                                  <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                  <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                   <Link
                                     href={`/markets/commodities/${item.slug}`}
                                     className="text-[#0066cc] hover:underline font-medium"

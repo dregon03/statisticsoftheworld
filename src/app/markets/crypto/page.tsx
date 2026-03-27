@@ -127,10 +127,10 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
   };
 
   return (
-    <div className="border-t border-[#e8e8e8] bg-[#fafbfc] px-4 py-4">
+    <div className="border-t border-[#d5dce6] bg-[#fafbfd] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#333]">{name}</span>
+          <span className="text-[13px] font-semibold text-[#0d1b2a]">{name}</span>
           {points.length > 1 && (
             <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}${Math.abs(changeAmt).toLocaleString(undefined, { maximumFractionDigits: 2 })} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
@@ -140,7 +140,7 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
         <div className="flex gap-1">
           {RANGES.map(r => (
             <button key={r.key} onClick={() => setRange(r.key)}
-              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0066cc] text-white' : 'bg-white border border-[#ddd] text-[#666] hover:bg-[#f0f0f0]'}`}>
+              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
               {r.label}
             </button>
           ))}
@@ -148,9 +148,9 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">Loading chart...</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">Loading chart...</div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">No chart data</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">No chart data</div>
       ) : (
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -187,7 +187,7 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
                 const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
                 return (
                   <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
-                    <div className="text-[#999] mb-0.5">{dateLabel}</div>
+                    <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                     <div className="font-mono font-semibold text-[14px]">${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
                 );
@@ -210,10 +210,10 @@ function PredictionCard({ market }: { market: PredictionMarket }) {
 
   return (
     <a href={market.url} target="_blank" rel="noopener noreferrer"
-      className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#e8e8e8] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group">
+      className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#d5dce6] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group">
       <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-[#333] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">{market.question}</div>
-        <div className="text-[10px] text-[#999] mt-0.5">Vol: {vol}{end ? ` · Resolves ${end}` : ''}</div>
+        <div className="text-[12px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">{market.question}</div>
+        <div className="text-[10px] text-[#64748b] mt-0.5">Vol: {vol}{end ? ` · Resolves ${end}` : ''}</div>
       </div>
       <div className="shrink-0 flex items-center gap-2">
         <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -228,7 +228,7 @@ function PredictionCard({ market }: { market: PredictionMarket }) {
 /* ── Change Span ───────────────────────────────────── */
 
 function ChangeSpan({ value }: { value: number | null }) {
-  if (value == null) return <span className="text-[#ccc]">—</span>;
+  if (value == null) return <span className="text-[#94a3b8]">—</span>;
   const color = value >= 0 ? 'text-green-600' : 'text-red-600';
   return <span className={`font-mono ${color}`}>{value >= 0 ? '+' : ''}{value.toFixed(2)}%</span>;
 }
@@ -358,7 +358,7 @@ export default function CryptoPage() {
   });
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
 
       <div className="max-w-[1200px] mx-auto px-4 py-8">
@@ -366,13 +366,13 @@ export default function CryptoPage() {
 
         {/* BTC + ETH Headline */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="border border-[#e8e8e8] rounded-xl p-5 bg-gradient-to-r from-[#fff8f0] to-white">
+          <div className="border border-[#d5dce6] rounded-xl p-5 bg-gradient-to-r from-[#fff8f0] to-white">
             <div className="flex items-center gap-2 mb-1">
               <img src="https://cryptofonts.com/img/SVG/btc.svg" alt="" width={24} height={24} className="rounded-full" />
-              <span className="text-[11px] text-[#999] uppercase tracking-wider">Bitcoin (BTC)</span>
+              <span className="text-[11px] text-[#64748b] uppercase tracking-wider">Bitcoin (BTC)</span>
             </div>
             <div className="flex items-baseline gap-3">
-              <span className="text-[28px] font-bold font-mono text-[#333]">
+              <span className="text-[28px] font-bold font-mono text-[#0d1b2a]">
                 {btc?.price != null ? <AnimatedPrice value={btc.price} format={v => `$${v.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} /> : '—'}
               </span>
               {btcChange != null && (
@@ -382,18 +382,18 @@ export default function CryptoPage() {
               )}
             </div>
             {btc?.ytdChg != null && (
-              <div className="text-[11px] text-[#999] mt-1">
+              <div className="text-[11px] text-[#64748b] mt-1">
                 YTD: <span className={btc.ytdChg >= 0 ? 'text-green-600' : 'text-red-600'}>{btc.ytdChg >= 0 ? '+' : ''}{btc.ytdChg.toFixed(1)}%</span>
               </div>
             )}
           </div>
-          <div className="border border-[#e8e8e8] rounded-xl p-5 bg-gradient-to-r from-[#f0f4ff] to-white">
+          <div className="border border-[#d5dce6] rounded-xl p-5 bg-gradient-to-r from-[#f0f4ff] to-white">
             <div className="flex items-center gap-2 mb-1">
               <img src="https://cryptofonts.com/img/SVG/eth.svg" alt="" width={24} height={24} className="rounded-full" />
-              <span className="text-[11px] text-[#999] uppercase tracking-wider">Ethereum (ETH)</span>
+              <span className="text-[11px] text-[#64748b] uppercase tracking-wider">Ethereum (ETH)</span>
             </div>
             <div className="flex items-baseline gap-3">
-              <span className="text-[28px] font-bold font-mono text-[#333]">
+              <span className="text-[28px] font-bold font-mono text-[#0d1b2a]">
                 {eth?.price != null ? <AnimatedPrice value={eth.price} format={v => `$${v.toLocaleString(undefined, { maximumFractionDigits: 2 })}`} /> : '—'}
               </span>
               {ethChange != null && (
@@ -403,7 +403,7 @@ export default function CryptoPage() {
               )}
             </div>
             {eth?.ytdChg != null && (
-              <div className="text-[11px] text-[#999] mt-1">
+              <div className="text-[11px] text-[#64748b] mt-1">
                 YTD: <span className={eth.ytdChg >= 0 ? 'text-green-600' : 'text-red-600'}>{eth.ytdChg >= 0 ? '+' : ''}{eth.ytdChg.toFixed(1)}%</span>
               </div>
             )}
@@ -411,13 +411,13 @@ export default function CryptoPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-[#999]">Loading crypto prices...</div>
+          <div className="text-center py-20 text-[#64748b]">Loading crypto prices...</div>
         ) : (
           <div className="space-y-8">
             {/* Coins Table */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider">Top 20 Cryptocurrencies</h2>
+                <h2 className="text-[14px] font-semibold text-[#64748b] uppercase tracking-wider">Top 20 Cryptocurrencies</h2>
                 <ExportButton
                   filename={`sotw-crypto-${new Date().toISOString().slice(0, 10)}`}
                   getData={() => ({
@@ -430,23 +430,23 @@ export default function CryptoPage() {
                   })}
                 />
               </div>
-              <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
+              <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
+                    <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                       <th className="text-left px-3 py-2">#</th>
                       <th className="text-left px-3 py-2">Name</th>
                       <th className="text-right px-3 py-2">
-                        <button onClick={() => handleSort('price')} className="hover:text-[#333]">Price{sortIcon('price')}</button>
+                        <button onClick={() => handleSort('price')} className="hover:text-[#0d1b2a]">Price{sortIcon('price')}</button>
                       </th>
                       <th className="text-right px-3 py-2">
-                        <button onClick={() => handleSort('dayChg')} className="hover:text-[#333]">24h{sortIcon('dayChg')}</button>
+                        <button onClick={() => handleSort('dayChg')} className="hover:text-[#0d1b2a]">24h{sortIcon('dayChg')}</button>
                       </th>
                       <th className="text-right px-3 py-2 hidden md:table-cell">
-                        <button onClick={() => handleSort('weeklyChg')} className="hover:text-[#333]">7d{sortIcon('weeklyChg')}</button>
+                        <button onClick={() => handleSort('weeklyChg')} className="hover:text-[#0d1b2a]">7d{sortIcon('weeklyChg')}</button>
                       </th>
                       <th className="text-right px-3 py-2 hidden md:table-cell">
-                        <button onClick={() => handleSort('monthlyChg')} className="hover:text-[#333]">30d{sortIcon('monthlyChg')}</button>
+                        <button onClick={() => handleSort('monthlyChg')} className="hover:text-[#0d1b2a]">30d{sortIcon('monthlyChg')}</button>
                       </th>
                       <th className="text-right px-3 py-2 hidden lg:table-cell">YTD</th>
                     </tr>
@@ -460,16 +460,16 @@ export default function CryptoPage() {
                       return (
                         <React.Fragment key={coin.pair}>
                           <tr
-                            className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
+                            className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[13px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
                             onClick={() => setExpanded(isExpanded ? null : coin.pair)}
                           >
-                            <td className="px-3 py-2 text-[#999] text-[12px]">{i + 1}</td>
+                            <td className="px-3 py-2 text-[#64748b] text-[12px]">{i + 1}</td>
                             <td className="px-3 py-2">
                               <span className="flex items-center gap-2">
-                                <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                 <img src={`https://cryptofonts.com/img/SVG/${coin.symbol.toLowerCase()}.svg`} alt="" width={20} height={20} className="rounded-full" loading="lazy" />
                                 <span className="font-medium">{coin.name}</span>
-                                <span className="text-[11px] text-[#999]">{coin.symbol}</span>
+                                <span className="text-[11px] text-[#64748b]">{coin.symbol}</span>
                               </span>
                             </td>
                             <td className="px-3 py-2 text-right font-mono font-semibold">
@@ -498,10 +498,10 @@ export default function CryptoPage() {
             {/* Prediction Markets */}
             {cryptoPredictions.length > 0 && (
               <div>
-                <h2 className="text-[14px] font-semibold text-[#666] uppercase tracking-wider mb-3">
+                <h2 className="text-[14px] font-semibold text-[#64748b] uppercase tracking-wider mb-3">
                   &#x1F52E; Crypto Predictions
                 </h2>
-                <p className="text-[12px] text-[#999] mb-3">
+                <p className="text-[12px] text-[#64748b] mb-3">
                   Live prediction market odds from <a href="https://polymarket.com" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Polymarket</a>. Real-money forecasts on crypto prices and events.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -512,7 +512,7 @@ export default function CryptoPage() {
           </div>
         )}
 
-        <div className="text-[11px] text-[#999] mt-6">
+        <div className="text-[11px] text-[#64748b] mt-6">
           Prices from Yahoo Finance (15-min delayed). Crypto markets trade 24/7.
         </div>
       </div>

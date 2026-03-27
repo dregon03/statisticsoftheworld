@@ -49,17 +49,17 @@ export default async function IndicatorsPage({ searchParams }: { searchParams: P
     }).filter(c => c.indicators.length > 0);
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
       <HeroTabs active="/indicators" indicatorCount={INDICATORS.length} />
 
       {/* Category nav */}
-      <nav className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] border-b border-[#f0f0f0]">
+      <nav className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] border-b border-[#edf0f5]">
         {categoriesWithData.map(({ category }) => (
           <a
             key={category}
             href={`#${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-            className="text-[#999] hover:text-[#333] transition whitespace-nowrap"
+            className="text-[#64748b] hover:text-[#0d1b2a] transition whitespace-nowrap"
           >
             {category}
           </a>

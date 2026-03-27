@@ -106,10 +106,10 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
   };
 
   return (
-    <div className="border-t border-[#e8e8e8] bg-[#fafbfc] px-4 py-4">
+    <div className="border-t border-[#d5dce6] bg-[#fafbfd] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#333]">{name}</span>
+          <span className="text-[13px] font-semibold text-[#0d1b2a]">{name}</span>
           {points.length > 1 && (
             <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}${Math.abs(changeAmt).toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
@@ -119,7 +119,7 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
         <div className="flex gap-1">
           {RANGES.map(r => (
             <button key={r.key} onClick={() => setRange(r.key)}
-              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0066cc] text-white' : 'bg-white border border-[#ddd] text-[#666] hover:bg-[#f0f0f0]'}`}>
+              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
               {r.label}
             </button>
           ))}
@@ -127,9 +127,9 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">Loading chart...</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">Loading chart...</div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">No chart data</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">No chart data</div>
       ) : (
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -166,7 +166,7 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
                 const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
                 return (
                   <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
-                    <div className="text-[#999] mb-0.5">{dateLabel}</div>
+                    <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                     <div className="font-mono font-semibold text-[14px]">${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
                 );
@@ -517,12 +517,12 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
             <span className="font-bold text-[16px] text-white">{hovered.ticker}</span>
             <span className="text-[#888] text-[12px]">{hovered.name}</span>
           </div>
-          <div className="text-[#666] text-[11px] mb-2">{hovered.sector} · {hovered.industry}</div>
+          <div className="text-[#64748b] text-[11px] mb-2">{hovered.sector} · {hovered.industry}</div>
           <div className="flex items-center justify-between border-t border-[#333] pt-2">
             <span className={`font-mono font-bold text-[18px] ${hovered.changePct >= 0 ? 'text-[#4caf50]' : 'text-[#ef5350]'}`}>
               {hovered.changePct >= 0 ? '+' : ''}{hovered.changePct.toFixed(2)}%
             </span>
-            <span className="text-[#666] text-[12px] font-mono">${(hovered.size / 1e9).toFixed(0)}B</span>
+            <span className="text-[#64748b] text-[12px] font-mono">${(hovered.size / 1e9).toFixed(0)}B</span>
           </div>
         </div>
       )}
@@ -637,21 +637,21 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
   const losers = [...stockQuotes].sort((a, b) => a.changePct - b.changePct).slice(0, 5);
 
   return (
-    <main className="min-h-screen bg-white text-[#333]">
+    <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />
       <div className="max-w-[1200px] mx-auto px-4 py-8">
         <MarketsHeader updatedAt={updatedAt} />
         <StocksHeader />
 
         {loading ? (
-          <div className="text-center py-20 text-[#999]">Loading {title} data...</div>
+          <div className="text-center py-20 text-[#64748b]">Loading {title} data...</div>
         ) : stockQuotes.length === 0 ? (
-          <div className="text-center py-20 text-[#999]">No {title} data yet. ETL job may still be running its first fetch.</div>
+          <div className="text-center py-20 text-[#64748b]">No {title} data yet. ETL job may still be running its first fetch.</div>
         ) : (
           <>
             {/* Gainers / Losers */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div className="border border-[#e8e8e8] rounded-lg p-4">
+              <div className="border border-[#d5dce6] rounded-lg p-4">
                 <h3 className="text-[13px] font-semibold text-[#2ecc40] mb-3">Top Gainers</h3>
                 {gainers.map(q => (
                   <div key={q.id} className="flex justify-between text-[13px] py-1">
@@ -660,7 +660,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                   </div>
                 ))}
               </div>
-              <div className="border border-[#e8e8e8] rounded-lg p-4">
+              <div className="border border-[#d5dce6] rounded-lg p-4">
                 <h3 className="text-[13px] font-semibold text-[#e74c3c] mb-3">Top Losers</h3>
                 {losers.map(q => (
                   <div key={q.id} className="flex justify-between text-[13px] py-1">
@@ -685,9 +685,9 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                 placeholder="Search ticker..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-48"
+                className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-48"
               />
-              <span className="text-[12px] text-[#999] self-center ml-auto flex items-center gap-3">
+              <span className="text-[12px] text-[#64748b] self-center ml-auto flex items-center gap-3">
                 {stockQuotes.length} stocks
                 <ExportButton
                   filename={`sotw-${title.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}`}
@@ -702,23 +702,23 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
             </div>
 
             {/* Table */}
-            <div className="border border-[#e8e8e8] rounded-lg overflow-hidden">
+            <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="text-[11px] text-[#999] uppercase tracking-wider bg-[#f8f9fa] border-b border-[#e8e8e8]">
+                  <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                     <th className="text-left px-3 py-2">
-                      <button onClick={() => handleSort('label')} className="hover:text-[#333]">Ticker{sortIcon('label')}</button>
+                      <button onClick={() => handleSort('label')} className="hover:text-[#0d1b2a]">Ticker{sortIcon('label')}</button>
                     </th>
                     <th className="text-left px-3 py-2 hidden md:table-cell">Name</th>
                     <th className="text-right px-3 py-2">
-                      <button onClick={() => handleSort('price')} className="hover:text-[#333]">Price{sortIcon('price')}</button>
+                      <button onClick={() => handleSort('price')} className="hover:text-[#0d1b2a]">Price{sortIcon('price')}</button>
                     </th>
                     <th className="text-right px-3 py-2 hidden sm:table-cell">Prev Close</th>
                     <th className="text-right px-3 py-2">
-                      <button onClick={() => handleSort('change')} className="hover:text-[#333]">Change{sortIcon('change')}</button>
+                      <button onClick={() => handleSort('change')} className="hover:text-[#0d1b2a]">Change{sortIcon('change')}</button>
                     </th>
                     <th className="text-right px-3 py-2">
-                      <button onClick={() => handleSort('changePct')} className="hover:text-[#333]">% Change{sortIcon('changePct')}</button>
+                      <button onClick={() => handleSort('changePct')} className="hover:text-[#0d1b2a]">% Change{sortIcon('changePct')}</button>
                     </th>
                   </tr>
                 </thead>
@@ -730,21 +730,21 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                     return (
                       <React.Fragment key={q.id}>
                         <tr
-                          className={`border-b border-[#f0f0f0] hover:bg-[#f5f7fa] transition text-[13px] cursor-pointer ${isExpanded2 ? 'bg-[#f5f7fa]' : i % 2 ? 'bg-[#fafbfc]' : ''}`}
+                          className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[13px] cursor-pointer ${isExpanded2 ? 'bg-[#f5f7fa]' : i % 2 ? 'bg-[#fafbfd]' : ''}`}
                           onClick={() => setExpanded(isExpanded2 ? null : q.label)}
                         >
                           <td className="px-3 py-2 font-semibold">
                             <span className="flex items-center gap-1.5">
-                              <span className={`text-[10px] text-[#999] transition-transform inline-block ${isExpanded2 ? 'rotate-90' : ''}`}>&#9654;</span>
+                              <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded2 ? 'rotate-90' : ''}`}>&#9654;</span>
                               <StockLogo ticker={q.label} size={18} />
                               {q.label}
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-[12px] text-[#666] hidden md:table-cell">{COMPANY_NAMES[q.label] || ''}</td>
+                          <td className="px-3 py-2 text-[12px] text-[#64748b] hidden md:table-cell">{COMPANY_NAMES[q.label] || ''}</td>
                           <td className="px-3 py-2 text-right font-mono font-semibold">
                             <AnimatedPrice value={q.price} format={v => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
                           </td>
-                          <td className="px-3 py-2 text-right font-mono text-[12px] text-[#999] hidden sm:table-cell">
+                          <td className="px-3 py-2 text-right font-mono text-[12px] text-[#64748b] hidden sm:table-cell">
                             ${q.previousClose.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
                           <td className={`px-3 py-2 text-right font-mono text-[12px] ${color}`}>{sign}{q.change.toFixed(2)}</td>

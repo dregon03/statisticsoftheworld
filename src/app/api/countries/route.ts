@@ -1,5 +1,9 @@
 import { getCountries, getIndicatorForAllCountries, getAllIndicatorsForCountry } from '@/lib/data';
 
+// Cache the full countries+stats response — data changes at most daily via ETL
+let listCache: { data: any; ts: number } | null = null;
+const LIST_CACHE_TTL = 30 * 60_000; // 30 minutes
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
@@ -8,6 +12,11 @@ export async function GET(request: Request) {
   if (id) {
     const indicators = await getAllIndicatorsForCountry(id);
     return Response.json({ indicators });
+  }
+
+  // Return cached if fresh
+  if (listCache && Date.now() - listCache.ts < LIST_CACHE_TTL) {
+    return Response.json(listCache.data);
   }
 
   // List mode: return all countries with summary stats
@@ -54,5 +63,7 @@ export async function GET(request: Request) {
   assign(tradeData, 'tradeOpenness');
   assign(fdiData, 'fdi');
 
-  return Response.json({ countries, stats });
+  const result = { countries, stats };
+  listCache = { data: result, ts: Date.now() };
+  return Response.json(result);
 }

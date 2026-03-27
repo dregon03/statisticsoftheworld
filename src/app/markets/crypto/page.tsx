@@ -431,7 +431,16 @@ export default function CryptoPage() {
                 />
               </div>
               <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
-                <table className="w-full">
+                <table className="w-full table-fixed">
+                  <colgroup>
+                    <col style={{ width: '5%' }} />
+                    <col style={{ width: '25%' }} />
+                    <col style={{ width: '16%' }} />
+                    <col style={{ width: '12%' }} />
+                    <col style={{ width: '14%' }} />
+                    <col style={{ width: '14%' }} />
+                    <col style={{ width: '14%' }} />
+                  </colgroup>
                   <thead>
                     <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                       <th className="text-left px-3 py-2">#</th>

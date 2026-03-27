@@ -651,7 +651,15 @@ export default function CurrenciesPage() {
               <div key={section.title}>
                 <h2 className="text-[14px] font-semibold text-[#64748b] uppercase tracking-wider mb-3">{section.title}</h2>
                 <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
-                  <table className="w-full">
+                  <table className="w-full table-fixed">
+                    <colgroup>
+                      <col style={{ width: '28%' }} />
+                      <col style={{ width: '18%' }} />
+                      <col style={{ width: '14%' }} />
+                      <col style={{ width: '14%' }} />
+                      <col style={{ width: '14%' }} />
+                      <col style={{ width: '12%' }} />
+                    </colgroup>
                     <thead>
                       <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                         <th className="text-left px-3 py-2">Pair</th>

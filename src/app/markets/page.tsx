@@ -270,7 +270,15 @@ export default function MarketsPage() {
                 <div key={region}>
                   <h2 className="text-[15px] font-bold text-[#0d1b2a] uppercase tracking-wider mb-3">{region}</h2>
                   <div className="bg-white border border-[#d5dce6] rounded-xl overflow-hidden shadow-sm">
-                    <table className="w-full">
+                    <table className="w-full table-fixed">
+                      <colgroup>
+                        <col style={{ width: '20%' }} />
+                        <col style={{ width: '22%' }} />
+                        <col style={{ width: '16%' }} />
+                        <col style={{ width: '16%' }} />
+                        <col style={{ width: '13%' }} />
+                        <col style={{ width: '13%' }} />
+                      </colgroup>
                       <thead>
                         <tr className="text-[12px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                           <th className="text-left px-3 py-2">Country</th>

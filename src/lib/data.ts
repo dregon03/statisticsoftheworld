@@ -648,41 +648,48 @@ export async function getTop10AllIndicators(): Promise<Record<string, { country:
     return _top10Cache.data;
   }
 
-  // Fetch country names + iso2 first (fast, ~217 rows)
+  // Fetch country names + iso2 (fast, ~217 rows)
   const countries = await getCountries();
   const countryMap = new Map(countries.map(c => [c.id, { name: c.name, iso2: c.iso2 }]));
 
-  // Fetch all indicator data in pages (Supabase default limit is 1000)
-  const allRows: { id: string; country_id: string; value: number; year: number }[] = [];
-  const pageSize = 1000;
-  for (let offset = 0; ; offset += pageSize) {
-    const { data, error } = await supabase
-      .from('sotw_indicators')
-      .select('id, country_id, value, year')
-      .not('value', 'is', null)
-      .range(offset, offset + pageSize - 1);
-    if (error || !data || data.length === 0) break;
-    allRows.push(...(data as any[]));
-    if (data.length < pageSize) break;
+  // Get the list of indicator IDs we actually need top-10 for
+  const indicatorIds = INDICATORS.map(ind => ind.id);
+
+  // Fetch top 10 per indicator in parallel batches instead of downloading entire table
+  // Each query fetches one indicator's data sorted by value desc, limit 10
+  const BATCH_SIZE = 20;
+  const grouped: Record<string, { country: string; countryId: string; iso2: string; value: number; year: string }[]> = {};
+
+  for (let i = 0; i < indicatorIds.length; i += BATCH_SIZE) {
+    const batch = indicatorIds.slice(i, i + BATCH_SIZE);
+    const results = await Promise.all(
+      batch.map(async (indId) => {
+        const { data } = await supabase
+          .from('sotw_indicators')
+          .select('id, country_id, value, year')
+          .eq('id', indId)
+          .not('value', 'is', null)
+          .order('value', { ascending: false })
+          .limit(10);
+        return { indId, data: data || [] };
+      })
+    );
+
+    for (const { indId, data } of results) {
+      if (data.length === 0) continue;
+      grouped[indId] = data.map((row: any) => {
+        const c = countryMap.get(row.country_id);
+        return {
+          country: c?.name || row.country_id,
+          countryId: row.country_id,
+          iso2: c?.iso2 || row.country_id.toLowerCase().slice(0, 2),
+          value: adjustValue(row.id, row.value) as number,
+          year: String(row.year),
+        };
+      });
+    }
   }
 
-  // Group by indicator, sort each group by value descending, take top 10
-  const grouped: Record<string, { country: string; countryId: string; iso2: string; value: number; year: string }[]> = {};
-  for (const row of allRows) {
-    if (!grouped[row.id]) grouped[row.id] = [];
-    const c = countryMap.get(row.country_id);
-    grouped[row.id].push({
-      country: c?.name || row.country_id,
-      countryId: row.country_id,
-      iso2: c?.iso2 || row.country_id.toLowerCase().slice(0, 2),
-      value: adjustValue(row.id, row.value) as number,
-      year: String(row.year),
-    });
-  }
-  for (const id of Object.keys(grouped)) {
-    grouped[id].sort((a, b) => (b.value || 0) - (a.value || 0));
-    grouped[id] = grouped[id].slice(0, 10);
-  }
   _top10Cache = { data: grouped, ts: Date.now() };
   return grouped;
 }

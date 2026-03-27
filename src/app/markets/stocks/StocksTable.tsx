@@ -18,7 +18,9 @@ import {
   CartesianGrid,
 } from 'recharts';
 
-// Finnhub stores some logos under exchange-specific names
+// Finnhub stores some logos under exchange-specific names.
+// For .TO and .L tickers, Finnhub often uses the ticker as-is or a variant.
+// We use clearbit logo API as fallback for companies Finnhub doesn't cover.
 const LOGO_OVERRIDES: Record<string, string> = {
   META: 'FB', AZN: 'AZN.L', BMO: 'BMO.TO', BP: 'BP.L', ENB: 'ENB.TO',
   HSBC: 'HSBA.L', NVO: 'NOVO B.CO', RY: 'RY.TO', SAP: 'SAP.DE', SHEL: 'SHEL.L',
@@ -29,18 +31,86 @@ const LOGO_OVERRIDES: Record<string, string> = {
   ASML: 'ASML.AS', TSM: 'TSM', BABA: 'BABA', PDD: 'PDD', JD: 'JD',
 };
 
+// Clearbit logo fallback: ticker → company domain
+const CLEARBIT_DOMAINS: Record<string, string> = {
+  // TSX 60
+  'RY.TO': 'rbc.com', 'TD.TO': 'td.com', 'BNS.TO': 'scotiabank.com', 'BMO.TO': 'bmo.com',
+  'CM.TO': 'cibc.com', 'ENB.TO': 'enbridge.com', 'CNR.TO': 'cn.ca', 'CP.TO': 'cpkcr.com',
+  'TRP.TO': 'tcenergy.com', 'SU.TO': 'suncor.com', 'CNQ.TO': 'cnrl.com', 'MFC.TO': 'manulife.com',
+  'SLF.TO': 'sunlife.com', 'BCE.TO': 'bce.ca', 'T.TO': 'telus.com', 'ABX.TO': 'barrick.com',
+  'NTR.TO': 'nutrien.com', 'FNV.TO': 'franco-nevada.com', 'CSU.TO': 'csisoftware.com',
+  'SHOP.TO': 'shopify.com', 'ATD.TO': 'couche-tard.com', 'WCN.TO': 'wasteconnections.com',
+  'IFC.TO': 'intactfc.com', 'QSR.TO': 'rbi.com', 'DOL.TO': 'dollarama.com',
+  'SAP.TO': 'saputo.com', 'GIB-A.TO': 'cgi.com', 'WSP.TO': 'wsp.com', 'CCO.TO': 'cameco.com',
+  'TRI.TO': 'thomsonreuters.com', 'BAM.TO': 'brookfield.com', 'BN.TO': 'bn.brookfield.com',
+  'POW.TO': 'powercorporation.com', 'FFH.TO': 'fairfax.ca', 'GWO.TO': 'greatwestlifeco.com',
+  'IAG.TO': 'ia.ca', 'NA.TO': 'nbc.ca', 'EMA.TO': 'emera.com', 'FTS.TO': 'fortisinc.com',
+  'AQN.TO': 'algonquinpower.com', 'H.TO': 'hydroone.com', 'MG.TO': 'magna.com',
+  'L.TO': 'loblaw.ca', 'CTC-A.TO': 'canadiantire.ca', 'WPM.TO': 'wheatonpm.com',
+  'AEM.TO': 'agnicoeagle.com', 'K.TO': 'kinross.com', 'FM.TO': 'first-quantum.com',
+  'IMO.TO': 'imperialoil.ca', 'CVE.TO': 'cenovus.com', 'HSE.TO': 'huskyenergy.com',
+  'PPL.TO': 'pembina.com', 'IPL.TO': 'interpipeline.com', 'KEY.TO': 'keyera.com',
+  'GFL.TO': 'gflenv.com', 'TFII.TO': 'tfiintl.com', 'STN.TO': 'stantec.com',
+  'OTEX.TO': 'opentext.com', 'BB.TO': 'blackberry.com', 'LSPD.TO': 'lightspeedhq.com',
+  // FTSE 100
+  'III.L': '3i.com', 'ADM.L': 'admiralgroup.co.uk', 'AAF.L': 'airtel.in',
+  'AAL.L': 'angloamerican.com', 'ANTO.L': 'antofagasta.co.uk', 'AHT.L': 'ashtead-group.com',
+  'ABF.L': 'abf.co.uk', 'AZN.L': 'astrazeneca.com', 'AUTO.L': 'autotrader.co.uk',
+  'AVV.L': 'aveva.com', 'AV.L': 'aviva.com', 'BME.L': 'bmstores.co.uk',
+  'BA.L': 'baesystems.com', 'BARC.L': 'barclays.co.uk', 'BDEV.L': 'barrattdevelopments.co.uk',
+  'BEZ.L': 'beazley.com', 'BKG.L': 'berkeleygroup.co.uk', 'BP.L': 'bp.com',
+  'BATS.L': 'bat.com', 'BLND.L': 'britishland.com', 'BT-A.L': 'bt.com',
+  'BNZL.L': 'bunzl.com', 'BRBY.L': 'burberry.com', 'CCH.L': 'coca-colahellenic.com',
+  'CPG.L': 'compass-group.com', 'CNA.L': 'centrica.com', 'CRH.L': 'crh.com',
+  'CRDA.L': 'croda.com', 'DCC.L': 'dcc.ie', 'DGE.L': 'diageo.com',
+  'DPLM.L': 'diplomaplc.com', 'EDV.L': 'endeavourmining.com', 'ENT.L': 'entaingroup.com',
+  'EXPN.L': 'experian.com', 'FRAS.L': 'frasers.group', 'FRES.L': 'fresnilloplc.com',
+  'GLEN.L': 'glencore.com', 'GSK.L': 'gsk.com', 'HLN.L': 'haleon.com',
+  'HLMA.L': 'halma.com', 'HSBA.L': 'hsbc.com', 'IHG.L': 'ihgplc.com',
+  'IMB.L': 'imperialbrandsplc.com', 'INF.L': 'informa.com', 'ITV.L': 'itvplc.com',
+  'JD.L': 'jdplc.com', 'KGF.L': 'kingfisher.com', 'LAND.L': 'landsecurities.com',
+  'LGEN.L': 'legalandgeneralgroup.com', 'LLOY.L': 'lloydsbankinggroup.com',
+  'LSEG.L': 'lseg.com', 'MNG.L': 'mandg.com', 'MRO.L': 'melroseplc.net',
+  'MNDI.L': 'mondigroup.com', 'NG.L': 'nationalgrid.com', 'NWG.L': 'natwestgroup.com',
+  'NXT.L': 'nextplc.co.uk', 'OCDO.L': 'ocadogroup.com', 'PSON.L': 'pearson.com',
+  'PSN.L': 'persimmonhomes.com', 'PHNX.L': 'thephoenixgroup.com', 'PRU.L': 'prudential.co.uk',
+  'RKT.L': 'reckitt.com', 'REL.L': 'relx.com', 'RIO.L': 'riotinto.com',
+  'RMV.L': 'rightmove.co.uk', 'RR.L': 'rolls-royce.com', 'RS1.L': 'rsgroup.com',
+  'RTO.L': 'rentokil-initial.com', 'SAG.L': 'sage.com', 'SBRY.L': 'sainsburys.co.uk',
+  'SDR.L': 'schroders.com', 'SGE.L': 'sage.com', 'SGRO.L': 'segro.com',
+  'SHEL.L': 'shell.com', 'SJP.L': 'sjp.co.uk', 'SKG.L': 'smurfitkappa.com',
+  'SMIN.L': 'smiths.com', 'SMT.L': 'bailliegifford.com', 'SN.L': 'smith-nephew.com',
+  'SPX.L': 'spiraxgroup.com', 'SSE.L': 'sse.com', 'STAN.L': 'sc.com',
+  'SVT.L': 'severntrent.com', 'TSCO.L': 'tescoplc.com', 'TW.L': 'taylorwimpey.co.uk',
+  'ULVR.L': 'unilever.com', 'UTG.L': 'unitegroup.com', 'UU.L': 'unitedutilities.com',
+  'VOD.L': 'vodafone.com', 'WEIR.L': 'global.weir', 'WPP.L': 'wpp.com',
+  'WTB.L': 'whitbread.co.uk',
+};
+
 function StockLogo({ ticker, size = 20 }: { ticker: string; size?: number }) {
-  const [error, setError] = useState(false);
-  if (error) return null;
-  const logoKey = LOGO_OVERRIDES[ticker] || ticker;
+  const [src, setSrc] = useState<string | null>(() => {
+    const logoKey = LOGO_OVERRIDES[ticker] || ticker;
+    return `https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/${encodeURIComponent(logoKey)}.png`;
+  });
+
+  if (!src) return null;
+
   return (
     <img
-      src={`https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/${encodeURIComponent(logoKey)}.png`}
+      src={src}
       alt=""
       width={size}
       height={size}
       className="rounded-sm object-contain"
-      onError={() => setError(true)}
+      onError={() => {
+        const domain = CLEARBIT_DOMAINS[ticker];
+        if (domain && src.includes('finnhub')) {
+          // Try Google favicon as fallback
+          setSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=${size * 2}`);
+        } else {
+          setSrc(null);
+        }
+      }}
       loading="lazy"
     />
   );

@@ -555,13 +555,19 @@ export default function CommoditiesPage() {
               <div key={section.title}>
                 <h2 className="text-[14px] font-semibold text-[#64748b] uppercase tracking-wider mb-3">{section.title}</h2>
                 <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
-                  <table className="w-full">
+                  <table className="w-full table-fixed">
+                    <colgroup>
+                      <col style={{ width: '35%' }} />
+                      <col style={{ width: '22%' }} />
+                      <col style={{ width: '22%' }} />
+                      <col style={{ width: '21%' }} />
+                    </colgroup>
                     <thead>
                       <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                         <th className="text-left px-3 py-2">Commodity</th>
                         <th className="text-right px-3 py-2">Price</th>
                         <th className="text-right px-3 py-2 hidden md:table-cell">Change</th>
-                        <th className="text-right px-3 py-2 w-[100px] hidden md:table-cell">1D Trend</th>
+                        <th className="text-right px-3 py-2 hidden md:table-cell">1D Trend</th>
                       </tr>
                     </thead>
                     <tbody>

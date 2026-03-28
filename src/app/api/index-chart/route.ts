@@ -18,22 +18,16 @@ const INDEX_SYMBOLS: Record<string, string> = {
   'YF.FUT.DOW': 'YM=F', 'YF.FUT.RUSSELL': 'RTY=F',
 };
 
-// Stooq.com symbols for deep historical data (monthly CSV, verified)
-const STOOQ_SYMBOLS: Record<string, string> = {
-  'YF.IDX.USA':    '^spx',   // S&P 500 from 1800
-  'YF.FUT.SP500':  '^spx',
-  'YF.FUT.DOW':    '^dji',   // Dow Jones from 1896
-  'YF.IDX.JPN':    '^nkx',   // Nikkei from 1914
-  'YF.IDX.GBR':    '^ukx',   // FTSE 100 from 1935
-  'YF.IDX.DEU':    '^dax',   // DAX from 1960
-  'YF.IDX.HKG':    '^hsi',   // Hang Seng from 1969
-  'YF.IDX.CAN':    '^tsx',   // TSX from 1956
-  'YF.IDX.SGP':    '^sti',   // STI from 1987
-  'YF.IDX.NZL':    '^nz50',  // NZX 50 from 2001
-  'YF.IDX.SAU':    '^tasi',  // Tadawul from 2001
+// Static historical data files (pre-downloaded, stored in /public/data/history/)
+// These are served as static JSON — no external API calls needed
+const STATIC_HISTORY: Record<string, string> = {
+  'YF.IDX.USA':    'sp500',    // S&P 500 from 1871 (Shiller)
+  'YF.FUT.SP500':  'sp500',
+  'YF.FUT.NASDAQ': 'nasdaq',   // NASDAQ from 1971 (FRED)
+  'YF.IDX.JPN':    'nikkei',   // Nikkei from 1949 (FRED)
 };
 
-// FRED fallback for series Stooq doesn't have
+// FRED fallback for indices not in static files
 const FRED_SERIES: Record<string, { series: string; start: string }> = {
   'YF.FUT.NASDAQ': { series: 'NASDAQCOM',  start: '1971-02-05' },
   'YF.IDX.JPN':    { series: 'NIKKEI225',  start: '1949-05-16' },
@@ -76,29 +70,18 @@ function dateInTz(date: Date, tz: string): string {
   }
 }
 
-// ── Stooq.com CSV fetcher ──────────────────────────────────────────
-async function fetchStooqData(stooqSym: string): Promise<{ points: { date: string; value: number }[] } | null> {
-  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(stooqSym)}&d1=18000101&d2=20270101&i=m`;
+// ── Static file loader (pre-downloaded historical data) ────────────
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+function loadStaticHistory(filename: string): { points: { date: string; value: number }[] } | null {
   try {
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-    if (!res.ok) return null;
-    const text = await res.text();
-    const lines = text.trim().split('\n');
-    if (lines.length < 2 || lines[1].startsWith('No data')) return null;
-
-    const points: { date: string; value: number }[] = [];
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      if (cols.length < 5) continue;
-      const date = cols[0]; // YYYY-MM-DD
-      const close = parseFloat(cols[4]);
-      if (!isNaN(close) && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        points.push({ date, value: Math.round(close * 100) / 100 });
-      }
+    const filePath = join(process.cwd(), 'public', 'data', 'history', `${filename}.json`);
+    const data = JSON.parse(readFileSync(filePath, 'utf-8'));
+    if (Array.isArray(data) && data.length > 10) {
+      return { points: data };
     }
-
-    if (points.length < 10) return null;
-    return { points };
+    return null;
   } catch {
     return null;
   }
@@ -161,23 +144,12 @@ export async function GET(request: Request) {
 
   // For 'max' range, try deep historical sources first
   if (range === 'max') {
-    // 1. Try Stooq for indices (S&P from 1800, Dow from 1896)
-    const stooqSym = id ? STOOQ_SYMBOLS[id] : null;
-    if (stooqSym) {
-      const stooqResult = await fetchStooqData(stooqSym);
-      if (stooqResult && stooqResult.points.length > 0) {
-        const result = { ...stooqResult, source: 'Stooq' };
-        cache[cacheKey] = { data: result, ts: Date.now() };
-        return Response.json(result);
-      }
-    }
-
-    // 1b. Try Stooq for individual US stocks (e.g., AAPL → aapl.us)
-    if (ticker && !ticker.includes('=') && !ticker.startsWith('^')) {
-      const stockSym = ticker.toLowerCase().replace('.', '-') + '.us';
-      const stooqResult = await fetchStooqData(stockSym);
-      if (stooqResult && stooqResult.points.length > 0) {
-        const result = { ...stooqResult, source: 'Stooq' };
+    // 1. Try static pre-downloaded data (most reliable, no external API)
+    const staticFile = id ? STATIC_HISTORY[id] : null;
+    if (staticFile) {
+      const staticResult = loadStaticHistory(staticFile);
+      if (staticResult && staticResult.points.length > 0) {
+        const result = { ...staticResult, source: 'Historical' };
         cache[cacheKey] = { data: result, ts: Date.now() };
         return Response.json(result);
       }

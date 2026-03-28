@@ -26,30 +26,27 @@ const SOTW_TO_YAHOO: Record<string, string> = {
   'YF.MILK': 'DC=F', 'YF.BUTTER': 'CB=F', 'YF.CHEESE': 'CSC=F',
 };
 
-// Stooq.com symbols for deep historical commodities (verified)
-const STOOQ_COMMODITY: Record<string, string> = {
-  // Precious Metals (spot prices)
-  'YF.GOLD':         'xauusd',   // from 1800
-  'YF.SILVER':       'xagusd',   // from 1800
-  'YF.PLATINUM':     'xptusd',   // from 1968
-  'YF.PALLADIUM':    'xpdusd',   // from 1968
-  // Energy
-  'YF.CRUDE_OIL':    'cl.c',     // WTI from 1946
-  'YF.NATGAS':       'ng.c',     // Natural Gas from 1930
-  'YF.HEATING_OIL':  'ho.c',     // Heating Oil from 1967
-  'YF.GASOLINE':     'rb.c',     // Gasoline from 2007
-  // Grains
-  'YF.WHEAT':        'zw.c',     // from 1917
-  'YF.WHEAT_KC':     'zw.c',     // same as Chicago wheat
-  'YF.CORN':         'zc.c',     // from 1917
-  'YF.SOYBEANS':     'zs.c',     // from 1917
-  // Softs
-  'YF.COFFEE':       'kc.c',     // from 1948
-  'YF.COCOA':        'cc.c',     // from 1980
-  'YF.SUGAR':        'sb.c',     // from 1917
-  'YF.COTTON':       'ct.c',     // from 1917
-  // Livestock
-  'YF.LIVE_CATTLE':  'le.c',     // from 1917
+// Static historical data files (pre-downloaded, stored in /public/data/history/)
+const STATIC_COMMODITY: Record<string, string> = {
+  'YF.GOLD':         'gold',       // from 1833
+  'YF.CRUDE_OIL':    'wti',        // from 1986
+  'YF.BRENT':        'brent',      // from 1987
+  'YF.NATGAS':       'natgas',     // from 1997
+  'YF.COPPER':       'copper',     // from 1990
+  'YF.ALUMINUM':     'aluminum',   // from 1992
+  'AV.ALUMINUM':     'aluminum',
+  'YF.WHEAT':        'wheat',      // from 1990
+  'YF.WHEAT_KC':     'wheat',
+  'YF.CORN':         'corn',       // from 1990
+  'YF.SOYBEANS':     'soybeans',   // from 1990
+  'YF.COFFEE':       'coffee',     // from 1992
+  'YF.COCOA':        'cocoa',      // from 1991
+  'YF.SUGAR':        'sugar',      // from 1990
+  'YF.COTTON':       'cotton',     // from 1990
+  'YF.NICKEL_ETC':   'nickel',     // from 1990
+  'YF.ZINC_ETC':     'zinc',       // from 1990
+  'YF.IRON_ORE':     'iron_ore',   // from 1990
+  'YF.RICE':         'rice',       // from 1991
 };
 
 // FRED series for commodities
@@ -95,28 +92,16 @@ function cacheTtl(range: string): number {
   return 2 * 60 * 1000;
 }
 
-// Stooq CSV fetcher for deep historical commodities
-async function fetchStooqData(stooqSym: string): Promise<{ points: { date: string; value: number }[] } | null> {
-  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(stooqSym)}&d1=18000101&d2=20270101&i=m`;
-  try {
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-    if (!res.ok) return null;
-    const text = await res.text();
-    const lines = text.trim().split('\n');
-    if (lines.length < 2 || lines[1].startsWith('No data')) return null;
+// Static file loader (pre-downloaded historical data)
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-    const points: { date: string; value: number }[] = [];
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      if (cols.length < 5) continue;
-      const date = cols[0];
-      const close = parseFloat(cols[4]);
-      if (!isNaN(close) && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        points.push({ date, value: Math.round(close * 100) / 100 });
-      }
-    }
-    if (points.length < 10) return null;
-    return { points };
+function loadStaticHistory(filename: string): { points: { date: string; value: number }[] } | null {
+  try {
+    const filePath = join(process.cwd(), 'public', 'data', 'history', `${filename}.json`);
+    const data = JSON.parse(readFileSync(filePath, 'utf-8'));
+    if (Array.isArray(data) && data.length > 10) return { points: data };
+    return null;
   } catch {
     return null;
   }
@@ -189,18 +174,18 @@ export async function GET(request: Request) {
 
   // For 'max' range, try deep historical sources first
   if (range === 'max') {
-    // 1. Try Stooq (Gold from 1800, Silver from 1800)
-    const stooqSym = STOOQ_COMMODITY[id];
-    if (stooqSym) {
-      const stooqResult = await fetchStooqData(stooqSym);
-      if (stooqResult && stooqResult.points.length > 0) {
-        const result = { ...stooqResult, source: 'Stooq' };
+    // 1. Try static pre-downloaded data (most reliable)
+    const staticFile = STATIC_COMMODITY[id];
+    if (staticFile) {
+      const staticResult = loadStaticHistory(staticFile);
+      if (staticResult && staticResult.points.length > 0) {
+        const result = { ...staticResult, source: 'Historical' };
         cache[cacheKey] = { data: result, ts: Date.now() };
         return Response.json(result);
       }
     }
 
-    // 2. Try FRED (WTI from 1946, copper/wheat/etc from 1992)
+    // 2. Try FRED as fallback
     if (FRED_COMMODITY[id]) {
       const fredResult = await fetchFredData(id);
       if (fredResult && fredResult.points.length > 0) {

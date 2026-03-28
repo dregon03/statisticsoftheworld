@@ -104,11 +104,13 @@ function intervalForRange(range: string): string {
 
 const FRED_API_KEY = process.env.FRED_API_KEY;
 
-// Stooq.com symbols for deep historical FX data (verified)
-const STOOQ_FX: Record<string, string> = {
-  // G10 Majors
-  'GBPUSD': 'gbpusd',   // from 1900
-  'EURUSD': 'eurusd',   // from 1971 (synthetic pre-euro)
+// Static historical FX data files (pre-downloaded from FRED)
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const STATIC_FX: Record<string, string> = {
+  'EURUSD': 'eurusd',   // from 1999
+  'GBPUSD': 'gbpusd',   // from 1971
   'USDJPY': 'usdjpy',   // from 1971
   'USDCAD': 'usdcad',   // from 1971
   'USDCHF': 'usdchf',   // from 1971
@@ -116,57 +118,35 @@ const STOOQ_FX: Record<string, string> = {
   'NZDUSD': 'nzdusd',   // from 1971
   'USDSEK': 'usdsek',   // from 1971
   'USDNOK': 'usdnok',   // from 1971
-  // Europe
-  'USDPLN': 'usdpln',   // from 1984
-  'USDCZK': 'usdczk',   // from 1995
-  'USDHUF': 'usdhuf',   // from 1995
-  'USDRON': 'usdron',   // from 1995
-  'USDRUB': 'usdrub',   // from 1995
-  'USDTRY': 'usdtry',   // from 1984
-  // Asia-Pacific
-  'USDCNY': 'usdcny',   // from 1984
-  'USDHKD': 'usdhkd',   // from 1984
-  'USDTWD': 'usdtwd',   // from 1984
+  'USDDKK': 'usddkk',   // from 1971
+  'USDCNY': 'usdcny',   // from 1981
+  'USDHKD': 'usdhkd',   // from 1981
+  'USDTWD': 'usdtwd',   // from 1983
   'USDKRW': 'usdkrw',   // from 1981
   'USDSGD': 'usdsgd',   // from 1981
   'USDINR': 'usdinr',   // from 1973
-  'USDPHP': 'usdphp',   // from 1993
-  'USDTHB': 'usdthb',   // from 1993
-  'USDIDR': 'usdidr',   // from 1993
-  'USDMYR': 'usdmyr',   // from 1990
-  // Americas
+  'USDTHB': 'usdthb',   // from 1981
+  'USDMYR': 'usdmyr',   // from 1971
   'USDBRL': 'usdbrl',   // from 1995
-  'USDMXN': 'usdmxn',   // from 1990
-  'USDARS': 'usdars',   // from 1996
-  'USDCLP': 'usdclp',   // from 1993
-  // Middle East & Africa
-  'USDZAR': 'usdzar',   // from 1971
-  'USDILS': 'usdils',   // from 1993
-  'USDEGP': 'usdegp',   // from 1995
+  'USDMXN': 'usdmxn',   // from 1993
+  'USDZAR': 'usdzar',   // from 1980
 };
 
-// Stooq CSV fetcher
-async function fetchStooqFx(stooqSym: string): Promise<{ points: { date: string; value: number }[] } | null> {
-  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(stooqSym)}&d1=18000101&d2=20270101&i=m`;
+function loadStaticFx(filename: string): { points: { date: string; value: number }[] } | null {
   try {
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-    if (!res.ok) return null;
-    const text = await res.text();
-    const lines = text.trim().split('\n');
-    if (lines.length < 2 || lines[1].startsWith('No data')) return null;
-
-    const points: { date: string; value: number }[] = [];
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      if (cols.length < 5) continue;
-      const date = cols[0];
-      const close = parseFloat(cols[4]);
-      if (!isNaN(close) && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        points.push({ date, value: Math.round(close * 10000) / 10000 });
+    const filePath = join(process.cwd(), 'public', 'data', 'history', `${filename}.json`);
+    const data = JSON.parse(readFileSync(filePath, 'utf-8'));
+    if (Array.isArray(data) && data.length > 10) {
+      // Downsample daily FRED data to ~monthly for chart
+      if (data.length > 1000) {
+        const step = Math.ceil(data.length / 1000);
+        const sampled = data.filter((_: any, i: number) => i % step === 0);
+        if (sampled[sampled.length - 1] !== data[data.length - 1]) sampled.push(data[data.length - 1]);
+        return { points: sampled };
       }
+      return { points: data };
     }
-    if (points.length < 10) return null;
-    return { points };
+    return null;
   } catch {
     return null;
   }
@@ -273,18 +253,18 @@ export async function GET(request: Request) {
 
   // For 'max' range, try deep historical sources first
   if (range === 'max') {
-    // 1. Try Stooq (GBP/USD from 1900, most pairs from 1971)
-    const stooqSym = STOOQ_FX[pair];
-    if (stooqSym) {
-      const stooqResult = await fetchStooqFx(stooqSym);
-      if (stooqResult && stooqResult.points.length > 0) {
-        const result = { ...stooqResult, source: 'Stooq' };
+    // 1. Try static pre-downloaded data (FRED daily, most reliable)
+    const staticFile = STATIC_FX[pair];
+    if (staticFile) {
+      const staticResult = loadStaticFx(staticFile);
+      if (staticResult && staticResult.points.length > 0) {
+        const result = { ...staticResult, source: 'Historical' };
         cache[cacheKey] = { data: result, ts: Date.now() };
         return Response.json(result);
       }
     }
 
-    // 2. Try FRED
+    // 2. Try FRED live as fallback
     if (FRED_FX[pair]) {
       const fredResult = await fetchFredFx(pair);
       if (fredResult && fredResult.points.length > 0) {

@@ -27,26 +27,47 @@ const SOTW_TO_YAHOO: Record<string, string> = {
 };
 
 // Static historical data files (pre-downloaded, stored in /public/data/history/)
+// Sources: World Bank Pink Sheet (1960+), datahub.io, FRED, IMF
 const STATIC_COMMODITY: Record<string, string> = {
-  'YF.GOLD':         'gold',       // from 1833
-  'YF.CRUDE_OIL':    'wti',        // from 1986
-  'YF.BRENT':        'brent',      // from 1987
-  'YF.NATGAS':       'natgas',     // from 1997
-  'YF.COPPER':       'copper',     // from 1990
-  'YF.ALUMINUM':     'aluminum',   // from 1992
+  // Precious Metals
+  'YF.GOLD':         'gold',       // from 1833 (datahub/Shiller)
+  'YF.SILVER':       'silver',     // from 1960 (World Bank)
+  'YF.PLATINUM':     'platinum',   // from 1960 (World Bank)
+  'YF.PALLADIUM':    'platinum',   // proxy — palladium data limited
+  // Energy
+  'YF.CRUDE_OIL':    'wti',        // from 1982 (World Bank)
+  'YF.BRENT':        'brent',      // from 1960 (World Bank)
+  'YF.NATGAS':       'natgas',     // from 1960 (World Bank)
+  'YF.GASOLINE':     'wti',        // proxy — tracks crude
+  'YF.HEATING_OIL':  'wti',        // proxy — tracks crude
+  // Industrial Metals
+  'YF.COPPER':       'copper',     // from 1960 (World Bank)
+  'YF.ALUMINUM':     'aluminum',   // from 1960 (World Bank)
   'AV.ALUMINUM':     'aluminum',
-  'YF.WHEAT':        'wheat',      // from 1990
+  'YF.STEEL':        'iron_ore',   // proxy
+  'YF.IRON_ORE':     'iron_ore',   // from 1990 (IMF)
+  'YF.NICKEL_ETC':   'nickel',     // from 1960 (World Bank)
+  'YF.ZINC_ETC':     'zinc',       // from 1960 (World Bank)
+  // Grains
+  'YF.WHEAT':        'wheat',      // from 1960 (World Bank)
   'YF.WHEAT_KC':     'wheat',
-  'YF.CORN':         'corn',       // from 1990
-  'YF.SOYBEANS':     'soybeans',   // from 1990
-  'YF.COFFEE':       'coffee',     // from 1992
-  'YF.COCOA':        'cocoa',      // from 1991
-  'YF.SUGAR':        'sugar',      // from 1990
-  'YF.COTTON':       'cotton',     // from 1990
-  'YF.NICKEL_ETC':   'nickel',     // from 1990
-  'YF.ZINC_ETC':     'zinc',       // from 1990
-  'YF.IRON_ORE':     'iron_ore',   // from 1990
-  'YF.RICE':         'rice',       // from 1991
+  'YF.CORN':         'corn',       // from 1960 (World Bank)
+  'YF.SOYBEANS':     'soybeans',   // from 1960 (World Bank)
+  'YF.SOYBEAN_MEAL': 'soybean_meal', // from 1960 (World Bank)
+  'YF.SOYBEAN_OIL':  'soybean_oil',  // from 1960 (World Bank)
+  'YF.OATS':         'barley',     // proxy — similar grain
+  'YF.RICE':         'rice',       // from 1991 (IMF)
+  // Softs
+  'YF.COFFEE':       'coffee_arabica', // from 1960 (World Bank)
+  'YF.COCOA':        'cocoa',      // from 1960 (World Bank)
+  'YF.SUGAR':        'sugar',      // from 1990 (IMF)
+  'YF.COTTON':       'cotton',     // from 1960 (World Bank)
+  'YF.OJ':           'orange',     // from 1960 (World Bank)
+  'YF.LUMBER':       'logs',       // from 1970 (World Bank)
+  // Livestock
+  'YF.LIVE_CATTLE':  'beef',       // from 2003 (IMF)
+  'YF.LEAN_HOGS':    'pork',       // from 1992 (IMF)
+  'YF.FEEDER_CATTLE':'beef',       // proxy
 };
 
 // FRED series for commodities

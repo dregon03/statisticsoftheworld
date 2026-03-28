@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
@@ -729,7 +730,7 @@ export default function CurrenciesPage() {
                                 <span className="flex items-center gap-2">
                                   <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                   <FlagIcon code={p.flag} size={20} />
-                                  <span className="font-medium">{p.label}</span>
+                                  <Link href={`/markets/currencies/${p.pair.toLowerCase()}`} className="font-medium text-[#0066cc] hover:underline" onClick={e => e.stopPropagation()}>{p.label}</Link>
                                 </span>
                               </td>
                               <td className="px-3 py-2 text-right font-mono font-semibold">

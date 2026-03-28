@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
@@ -519,7 +520,7 @@ export default function CryptoPage() {
                               <span className="flex items-center gap-2">
                                 <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                 <img src={`https://cryptofonts.com/img/SVG/${coin.symbol.toLowerCase()}.svg`} alt="" width={20} height={20} className="rounded-full" loading="lazy" />
-                                <span className="font-medium">{coin.name}</span>
+                                <Link href={`/markets/crypto/${coin.pair.toLowerCase()}`} className="font-medium text-[#0066cc] hover:underline" onClick={e => e.stopPropagation()}>{coin.name}</Link>
                                 <span className="text-[11px] text-[#64748b]">{coin.symbol}</span>
                               </span>
                             </td>

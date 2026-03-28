@@ -35,9 +35,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// Map futures/alternative IDs to their canonical indicator IDs
+const ID_ALIASES: Record<string, string> = {
+  'YF.FUT.SP500': 'YF.IDX.USA',
+  'YF.FUT.NASDAQ': 'YF.IDX.USA',
+  'YF.FUT.DOW': 'YF.IDX.USA',
+  'YF.FUT.RUSSELL': 'YF.IDX.USA',
+};
+
 export default async function IndicatorDetailPage({ params }: Props) {
   const { id, indicator: rawIndicator } = await params;
-  const indicatorId = decodeURIComponent(rawIndicator);
+  const rawId = decodeURIComponent(rawIndicator);
+  const indicatorId = ID_ALIASES[rawId] || rawId;
   const country = await getCountry(id);
   const ind = INDICATORS.find(i => i.id === indicatorId);
   if (!country || !ind) notFound();

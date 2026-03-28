@@ -90,8 +90,9 @@ const SLUG_MAP: Record<string, { id: string; label: string; category: string }> 
 const RANGES = [
   { key: '1d', label: '1D' }, { key: '5d', label: '5D' },
   { key: '1mo', label: '1M' }, { key: '3mo', label: '3M' },
-  { key: '6mo', label: '6M' }, { key: '1y', label: '1Y' },
-  { key: '5y', label: '5Y' },
+  { key: '6mo', label: '6M' }, { key: 'ytd', label: 'YTD' },
+  { key: '1y', label: '1Y' }, { key: '2y', label: '2Y' },
+  { key: '5y', label: '5Y' }, { key: '10y', label: '10Y' },
   { key: 'max', label: 'All' },
 ] as const;
 

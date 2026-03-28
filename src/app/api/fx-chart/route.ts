@@ -83,7 +83,7 @@ const FX_SYMBOLS: Record<string, string> = {
   'DXY': 'DX-Y.NYB',
 };
 
-const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y', 'max'] as const;
+const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', 'ytd', '1y', '2y', '5y', '10y', 'max'] as const;
 
 function intervalForRange(range: string): string {
   switch (range) {
@@ -92,18 +92,154 @@ function intervalForRange(range: string): string {
     case '1mo': return '1d';
     case '3mo': return '1d';
     case '6mo': return '1d';
+    case 'ytd': return '1d';
     case '1y': return '1d';
+    case '2y': return '1wk';
     case '5y': return '1wk';
+    case '10y': return '1wk';
     case 'max': return '1mo';
     default: return '1d';
   }
 }
 
+const FRED_API_KEY = process.env.FRED_API_KEY;
+
+// Stooq.com symbols for deep historical FX data (verified)
+const STOOQ_FX: Record<string, string> = {
+  // G10 Majors
+  'GBPUSD': 'gbpusd',   // from 1900
+  'EURUSD': 'eurusd',   // from 1971 (synthetic pre-euro)
+  'USDJPY': 'usdjpy',   // from 1971
+  'USDCAD': 'usdcad',   // from 1971
+  'USDCHF': 'usdchf',   // from 1971
+  'AUDUSD': 'audusd',   // from 1971
+  'NZDUSD': 'nzdusd',   // from 1971
+  'USDSEK': 'usdsek',   // from 1971
+  'USDNOK': 'usdnok',   // from 1971
+  // Europe
+  'USDPLN': 'usdpln',   // from 1984
+  'USDCZK': 'usdczk',   // from 1995
+  'USDHUF': 'usdhuf',   // from 1995
+  'USDRON': 'usdron',   // from 1995
+  'USDRUB': 'usdrub',   // from 1995
+  'USDTRY': 'usdtry',   // from 1984
+  // Asia-Pacific
+  'USDCNY': 'usdcny',   // from 1984
+  'USDHKD': 'usdhkd',   // from 1984
+  'USDTWD': 'usdtwd',   // from 1984
+  'USDKRW': 'usdkrw',   // from 1981
+  'USDSGD': 'usdsgd',   // from 1981
+  'USDINR': 'usdinr',   // from 1973
+  'USDPHP': 'usdphp',   // from 1993
+  'USDTHB': 'usdthb',   // from 1993
+  'USDIDR': 'usdidr',   // from 1993
+  'USDMYR': 'usdmyr',   // from 1990
+  // Americas
+  'USDBRL': 'usdbrl',   // from 1995
+  'USDMXN': 'usdmxn',   // from 1990
+  'USDARS': 'usdars',   // from 1996
+  'USDCLP': 'usdclp',   // from 1993
+  // Middle East & Africa
+  'USDZAR': 'usdzar',   // from 1971
+  'USDILS': 'usdils',   // from 1993
+  'USDEGP': 'usdegp',   // from 1995
+};
+
+// Stooq CSV fetcher
+async function fetchStooqFx(stooqSym: string): Promise<{ points: { date: string; value: number }[] } | null> {
+  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(stooqSym)}&d1=18000101&d2=20270101&i=m`;
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) return null;
+    const text = await res.text();
+    const lines = text.trim().split('\n');
+    if (lines.length < 2 || lines[1].startsWith('No data')) return null;
+
+    const points: { date: string; value: number }[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length < 5) continue;
+      const date = cols[0];
+      const close = parseFloat(cols[4]);
+      if (!isNaN(close) && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        points.push({ date, value: Math.round(close * 10000) / 10000 });
+      }
+    }
+    if (points.length < 10) return null;
+    return { points };
+  } catch {
+    return null;
+  }
+}
+
+// FRED series for currencies — back to 1971 (post-Bretton Woods)
+const FRED_FX: Record<string, { series: string; start: string }> = {
+  'EURUSD': { series: 'DEXUSEU',  start: '1999-01-04' },
+  'GBPUSD': { series: 'DEXUSUK',  start: '1971-01-04' },
+  'USDJPY': { series: 'DEXJPUS',  start: '1971-01-04' },
+  'USDCAD': { series: 'DEXCAUS',  start: '1971-01-04' },
+  'USDCHF': { series: 'DEXSZUS',  start: '1971-01-04' },
+  'AUDUSD': { series: 'DEXUSAL',  start: '1971-01-04' },
+  'USDCNY': { series: 'DEXCHUS',  start: '1981-01-02' },
+  'USDKRW': { series: 'DEXKOUS',  start: '1981-04-13' },
+  'USDMXN': { series: 'DEXMXUS',  start: '1993-11-08' },
+  'USDBRL': { series: 'DEXBZUS',  start: '1995-01-02' },
+  'USDINR': { series: 'DEXINUS',  start: '1973-01-02' },
+  'USDSGD': { series: 'DEXSIUS',  start: '1981-01-02' },
+  'USDZAR': { series: 'DEXSFUS',  start: '1971-01-04' },
+  'USDHKD': { series: 'DEXHKUS',  start: '1981-01-02' },
+  'USDTWD': { series: 'DEXTAUS',  start: '1983-10-03' },
+  'NZDUSD': { series: 'DEXUSNZ',  start: '1971-01-04' },
+  'USDSEK': { series: 'DEXSDUS',  start: '1971-01-04' },
+  'USDNOK': { series: 'DEXNOUS',  start: '1971-01-04' },
+  'USDDKK': { series: 'DEXDNUS',  start: '1971-01-04' },
+  'USDTHB': { series: 'DEXTHUS',  start: '1981-01-02' },
+  'USDMYR': { series: 'DEXMAUS',  start: '1971-01-04' },
+};
+
 let cache: Record<string, { data: any; ts: number }> = {};
 function cacheTtl(range: string): number {
-  if (range === '1d') return 25_000; // 25s — ensures every 30s poll gets fresh data
+  if (range === '1d') return 25_000;
   if (range === '5d') return 2 * 60_000;
+  if (range === 'max' || range === '10y') return 60 * 60_000;
   return 5 * 60_000;
+}
+
+async function fetchFredFx(pair: string): Promise<{ points: { date: string; value: number }[] } | null> {
+  const fredInfo = FRED_FX[pair];
+  if (!fredInfo || !FRED_API_KEY) return null;
+
+  const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredInfo.series}&observation_start=${fredInfo.start}&api_key=${FRED_API_KEY}&file_type=json&sort_order=asc`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const json = await res.json();
+    const observations = json.observations || [];
+
+    const points: { date: string; value: number }[] = [];
+    for (const obs of observations) {
+      const val = parseFloat(obs.value);
+      if (!isNaN(val) && obs.value !== '.') {
+        points.push({ date: obs.date, value: Math.round(val * 10000) / 10000 });
+      }
+    }
+
+    if (points.length > 2000) {
+      const sampled: typeof points = [];
+      const step = Math.ceil(points.length / 2000);
+      for (let i = 0; i < points.length; i += step) {
+        sampled.push(points[i]);
+      }
+      if (sampled[sampled.length - 1] !== points[points.length - 1]) {
+        sampled.push(points[points.length - 1]);
+      }
+      return { points: sampled };
+    }
+
+    return { points };
+  } catch {
+    return null;
+  }
 }
 
 function dateInTz(date: Date, tz: string): string {
@@ -133,6 +269,30 @@ export async function GET(request: Request) {
   const cached = cache[cacheKey];
   if (cached && Date.now() - cached.ts < cacheTtl(range)) {
     return Response.json(cached.data);
+  }
+
+  // For 'max' range, try deep historical sources first
+  if (range === 'max') {
+    // 1. Try Stooq (GBP/USD from 1900, most pairs from 1971)
+    const stooqSym = STOOQ_FX[pair];
+    if (stooqSym) {
+      const stooqResult = await fetchStooqFx(stooqSym);
+      if (stooqResult && stooqResult.points.length > 0) {
+        const result = { ...stooqResult, source: 'Stooq' };
+        cache[cacheKey] = { data: result, ts: Date.now() };
+        return Response.json(result);
+      }
+    }
+
+    // 2. Try FRED
+    if (FRED_FX[pair]) {
+      const fredResult = await fetchFredFx(pair);
+      if (fredResult && fredResult.points.length > 0) {
+        const result = { ...fredResult, source: 'FRED' };
+        cache[cacheKey] = { data: result, ts: Date.now() };
+        return Response.json(result);
+      }
+    }
   }
 
   const interval = intervalForRange(range);

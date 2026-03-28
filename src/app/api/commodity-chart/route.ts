@@ -1,3 +1,7 @@
+// Yahoo Finance Commodity chart API — with FRED fallback for long-range historical data
+
+const FRED_API_KEY = process.env.FRED_API_KEY;
+
 const SOTW_TO_YAHOO: Record<string, string> = {
   // Precious Metals
   'YF.GOLD': 'GC=F', 'YF.SILVER': 'SI=F', 'YF.PLATINUM': 'PL=F', 'YF.PALLADIUM': 'PA=F',
@@ -22,29 +26,146 @@ const SOTW_TO_YAHOO: Record<string, string> = {
   'YF.MILK': 'DC=F', 'YF.BUTTER': 'CB=F', 'YF.CHEESE': 'CSC=F',
 };
 
-const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y', 'max'] as const;
+// Stooq.com symbols for deep historical commodities (verified)
+const STOOQ_COMMODITY: Record<string, string> = {
+  // Precious Metals (spot prices)
+  'YF.GOLD':         'xauusd',   // from 1800
+  'YF.SILVER':       'xagusd',   // from 1800
+  'YF.PLATINUM':     'xptusd',   // from 1968
+  'YF.PALLADIUM':    'xpdusd',   // from 1968
+  // Energy
+  'YF.CRUDE_OIL':    'cl.c',     // WTI from 1946
+  'YF.NATGAS':       'ng.c',     // Natural Gas from 1930
+  'YF.HEATING_OIL':  'ho.c',     // Heating Oil from 1967
+  'YF.GASOLINE':     'rb.c',     // Gasoline from 2007
+  // Grains
+  'YF.WHEAT':        'zw.c',     // from 1917
+  'YF.WHEAT_KC':     'zw.c',     // same as Chicago wheat
+  'YF.CORN':         'zc.c',     // from 1917
+  'YF.SOYBEANS':     'zs.c',     // from 1917
+  // Softs
+  'YF.COFFEE':       'kc.c',     // from 1948
+  'YF.COCOA':        'cc.c',     // from 1980
+  'YF.SUGAR':        'sb.c',     // from 1917
+  'YF.COTTON':       'ct.c',     // from 1917
+  // Livestock
+  'YF.LIVE_CATTLE':  'le.c',     // from 1917
+};
 
-// Pick interval based on range to keep data points reasonable
+// FRED series for commodities
+const FRED_COMMODITY: Record<string, { series: string; start: string }> = {
+  'YF.CRUDE_OIL': { series: 'WTISPLC',          start: '1946-01-01' },
+  'YF.BRENT':     { series: 'DCOILBRENTEU',     start: '1987-05-20' },
+  'YF.NATGAS':    { series: 'DHHNGSP',          start: '1997-01-07' },
+  'YF.COPPER':    { series: 'PCOPPUSDM',        start: '1992-01-01' },
+  'YF.ALUMINUM':  { series: 'PALUMUSDM',        start: '1992-01-01' },
+  'AV.ALUMINUM':  { series: 'PALUMUSDM',        start: '1992-01-01' },
+  'YF.WHEAT':     { series: 'PWHEAMTUSDM',      start: '1992-01-01' },
+  'YF.CORN':      { series: 'PMAIZMTUSDM',      start: '1992-01-01' },
+  'YF.COFFEE':    { series: 'PCOFFOTMUSDM',     start: '1992-01-01' },
+  'YF.COCOA':     { series: 'PCOCOUSDM',        start: '1992-01-01' },
+  'YF.SUGAR':     { series: 'PSUGAISAUSDM',     start: '1992-01-01' },
+  'YF.COTTON':    { series: 'PCOTTINDUSDM',     start: '1992-01-01' },
+};
+
+const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', 'ytd', '1y', '2y', '5y', '10y', 'max'] as const;
+
 function intervalForRange(range: string): string {
   switch (range) {
-    case '1d': return '2m';   // 2-minute candles for intraday
-    case '5d': return '15m';  // 15-minute candles for 5 days
+    case '1d': return '2m';
+    case '5d': return '15m';
     case '1mo': return '1d';
     case '3mo': return '1d';
     case '6mo': return '1d';
+    case 'ytd': return '1d';
     case '1y': return '1d';
+    case '2y': return '1wk';
     case '5y': return '1wk';
+    case '10y': return '1wk';
     case 'max': return '1mo';
     default: return '1d';
   }
 }
 
 let cache: Record<string, { data: any; ts: number }> = {};
-// Short cache for intraday, longer for historical
 function cacheTtl(range: string): number {
-  if (range === '1d') return 25 * 1000;       // 25s — ensures every 30s poll gets fresh data
-  if (range === '5d') return 2 * 60 * 1000;   // 2 minutes for 5-day
-  return 2 * 60 * 1000;                       // 2 minutes for all others
+  if (range === '1d') return 25 * 1000;
+  if (range === '5d') return 2 * 60 * 1000;
+  if (range === 'max' || range === '10y') return 60 * 60 * 1000;
+  return 2 * 60 * 1000;
+}
+
+// Stooq CSV fetcher for deep historical commodities
+async function fetchStooqData(stooqSym: string): Promise<{ points: { date: string; value: number }[] } | null> {
+  const url = `https://stooq.com/q/d/l/?s=${encodeURIComponent(stooqSym)}&d1=18000101&d2=20270101&i=m`;
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!res.ok) return null;
+    const text = await res.text();
+    const lines = text.trim().split('\n');
+    if (lines.length < 2 || lines[1].startsWith('No data')) return null;
+
+    const points: { date: string; value: number }[] = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length < 5) continue;
+      const date = cols[0];
+      const close = parseFloat(cols[4]);
+      if (!isNaN(close) && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        points.push({ date, value: Math.round(close * 100) / 100 });
+      }
+    }
+    if (points.length < 10) return null;
+    return { points };
+  } catch {
+    return null;
+  }
+}
+
+function dateInTz(date: Date, tz: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+    return parts;
+  } catch {
+    return date.toISOString().slice(0, 10);
+  }
+}
+
+async function fetchFredData(id: string): Promise<{ points: { date: string; value: number }[] } | null> {
+  const fredInfo = FRED_COMMODITY[id];
+  if (!fredInfo || !FRED_API_KEY) return null;
+
+  const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${fredInfo.series}&observation_start=${fredInfo.start}&api_key=${FRED_API_KEY}&file_type=json&sort_order=asc`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const json = await res.json();
+    const observations = json.observations || [];
+
+    const points: { date: string; value: number }[] = [];
+    for (const obs of observations) {
+      const val = parseFloat(obs.value);
+      if (!isNaN(val) && obs.value !== '.') {
+        points.push({ date: obs.date, value: Math.round(val * 100) / 100 });
+      }
+    }
+
+    if (points.length > 2000) {
+      const sampled: typeof points = [];
+      const step = Math.ceil(points.length / 2000);
+      for (let i = 0; i < points.length; i += step) {
+        sampled.push(points[i]);
+      }
+      if (sampled[sampled.length - 1] !== points[points.length - 1]) {
+        sampled.push(points[points.length - 1]);
+      }
+      return { points: sampled };
+    }
+
+    return { points };
+  } catch {
+    return null;
+  }
 }
 
 export async function GET(request: Request) {
@@ -66,6 +187,30 @@ export async function GET(request: Request) {
     return Response.json(cached.data);
   }
 
+  // For 'max' range, try deep historical sources first
+  if (range === 'max') {
+    // 1. Try Stooq (Gold from 1800, Silver from 1800)
+    const stooqSym = STOOQ_COMMODITY[id];
+    if (stooqSym) {
+      const stooqResult = await fetchStooqData(stooqSym);
+      if (stooqResult && stooqResult.points.length > 0) {
+        const result = { ...stooqResult, source: 'Stooq' };
+        cache[cacheKey] = { data: result, ts: Date.now() };
+        return Response.json(result);
+      }
+    }
+
+    // 2. Try FRED (WTI from 1946, copper/wheat/etc from 1992)
+    if (FRED_COMMODITY[id]) {
+      const fredResult = await fetchFredData(id);
+      if (fredResult && fredResult.points.length > 0) {
+        const result = { ...fredResult, source: 'FRED' };
+        cache[cacheKey] = { data: result, ts: Date.now() };
+        return Response.json(result);
+      }
+    }
+  }
+
   const interval = intervalForRange(range);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=${range}&interval=${interval}`;
 
@@ -75,7 +220,6 @@ export async function GET(request: Request) {
     });
 
     if (!res.ok) {
-      // Fallback: try query2
       const res2 = await fetch(url.replace('query1', 'query2'), {
         headers: { 'User-Agent': 'Mozilla/5.0' },
       });
@@ -94,16 +238,6 @@ export async function GET(request: Request) {
     return Response.json(result);
   } catch {
     return Response.json({ error: 'Failed to fetch chart data' }, { status: 500 });
-  }
-}
-
-// Get YYYY-MM-DD in a specific timezone
-function dateInTz(date: Date, tz: string): string {
-  try {
-    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
-    return parts; // en-CA gives YYYY-MM-DD format
-  } catch {
-    return date.toISOString().slice(0, 10);
   }
 }
 
@@ -131,8 +265,6 @@ function parseYahooChart(json: any, range: string = '1y') {
     }
   }
 
-  // For 1d charts, prepend previousClose so the chart starts from yesterday's close
-  // This ensures the chart direction matches the daily change %
   if (range === '1d' && points.length > 0) {
     const prevClose = result.meta?.chartPreviousClose ?? result.meta?.previousClose;
     if (prevClose != null && !isNaN(prevClose)) {
@@ -147,17 +279,13 @@ function parseYahooChart(json: any, range: string = '1y') {
     }
   }
 
-  // For daily+ charts, append today's live price from meta if it's newer than last point
   if (!isIntraday && result.meta?.regularMarketPrice) {
     const livePrice = Math.round(result.meta.regularMarketPrice * 100) / 100;
     const todayStr = dateInTz(new Date(), tz);
     const lastPoint = points[points.length - 1];
-
     if (lastPoint && lastPoint.date < todayStr) {
-      // Last candle is from a previous day — append today's live price
       points.push({ date: todayStr, value: livePrice });
     } else if (lastPoint && lastPoint.date === todayStr) {
-      // Today's candle exists but may be stale — update with live price
       lastPoint.value = livePrice;
     }
   }

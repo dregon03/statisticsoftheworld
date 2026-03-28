@@ -133,8 +133,11 @@ const RANGES = [
   { key: '1mo', label: '1M' },
   { key: '3mo', label: '3M' },
   { key: '6mo', label: '6M' },
+  { key: 'ytd', label: 'YTD' },
   { key: '1y', label: '1Y' },
+  { key: '2y', label: '2Y' },
   { key: '5y', label: '5Y' },
+  { key: '10y', label: '10Y' },
   { key: 'max', label: 'All' },
 ] as const;
 
@@ -169,9 +172,23 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
   const color = isUp ? '#16a34a' : '#dc2626';
 
   const formatXTick = (date: string) => {
-    if (range === '1d' || range === '5d') return date.replace(/,.*,/, ',').split(', ').pop() || date;
+    if (range === '1d') {
+      // Extract time like "10:30 AM" from intraday string
+      const m = date.match(/(\d{1,2}:\d{2}\s*[AP]M)/i);
+      return m ? m[1] : date.split(', ').pop() || date;
+    }
+    if (range === '5d') {
+      // Show "Mon 10AM" style for 5-day
+      const m = date.match(/([A-Z][a-z]{2})\s+\d+,?\s*(\d{1,2}:\d{2}\s*[AP]M)/i);
+      if (m) return `${m[1]} ${m[2]}`;
+      return date.split(', ').pop() || date;
+    }
     const d = new Date(date + 'T12:00:00');
-    if (range === '5y') return d.toLocaleDateString('en', { year: '2-digit', month: 'short' });
+    if (range === '1mo') return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+    if (range === '3mo' || range === '6mo' || range === 'ytd') return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+    if (range === '1y' || range === '2y') return d.toLocaleDateString('en', { year: '2-digit', month: 'short' });
+    if (range === '5y' || range === '10y') return d.toLocaleDateString('en', { year: 'numeric' });
+    if (range === 'max') return d.getFullYear().toString();
     return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
   };
 
@@ -186,7 +203,7 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
             </span>
           )}
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-wrap">
           {RANGES.map(r => (
             <button key={r.key} onClick={() => setRange(r.key)}
               className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
@@ -200,10 +217,34 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
         <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">Loading chart...</div>
       ) : points.length < 2 ? (
         <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">No chart data</div>
-      ) : (
+      ) : (() => {
+        const vals = points.map(p => p.value).filter(v => v > 0);
+        const minVal = Math.min(...vals);
+        const maxVal = Math.max(...vals);
+        const useLog = (range === 'max' || range === '10y') && maxVal / minVal > 10;
+        const chartData = useLog
+          ? points.filter(p => p.value > 0).map(p => ({ ...p, logValue: Math.log10(p.value) }))
+          : points;
+        const logTicks = (() => {
+          if (!useLog) return undefined;
+          const ticks: number[] = [];
+          const bases = [1, 2, 5];
+          let mag = Math.pow(10, Math.floor(Math.log10(minVal)));
+          while (mag <= maxVal * 2) {
+            for (const b of bases) {
+              const v = mag * b;
+              if (v >= minVal * 0.5 && v <= maxVal * 2) ticks.push(Math.log10(v));
+            }
+            mag *= 10;
+          }
+          return ticks;
+        })();
+        const fmtPrice = (v: number) => v >= 10000 ? `$${(v/1000).toFixed(0)}K` : v >= 1000 ? `$${(v/1000).toFixed(1)}K` : `$${v.toFixed(2)}`;
+        return (
         <div className="h-[200px]">
+          {useLog && <div className="text-[9px] text-[#94a3b8] text-right pr-2 -mb-1">log scale</div>}
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={points} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
               <defs>
                 <linearGradient id={`stockgrad-${ticker.replace(/[^a-zA-Z0-9]/g, '')}`} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={color} stopOpacity={0.15} />
@@ -213,25 +254,27 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="date"
                 tickFormatter={(date: string) => {
-                  if (points.length > 0 && date === points[points.length - 1].date) return 'Today';
+                  if (chartData.length > 0 && date === chartData[chartData.length - 1].date) return 'Today';
                   return formatXTick(date);
                 }}
                 tick={{ fontSize: 10, fill: '#999' }} tickLine={false} axisLine={{ stroke: '#e8e8e8' }}
                 ticks={(() => {
-                  if (points.length <= 2) return undefined;
-                  const n = Math.min(10, points.length);
-                  const step = Math.floor((points.length - 1) / n);
+                  if (chartData.length <= 2) return undefined;
+                  const n = Math.min(10, chartData.length);
+                  const step = Math.floor((chartData.length - 1) / n);
                   const ticks: string[] = [];
-                  for (let i = 0; i < points.length - 1; i += step) ticks.push(points[i].date);
-                  ticks.push(points[points.length - 1].date);
+                  for (let i = 0; i < chartData.length - 1; i += step) ticks.push(chartData[i].date);
+                  ticks.push(chartData[chartData.length - 1].date);
                   return ticks;
                 })()}
               />
               <YAxis domain={['auto', 'auto']} tick={{ fontSize: 10, fill: '#999' }} tickLine={false} axisLine={false}
-                tickFormatter={(v: number) => `$${v.toFixed(0)}`} width={55} />
+                tickFormatter={(v: number) => useLog ? fmtPrice(Math.pow(10, v)) : fmtPrice(v)}
+                ticks={logTicks} width={60}
+                label={{ value: 'USD', position: 'insideTopLeft', offset: -5, style: { fontSize: 9, fill: '#94a3b8' } }} />
               <Tooltip content={({ active, payload }) => {
                 if (!active || !payload?.[0]) return null;
-                const p = payload[0].payload as ChartPoint;
+                const p = payload[0].payload as ChartPoint & { logValue?: number };
                 const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
                 const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
                 return (
@@ -241,11 +284,12 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
                   </div>
                 );
               }} />
-              <Area type="monotone" dataKey="value" stroke={color} strokeWidth={1.5} fill={`url(#stockgrad-${ticker.replace(/[^a-zA-Z0-9]/g, '')})`} dot={false} activeDot={{ r: 3, fill: color, strokeWidth: 0 }} />
+              <Area type="monotone" dataKey={useLog ? 'logValue' : 'value'} stroke={color} strokeWidth={1.5} fill={`url(#stockgrad-${ticker.replace(/[^a-zA-Z0-9]/g, '')})`} dot={false} activeDot={{ r: 3, fill: color, strokeWidth: 0 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
@@ -411,10 +455,13 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
           allHeaders.push({ x: indRect.x, y: indRect.y, w: indRect.w, h: indHeaderH, label: shortName, type: 'industry' });
         }
 
-        // Squarify stocks within industry
+        // Squarify stocks within industry — enforce minimum size so all companies are visible
         const stockRect = { x: indRect.x, y: indRect.y + indHeaderH, w: indRect.w, h: indRect.h - indHeaderH };
+        const indTotalCap = ie.stocks.reduce((s, c) => s + c.size, 0);
+        const minFraction = 0.005; // 0.5% minimum of industry area
+        const minSize = indTotalCap * minFraction;
         const stockLayout = squarify(
-          ie.stocks.map(s => ({ key: s.ticker, size: s.size })),
+          ie.stocks.map(s => ({ key: s.ticker, size: Math.max(s.size, minSize) })),
           stockRect
         );
 

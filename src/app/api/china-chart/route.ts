@@ -24,7 +24,7 @@ const SINA_SYMBOLS: Record<string, string> = {
 // Daily: https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_X=/InnerFuturesNewService.getDailyKLine?symbol=CU0
 // Intraday (5min): https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_X=/InnerFuturesNewService.getFewMinLine?symbol=CU0&type=5
 
-const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y', 'max'] as const;
+const VALID_RANGES = ['1d', '5d', '1mo', '3mo', '6mo', 'ytd', '1y', '2y', '5y', '10y', 'max'] as const;
 
 let cache: Record<string, { data: any; ts: number }> = {};
 function cacheTtl(range: string): number {

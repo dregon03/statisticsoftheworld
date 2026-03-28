@@ -19,12 +19,41 @@ const INDEX_SYMBOLS: Record<string, string> = {
 };
 
 // Static historical data files (pre-downloaded, stored in /public/data/history/)
-// These are served as static JSON — no external API calls needed
 const STATIC_HISTORY: Record<string, string> = {
-  'YF.IDX.USA':    'sp500',    // S&P 500 from 1871 (Shiller)
+  // US
+  'YF.IDX.USA':    'sp500',       // from 1871
   'YF.FUT.SP500':  'sp500',
-  'YF.FUT.NASDAQ': 'nasdaq',   // NASDAQ from 1971 (FRED)
-  'YF.IDX.JPN':    'nikkei',   // Nikkei from 1949 (FRED)
+  'YF.FUT.DOW':    'djia',        // from 1992
+  'YF.FUT.NASDAQ': 'nasdaq',      // from 1971
+  'YF.FUT.RUSSELL': 'russell2000', // from 1987
+  // Americas
+  'YF.IDX.CAN':    'tsx',         // from 1984
+  'YF.IDX.BRA':    'bovespa',     // from 1993
+  'YF.IDX.MEX':    'ipc_mexico',  // from 1991
+  'YF.IDX.ARG':    'merval',      // from 1996
+  // Europe
+  'YF.IDX.GBR':    'ftse100',     // from 1984
+  'YF.IDX.DEU':    'dax',         // from 1987
+  'YF.IDX.FRA':    'cac40',       // from 1990
+  'YF.IDX.ESP':    'ibex35',      // from 1993
+  'YF.IDX.ITA':    'ftse_mib',    // from 1997
+  'YF.IDX.CHE':    'smi',         // from 1990
+  'YF.IDX.NLD':    'aex',         // from 1992
+  // Asia-Pacific
+  'YF.IDX.JPN':    'nikkei',      // from 1949
+  'YF.IDX.HKG':    'hang_seng',   // from 1986
+  'YF.IDX.CHN':    'shanghai',    // from 1997
+  'YF.IDX.KOR':    'kospi',       // from 1996
+  'YF.IDX.IND':    'sensex',      // from 1997
+  'YF.IDX.AUS':    'asx200',      // from 1992
+  'YF.IDX.NZL':    'nzx50',       // from 2003
+  'YF.IDX.SGP':    'sti',         // from 1987
+  'YF.IDX.IDN':    'jakarta',     // from 1990
+  'YF.IDX.MYS':    'klci',        // from 1993
+  // Middle East & Africa
+  'YF.IDX.ISR':    'ta125',       // from 1992
+  'YF.IDX.SAU':    'tadawul',     // from 1998
+  'YF.IDX.ZAF':    'jse',         // from 2012
 };
 
 // FRED fallback for indices not in static files

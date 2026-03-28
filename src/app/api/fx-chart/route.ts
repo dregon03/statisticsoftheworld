@@ -109,27 +109,35 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 const STATIC_FX: Record<string, string> = {
-  'EURUSD': 'eurusd',   // from 1999
-  'GBPUSD': 'gbpusd',   // from 1971
-  'USDJPY': 'usdjpy',   // from 1971
-  'USDCAD': 'usdcad',   // from 1971
-  'USDCHF': 'usdchf',   // from 1971
-  'AUDUSD': 'audusd',   // from 1971
-  'NZDUSD': 'nzdusd',   // from 1971
-  'USDSEK': 'usdsek',   // from 1971
-  'USDNOK': 'usdnok',   // from 1971
-  'USDDKK': 'usddkk',   // from 1971
-  'USDCNY': 'usdcny',   // from 1981
-  'USDHKD': 'usdhkd',   // from 1981
-  'USDTWD': 'usdtwd',   // from 1983
-  'USDKRW': 'usdkrw',   // from 1981
-  'USDSGD': 'usdsgd',   // from 1981
-  'USDINR': 'usdinr',   // from 1973
-  'USDTHB': 'usdthb',   // from 1981
-  'USDMYR': 'usdmyr',   // from 1971
-  'USDBRL': 'usdbrl',   // from 1995
-  'USDMXN': 'usdmxn',   // from 1993
-  'USDZAR': 'usdzar',   // from 1980
+  // G10 (FRED daily, 1971+)
+  'EURUSD': 'eurusd', 'GBPUSD': 'gbpusd', 'USDJPY': 'usdjpy',
+  'USDCAD': 'usdcad', 'USDCHF': 'usdchf', 'AUDUSD': 'audusd',
+  'NZDUSD': 'nzdusd', 'USDSEK': 'usdsek', 'USDNOK': 'usdnok', 'USDDKK': 'usddkk',
+  // Europe (Yahoo weekly, 2003+)
+  'USDPLN': 'usdpln', 'USDCZK': 'usdczk', 'USDHUF': 'usdhuf',
+  'USDRON': 'usdron', 'USDRUB': 'usdrub', 'USDTRY': 'usdtry',
+  'USDUAH': 'usduah', 'USDISK': 'usdisk',
+  // Asia-Pacific (FRED daily 1971-1983+ / Yahoo 2001+)
+  'USDCNY': 'usdcny', 'USDHKD': 'usdhkd', 'USDTWD': 'usdtwd',
+  'USDKRW': 'usdkrw', 'USDSGD': 'usdsgd', 'USDINR': 'usdinr',
+  'USDTHB': 'usdthb', 'USDMYR': 'usdmyr', 'USDPHP': 'usdphp',
+  'USDIDR': 'usdidr', 'USDPKR': 'usdpkr', 'USDVND': 'usdvnd',
+  'USDBDT': 'usdbdt', 'USDLKR': 'usdlkr',
+  // Americas (FRED 1993-1995+ / Yahoo 2001+)
+  'USDBRL': 'usdbrl', 'USDMXN': 'usdmxn', 'USDARS': 'usdars',
+  'USDCLP': 'usdclp', 'USDCOP': 'usdcop', 'USDPEN': 'usdpen', 'USDUYU': 'usduyu',
+  // Middle East & Africa
+  'USDZAR': 'usdzar', 'USDSAR': 'usdsar', 'USDAED': 'usdaed',
+  'USDILS': 'usdils', 'USDEGP': 'usdegp', 'USDNGN': 'usdngn',
+  'USDKES': 'usdkes', 'USDGHS': 'usdghs', 'USDMAD': 'usdmad', 'USDTND': 'usdtnd',
+  // Crypto (Yahoo weekly, 2014-2017+)
+  'BTCUSD': 'btcusd', 'ETHUSD': 'ethusd', 'SOLUSD': 'solusd',
+  'BNBUSD': 'bnbusd', 'XRPUSD': 'xrpusd', 'ADAUSD': 'adausd',
+  'DOGEUSD': 'dogeusd', 'DOTUSD': 'dotusd', 'LINKUSD': 'linkusd',
+  'LTCUSD': 'ltcusd', 'AVAXUSD': 'avaxusd', 'MATICUSD': 'maticusd',
+  'UNIUSD': 'uniusd', 'ATOMUSD': 'atomusd', 'XLMUSD': 'xlmusd',
+  'BCHUSD': 'bchusd', 'NEARUSD': 'nearusd', 'ICPUSD': 'icpusd',
+  'APTUSD': 'aptusd', 'SUIUSD': 'suiusd',
 };
 
 function loadStaticFx(filename: string): { points: { date: string; value: number }[] } | null {

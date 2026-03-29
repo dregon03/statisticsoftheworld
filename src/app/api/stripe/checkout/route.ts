@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       payment_method_types: ['card'],
       customer_email: email,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${request.headers.get('origin') || 'https://statisticsoftheworld.com'}/pricing?success=true&tier=${tier}`,
+      success_url: `${request.headers.get('origin') || 'https://statisticsoftheworld.com'}/pricing/success?tier=${tier}&email=${encodeURIComponent(email)}`,
       cancel_url: `${request.headers.get('origin') || 'https://statisticsoftheworld.com'}/pricing?canceled=true`,
       metadata: {
         tier,

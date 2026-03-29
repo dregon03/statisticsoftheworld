@@ -27,29 +27,40 @@ NOW = datetime.datetime.utcnow()
 TODAY = NOW.date()
 
 
-def call_gemini(prompt):
-    """Call Gemini 2.5 Pro with Google Search grounding."""
-    try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_KEY}"
-        req = urllib.request.Request(
-            url,
-            data=json.dumps({
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"temperature": 0.1, "maxOutputTokens": 4096},
-                "tools": [{"google_search": {}}],
-            }).encode(),
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            result = json.loads(resp.read())
-        text = ""
-        for part in result.get("candidates", [{}])[0].get("content", {}).get("parts", []):
-            if "text" in part:
-                text += part["text"]
-        return text
-    except Exception as e:
-        print(f"  Gemini error: {e}")
-        return ""
+def call_gemini(prompt, retries=3):
+    """Call Gemini 2.5 Pro with Google Search grounding. Retries on 429."""
+    import time as _time
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_KEY}"
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps({
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": 0.1, "maxOutputTokens": 4096},
+                    "tools": [{"google_search": {}}],
+                }).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                result = json.loads(resp.read())
+            text = ""
+            for part in result.get("candidates", [{}])[0].get("content", {}).get("parts", []):
+                if "text" in part:
+                    text += part["text"]
+            return text
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < retries - 1:
+                wait = 10 * (attempt + 1)
+                print(f"  Gemini 429, retrying in {wait}s...", flush=True)
+                _time.sleep(wait)
+                continue
+            print(f"  Gemini error: {e}")
+            return ""
+        except Exception as e:
+            print(f"  Gemini error: {e}")
+            return ""
+    return ""
 
 
 def extract_json(text):

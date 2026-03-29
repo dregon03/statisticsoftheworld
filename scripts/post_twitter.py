@@ -117,26 +117,27 @@ def get_db():
 
 def get_market_snapshot(cur):
     """Get today's key market movers."""
+    targets = ['^GSPC', '^DJI', '^IXIC', 'CL=F', 'GC=F', 'BTC-USD', 'EURUSD=X', '^TNX']
     cur.execute("""
-        SELECT symbol, name, price, change_percent
-        FROM live_quotes
-        WHERE symbol IN ('^GSPC', '^DJI', '^IXIC', 'CL=F', 'GC=F', 'BTC-USD', 'EURUSD=X', '^TNX')
+        SELECT id, label, price, change_pct
+        FROM sotw_live_quotes
+        WHERE id = ANY(%s)
         AND updated_at > NOW() - INTERVAL '24 hours'
-        ORDER BY symbol
-    """)
+        ORDER BY id
+    """, (targets,))
     rows = cur.fetchall()
     if not rows:
         return None
 
     parts = []
-    for symbol, name, price, change_pct in rows:
+    for symbol, label, price, change_pct in rows:
         short = {
             "^GSPC": "S&P 500", "^DJI": "Dow", "^IXIC": "Nasdaq",
             "CL=F": "Oil (WTI)", "GC=F": "Gold", "BTC-USD": "Bitcoin",
             "EURUSD=X": "EUR/USD", "^TNX": "10Y Yield"
-        }.get(symbol, name or symbol)
+        }.get(symbol, label or symbol)
 
-        if change_pct is not None:
+        if change_pct is not None and price is not None:
             sign = "+" if change_pct > 0 else ""
             if symbol == "^TNX":
                 parts.append(f"{short}: {price:.2f}%")
@@ -157,14 +158,10 @@ def get_market_snapshot(cur):
 def get_country_spotlight(cur):
     """Spotlight a random interesting country."""
     cur.execute("""
-        SELECT DISTINCT d.country_code, c.name
-        FROM data d
-        JOIN countries c ON c.code = d.country_code
-        WHERE d.year >= 2023
-        AND c.name IS NOT NULL
-        AND d.country_code NOT IN ('WLD', 'EMU', 'EUU', 'SSA', 'MEA', 'SAS', 'EAS', 'LAC', 'NAC')
-        GROUP BY d.country_code, c.name
-        HAVING COUNT(DISTINCT d.indicator_code) > 20
+        SELECT c.id, c.name
+        FROM sotw_countries c
+        WHERE c.name IS NOT NULL
+        AND c.id NOT IN ('WLD', 'EMU', 'EUU', 'SSA', 'MEA', 'SAS', 'EAS', 'LAC', 'NAC')
         ORDER BY RANDOM()
         LIMIT 1
     """)
@@ -174,56 +171,43 @@ def get_country_spotlight(cur):
 
     code, name = row
 
-    # Get key indicators
+    # Get key indicators for this country
     cur.execute("""
-        SELECT i.name, d.value, d.year
-        FROM data d
-        JOIN indicators i ON i.code = d.indicator_code
-        WHERE d.country_code = %s
-        AND d.indicator_code IN (
-            'NY.GDP.MKTP.CD', 'NY.GDP.PCAP.CD', 'FP.CPI.TOTL.ZG',
-            'SP.POP.TOTL', 'NE.TRD.GNFS.ZS', 'SL.UEM.TOTL.ZS'
-        )
+        SELECT m.id, d.value, d.year
+        FROM sotw_indicators d
+        JOIN sotw_indicator_meta m ON m.id = d.id
+        WHERE d.country_id = %s
         AND d.year >= 2022
-        ORDER BY d.year DESC, i.name
-    """)
+        AND d.value IS NOT NULL
+        ORDER BY d.year DESC
+    """, (code,))
     indicators = cur.fetchall()
 
     if len(indicators) < 2:
         return None
 
-    # Build tweet
+    # Build tweet from available indicators
     facts = []
     seen = set()
-    for ind_name, value, year in indicators:
-        if ind_name in seen:
+    for ind_id, value, year in indicators:
+        if ind_id in seen or len(facts) >= 4:
             continue
-        seen.add(ind_name)
+        seen.add(ind_id)
 
-        short = ind_name.replace("GDP (current US$)", "GDP")\
-                        .replace("GDP per capita (current US$)", "GDP/capita")\
-                        .replace("Inflation, consumer prices (annual %)", "Inflation")\
-                        .replace("Population, total", "Population")\
-                        .replace("Trade (% of GDP)", "Trade/GDP")\
-                        .replace("Unemployment, total (% of total labor force) (modeled ILO estimate)", "Unemployment")
-
-        if "GDP" in ind_name and "per" not in ind_name.lower() and value > 1e9:
+        iid = ind_id.lower()
+        if 'gdp' in iid and 'capita' not in iid and 'growth' not in iid and value > 1e9:
             facts.append(f"GDP: ${value/1e9:.1f}B ({year})")
-        elif "per capita" in ind_name.lower():
+        elif 'capita' in iid:
             facts.append(f"GDP/capita: ${value:,.0f} ({year})")
-        elif "Inflation" in ind_name:
+        elif 'inflation' in iid or 'cpi' in iid:
             facts.append(f"Inflation: {value:.1f}% ({year})")
-        elif "Population" in ind_name:
+        elif 'population' in iid and value > 1e4:
             if value > 1e9:
                 facts.append(f"Pop: {value/1e9:.2f}B")
             elif value > 1e6:
                 facts.append(f"Pop: {value/1e6:.1f}M")
-            else:
-                facts.append(f"Pop: {value/1e3:.0f}K")
-        elif "Unemployment" in ind_name:
+        elif 'unemployment' in iid:
             facts.append(f"Unemployment: {value:.1f}%")
-        elif "Trade" in ind_name:
-            facts.append(f"Trade/GDP: {value:.0f}%")
 
     if len(facts) < 2:
         return None
@@ -235,95 +219,79 @@ def get_country_spotlight(cur):
     return tweet
 
 def get_indicator_highlight(cur):
-    """Highlight an interesting indicator comparison."""
-    comparisons = [
-        {
-            "indicator": "FP.CPI.TOTL.ZG",
-            "title": "Global inflation snapshot",
-            "desc": "CPI inflation rates",
-            "unit": "%",
-            "page": "heatmap"
-        },
-        {
-            "indicator": "NY.GDP.MKTP.KD.ZG",
-            "title": "GDP growth leaders",
-            "desc": "Real GDP growth",
-            "unit": "%",
-            "page": "rankings"
-        },
-        {
-            "indicator": "BN.CAB.XOKA.CD",
-            "title": "Current account balances",
-            "desc": "Current account balance",
-            "unit": "USD",
-            "page": "rankings"
-        },
-    ]
+    """Highlight top countries for a random indicator."""
+    cur.execute("""
+        SELECT DISTINCT d.id
+        FROM sotw_indicators d
+        WHERE d.year >= 2023 AND d.value IS NOT NULL
+        GROUP BY d.id
+        HAVING COUNT(DISTINCT d.country_id) > 50
+        ORDER BY RANDOM()
+        LIMIT 1
+    """)
+    row = cur.fetchone()
+    if not row:
+        return None
 
-    comp = random.choice(comparisons)
+    ind_id = row[0]
 
+    # Get top 5 countries for this indicator
     cur.execute("""
         SELECT c.name, d.value, d.year
-        FROM data d
-        JOIN countries c ON c.code = d.country_code
-        WHERE d.indicator_code = %s
+        FROM sotw_indicators d
+        JOIN sotw_countries c ON c.id = d.country_id
+        WHERE d.id = %s
         AND d.year >= 2023
         AND c.name IS NOT NULL
-        AND d.country_code NOT IN ('WLD', 'EMU', 'EUU', 'SSA', 'MEA', 'SAS', 'EAS', 'LAC', 'NAC')
         AND d.value IS NOT NULL
+        AND d.country_id NOT IN ('WLD', 'EMU', 'EUU', 'SSA', 'MEA', 'SAS', 'EAS', 'LAC', 'NAC')
         ORDER BY d.value DESC
         LIMIT 5
-    """)
+    """, (ind_id,))
     top = cur.fetchall()
-
-    cur.execute("""
-        SELECT c.name, d.value, d.year
-        FROM data d
-        JOIN countries c ON c.code = d.country_code
-        WHERE d.indicator_code = %s
-        AND d.year >= 2023
-        AND c.name IS NOT NULL
-        AND d.country_code NOT IN ('WLD', 'EMU', 'EUU', 'SSA', 'MEA', 'SAS', 'EAS', 'LAC', 'NAC')
-        AND d.value IS NOT NULL
-        ORDER BY d.value ASC
-        LIMIT 3
-    """)
-    bottom = cur.fetchall()
 
     if len(top) < 3:
         return None
 
-    tweet = f"{comp['title']} ({top[0][2]}):\n"
-    for name, value, year in top[:5]:
-        if comp["unit"] == "%":
-            tweet += f"  {name}: {value:.1f}%\n"
-        elif comp["unit"] == "USD" and abs(value) > 1e9:
+    # Format indicator name
+    title = ind_id.replace("_", " ").replace(".", " ").title()
+    if len(title) > 40:
+        title = title[:37] + "..."
+
+    tweet = f"Top 5 by {title} ({top[0][2]}):\n"
+    for name, value, year in top:
+        if abs(value) > 1e9:
             tweet += f"  {name}: ${value/1e9:.1f}B\n"
+        elif abs(value) > 1e6:
+            tweet += f"  {name}: ${value/1e6:.1f}M\n"
+        elif abs(value) < 100:
+            tweet += f"  {name}: {value:.1f}%\n"
         else:
             tweet += f"  {name}: {value:,.0f}\n"
 
-    tweet += f"\nExplore all 218 countries: {SITE_URL}/{comp['page']}"
+    tweet += f"\n{SITE_URL}/rankings"
 
     if len(tweet) > 280:
-        # Trim to top 3
-        tweet = f"{comp['title']} ({top[0][2]}):\n"
+        tweet = f"Top 3 by {title} ({top[0][2]}):\n"
         for name, value, year in top[:3]:
-            if comp["unit"] == "%":
+            if abs(value) > 1e9:
+                tweet += f"  {name}: ${value/1e9:.1f}B\n"
+            elif abs(value) < 100:
                 tweet += f"  {name}: {value:.1f}%\n"
             else:
                 tweet += f"  {name}: {value:,.0f}\n"
-        tweet += f"\n{SITE_URL}/{comp['page']}"
+        tweet += f"\n{SITE_URL}/rankings"
 
     return tweet
 
 def get_calendar_tweet(cur):
     """Tweet about today's economic releases."""
     cur.execute("""
-        SELECT country, event, actual, forecast, previous
-        FROM calendar
+        SELECT country, title, actual, forecast, previous
+        FROM sotw_calendar_events
         WHERE date = CURRENT_DATE
         AND actual IS NOT NULL
-        ORDER BY impact DESC, event
+        ORDER BY impact DESC, title
         LIMIT 5
     """)
     rows = cur.fetchall()
@@ -332,8 +300,8 @@ def get_calendar_tweet(cur):
         return None
 
     tweet = "Economic data released today:\n"
-    for country, event, actual, forecast, previous in rows:
-        line = f"  {country}: {event} = {actual}"
+    for country, title, actual, forecast, previous in rows:
+        line = f"  {country}: {title} = {actual}"
         if forecast:
             line += f" (est. {forecast})"
         tweet += line + "\n"
@@ -342,8 +310,8 @@ def get_calendar_tweet(cur):
 
     if len(tweet) > 280:
         tweet = "Economic data released today:\n"
-        for country, event, actual, forecast, previous in rows[:3]:
-            tweet += f"  {country}: {event} = {actual}\n"
+        for country, title, actual, forecast, previous in rows[:3]:
+            tweet += f"  {country}: {title} = {actual}\n"
         tweet += f"\n{SITE_URL}/calendar"
 
     return tweet

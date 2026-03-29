@@ -67,7 +67,7 @@ def call_openrouter_gemini(prompt, max_tokens=8192):
 def call_gemini(prompt, max_tokens=8192):
     """Call Gemini 2.5 Pro with Google Search grounding. Falls back to OpenRouter on 403/429."""
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
         req = urllib.request.Request(
             url,
             data=json.dumps({

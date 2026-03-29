@@ -108,6 +108,7 @@ export default function PricingPage() {
   const [name, setName] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [showSignup, setShowSignup] = useState(false);
+  const [showSubscribeEmail, setShowSubscribeEmail] = useState<string | null>(null); // tier name when showing email prompt
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [copied, setCopied] = useState(false);
@@ -151,6 +152,32 @@ export default function PricingPage() {
     navigator.clipboard.writeText(apiKey);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const [subscribeEmail, setSubscribeEmail] = useState('');
+  const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
+
+  const handleCheckout = async (tier: string, checkoutEmail: string) => {
+    setSubscribeLoading(true);
+    setSubscribeError('');
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier, email: checkoutEmail, apiKey: apiKey || '' }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setSubscribeError(data.error || 'Checkout failed');
+        setSubscribeLoading(false);
+      }
+    } catch {
+      setSubscribeError('Network error');
+      setSubscribeLoading(false);
+    }
   };
 
   return (
@@ -222,23 +249,13 @@ export default function PricingPage() {
                 </a>
               ) : (
                 <button
-                  onClick={async () => {
+                  onClick={() => {
                     const tier = plan.ctaAction?.replace('stripe_', '') || '';
-                    if (!email && !apiKey) {
-                      setShowSignup(true);
-                      setMessage('Get a free API key first, then upgrade.');
-                      return;
-                    }
-                    const res = await fetch('/api/stripe/checkout', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ tier, email, apiKey }),
-                    });
-                    const data = await res.json();
-                    if (data.url) {
-                      window.location.href = data.url;
+                    if (email) {
+                      // Already have email from key signup — go straight to checkout
+                      handleCheckout(tier, email);
                     } else {
-                      setMessage(data.error || 'Checkout failed');
+                      setShowSubscribeEmail(tier);
                     }
                   }}
                   className="w-full px-4 py-2 rounded-lg text-[15px] font-medium transition bg-[#333] text-white hover:bg-[#222]"
@@ -297,6 +314,38 @@ export default function PricingPage() {
                   </button>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Subscribe Email Modal */}
+        {showSubscribeEmail && (
+          <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center" onClick={() => { setShowSubscribeEmail(null); setSubscribeError(''); }}>
+            <div className="bg-white rounded-xl shadow-2xl p-6 w-[420px] max-w-[90vw]" onClick={e => e.stopPropagation()}>
+              <h3 className="text-[18px] font-bold mb-1">Subscribe to {showSubscribeEmail === 'pro' ? 'Pro' : 'Business'}</h3>
+              <p className="text-[15px] text-[#64748b] mb-4">
+                {showSubscribeEmail === 'pro' ? '$49/mo — 50,000 requests/day' : '$500/mo — 500,000 requests/day'}
+              </p>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={subscribeEmail}
+                onChange={e => setSubscribeEmail(e.target.value)}
+                className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[15px] mb-3 outline-none focus:border-[#0066cc]"
+                autoFocus
+              />
+              {subscribeError && <div className="text-[14px] text-red-500 mb-2">{subscribeError}</div>}
+              <button
+                onClick={() => {
+                  if (!subscribeEmail.includes('@')) { setSubscribeError('Enter a valid email'); return; }
+                  handleCheckout(showSubscribeEmail, subscribeEmail);
+                }}
+                disabled={subscribeLoading}
+                className="w-full px-4 py-2 bg-[#0d1b2a] text-white rounded-lg text-[15px] font-medium hover:bg-[#0055aa] transition disabled:opacity-50"
+              >
+                {subscribeLoading ? 'Redirecting to checkout...' : 'Continue to Payment'}
+              </button>
+              <p className="text-[14px] text-[#94a3b8] mt-3 text-center">Secure payment via Stripe. Cancel anytime.</p>
             </div>
           </div>
         )}

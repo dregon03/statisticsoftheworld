@@ -4,7 +4,7 @@
 # Requires: curl, mail (or use Python smtp fallback below)
 
 HEALTH_URL="https://statisticsoftheworld.com/api/health"
-ALERT_EMAIL="tomhwang20@gmail.com"
+ALERT_EMAIL="statisticsoftheworldcontact@gmail.com"
 LOG_FILE="/var/log/sotw-monitor.log"
 STATE_FILE="/tmp/sotw-monitor-state"
 

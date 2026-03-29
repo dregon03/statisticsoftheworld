@@ -54,7 +54,7 @@ def call_openrouter(prompt):
 def call_gemini(prompt, retries=2):
     """Call Gemini 2.0 Flash with Google Search grounding (cheapest model with grounding)."""
     import time as _time
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_KEY}"
     for attempt in range(retries):
         try:
             req = urllib.request.Request(

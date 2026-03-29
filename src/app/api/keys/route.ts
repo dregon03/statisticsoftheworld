@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { sendEmail } from '@/lib/mailer';
 import crypto from 'crypto';
 
 // Generate a new API key
@@ -48,6 +49,27 @@ export async function POST(request: Request) {
     if (error) {
       return Response.json({ error: 'Failed to create API key' }, { status: 500 });
     }
+
+    // Send welcome email (fire and forget)
+    sendEmail(email, 'Your SOTW API Key', `
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;padding:24px">
+        <h2 style="color:#0d1b2a;margin-bottom:4px">Welcome to Statistics of the World</h2>
+        <p style="color:#64748b;font-size:15px">Your free API key is ready. 1,000 requests per day.</p>
+        <div style="background:#f4f6f9;border:1px solid #d5dce6;border-radius:8px;padding:16px;margin:20px 0">
+          <div style="color:#64748b;font-size:13px;margin-bottom:4px">Your API Key</div>
+          <div style="font-family:monospace;font-size:14px;color:#0d1b2a;word-break:break-all">${apiKey}</div>
+        </div>
+        <p style="color:#64748b;font-size:14px"><strong>Quick start:</strong></p>
+        <pre style="background:#0d1b2a;color:#e2e8f0;padding:12px;border-radius:8px;font-size:13px;overflow-x:auto">curl -H "X-API-Key: ${apiKey}" \\
+  https://statisticsoftheworld.com/api/v1/countries</pre>
+        <p style="color:#64748b;font-size:14px;margin-top:20px">
+          <a href="https://statisticsoftheworld.com/api-docs" style="color:#0066cc">API Documentation</a> &middot;
+          <a href="https://statisticsoftheworld.com/pricing" style="color:#0066cc">Upgrade for higher limits</a>
+        </p>
+        <hr style="border:none;border-top:1px solid #e8e8e8;margin:24px 0">
+        <p style="color:#94a3b8;font-size:12px">Keep this key confidential. If compromised, generate a new one at statisticsoftheworld.com/pricing</p>
+      </div>
+    `).catch(() => {}); // Don't fail the response if email fails
 
     return Response.json({
       message: 'API key created',

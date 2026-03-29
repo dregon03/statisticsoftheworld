@@ -91,6 +91,7 @@ export default function Footer() {
             <Link href="/ai" className="hover:text-white transition">AI</Link>
             <Link href="/terms" className="hover:text-white transition">Terms</Link>
             <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
+            <Link href="/contact" className="hover:text-white transition">Contact</Link>
           </div>
         </div>
       </div>

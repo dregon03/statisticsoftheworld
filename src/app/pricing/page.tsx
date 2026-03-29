@@ -397,6 +397,40 @@ export default function PricingPage() {
           </div>
         </div>
 
+        {/* Manage subscription */}
+        <div className="border border-[#d5dce6] rounded-xl p-5 bg-[#f4f6f9] mb-4">
+          <h3 className="text-[14px] font-semibold mb-2">Manage your subscription</h3>
+          <div className="flex gap-2">
+            <input
+              type="email"
+              placeholder="Enter your subscription email"
+              value={lookupEmail}
+              onChange={e => setLookupEmail(e.target.value)}
+              className="flex-1 border border-[#d5dce6] rounded-lg px-3 py-2 text-[15px] outline-none focus:border-[#0066cc] bg-white"
+            />
+            <button
+              onClick={async () => {
+                if (!lookupEmail.includes('@')) return;
+                const res = await fetch('/api/stripe/portal', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email: lookupEmail }),
+                });
+                const data = await res.json();
+                if (data.url) {
+                  window.location.href = data.url;
+                } else {
+                  setMessage(data.error || 'No subscription found');
+                }
+              }}
+              className="px-4 py-2 bg-[#333] text-white rounded-lg text-[15px] font-medium hover:bg-[#222] transition"
+            >
+              Billing Portal
+            </button>
+          </div>
+          <p className="text-[14px] text-[#94a3b8] mt-2">Cancel, upgrade, update payment method, or view invoices.</p>
+        </div>
+
         {/* Look up existing key */}
         <div className="border border-[#d5dce6] rounded-xl p-5 bg-[#f4f6f9] mb-10">
           <h3 className="text-[14px] font-semibold mb-2">Already have a key?</h3>

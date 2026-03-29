@@ -1,0 +1,56 @@
+# ═══════════════════════════════════════════════════════════
+# SOTW ETL Cron Schedule — Hetzner VPS (5.161.56.146)
+# All times in UTC. Server is in Ashburn, VA (us-east).
+# To install: crontab /opt/sotw-etl/scripts/crontab.txt
+# ═══════════════════════════════════════════════════════════
+
+ETL=/opt/sotw-etl/run-etl.sh
+
+# ── Monitoring (every 15 min) ─────────────────────────────
+*/15 * * * * /opt/sotw-etl/scripts/monitor.sh
+
+# ── Daily backup (5 AM UTC) ──────────────────────────────
+0 5 * * * /opt/sotw-etl/scripts/backup_supabase.sh
+
+# ── Daily (7 AM UTC = 3 AM ET) ───────────────────────────
+0 7 * * * $ETL etl_yfinance.py >> /var/log/sotw-etl.log 2>&1
+5 7 * * * $ETL etl.py >> /var/log/sotw-etl.log 2>&1
+10 7 * * * $ETL etl_financial.py >> /var/log/sotw-etl.log 2>&1
+15 7 * * * $ETL fetch_china_quotes.py >> /var/log/sotw-etl.log 2>&1
+20 7 * * * $ETL etl_calendar_ai.py >> /var/log/sotw-etl.log 2>&1
+25 7 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
+
+# ── Every 4 hours: Polymarket ────────────────────────────
+0 */4 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
+
+# ── Weekdays: Calendar actuals (after major releases) ────
+# 8:45 AM ET = 12:45 UTC, 9 AM ET = 13:00 UTC, etc.
+45 12 * * 1-5 $ETL etl_calendar_actuals.py >> /var/log/sotw-etl.log 2>&1
+0 13 * * 1-5 $ETL etl_calendar_actuals.py >> /var/log/sotw-etl.log 2>&1
+15 13 * * 1-5 $ETL etl_calendar_actuals.py >> /var/log/sotw-etl.log 2>&1
+15 14 * * 1-5 $ETL etl_calendar_actuals.py >> /var/log/sotw-etl.log 2>&1
+0 19 * * 1-5 $ETL etl_calendar_actuals.py >> /var/log/sotw-etl.log 2>&1
+30 21 * * 1-5 $ETL etl_calendar_actuals.py >> /var/log/sotw-etl.log 2>&1
+0 22 * * 1-5 $ETL etl_calendar_actuals.py >> /var/log/sotw-etl.log 2>&1
+
+# ── Weekly (Monday 8 AM UTC) ─────────────────────────────
+0 8 * * 1 $ETL etl_correlations.py >> /var/log/sotw-etl.log 2>&1
+30 8 * * 1 $ETL etl_stock_profiles.py >> /var/log/sotw-etl.log 2>&1
+
+# ── Monthly (1st of month, 6 AM UTC) ─────────────────────
+0 6 1 * * $ETL etl_intl_orgs.py >> /var/log/sotw-etl.log 2>&1
+30 6 1 * * $ETL etl_history.py >> /var/log/sotw-etl.log 2>&1
+0 7 1 * * $ETL etl_trade.py >> /var/log/sotw-etl.log 2>&1
+
+# ── Weekday live quote sessions (5s stocks, 30s indices) ──
+# Pre-market + morning: 8:30 AM - 12 PM ET (12:30 - 16:00 UTC)
+30 12 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 5 --duration 12600 >> /var/log/sotw-quotes.log 2>&1
+
+# Afternoon: 12 PM - 4 PM ET (16:00 - 20:00 UTC)
+0 16 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 5 --duration 14400 >> /var/log/sotw-quotes.log 2>&1
+
+# After-hours: 4 PM - 6 PM ET (20:00 - 22:00 UTC)
+0 20 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 30 --duration 7200 >> /var/log/sotw-quotes.log 2>&1
+
+# Live indices/commodities/FX (30s, during market hours)
+30 12 * * 1-5 $ETL fetch_live_quotes.py --loop --interval 30 --duration 34200 >> /var/log/sotw-quotes.log 2>&1

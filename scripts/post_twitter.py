@@ -30,11 +30,11 @@ import psycopg2
 # CONFIG
 # ============================================================
 
-DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
+DB_HOST = os.environ.get("SUPABASE_DB_HOST", "aws-1-ca-central-1.pooler.supabase.com")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 DB_NAME = "postgres"
-DB_USER = "postgres"
-DB_PORT = 5432
+DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
+DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 
 # X API OAuth 1.0a credentials
 CONSUMER_KEY = os.environ.get("X_CONSUMER_KEY", "")

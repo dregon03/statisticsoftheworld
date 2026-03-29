@@ -197,9 +197,9 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
     <div className="border-t border-[#d5dce6] bg-[#fafbfd] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#0d1b2a]">{name}</span>
+          <span className="text-[15px] font-semibold text-[#0d1b2a]">{name}</span>
           {points.length > 1 && (
-            <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-[14px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}${Math.abs(changeAmt).toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
             </span>
           )}
@@ -207,7 +207,7 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
         <div className="flex gap-1 flex-wrap">
           {RANGES.map(r => (
             <button key={r.key} onClick={() => setRange(r.key)}
-              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
+              className={`px-2 py-0.5 text-[15px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
               {r.label}
             </button>
           ))}
@@ -215,9 +215,9 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">Loading chart...</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">Loading chart...</div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">No chart data</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">No chart data</div>
       ) : (() => {
         const vals = points.map(p => p.value).filter(v => v > 0);
         const minVal = Math.min(...vals);
@@ -279,7 +279,7 @@ function StockChart({ ticker, name }: { ticker: string; name: string }) {
                 const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
                 const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
                 return (
-                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                     <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                     <div className="font-mono font-semibold text-[14px]">${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
@@ -619,7 +619,7 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
   return (
     <div ref={containerRef}>
       {/* Color legend */}
-      <div className="flex items-center justify-between px-3 py-1.5 bg-[#111] text-[10px] text-[#888]">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-[#111] text-[14px] text-[#888]">
         <span>Size = market cap · Color = daily change</span>
         <div className="flex items-center gap-0">
           <span className="mr-1.5 text-[#ef5350]">-3%</span>
@@ -646,7 +646,7 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
       {/* Sector legend */}
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 px-3 py-2 bg-[#111] border-t border-[#2a2a2a]">
         {sectors.map(s => (
-          <span key={s.name} className="text-[10px] text-[#777] uppercase tracking-wider">
+          <span key={s.name} className="text-[14px] text-[#777] uppercase tracking-wider">
             {s.name} <span className="text-[#555]">({s.children.length})</span>
           </span>
         ))}
@@ -655,19 +655,19 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
       {/* Tooltip */}
       {hovered && (
         <div
-          className="fixed z-[200] bg-[#1a1a1a] border border-[#444] shadow-2xl rounded px-4 py-3 text-[13px] min-w-[200px] pointer-events-none"
+          className="fixed z-[200] bg-[#1a1a1a] border border-[#444] shadow-2xl rounded px-4 py-3 text-[15px] min-w-[200px] pointer-events-none"
           style={{ left: mousePos.x + 14, top: mousePos.y - 14 }}
         >
           <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-[16px] text-white">{hovered.ticker}</span>
-            <span className="text-[#888] text-[12px]">{hovered.name}</span>
+            <span className="text-[#888] text-[14px]">{hovered.name}</span>
           </div>
-          <div className="text-[#64748b] text-[11px] mb-2">{hovered.sector} · {hovered.industry}</div>
+          <div className="text-[#64748b] text-[15px] mb-2">{hovered.sector} · {hovered.industry}</div>
           <div className="flex items-center justify-between border-t border-[#333] pt-2">
             <span className={`font-mono font-bold text-[18px] ${hovered.changePct >= 0 ? 'text-[#4caf50]' : 'text-[#ef5350]'}`}>
               {hovered.changePct >= 0 ? '+' : ''}{hovered.changePct.toFixed(2)}%
             </span>
-            <span className="text-[#64748b] text-[12px] font-mono">${(hovered.size / 1e9).toFixed(0)}B</span>
+            <span className="text-[#64748b] text-[14px] font-mono">${(hovered.size / 1e9).toFixed(0)}B</span>
           </div>
         </div>
       )}
@@ -851,18 +851,18 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
             {/* Gainers / Losers */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="border border-[#d5dce6] rounded-lg p-4">
-                <h3 className="text-[13px] font-semibold text-[#2ecc40] mb-3">Top Gainers</h3>
+                <h3 className="text-[15px] font-semibold text-[#2ecc40] mb-3">Top Gainers</h3>
                 {gainers.map(q => (
-                  <div key={q.id} className="flex justify-between text-[13px] py-1">
+                  <div key={q.id} className="flex justify-between text-[15px] py-1">
                     <span className="font-medium">{q.label}</span>
                     <span className="font-mono text-[#2ecc40]">+{q.changePct.toFixed(2)}%</span>
                   </div>
                 ))}
               </div>
               <div className="border border-[#d5dce6] rounded-lg p-4">
-                <h3 className="text-[13px] font-semibold text-[#e74c3c] mb-3">Top Losers</h3>
+                <h3 className="text-[15px] font-semibold text-[#e74c3c] mb-3">Top Losers</h3>
                 {losers.map(q => (
-                  <div key={q.id} className="flex justify-between text-[13px] py-1">
+                  <div key={q.id} className="flex justify-between text-[15px] py-1">
                     <span className="font-medium">{q.label}</span>
                     <span className="font-mono text-[#e74c3c]">{q.changePct.toFixed(2)}%</span>
                   </div>
@@ -884,9 +884,9 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                 placeholder="Search ticker..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-48"
+                className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[15px] outline-none focus:border-[#0066cc] transition w-48"
               />
-              <span className="text-[12px] text-[#64748b] self-center ml-auto flex items-center gap-3">
+              <span className="text-[14px] text-[#64748b] self-center ml-auto flex items-center gap-3">
                 {stockQuotes.length} stocks
                 <ExportButton
                   filename={`sotw-${title.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}`}
@@ -904,7 +904,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
             <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
+                  <tr className="text-[15px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                     <th className="text-left px-3 py-2">
                       <button onClick={() => handleSort('label')} className="hover:text-[#0d1b2a]">Ticker{sortIcon('label')}</button>
                     </th>
@@ -929,17 +929,17 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                     return (
                       <React.Fragment key={q.id}>
                         <tr
-                          className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[13px] cursor-pointer ${isExpanded2 ? 'bg-[#f5f7fa]' : i % 2 ? 'bg-[#fafbfd]' : ''}`}
+                          className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[15px] cursor-pointer ${isExpanded2 ? 'bg-[#f5f7fa]' : i % 2 ? 'bg-[#fafbfd]' : ''}`}
                           onClick={() => setExpanded(isExpanded2 ? null : q.label)}
                         >
                           <td className="px-3 py-2 font-semibold">
                             <span className="flex items-center gap-1.5">
-                              <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded2 ? 'rotate-90' : ''}`}>&#9654;</span>
+                              <span className={`text-[14px] text-[#64748b] transition-transform inline-block ${isExpanded2 ? 'rotate-90' : ''}`}>&#9654;</span>
                               <StockLogo ticker={q.label} size={18} />
                               <Link href={`/markets/stocks/${q.label}`} className="hover:text-[#0066cc] transition" onClick={e => e.stopPropagation()}>{q.label}</Link>
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-[12px] text-[#64748b] hidden md:table-cell">
+                          <td className="px-3 py-2 text-[14px] text-[#64748b] hidden md:table-cell">
                             <Link href={`/markets/stocks/${q.label}`} className="hover:text-[#0066cc] transition">{COMPANY_NAMES[q.label] || ''}</Link>
                           </td>
                           <td className="px-3 py-2 text-right font-mono font-semibold">
@@ -947,11 +947,11 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                               ? <AnimatedPrice value={q.price} format={v => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
                               : <span className="text-[#94a3b8]">&mdash;</span>}
                           </td>
-                          <td className="px-3 py-2 text-right font-mono text-[12px] text-[#64748b] hidden sm:table-cell">
+                          <td className="px-3 py-2 text-right font-mono text-[14px] text-[#64748b] hidden sm:table-cell">
                             {q.previousClose > 0 ? `$${q.previousClose.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '\u2014'}
                           </td>
-                          <td className={`px-3 py-2 text-right font-mono text-[12px] ${q.price > 0 ? color : 'text-[#94a3b8]'}`}>{q.price > 0 ? `${sign}${q.change.toFixed(2)}` : '\u2014'}</td>
-                          <td className={`px-3 py-2 text-right font-mono text-[12px] font-semibold ${q.price > 0 ? color : 'text-[#94a3b8]'}`}>{q.price > 0 ? `${sign}${q.changePct.toFixed(2)}%` : '\u2014'}</td>
+                          <td className={`px-3 py-2 text-right font-mono text-[14px] ${q.price > 0 ? color : 'text-[#94a3b8]'}`}>{q.price > 0 ? `${sign}${q.change.toFixed(2)}` : '\u2014'}</td>
+                          <td className={`px-3 py-2 text-right font-mono text-[14px] font-semibold ${q.price > 0 ? color : 'text-[#94a3b8]'}`}>{q.price > 0 ? `${sign}${q.changePct.toFixed(2)}%` : '\u2014'}</td>
                         </tr>
                         {isExpanded2 && (
                           <tr>

@@ -6,7 +6,7 @@ const TIER_LIMITS: Record<string, number> = {
   anonymous: 100,       // No key, per IP
   free: 1000,           // Free API key
   pro: 50000,           // $49/mo
-  business: 500000,     // $199/mo
+  business: 500000,     // $500/mo
   enterprise: 10000000, // Custom / unlimited
 };
 

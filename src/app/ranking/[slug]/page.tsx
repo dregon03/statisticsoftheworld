@@ -96,23 +96,23 @@ export default async function RankingPage({ params }: Props) {
         {/* Summary stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="border border-gray-100 rounded-xl p-4">
-            <div className="text-[11px] text-gray-400 mb-1">Countries</div>
+            <div className="text-[15px] text-gray-400 mb-1">Countries</div>
             <div className="text-[20px] font-bold">{data.length}</div>
           </div>
           {data.length > 0 && (
             <>
               <div className="border border-gray-100 rounded-xl p-4">
-                <div className="text-[11px] text-gray-400 mb-1">Highest</div>
+                <div className="text-[15px] text-gray-400 mb-1">Highest</div>
                 <div className="text-[16px] font-bold text-green-600">{formatValue(data[0].value, ind.format, ind.decimals)}</div>
-                <div className="text-[11px] text-gray-400">{data[0].country}</div>
+                <div className="text-[15px] text-gray-400">{data[0].country}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-4">
-                <div className="text-[11px] text-gray-400 mb-1">Lowest</div>
+                <div className="text-[15px] text-gray-400 mb-1">Lowest</div>
                 <div className="text-[16px] font-bold text-red-500">{formatValue(data[data.length - 1].value, ind.format, ind.decimals)}</div>
-                <div className="text-[11px] text-gray-400">{data[data.length - 1].country}</div>
+                <div className="text-[15px] text-gray-400">{data[data.length - 1].country}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-4">
-                <div className="text-[11px] text-gray-400 mb-1">Latest Year</div>
+                <div className="text-[15px] text-gray-400 mb-1">Latest Year</div>
                 <div className="text-[20px] font-bold">{data[0].year}</div>
               </div>
             </>
@@ -123,7 +123,7 @@ export default async function RankingPage({ params }: Props) {
         <div className="border border-gray-100 rounded-xl overflow-hidden mb-8">
           <table className="w-full">
             <thead>
-              <tr className="text-left text-[11px] text-gray-400 uppercase border-b border-gray-100 bg-gray-50">
+              <tr className="text-left text-[15px] text-gray-400 uppercase border-b border-gray-100 bg-gray-50">
                 <th className="px-4 py-2.5 w-12">#</th>
                 <th className="px-4 py-2.5">Country</th>
                 <th className="px-4 py-2.5 text-right">{ind.label}</th>
@@ -137,14 +137,14 @@ export default async function RankingPage({ params }: Props) {
                 const barWidth = maxVal > 0 ? (Math.abs(entry.value || 0) / maxVal) * 100 : 0;
                 return (
                   <tr key={entry.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                    <td className="px-4 py-2 text-gray-300 text-[13px]">{i + 1}</td>
+                    <td className="px-4 py-2 text-gray-300 text-[15px]">{i + 1}</td>
                     <td className="px-4 py-2">
-                      <Link href={`/country/${entry.countryId}/${encodeURIComponent(config.id)}`} className="inline-flex items-center gap-2 text-[13px] text-blue-600 hover:text-blue-800">
+                      <Link href={`/country/${entry.countryId}/${encodeURIComponent(config.id)}`} className="inline-flex items-center gap-2 text-[15px] text-blue-600 hover:text-blue-800">
                         <Flag iso2={entry.iso2} size={20} />
                         {entry.country}
                       </Link>
                     </td>
-                    <td className="px-4 py-2 text-right font-mono text-[13px]">
+                    <td className="px-4 py-2 text-right font-mono text-[15px]">
                       {formatValue(entry.value, ind.format, ind.decimals)}
                     </td>
                     <td className="px-4 py-2 hidden md:table-cell">
@@ -152,7 +152,7 @@ export default async function RankingPage({ params }: Props) {
                         <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${barWidth}%` }} />
                       </div>
                     </td>
-                    <td className="px-4 py-2 text-right text-gray-400 text-[12px]">{entry.year}</td>
+                    <td className="px-4 py-2 text-right text-gray-400 text-[14px]">{entry.year}</td>
                   </tr>
                 );
               })}
@@ -168,7 +168,7 @@ export default async function RankingPage({ params }: Props) {
               <Link
                 key={s}
                 href={`/ranking/${s}`}
-                className="text-[12px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-[#64748b]"
+                className="text-[14px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-[#64748b]"
               >
                 {cfg.title}
               </Link>

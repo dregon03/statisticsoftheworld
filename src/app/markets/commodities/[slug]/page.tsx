@@ -110,7 +110,7 @@ function FuturesCurve({ id }: { id: string }) {
       .then(d => { if (d && !d.error) setData(d); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
-  if (loading) return <div className="py-3 text-[11px] text-[#64748b]">Loading futures curve...</div>;
+  if (loading) return <div className="py-3 text-[15px] text-[#64748b]">Loading futures curve...</div>;
   if (!data || data.contracts.length < 2) return null;
   const sc = data.structure === 'backwardation' ? '#dc2626' : data.structure === 'contango' ? '#16a34a' : '#666';
   const sl = data.structure === 'backwardation' ? 'Backwardation' : data.structure === 'contango' ? 'Contango' : 'Flat';
@@ -119,19 +119,19 @@ function FuturesCurve({ id }: { id: string }) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-[14px] font-semibold text-[#0d1b2a]">Futures Curve</span>
-          <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ color: sc, backgroundColor: `${sc}12` }}>{sl}</span>
+          <span className="text-[14px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ color: sc, backgroundColor: `${sc}12` }}>{sl}</span>
         </div>
-        <span className="text-[10px] text-[#94a3b8]">CME settlements via Yahoo Finance</span>
+        <span className="text-[14px] text-[#94a3b8]">CME settlements via Yahoo Finance</span>
       </div>
-      <p className="text-[11px] text-[#64748b] mb-3">{data.structureDescription}</p>
+      <p className="text-[15px] text-[#64748b] mb-3">{data.structureDescription}</p>
       <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1.5">
         {data.contracts.map((c, i) => {
           const isFirst = i === 0;
           const cc = c.changeFromFront >= 0 ? '#16a34a' : '#dc2626';
           return (
             <div key={c.label} className={`border rounded-lg p-2 text-center ${isFirst ? 'border-[#0066cc] bg-[#f8fbff]' : 'border-[#d5dce6]'}`}>
-              <div className="text-[10px] text-[#64748b] mb-0.5">{c.label}</div>
-              <div className="text-[13px] font-mono font-semibold text-[#0d1b2a]">${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              <div className="text-[14px] text-[#64748b] mb-0.5">{c.label}</div>
+              <div className="text-[15px] font-mono font-semibold text-[#0d1b2a]">${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
               {!isFirst && <div className="text-[9px] font-mono" style={{ color: cc }}>{c.changeFromFront >= 0 ? '+' : ''}{c.changeFromFront.toFixed(1)}%</div>}
               {isFirst && <div className="text-[9px] text-[#0066cc] font-semibold">SPOT</div>}
             </div>
@@ -227,7 +227,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
         <MarketsHeader />
 
         {/* Breadcrumb */}
-        <div className="text-[12px] text-[#64748b] mb-4">
+        <div className="text-[14px] text-[#64748b] mb-4">
           <Link href="/markets/commodities" className="hover:text-[#0d1b2a] transition">Commodities</Link>
           <span className="mx-1.5">/</span>
           <span className="text-[#0d1b2a]">{commodity.label}</span>
@@ -236,7 +236,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
         {/* Title + Price */}
         <div className="mb-6">
           <h2 className="text-[22px] font-bold">{commodity.label}</h2>
-          <div className="text-[12px] text-[#64748b] mt-0.5">Category: {commodity.category}</div>
+          <div className="text-[14px] text-[#64748b] mt-0.5">Category: {commodity.category}</div>
           {last != null && (
             <div className="flex items-baseline gap-3 mt-2">
               <span className="text-[28px] font-bold font-mono">{fmt(last, curr)}</span>
@@ -306,8 +306,8 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
               { label: 'Source', val: meta?.sourceName || 'Yahoo Finance' },
             ].map((s, i) => (
               <div key={s.label} className={`flex-1 min-w-[120px] px-4 py-3 ${i > 0 ? 'border-l border-gray-100' : ''}`}>
-                <div className="text-[10px] text-gray-400 uppercase tracking-wider">{s.label}</div>
-                <div className="text-[13px] font-semibold text-gray-900 mt-0.5">{s.val}</div>
+                <div className="text-[14px] text-gray-400 uppercase tracking-wider">{s.label}</div>
+                <div className="text-[15px] font-semibold text-gray-900 mt-0.5">{s.val}</div>
               </div>
             ))}
           </div>
@@ -319,16 +319,16 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
           <div className="flex gap-1">
             {RANGES.map(r => (
               <button key={r.key} onClick={() => setRange(r.key)}
-                className={`px-3 py-1 text-[12px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
+                className={`px-3 py-1 text-[14px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
                 {r.label}
               </button>
             ))}
           </div>
         </div>
         {loading ? (
-          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[13px] border border-[#d5dce6] rounded-lg">Loading chart...</div>
+          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[15px] border border-[#d5dce6] rounded-lg">Loading chart...</div>
         ) : points.length < 2 ? (
-          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[13px] border border-[#d5dce6] rounded-lg">No chart data available</div>
+          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[15px] border border-[#d5dce6] rounded-lg">No chart data available</div>
         ) : (
           <div className="h-[350px] border border-[#d5dce6] rounded-lg p-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -366,7 +366,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
                     ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })
                     : p.date;
                   return (
-                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                       <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[15px]">{fmt(p.value, curr)}</div>
                     </div>
@@ -377,7 +377,7 @@ export default function CommodityDetailPage({ params }: { params: Promise<{ slug
             </ResponsiveContainer>
           </div>
         )}
-        <div className="text-[11px] text-[#64748b] mt-2">
+        <div className="text-[15px] text-[#64748b] mt-2">
           {points.length > 0 && `${points.length} data points`} · Source: {isCN ? 'Sina Finance' : 'Yahoo Finance (15-min delayed)'} · Auto-refreshes every 30s
         </div>
 

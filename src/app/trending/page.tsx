@@ -37,7 +37,7 @@ export default function TrendingPage() {
 
       <section className="max-w-[1200px] mx-auto px-4 py-8">
         <h1 className="text-[28px] font-bold mb-1">Trending Data</h1>
-        <p className="text-[13px] text-[#64748b] mb-8">
+        <p className="text-[15px] text-[#64748b] mb-8">
           Auto-generated insights from the latest global statistics. Updated daily.
         </p>
 
@@ -56,7 +56,7 @@ export default function TrendingPage() {
                     <h2 className="text-[14px] font-semibold">{insight.title}</h2>
                     <Link
                       href={`/indicators?id=${encodeURIComponent(insight.indicatorId)}`}
-                      className="text-[11px] text-[#0066cc] hover:underline"
+                      className="text-[15px] text-[#0066cc] hover:underline"
                     >
                       {insight.indicatorLabel} →
                     </Link>
@@ -66,9 +66,9 @@ export default function TrendingPage() {
                       const barWidth = maxVal > 0 ? (Math.abs(c.value) / maxVal) * 100 : 0;
                       return (
                         <div key={c.id} className="flex items-center px-4 py-2 gap-3 hover:bg-[#fafafa] transition">
-                          <span className="text-[11px] text-[#94a3b8] w-5 text-right">{j + 1}</span>
+                          <span className="text-[15px] text-[#94a3b8] w-5 text-right">{j + 1}</span>
                           <Flag iso2={c.iso2} size={18} />
-                          <Link href={`/country/${c.id}`} className="text-[13px] text-[#0066cc] hover:underline flex-1 truncate">
+                          <Link href={`/country/${c.id}`} className="text-[15px] text-[#0066cc] hover:underline flex-1 truncate">
                             {c.name}
                           </Link>
                           <div className="w-20 hidden sm:block">
@@ -79,7 +79,7 @@ export default function TrendingPage() {
                               />
                             </div>
                           </div>
-                          <span className={`text-[12px] font-mono w-20 text-right ${c.value < 0 ? 'text-red-500' : ''}`}>
+                          <span className={`text-[14px] font-mono w-20 text-right ${c.value < 0 ? 'text-red-500' : ''}`}>
                             {formatValue(c.value, ind.format, 1)}
                           </span>
                         </div>

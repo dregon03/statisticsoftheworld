@@ -138,7 +138,7 @@ export default async function CountryPage({ params }: Props) {
                 <div className="text-[24px] font-extrabold text-[#0d1b2a] group-hover:text-[#0066cc] transition">
                   {d && ind ? formatValue(d.value, ind.format, ind.decimals) : 'N/A'}
                 </div>
-                {d && <div className="text-[12px] text-[#94a3b8] mt-1">{d.year}</div>}
+                {d && <div className="text-[14px] text-[#94a3b8] mt-1">{d.year}</div>}
               </Link>
             );
           })}
@@ -164,7 +164,7 @@ export default async function CountryPage({ params }: Props) {
                 <div className="bg-white border border-[#d5dce6] rounded-xl overflow-hidden shadow-sm">
                   <table className="w-full">
                     <thead>
-                      <tr className="text-left text-[12px] text-[#64748b] border-b border-[#d5dce6] bg-[#f4f6f9]">
+                      <tr className="text-left text-[14px] text-[#64748b] border-b border-[#d5dce6] bg-[#f4f6f9]">
                         <th className="px-5 py-2.5">Indicator</th>
                         <th className="px-5 py-2.5 text-right">Value</th>
                         <th className="px-5 py-2.5 text-right">Year</th>
@@ -185,7 +185,7 @@ export default async function CountryPage({ params }: Props) {
                               </Link>
                             </td>
                             <td className="px-5 py-2.5 text-right font-mono text-[14px]">{formatValue(d.value, ind.format, ind.decimals)}</td>
-                            <td className="px-5 py-2.5 text-right text-[#94a3b8] text-[12px]">{d.year}</td>
+                            <td className="px-5 py-2.5 text-right text-[#94a3b8] text-[14px]">{d.year}</td>
                           </tr>
                         );
                       })}

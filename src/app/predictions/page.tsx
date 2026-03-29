@@ -91,7 +91,7 @@ function MarketCard({ market }: { market: PredictionMarket }) {
 
       <ProbabilityBar probability={market.probability} color={color} />
 
-      <div className="flex items-center justify-between mt-3 text-[11px] text-[#94a3b8]">
+      <div className="flex items-center justify-between mt-3 text-[15px] text-[#94a3b8]">
         <div className="flex gap-3">
           <span>Vol: {formatVolume(market.volume)}</span>
           <span>Liq: {formatVolume(market.liquidity)}</span>
@@ -140,7 +140,7 @@ export default function PredictionsPage() {
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-[32px] font-extrabold text-[#0d1b2a] tracking-tight">Prediction Markets</h1>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#7c3aed] px-2.5 py-1 rounded-lg">
+            <span className="text-[15px] font-bold uppercase tracking-wider text-white bg-[#7c3aed] px-2.5 py-1 rounded-lg">
               Live
             </span>
           </div>
@@ -152,7 +152,7 @@ export default function PredictionsPage() {
             . Prices reflect the crowd&apos;s probability estimate for each outcome.
           </p>
           {updatedAt && (
-            <p className="text-[12px] text-[#94a3b8]">
+            <p className="text-[14px] text-[#94a3b8]">
               Last updated: {new Date(updatedAt).toLocaleString()}
             </p>
           )}
@@ -162,7 +162,7 @@ export default function PredictionsPage() {
         <div className="flex flex-wrap gap-2 mb-6">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`px-3.5 py-2 text-[13px] rounded-lg border transition font-medium ${
+            className={`px-3.5 py-2 text-[15px] rounded-lg border transition font-medium ${
               !selectedCategory
                 ? 'bg-[#0d1b2a] text-white border-[#0d1b2a]'
                 : 'border-[#d5dce6] text-[#64748b] hover:bg-white'
@@ -174,7 +174,7 @@ export default function PredictionsPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
-              className={`px-3.5 py-2 text-[13px] rounded-lg border transition font-medium ${
+              className={`px-3.5 py-2 text-[15px] rounded-lg border transition font-medium ${
                 selectedCategory === cat
                   ? 'text-white border-transparent'
                   : 'border-[#d5dce6] text-[#64748b] hover:bg-white'
@@ -206,7 +206,7 @@ export default function PredictionsPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CATEGORY_COLORS[cat] }} />
                     <h2 className="text-[17px] font-bold text-[#0d1b2a]">{cat}</h2>
-                    <span className="text-[12px] text-[#94a3b8]">{catMarkets.length} markets</span>
+                    <span className="text-[14px] text-[#94a3b8]">{catMarkets.length} markets</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {catMarkets.slice(0, 6).map(m => <MarketCard key={m.id} market={m} />)}
@@ -214,7 +214,7 @@ export default function PredictionsPage() {
                   {catMarkets.length > 6 && (
                     <button
                       onClick={() => setSelectedCategory(cat)}
-                      className="mt-2 text-[12px] text-[#0066cc] hover:underline"
+                      className="mt-2 text-[14px] text-[#0066cc] hover:underline"
                     >
                       View all {catMarkets.length} →
                     </button>
@@ -228,7 +228,7 @@ export default function PredictionsPage() {
         {/* How to read */}
         <div className="mt-12 bg-white border border-[#d5dce6] rounded-xl p-6 shadow-sm">
           <h2 className="text-[17px] font-bold text-[#0d1b2a] mb-3">How to read prediction markets</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[13px] text-[#64748b]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[15px] text-[#64748b]">
             <div>
               <div className="font-bold text-[#0d1b2a] mb-1">Probability</div>
               The percentage shown is the market&apos;s implied probability — the crowd&apos;s best estimate of the outcome happening.
@@ -247,7 +247,7 @@ export default function PredictionsPage() {
           </div>
         </div>
 
-        <div className="mt-4 text-[12px] text-[#94a3b8] text-center">
+        <div className="mt-4 text-[14px] text-[#94a3b8] text-center">
           Data from <a href="https://polymarket.com" target="_blank" rel="noopener noreferrer" className="text-[#64748b] hover:underline">Polymarket</a> via Gamma API.
           Prediction markets reflect crowd consensus, not certainty. Not financial advice.
         </div>

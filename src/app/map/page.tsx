@@ -77,11 +77,11 @@ export function MapContent() {
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <h1 className="text-[28px] font-bold">World Map</h1>
-            <Link href={`/indicators?id=${encodeURIComponent(selectedIndicator.id)}`} className="text-[12px] text-[#0066cc] hover:underline ml-2">
+            <Link href={`/indicators?id=${encodeURIComponent(selectedIndicator.id)}`} className="text-[14px] text-[#0066cc] hover:underline ml-2">
               View as table &rarr;
             </Link>
           </div>
-          <p className="text-[13px] text-[#64748b]">
+          <p className="text-[15px] text-[#64748b]">
             Visualize any indicator across 218 countries. Color intensity represents relative values.
           </p>
         </div>
@@ -94,7 +94,7 @@ export function MapContent() {
               placeholder="Search indicators..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] mb-3 outline-none focus:border-[#0066cc]"
+              className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[15px] mb-3 outline-none focus:border-[#0066cc]"
             />
             <div className="border border-[#d5dce6] rounded-xl overflow-hidden max-h-[60vh] overflow-y-auto">
               {MAP_CATEGORIES.map(cat => {
@@ -102,14 +102,14 @@ export function MapContent() {
                 if (catInds.length === 0) return null;
                 return (
                   <div key={cat}>
-                    <div className="px-3 py-1.5 text-[10px] font-bold text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] sticky top-0">
+                    <div className="px-3 py-1.5 text-[14px] font-bold text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] sticky top-0">
                       {cat}
                     </div>
                     {catInds.map(ind => (
                       <button
                         key={ind.id}
                         onClick={() => setSelectedIndicator(ind)}
-                        className={`w-full text-left px-3 py-1.5 text-[12px] transition ${
+                        className={`w-full text-left px-3 py-1.5 text-[14px] transition ${
                           selectedIndicator.id === ind.id
                             ? 'bg-[#f0f7ff] text-[#0066cc] font-medium border-l-2 border-[#0066cc]'
                             : 'text-[#64748b] hover:bg-[#f4f6f9]'
@@ -128,7 +128,7 @@ export function MapContent() {
           <div className="lg:col-span-3">
             <div className="mb-4">
               <h2 className="text-[18px] font-bold">{selectedIndicator.label}</h2>
-              <div className="text-[12px] text-[#64748b]">{selectedIndicator.category} &middot; {data.length} countries with data</div>
+              <div className="text-[14px] text-[#64748b]">{selectedIndicator.category} &middot; {data.length} countries with data</div>
             </div>
 
             {loading ? (
@@ -146,10 +146,10 @@ export function MapContent() {
                 {/* Top/Bottom stats */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   <div className="border border-[#d5dce6] rounded-xl p-4">
-                    <h3 className="text-[13px] font-semibold text-[#0d1b2a] mb-3">Highest</h3>
+                    <h3 className="text-[15px] font-semibold text-[#0d1b2a] mb-3">Highest</h3>
                     <div className="space-y-2">
                       {top5.map((d, i) => (
-                        <div key={d.countryId} className="flex items-center justify-between text-[13px]">
+                        <div key={d.countryId} className="flex items-center justify-between text-[15px]">
                           <div className="flex items-center gap-2">
                             <span className="text-[#64748b] w-4">{i + 1}.</span>
                             <Link href={`/country/${d.countryId}`} className="text-[#0066cc] hover:underline">{d.country}</Link>
@@ -160,10 +160,10 @@ export function MapContent() {
                     </div>
                   </div>
                   <div className="border border-[#d5dce6] rounded-xl p-4">
-                    <h3 className="text-[13px] font-semibold text-[#0d1b2a] mb-3">Lowest</h3>
+                    <h3 className="text-[15px] font-semibold text-[#0d1b2a] mb-3">Lowest</h3>
                     <div className="space-y-2">
                       {bottom5.map((d, i) => (
-                        <div key={d.countryId} className="flex items-center justify-between text-[13px]">
+                        <div key={d.countryId} className="flex items-center justify-between text-[15px]">
                           <div className="flex items-center gap-2">
                             <span className="text-[#64748b] w-4">{sorted.length - 4 + i}.</span>
                             <Link href={`/country/${d.countryId}`} className="text-[#0066cc] hover:underline">{d.country}</Link>

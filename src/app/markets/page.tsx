@@ -75,10 +75,10 @@ function ChangeCell({ value, pct }: { value: number; pct: number }) {
   const sign = value >= 0 ? '+' : '';
   return (
     <>
-      <td className={`px-3 py-2 text-right font-mono text-[12px] ${color}`}>
+      <td className={`px-3 py-2 text-right font-mono text-[14px] ${color}`}>
         {sign}{value.toFixed(2)}
       </td>
-      <td className={`px-3 py-2 text-right font-mono text-[12px] ${color}`}>
+      <td className={`px-3 py-2 text-right font-mono text-[14px] ${color}`}>
         {sign}{pct.toFixed(2)}%
       </td>
     </>
@@ -156,7 +156,7 @@ function IndexChart({ id, label }: { id: string; label: string }) {
         <div className="flex items-center gap-2">
           <span className="text-[14px] font-bold text-[#0d1b2a]">{label}</span>
           {points.length > 1 && (
-            <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-[14px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}{changeAmt.toLocaleString(undefined, { maximumFractionDigits: 2 })} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
             </span>
           )}
@@ -164,7 +164,7 @@ function IndexChart({ id, label }: { id: string; label: string }) {
         <div className="flex gap-1 flex-wrap">
           {RANGES.map(r => (
             <button key={r.key} onClick={() => setRange(r.key)}
-              className={`px-2.5 py-1 text-[12px] rounded-lg ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#d5dce6] text-[#64748b] hover:bg-[#f4f6f9]'}`}>
+              className={`px-2.5 py-1 text-[14px] rounded-lg ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#d5dce6] text-[#64748b] hover:bg-[#f4f6f9]'}`}>
               {r.label}
             </button>
           ))}
@@ -172,9 +172,9 @@ function IndexChart({ id, label }: { id: string; label: string }) {
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">Loading chart...</div>
+        <div className="h-[200px] flex items-center justify-center text-[#999] text-[14px]">Loading chart...</div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#999] text-[12px]">No chart data</div>
+        <div className="h-[200px] flex items-center justify-center text-[#999] text-[14px]">No chart data</div>
       ) : (() => {
         const vals = points.map(p => p.value).filter(v => v > 0);
         const minVal = Math.min(...vals);
@@ -236,7 +236,7 @@ function IndexChart({ id, label }: { id: string; label: string }) {
                 const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
                 const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
                 return (
-                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                     <div className="text-[#999] mb-0.5">{dateLabel}</div>
                     <div className="font-mono font-semibold text-[14px]">{p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
@@ -322,7 +322,7 @@ export default function MarketsPage() {
                         <col style={{ width: '13%' }} />
                       </colgroup>
                       <thead>
-                        <tr className="text-[12px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
+                        <tr className="text-[14px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                           <th className="text-left px-3 py-2">Country</th>
                           <th className="text-left px-3 py-2">Index</th>
                           <th className="text-right px-3 py-2">Price</th>
@@ -345,7 +345,7 @@ export default function MarketsPage() {
                               >
                                 <td className="px-3 py-2">
                                   <span className="flex items-center gap-1.5">
-                                    <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                    <span className={`text-[14px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                     {COUNTRY_ISO2[cid] && <Flag iso2={COUNTRY_ISO2[cid]} size={16} />}
                                     <Link href={`/country/${cid}`} className="text-[#0066cc] hover:underline" onClick={e => e.stopPropagation()}>
                                       {COUNTRY_NAMES[cid] || cid}
@@ -360,7 +360,7 @@ export default function MarketsPage() {
                                 <td className="px-3 py-2 text-right font-mono font-semibold">
                                   <AnimatedPrice value={q.price} />
                                 </td>
-                                <td className="px-3 py-2 text-right font-mono text-[13px] text-[#94a3b8]">
+                                <td className="px-3 py-2 text-right font-mono text-[15px] text-[#94a3b8]">
                                   {q.previousClose.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                 </td>
                                 <ChangeCell value={q.change} pct={q.changePct} />

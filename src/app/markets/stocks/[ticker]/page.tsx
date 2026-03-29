@@ -159,7 +159,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
         <MarketsHeader />
         <StocksHeader />
 
-        <div className="text-[12px] text-[#64748b] mb-4">
+        <div className="text-[14px] text-[#64748b] mb-4">
           <Link href="/markets/stocks/sp500" className="hover:text-[#0d1b2a] transition">Stocks</Link>
           <span className="mx-1.5">/</span>
           <span className="text-[#0d1b2a]">{name} ({ticker})</span>
@@ -169,7 +169,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
         <div className="mb-6">
           <h2 className="text-[22px] font-bold">{name} <span className="text-[#64748b] font-normal text-[16px]">{ticker}</span></h2>
           {profile && (
-            <div className="text-[12px] text-[#64748b] mt-0.5">
+            <div className="text-[14px] text-[#64748b] mt-0.5">
               {profile.sector} · {profile.industry} · Market Cap: {fmtMktCap(profile.marketCap)}
             </div>
           )}
@@ -195,8 +195,8 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
               { label: 'Change', val: `${isUp ? '+' : ''}${changePct.toFixed(2)}%` },
             ].map((s, i) => (
               <div key={s.label} className={`flex-1 min-w-[120px] px-4 py-3 ${i > 0 ? 'border-l border-gray-100' : ''}`}>
-                <div className="text-[10px] text-gray-400 uppercase tracking-wider">{s.label}</div>
-                <div className="text-[13px] font-semibold text-gray-900 mt-0.5">{s.val}</div>
+                <div className="text-[14px] text-gray-400 uppercase tracking-wider">{s.label}</div>
+                <div className="text-[15px] font-semibold text-gray-900 mt-0.5">{s.val}</div>
               </div>
             ))}
           </div>
@@ -208,7 +208,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
           <div className="flex gap-1 flex-wrap">
             {RANGES.map(r => (
               <button key={r.key} onClick={() => setRange(r.key)}
-                className={`px-3 py-1 text-[12px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
+                className={`px-3 py-1 text-[14px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
                 {r.label}
               </button>
             ))}
@@ -217,9 +217,9 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
 
         {/* Chart */}
         {loading ? (
-          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[13px] border border-[#d5dce6] rounded-lg">Loading chart...</div>
+          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[15px] border border-[#d5dce6] rounded-lg">Loading chart...</div>
         ) : points.length < 2 ? (
-          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[13px] border border-[#d5dce6] rounded-lg">No chart data available</div>
+          <div className="h-[350px] flex items-center justify-center text-[#64748b] text-[15px] border border-[#d5dce6] rounded-lg">No chart data available</div>
         ) : (
           <div className="h-[350px] border border-[#d5dce6] rounded-lg p-4">
             {useLog && <div className="text-[9px] text-[#94a3b8] text-right -mb-1">log scale</div>}
@@ -256,7 +256,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                   const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
                   const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
                   return (
-                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                       <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[15px]">${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     </div>
@@ -267,7 +267,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
             </ResponsiveContainer>
           </div>
         )}
-        <div className="text-[11px] text-[#64748b] mt-2">
+        <div className="text-[15px] text-[#64748b] mt-2">
           {points.length > 0 && `${points.length} data points`} · Source: Yahoo Finance · Auto-refreshes every 30s
         </div>
 
@@ -276,9 +276,9 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
           <div className="mt-8">
             <h3 className="text-[16px] font-semibold mb-3">Historical Annual Prices</h3>
             <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
-              <table className="w-full text-[13px]">
+              <table className="w-full text-[15px]">
                 <thead>
-                  <tr className="bg-[#f4f6f9] text-[#64748b] text-[11px] uppercase tracking-wider">
+                  <tr className="bg-[#f4f6f9] text-[#64748b] text-[15px] uppercase tracking-wider">
                     <th className="text-left px-4 py-2.5 font-medium">Year</th>
                     <th className="text-right px-4 py-2.5 font-medium">Close Price</th>
                     <th className="text-right px-4 py-2.5 font-medium">YoY Change</th>
@@ -301,7 +301,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                 </tbody>
               </table>
             </div>
-            <div className="text-[11px] text-[#64748b] mt-2">
+            <div className="text-[15px] text-[#64748b] mt-2">
               {annualHistory.length} years · Last close price per year · Source: Yahoo Finance
             </div>
           </div>

@@ -165,7 +165,7 @@ export default function Home() {
             <option value="">All Regions</option>
             {regions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <span className="text-[13px] text-[#64748b] self-center ml-auto flex items-center gap-3">
+          <span className="text-[15px] text-[#64748b] self-center ml-auto flex items-center gap-3">
             {filtered.length} countries
             <ExportButton
               filename={`sotw-countries-${new Date().toISOString().slice(0, 10)}`}
@@ -186,7 +186,7 @@ export default function Home() {
           <div className="bg-white border border-[#d5dce6] rounded-xl overflow-x-auto shadow-sm">
             <table className="w-full text-[14px]">
               <thead>
-                <tr className="bg-[#f4f6f9] border-b border-[#d5dce6] text-[12px] text-[#64748b] uppercase tracking-wider">
+                <tr className="bg-[#f4f6f9] border-b border-[#d5dce6] text-[14px] text-[#64748b] uppercase tracking-wider">
                   <th className="px-3 py-3 text-left font-semibold sticky left-0 bg-[#f4f6f9] z-10 min-w-[180px]">
                     <button onClick={() => handleSort('name')} className="hover:text-[#0d1b2a] transition">
                       Country{sortIcon('name')}
@@ -230,7 +230,7 @@ export default function Home() {
                         const val = (s as any)[col.key] as number | undefined;
                         const outlierCls = getOutlierClass(col, val);
                         return (
-                          <td key={col.key} className={`px-3 py-2.5 text-right font-mono text-[13px] ${outlierCls || 'text-[#475569]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
+                          <td key={col.key} className={`px-3 py-2.5 text-right font-mono text-[15px] ${outlierCls || 'text-[#475569]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
                             {col.format(val)}
                           </td>
                         );

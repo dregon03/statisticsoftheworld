@@ -110,7 +110,7 @@ export default function HeatmapPage() {
               <button
                 key={p.id}
                 onClick={() => { setPreset(p.id); setSortBy(null); }}
-                className={`px-3 py-1.5 rounded text-[12px] transition ${
+                className={`px-3 py-1.5 rounded text-[14px] transition ${
                   preset === p.id ? 'bg-white shadow-sm font-medium' : 'text-[#64748b]'
                 }`}
               >
@@ -121,7 +121,7 @@ export default function HeatmapPage() {
           <select
             value={group}
             onChange={e => setGroup(e.target.value)}
-            className="border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[12px] outline-none"
+            className="border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[14px] outline-none"
           >
             {groups.map(g => <option key={g} value={g}>{g}</option>)}
           </select>
@@ -146,14 +146,14 @@ export default function HeatmapPage() {
             <table className="w-full">
               <thead>
                 <tr className="bg-[#f4f6f9] border-b border-[#d5dce6]">
-                  <th className="px-3 py-2.5 text-left text-[11px] text-[#64748b] uppercase sticky left-0 bg-[#f4f6f9] z-10 min-w-[160px]">
+                  <th className="px-3 py-2.5 text-left text-[15px] text-[#64748b] uppercase sticky left-0 bg-[#f4f6f9] z-10 min-w-[160px]">
                     Country
                   </th>
                   {indicators.map(ind => (
                     <th key={ind.id} className="px-2 py-2.5 text-center min-w-[90px]">
                       <button
                         onClick={() => { setSortBy(ind.id); setSortAsc(sortBy === ind.id ? !sortAsc : false); }}
-                        className={`text-[11px] uppercase transition ${
+                        className={`text-[15px] uppercase transition ${
                           sortBy === ind.id ? 'text-[#0066cc] font-bold' : 'text-[#64748b] hover:text-[#0d1b2a]'
                         }`}
                         title={`Sort by ${ind.label}`}
@@ -169,7 +169,7 @@ export default function HeatmapPage() {
                 {sorted.map(row => (
                   <tr key={row.countryId} className="border-b border-[#edf0f5] hover:bg-[#fafafa]">
                     <td className="px-3 py-2 sticky left-0 bg-white z-10">
-                      <Link href={`/country/${row.countryId}`} className="inline-flex items-center gap-2 text-[13px] text-[#0066cc] hover:underline">
+                      <Link href={`/country/${row.countryId}`} className="inline-flex items-center gap-2 text-[15px] text-[#0066cc] hover:underline">
                         <Flag iso2={row.iso2} size={18} />
                         {row.country}
                       </Link>
@@ -177,12 +177,12 @@ export default function HeatmapPage() {
                     {indicators.map(ind => {
                       const d = row.values[ind.id];
                       if (!d) {
-                        return <td key={ind.id} className="px-2 py-2 text-center text-[11px] text-[#94a3b8]">—</td>;
+                        return <td key={ind.id} className="px-2 py-2 text-center text-[15px] text-[#94a3b8]">—</td>;
                       }
                       const colorClass = getColor(d.value, ranges[ind.id], ind.higherIsBetter, ind.neutral);
                       return (
                         <td key={ind.id} className="px-1 py-1 text-center">
-                          <div className={`rounded px-1.5 py-1 text-[11px] font-mono ${colorClass}`} title={`${d.value} (${d.year})`}>
+                          <div className={`rounded px-1.5 py-1 text-[15px] font-mono ${colorClass}`} title={`${d.value} (${d.year})`}>
                             {formatCell(d.value, ind.id)}
                           </div>
                         </td>
@@ -196,7 +196,7 @@ export default function HeatmapPage() {
         )}
 
         {/* Legend */}
-        <div className="mt-4 flex items-center gap-3 text-[11px] text-[#64748b]">
+        <div className="mt-4 flex items-center gap-3 text-[15px] text-[#64748b]">
           <span>Color scale:</span>
           {preset === 'military' ? (
             <>

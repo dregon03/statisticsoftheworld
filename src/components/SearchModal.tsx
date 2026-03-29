@@ -160,13 +160,13 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
             placeholder="Search countries, indicators, pages..."
             className="w-full px-3 py-3.5 text-[14px] outline-none bg-transparent"
           />
-          <kbd className="text-[10px] text-gray-400 border border-gray-200 rounded px-1.5 py-0.5 shrink-0">ESC</kbd>
+          <kbd className="text-[14px] text-gray-400 border border-gray-200 rounded px-1.5 py-0.5 shrink-0">ESC</kbd>
         </div>
 
         {/* Results */}
         <div className="max-h-[400px] overflow-y-auto py-2">
           {results.length === 0 ? (
-            <div className="px-4 py-8 text-center text-[13px] text-gray-400">
+            <div className="px-4 py-8 text-center text-[15px] text-gray-400">
               No results for &ldquo;{query}&rdquo;
             </div>
           ) : (
@@ -181,19 +181,19 @@ export default function SearchModal({ open, onClose }: { open: boolean; onClose:
               >
                 <span className="text-[14px] w-6 text-center shrink-0">{TYPE_ICONS[r.type]}</span>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-medium text-[#0d1b2a] truncate">{r.label}</div>
+                  <div className="text-[15px] font-medium text-[#0d1b2a] truncate">{r.label}</div>
                   {r.sublabel && (
-                    <div className="text-[11px] text-gray-400 truncate">{r.sublabel}</div>
+                    <div className="text-[15px] text-gray-400 truncate">{r.sublabel}</div>
                   )}
                 </div>
-                <span className="text-[10px] text-gray-400 shrink-0">{TYPE_LABELS[r.type]}</span>
+                <span className="text-[14px] text-gray-400 shrink-0">{TYPE_LABELS[r.type]}</span>
               </button>
             ))
           )}
         </div>
 
         {/* Footer */}
-        <div className="border-t border-gray-100 px-4 py-2 flex items-center gap-4 text-[10px] text-gray-400">
+        <div className="border-t border-gray-100 px-4 py-2 flex items-center gap-4 text-[14px] text-gray-400">
           <span><kbd className="border border-gray-200 rounded px-1 py-0.5 mr-1">↑↓</kbd> Navigate</span>
           <span><kbd className="border border-gray-200 rounded px-1 py-0.5 mr-1">↵</kbd> Open</span>
           <span><kbd className="border border-gray-200 rounded px-1 py-0.5 mr-1">Esc</kbd> Close</span>

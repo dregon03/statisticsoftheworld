@@ -102,7 +102,7 @@ function RegionsContent() {
       <section className="max-w-[1200px] mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-[28px] font-bold mb-1">Regional Analysis</h1>
-          <p className="text-[13px] text-[#64748b]">
+          <p className="text-[15px] text-[#64748b]">
             Compare world regions and income groups across 300+ indicators. Average, median, and aggregate statistics.
           </p>
         </div>
@@ -114,7 +114,7 @@ function RegionsContent() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="text-[11px] text-[#64748b] uppercase border-b border-[#d5dce6]">
+                  <tr className="text-[15px] text-[#64748b] uppercase border-b border-[#d5dce6]">
                     <th className="px-3 py-2 text-left sticky left-0 bg-white z-10">Region</th>
                     {OVERVIEW_INDICATORS.map(ind => (
                       <th key={ind.id} className="px-3 py-2 text-right min-w-[100px]">
@@ -131,13 +131,13 @@ function RegionsContent() {
                 <tbody>
                   {overviewData[OVERVIEW_INDICATORS[0].id]?.byRegion.map(region => (
                     <tr key={region.name} className="border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition">
-                      <td className="px-3 py-2 text-[13px] font-medium sticky left-0 bg-inherit z-10">{region.name}</td>
+                      <td className="px-3 py-2 text-[15px] font-medium sticky left-0 bg-inherit z-10">{region.name}</td>
                       {OVERVIEW_INDICATORS.map(indDef => {
                         const regionData = overviewData[indDef.id]?.byRegion.find(r => r.name === region.name);
                         const ind = INDICATORS.find(i => i.id === indDef.id);
                         const val = regionData ? (indDef.useMedian ? regionData.median : regionData.avg) : null;
                         return (
-                          <td key={indDef.id} className="px-3 py-2 text-right font-mono text-[12px]">
+                          <td key={indDef.id} className="px-3 py-2 text-right font-mono text-[14px]">
                             {val != null ? formatValue(val, ind?.format || 'number', ind?.decimals) : '—'}
                           </td>
                         );
@@ -158,7 +158,7 @@ function RegionsContent() {
               placeholder="Search indicators..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] mb-3 outline-none focus:border-[#0066cc]"
+              className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[15px] mb-3 outline-none focus:border-[#0066cc]"
             />
             <div className="border border-[#d5dce6] rounded-xl overflow-hidden max-h-[60vh] overflow-y-auto">
               {CATEGORIES.map(cat => {
@@ -166,14 +166,14 @@ function RegionsContent() {
                 if (catInds.length === 0) return null;
                 return (
                   <div key={cat}>
-                    <div className="px-3 py-1.5 text-[10px] font-bold text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] sticky top-0">
+                    <div className="px-3 py-1.5 text-[14px] font-bold text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] sticky top-0">
                       {cat}
                     </div>
                     {catInds.map(ind => (
                       <button
                         key={ind.id}
                         onClick={() => setSelectedId(ind.id)}
-                        className={`w-full text-left px-3 py-1.5 text-[12px] transition ${
+                        className={`w-full text-left px-3 py-1.5 text-[14px] transition ${
                           selectedId === ind.id
                             ? 'bg-[#f0f7ff] text-[#0066cc] font-medium border-l-2 border-[#0066cc]'
                             : 'text-[#64748b] hover:bg-[#f4f6f9]'
@@ -193,19 +193,19 @@ function RegionsContent() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-[18px] font-bold">{selectedIndicator?.label || selectedId}</h2>
-                <div className="text-[12px] text-[#64748b]">{data?.totalCountries || 0} countries with data</div>
+                <div className="text-[14px] text-[#64748b]">{data?.totalCountries || 0} countries with data</div>
               </div>
               <div className="flex gap-2">
                 <div className="flex gap-1 bg-[#f0f0f0] rounded-lg p-0.5">
                   <button
                     onClick={() => setView('region')}
-                    className={`px-3 py-1 rounded text-[12px] transition ${view === 'region' ? 'bg-white shadow-sm font-medium' : 'text-[#64748b]'}`}
+                    className={`px-3 py-1 rounded text-[14px] transition ${view === 'region' ? 'bg-white shadow-sm font-medium' : 'text-[#64748b]'}`}
                   >
                     By Region
                   </button>
                   <button
                     onClick={() => setView('income')}
-                    className={`px-3 py-1 rounded text-[12px] transition ${view === 'income' ? 'bg-white shadow-sm font-medium' : 'text-[#64748b]'}`}
+                    className={`px-3 py-1 rounded text-[14px] transition ${view === 'income' ? 'bg-white shadow-sm font-medium' : 'text-[#64748b]'}`}
                   >
                     By Income
                   </button>
@@ -213,7 +213,7 @@ function RegionsContent() {
                 <select
                   value={metric}
                   onChange={e => setMetric(e.target.value as 'avg' | 'median' | 'sum')}
-                  className="border border-[#d5dce6] rounded-lg px-2 py-1 text-[12px] outline-none"
+                  className="border border-[#d5dce6] rounded-lg px-2 py-1 text-[14px] outline-none"
                 >
                   <option value="avg">Average</option>
                   <option value="median">Median</option>
@@ -234,7 +234,7 @@ function RegionsContent() {
                     const width = maxVal > 0 ? (Math.abs(region[metric]) / Math.abs(maxVal)) * 100 : 0;
                     return (
                       <div key={region.name} className="flex items-center gap-3">
-                        <div className="w-[180px] text-[13px] font-medium text-[#0d1b2a] shrink-0 truncate">{region.name}</div>
+                        <div className="w-[180px] text-[15px] font-medium text-[#0d1b2a] shrink-0 truncate">{region.name}</div>
                         <div className="flex-1 flex items-center gap-2">
                           <div className="flex-1 bg-[#f0f0f0] rounded-full h-[20px] overflow-hidden">
                             <div
@@ -242,11 +242,11 @@ function RegionsContent() {
                               style={{ width: `${Math.max(width, 1)}%` }}
                             />
                           </div>
-                          <div className="w-[100px] text-right font-mono text-[12px] text-[#0d1b2a] shrink-0">
+                          <div className="w-[100px] text-right font-mono text-[14px] text-[#0d1b2a] shrink-0">
                             {formatValue(region[metric], selectedIndicator?.format || 'number', selectedIndicator?.decimals)}
                           </div>
                         </div>
-                        <div className="w-[40px] text-right text-[11px] text-[#64748b] shrink-0">
+                        <div className="w-[40px] text-right text-[15px] text-[#64748b] shrink-0">
                           n={region.countries}
                         </div>
                       </div>
@@ -258,7 +258,7 @@ function RegionsContent() {
                 <div className="border border-[#d5dce6] rounded-xl overflow-hidden">
                   <table className="w-full">
                     <thead>
-                      <tr className="text-[11px] text-[#64748b] uppercase border-b border-[#d5dce6] bg-[#f4f6f9]">
+                      <tr className="text-[15px] text-[#64748b] uppercase border-b border-[#d5dce6] bg-[#f4f6f9]">
                         <th className="px-4 py-2.5 text-left">{view === 'region' ? 'Region' : 'Income Level'}</th>
                         <th className="px-4 py-2.5 text-right">Countries</th>
                         <th className="px-4 py-2.5 text-right">Average</th>
@@ -271,21 +271,21 @@ function RegionsContent() {
                     <tbody>
                       {currentData.map(region => (
                         <tr key={region.name} className="border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition">
-                          <td className="px-4 py-2.5 text-[13px] font-medium">{region.name}</td>
-                          <td className="px-4 py-2.5 text-right text-[12px] text-[#64748b]">{region.countries}</td>
-                          <td className="px-4 py-2.5 text-right font-mono text-[12px]">
+                          <td className="px-4 py-2.5 text-[15px] font-medium">{region.name}</td>
+                          <td className="px-4 py-2.5 text-right text-[14px] text-[#64748b]">{region.countries}</td>
+                          <td className="px-4 py-2.5 text-right font-mono text-[14px]">
                             {formatValue(region.avg, selectedIndicator?.format || 'number', selectedIndicator?.decimals)}
                           </td>
-                          <td className="px-4 py-2.5 text-right font-mono text-[12px]">
+                          <td className="px-4 py-2.5 text-right font-mono text-[14px]">
                             {formatValue(region.median, selectedIndicator?.format || 'number', selectedIndicator?.decimals)}
                           </td>
-                          <td className="px-4 py-2.5 text-right font-mono text-[12px] text-[#64748b]">
+                          <td className="px-4 py-2.5 text-right font-mono text-[14px] text-[#64748b]">
                             {formatValue(region.min, selectedIndicator?.format || 'number', selectedIndicator?.decimals)}
                           </td>
-                          <td className="px-4 py-2.5 text-right font-mono text-[12px] text-[#64748b]">
+                          <td className="px-4 py-2.5 text-right font-mono text-[14px] text-[#64748b]">
                             {formatValue(region.max, selectedIndicator?.format || 'number', selectedIndicator?.decimals)}
                           </td>
-                          <td className="px-4 py-2.5 text-right font-mono text-[12px]">
+                          <td className="px-4 py-2.5 text-right font-mono text-[14px]">
                             {formatValue(region.sum, selectedIndicator?.format || 'number', selectedIndicator?.decimals)}
                           </td>
                         </tr>

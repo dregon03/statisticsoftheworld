@@ -44,7 +44,7 @@ function EmbedChartContent() {
   }, [indicatorId, countryId]);
 
   if (!indicatorId || !countryId) {
-    return <div className="p-4 text-[13px] text-[#999]">Missing indicator or country parameter.</div>;
+    return <div className="p-4 text-[15px] text-[#999]">Missing indicator or country parameter.</div>;
   }
 
   const currentYear = new Date().getFullYear();
@@ -53,9 +53,9 @@ function EmbedChartContent() {
   return (
     <div className="p-3 font-sans" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
       {loading ? (
-        <div className="text-center py-8 text-[#999] text-[13px]">Loading...</div>
+        <div className="text-center py-8 text-[#999] text-[15px]">Loading...</div>
       ) : data.length < 2 ? (
-        <div className="text-center py-8 text-[#999] text-[13px]">No data available.</div>
+        <div className="text-center py-8 text-[#999] text-[15px]">No data available.</div>
       ) : (
         <>
           <div className="mb-2">
@@ -70,7 +70,7 @@ function EmbedChartContent() {
             height={250}
             forecastStartYear={forecastStartYear}
           />
-          <div className="mt-2 text-[10px] text-[#999] flex items-center justify-between">
+          <div className="mt-2 text-[14px] text-[#999] flex items-center justify-between">
             <span>Source: IMF, World Bank, FRED</span>
             <a
               href={`https://statisticsoftheworld.com/country/${countryId}/${encodeURIComponent(indicatorId)}`}

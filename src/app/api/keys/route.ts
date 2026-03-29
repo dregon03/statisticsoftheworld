@@ -96,7 +96,13 @@ export async function GET(request: Request) {
       .eq('email', email)
       .eq('active', true);
 
-    return Response.json({ keys: data || [] });
+    // Mask API keys — only show prefix + last 4 chars
+    const maskedKeys = (data || []).map(k => ({
+      ...k,
+      api_key: k.api_key ? `${k.api_key.slice(0, 5)}...${k.api_key.slice(-4)}` : '',
+    }));
+
+    return Response.json({ keys: maskedKeys });
   }
 
   return Response.json({ error: 'Provide email or key parameter' }, { status: 400 });

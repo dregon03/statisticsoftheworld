@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -231,16 +231,16 @@ export default function CalendarPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-[28px] font-extrabold text-[#0d1b2a] tracking-tight">Economic Calendar</h1>
-            <p className="text-[13px] text-[#64748b]">
+            <p className="text-[15px] text-[#64748b]">
               {totalThisWeek} events · {highThisWeek} high impact · {earningsThisWeek} earnings
               {meta.updatedAt && <span className="ml-2">· Updated {new Date(meta.updatedAt).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}</span>}
             </p>
           </div>
           <div className="flex items-center gap-1.5">
-            <button onClick={() => setWeekOffset(w => w - 1)} className="px-2.5 py-1 border border-[#e0e0e0] rounded text-[11px] hover:bg-[#f5f5f5] transition">←</button>
-            <button onClick={() => setWeekOffset(0)} className={`px-3 py-1 border rounded text-[11px] transition ${weekOffset === 0 ? 'bg-[#333] text-white border-[#333]' : 'border-[#e0e0e0] hover:bg-[#f5f5f5]'}`}>This Week</button>
-            <button onClick={() => setWeekOffset(w => w + 1)} className="px-2.5 py-1 border border-[#e0e0e0] rounded text-[11px] hover:bg-[#f5f5f5] transition">→</button>
-            <span className="text-[12px] font-medium text-[#64748b] ml-2 hidden sm:inline">{formatWeekRange(week.dates)}</span>
+            <button onClick={() => setWeekOffset(w => w - 1)} className="px-2.5 py-1 border border-[#e0e0e0] rounded text-[15px] hover:bg-[#f5f5f5] transition">←</button>
+            <button onClick={() => setWeekOffset(0)} className={`px-3 py-1 border rounded text-[15px] transition ${weekOffset === 0 ? 'bg-[#333] text-white border-[#333]' : 'border-[#e0e0e0] hover:bg-[#f5f5f5]'}`}>This Week</button>
+            <button onClick={() => setWeekOffset(w => w + 1)} className="px-2.5 py-1 border border-[#e0e0e0] rounded text-[15px] hover:bg-[#f5f5f5] transition">→</button>
+            <span className="text-[14px] font-medium text-[#64748b] ml-2 hidden sm:inline">{formatWeekRange(week.dates)}</span>
           </div>
         </div>
 
@@ -255,7 +255,7 @@ export default function CalendarPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-3 py-1.5 text-[11px] font-medium border-b-2 -mb-px transition ${
+                className={`px-3 py-1.5 text-[15px] font-medium border-b-2 -mb-px transition ${
                   activeTab === tab.id ? 'border-[#333] text-[#0d1b2a]' : 'border-transparent text-[#64748b] hover:text-[#64748b]'
                 }`}
               >
@@ -264,18 +264,18 @@ export default function CalendarPage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <select value={filterCountry} onChange={e => setFilterCountry(e.target.value)} className="border border-[#e0e0e0] rounded px-2 py-1 text-[11px] outline-none">
+            <select value={filterCountry} onChange={e => setFilterCountry(e.target.value)} className="border border-[#e0e0e0] rounded px-2 py-1 text-[15px] outline-none">
               <option value="">All Countries</option>
               {countries.map(c => <option key={c} value={c}>{COUNTRY_FLAGS[c] || ''} {c}</option>)}
             </select>
-            <select value={filterImpact} onChange={e => setFilterImpact(e.target.value)} className="border border-[#e0e0e0] rounded px-2 py-1 text-[11px] outline-none">
+            <select value={filterImpact} onChange={e => setFilterImpact(e.target.value)} className="border border-[#e0e0e0] rounded px-2 py-1 text-[15px] outline-none">
               <option value="">All Impact</option>
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
             {(filterCountry || filterImpact) && (
-              <button onClick={() => { setFilterCountry(''); setFilterImpact(''); }} className="text-[10px] text-[#64748b] hover:text-[#0d1b2a]">Clear</button>
+              <button onClick={() => { setFilterCountry(''); setFilterImpact(''); }} className="text-[14px] text-[#64748b] hover:text-[#0d1b2a]">Clear</button>
             )}
             <ExportButton
               filename={`sotw-calendar-${week.from}`}
@@ -293,19 +293,32 @@ export default function CalendarPage() {
 
         {/* Calendar table */}
         {loading ? (
-          <div className="text-center py-16 text-[#64748b] text-[13px]">Loading calendar...</div>
+          <div className="text-center py-16 text-[#64748b] text-[15px]">Loading calendar...</div>
         ) : (
-          <div className="border border-[#d5dce6] rounded-lg overflow-visible">
+          <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
             {/* Column headers */}
-            <div className="hidden sm:flex items-center px-3 py-1.5 bg-[#f8f8f8] border-b border-[#d5dce6] text-[10px] font-medium text-[#64748b] uppercase tracking-wider gap-2">
-              <span className="w-2 shrink-0" />
-              <span className="w-11 shrink-0">Time</span>
-              <span className="w-6 shrink-0"></span>
-              <span className="flex-1">Event</span>
-              <span className="w-36 text-right">Actual</span>
-              <span className="w-20 text-right">Expected</span>
-              <span className="w-12 text-center hidden md:block">Impact</span>
-            </div>
+            <table className="w-full table-fixed">
+            <colgroup>
+              <col className="w-[14px]" />
+              <col className="w-[52px]" />
+              <col className="w-[28px]" />
+              <col />
+              <col className="w-[220px]" />
+              <col className="w-[80px]" />
+              <col className="w-[56px]" />
+            </colgroup>
+            <thead className="hidden sm:table-header-group">
+              <tr className="bg-[#f8f8f8] border-b border-[#d5dce6] text-[14px] font-medium text-[#64748b] uppercase tracking-wider">
+                <th />
+                <th className="text-left py-1.5 px-1">Time</th>
+                <th />
+                <th className="text-left py-1.5">Event</th>
+                <th className="text-right py-1.5 px-2">Actual</th>
+                <th className="text-right py-1.5 px-1">Expected</th>
+                <th className="text-center py-1.5 hidden md:table-cell">Impact</th>
+              </tr>
+            </thead>
+            <tbody>
 
             {week.dates.map(d => {
               const dateStr = d.toISOString().slice(0, 10);
@@ -316,54 +329,56 @@ export default function CalendarPage() {
               if (isWeekend && dayEvents.length === 0) return null;
 
               return (
-                <div key={dateStr} ref={el => { dayRefs.current[dateStr] = el; }}>
+                <React.Fragment key={dateStr}>
                   {/* Day header */}
-                  <div className={`px-3 py-1.5 border-b border-[#d5dce6] flex items-center justify-between ${
-                    isToday ? 'bg-blue-50' : 'bg-[#fafafa]'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[12px] font-semibold ${isToday ? 'text-blue-600' : isPastDay ? 'text-[#64748b]' : 'text-[#0d1b2a]'}`}>
-                        {d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}
-                      </span>
-                      {isToday && <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-medium">TODAY</span>}
-                    </div>
-                    <span className="text-[10px] text-[#bbb]">
+                  <tr ref={el => { dayRefs.current[dateStr] = el as unknown as HTMLDivElement; }} className={`border-b border-[#d5dce6] ${isToday ? 'bg-blue-50' : 'bg-[#fafafa]'}`}>
+                    <td colSpan={5} className="px-3 py-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[14px] font-semibold ${isToday ? 'text-blue-600' : isPastDay ? 'text-[#64748b]' : 'text-[#0d1b2a]'}`}>
+                          {d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}
+                        </span>
+                        {isToday && <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-medium">TODAY</span>}
+                      </div>
+                    </td>
+                    <td colSpan={2} className="px-3 py-1.5 text-right text-[14px] text-[#bbb]">
                       {dayEvents.length > 0 ? `${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}` : ''}
-                    </span>
-                  </div>
+                    </td>
+                  </tr>
 
                   {dayEvents.length === 0 ? (
-                    <div className="px-3 py-2 text-[11px] text-[#ddd] border-b border-[#f0f0f0]">No events</div>
+                    <tr className="border-b border-[#f0f0f0]"><td colSpan={7} className="px-3 py-2 text-[15px] text-[#ddd]">No events</td></tr>
                   ) : (
-                    <div className="divide-y divide-[#f5f5f5]">
-                      {dayEvents.map((event, i) => {
-                        const isEarnings = event.type === 'earnings';
-                        const isPast = event.date < todayStr;
-                        const indicatorId = findIndicatorLink(event.name);
+                    dayEvents.map((event, i) => {
+                      const isEarnings = event.type === 'earnings';
+                      const isPast = event.date < todayStr;
+                      const indicatorId = findIndicatorLink(event.name);
 
-                        return (
-                          <div key={`${dateStr}-${i}`} className={`flex items-center px-3 py-2 gap-2 text-[12px] ${isPast ? 'text-[#aaa]' : 'hover:bg-[#fafafa]'} transition`}>
-                            {/* Impact dot */}
-                            <span className={`w-2 h-2 rounded-full shrink-0 ${
+                      return (
+                        <tr key={`${dateStr}-${i}`} className={`border-b border-[#f5f5f5] text-[14px] ${isPast ? 'text-[#aaa]' : 'hover:bg-[#fafafa]'} transition`}>
+                          {/* Impact dot */}
+                          <td className="pl-3 py-2">
+                            <span className={`inline-block w-2 h-2 rounded-full ${
                               isEarnings ? 'bg-purple-400' :
                               event.impact === 'high' ? 'bg-red-500' :
                               event.impact === 'medium' ? 'bg-amber-400' :
                               'bg-gray-300'
                             }`} />
+                          </td>
 
-                            {/* Time */}
-                            <span className="w-11 shrink-0 text-[10px] font-mono text-[#aaa] hidden sm:block">
-                              {formatTime(event.time) || '—'}
-                            </span>
+                          {/* Time */}
+                          <td className="py-2 px-1 text-[14px] font-mono text-[#aaa] hidden sm:table-cell">
+                            {formatTime(event.time) || '—'}
+                          </td>
 
-                            {/* Country */}
-                            <span className="text-[13px] w-6 shrink-0" title={event.country}>
-                              {COUNTRY_FLAGS[event.country] || event.country}
-                            </span>
+                          {/* Country */}
+                          <td className="py-2 text-[15px]" title={event.country}>
+                            {COUNTRY_FLAGS[event.country] || event.country}
+                          </td>
 
-                            {/* Event name */}
-                            <div className="flex-1 min-w-0">
-                              <span className={`text-[12px] relative [&:hover>.cal-tip]:block ${
+                          {/* Event name */}
+                          <td className="py-2 pr-2">
+                            <div className="min-w-0">
+                              <span className={`text-[14px] relative [&:hover>.cal-tip]:block ${
                                 isEarnings ? 'text-purple-700 font-medium' :
                                 event.impact === 'high' ? 'text-[#111] font-semibold' :
                                 'text-[#444]'
@@ -377,7 +392,7 @@ export default function CalendarPage() {
                                 {(() => {
                                   const tip = event.detail || getMacroTooltip(event.name);
                                   return tip ? (
-                                    <span className="cal-tip hidden absolute left-0 top-full mt-1.5 z-[100] bg-white text-[#0d1b2a] text-[12px] px-3 py-2.5 rounded-lg shadow-lg whitespace-normal w-[340px] leading-relaxed pointer-events-none border border-[#d0d0d0]">
+                                    <span className="cal-tip hidden absolute left-0 top-full mt-1.5 z-[100] bg-white text-[#0d1b2a] text-[14px] px-3 py-2.5 rounded-lg shadow-lg whitespace-normal w-[340px] leading-relaxed pointer-events-none border border-[#d0d0d0]">
                                       {tip}
                                     </span>
                                   ) : null;
@@ -393,33 +408,35 @@ export default function CalendarPage() {
                                 </Link>
                               )}
                             </div>
+                          </td>
 
-                            {/* Actual */}
-                            <span className="w-36 text-right text-[11px] font-mono hidden sm:block truncate">
-                              {event.actual ? (
-                                <span className={`font-semibold ${
-                                  event.actual.includes('beat') ? 'text-green-600' :
-                                  event.actual.includes('miss') ? 'text-red-500' :
-                                  'text-green-600'
-                                }`} title={event.outcome || ''}>{event.actual}</span>
-                              ) : <span className="text-[#e0e0e0]">—</span>}
-                            </span>
+                          {/* Actual */}
+                          <td className="py-2 px-2 text-right text-[14px] font-mono hidden sm:table-cell">
+                            {event.actual ? (
+                              <span className={`font-semibold ${
+                                event.actual.includes('beat') ? 'text-green-600' :
+                                event.actual.includes('miss') ? 'text-red-500' :
+                                'text-green-600'
+                              }`} title={event.outcome || ''}>{event.actual}</span>
+                            ) : <span className="text-[#e0e0e0]">—</span>}
+                          </td>
 
-                            {/* Expected */}
-                            <span className="w-20 text-right text-[11px] font-mono text-[#888] hidden sm:block">
-                              {isEarnings ? (
-                                event.epsEstimate != null ? (
-                                  <span title={event.revenueEstimate ? `Rev: ${formatRev(event.revenueEstimate)}` : ''}>
-                                    ${event.epsEstimate.toFixed(2)}
-                                  </span>
-                                ) : <span className="text-[#e0e0e0]">—</span>
-                              ) : (
-                                event.forecast ? event.forecast : <span className="text-[#e0e0e0]">—</span>
-                              )}
-                            </span>
+                          {/* Expected */}
+                          <td className="py-2 px-1 text-right text-[14px] font-mono text-[#888] hidden sm:table-cell">
+                            {isEarnings ? (
+                              event.epsEstimate != null ? (
+                                <span title={event.revenueEstimate ? `Rev: ${formatRev(event.revenueEstimate)}` : ''}>
+                                  ${event.epsEstimate.toFixed(2)}
+                                </span>
+                              ) : <span className="text-[#e0e0e0]">—</span>
+                            ) : (
+                              event.forecast ? event.forecast : <span className="text-[#e0e0e0]">—</span>
+                            )}
+                          </td>
 
-                            {/* Impact */}
-                            <span className={`w-12 text-center text-[9px] py-0.5 rounded shrink-0 hidden md:inline-block font-medium ${
+                          {/* Impact */}
+                          <td className="py-2 pr-3 text-center hidden md:table-cell">
+                            <span className={`text-[9px] py-0.5 px-1.5 rounded font-medium ${
                               isEarnings ? 'text-purple-600 bg-purple-50' :
                               event.impact === 'high' ? 'text-red-600 bg-red-50' :
                               event.impact === 'medium' ? 'text-amber-600 bg-amber-50' :
@@ -427,19 +444,21 @@ export default function CalendarPage() {
                             }`}>
                               {isEarnings ? 'Earn' : event.impact === 'high' ? 'High' : event.impact === 'medium' ? 'Med' : 'Low'}
                             </span>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
-                </div>
+                </React.Fragment>
               );
             })}
+            </tbody>
+            </table>
           </div>
         )}
 
         {/* Legend */}
-        <div className="mt-3 flex items-center gap-4 text-[10px] text-[#bbb]">
+        <div className="mt-3 flex items-center gap-4 text-[14px] text-[#bbb]">
           <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" /> High</span>
           <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" /> Medium</span>
           <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 inline-block" /> Low</span>

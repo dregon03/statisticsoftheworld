@@ -90,13 +90,13 @@ export default function ScatterPlotChart({
               const d = payload[0].payload as ScatterPoint;
               return (
                 <div className="bg-white border border-[#e8e8e8] rounded-lg px-3 py-2 shadow-lg">
-                  <div className="text-[12px] font-semibold text-[#333]">{d.country}</div>
-                  <div className="text-[11px] text-[#999] mb-1">{d.region}</div>
-                  <div className="text-[12px]">
+                  <div className="text-[14px] font-semibold text-[#333]">{d.country}</div>
+                  <div className="text-[15px] text-[#999] mb-1">{d.region}</div>
+                  <div className="text-[14px]">
                     <span className="text-[#666]">{xLabel}: </span>
                     <span className="font-mono">{formatValue(d.x, xFormat, xDecimals)}</span>
                   </div>
-                  <div className="text-[12px]">
+                  <div className="text-[14px]">
                     <span className="text-[#666]">{yLabel}: </span>
                     <span className="font-mono">{formatValue(d.y, yFormat, yDecimals)}</span>
                   </div>
@@ -120,7 +120,7 @@ export default function ScatterPlotChart({
       </ResponsiveContainer>
 
       {/* Legend */}
-      <div className="flex flex-wrap justify-center gap-3 mt-2 text-[11px]">
+      <div className="flex flex-wrap justify-center gap-3 mt-2 text-[15px]">
         {regions.map(r => (
           <div key={r} className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: REGION_COLORS[r] || '#6b7280' }} />

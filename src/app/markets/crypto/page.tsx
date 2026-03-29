@@ -146,9 +146,9 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
     <div className="border-t border-[#d5dce6] bg-[#fafbfd] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#0d1b2a]">{name}</span>
+          <span className="text-[15px] font-semibold text-[#0d1b2a]">{name}</span>
           {points.length > 1 && (
-            <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-[14px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}${Math.abs(changeAmt).toLocaleString(undefined, { maximumFractionDigits: 2 })} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
             </span>
           )}
@@ -156,7 +156,7 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
         <div className="flex gap-1">
           {RANGES.map(r => (
             <button key={r.key} onClick={() => setRange(r.key)}
-              className={`px-2 py-0.5 text-[11px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
+              className={`px-2 py-0.5 text-[15px] rounded ${range === r.key ? 'bg-[#0d1b2a] text-white' : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'}`}>
               {r.label}
             </button>
           ))}
@@ -164,9 +164,9 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">Loading chart...</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">Loading chart...</div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">No chart data</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">No chart data</div>
       ) : (() => {
         const vals = points.map(p => p.value).filter(v => v > 0);
         const minVal = Math.min(...vals);
@@ -228,7 +228,7 @@ function CryptoChart({ pair, name }: { pair: string; name: string }) {
                 const isISO = p.date.match(/^\d{4}-\d{2}-\d{2}$/);
                 const dateLabel = isISO ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) : p.date;
                 return (
-                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                     <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                     <div className="font-mono font-semibold text-[14px]">${p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
@@ -255,14 +255,14 @@ function PredictionCard({ market }: { market: PredictionMarket }) {
     <a href={market.url} target="_blank" rel="noopener noreferrer"
       className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#d5dce6] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group">
       <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">{market.question}</div>
-        <div className="text-[10px] text-[#64748b] mt-0.5">Vol: {vol}{end ? ` · Resolves ${end}` : ''}</div>
+        <div className="text-[14px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">{market.question}</div>
+        <div className="text-[14px] text-[#64748b] mt-0.5">Vol: {vol}{end ? ` · Resolves ${end}` : ''}</div>
       </div>
       <div className="shrink-0 flex items-center gap-2">
         <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: pct >= 50 ? '#16a34a' : '#dc2626' }} />
         </div>
-        <span className="text-[13px] font-bold tabular-nums" style={{ color: pct >= 50 ? '#16a34a' : '#dc2626', minWidth: 36, textAlign: 'right' }}>{pct}%</span>
+        <span className="text-[15px] font-bold tabular-nums" style={{ color: pct >= 50 ? '#16a34a' : '#dc2626', minWidth: 36, textAlign: 'right' }}>{pct}%</span>
       </div>
     </a>
   );
@@ -412,7 +412,7 @@ export default function CryptoPage() {
           <div className="border border-[#d5dce6] rounded-xl p-5 bg-gradient-to-r from-[#fff8f0] to-white">
             <div className="flex items-center gap-2 mb-1">
               <img src="https://cryptofonts.com/img/SVG/btc.svg" alt="" width={24} height={24} className="rounded-full" />
-              <span className="text-[11px] text-[#64748b] uppercase tracking-wider">Bitcoin (BTC)</span>
+              <span className="text-[15px] text-[#64748b] uppercase tracking-wider">Bitcoin (BTC)</span>
             </div>
             <div className="flex items-baseline gap-3">
               <span className="text-[28px] font-bold font-mono text-[#0d1b2a]">
@@ -425,7 +425,7 @@ export default function CryptoPage() {
               )}
             </div>
             {btc?.ytdChg != null && (
-              <div className="text-[11px] text-[#64748b] mt-1">
+              <div className="text-[15px] text-[#64748b] mt-1">
                 YTD: <span className={btc.ytdChg >= 0 ? 'text-green-600' : 'text-red-600'}>{btc.ytdChg >= 0 ? '+' : ''}{btc.ytdChg.toFixed(1)}%</span>
               </div>
             )}
@@ -433,7 +433,7 @@ export default function CryptoPage() {
           <div className="border border-[#d5dce6] rounded-xl p-5 bg-gradient-to-r from-[#f0f4ff] to-white">
             <div className="flex items-center gap-2 mb-1">
               <img src="https://cryptofonts.com/img/SVG/eth.svg" alt="" width={24} height={24} className="rounded-full" />
-              <span className="text-[11px] text-[#64748b] uppercase tracking-wider">Ethereum (ETH)</span>
+              <span className="text-[15px] text-[#64748b] uppercase tracking-wider">Ethereum (ETH)</span>
             </div>
             <div className="flex items-baseline gap-3">
               <span className="text-[28px] font-bold font-mono text-[#0d1b2a]">
@@ -446,7 +446,7 @@ export default function CryptoPage() {
               )}
             </div>
             {eth?.ytdChg != null && (
-              <div className="text-[11px] text-[#64748b] mt-1">
+              <div className="text-[15px] text-[#64748b] mt-1">
                 YTD: <span className={eth.ytdChg >= 0 ? 'text-green-600' : 'text-red-600'}>{eth.ytdChg >= 0 ? '+' : ''}{eth.ytdChg.toFixed(1)}%</span>
               </div>
             )}
@@ -485,7 +485,7 @@ export default function CryptoPage() {
                     <col style={{ width: '14%' }} />
                   </colgroup>
                   <thead>
-                    <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
+                    <tr className="text-[15px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                       <th className="text-left px-3 py-2">#</th>
                       <th className="text-left px-3 py-2">Name</th>
                       <th className="text-right px-3 py-2">
@@ -512,25 +512,25 @@ export default function CryptoPage() {
                       return (
                         <React.Fragment key={coin.pair}>
                           <tr
-                            className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[13px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
+                            className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[15px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
                             onClick={() => setExpanded(isExpanded ? null : coin.pair)}
                           >
-                            <td className="px-3 py-2 text-[#64748b] text-[12px]">{i + 1}</td>
+                            <td className="px-3 py-2 text-[#64748b] text-[14px]">{i + 1}</td>
                             <td className="px-3 py-2">
                               <span className="flex items-center gap-2">
-                                <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                <span className={`text-[14px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                 <img src={`https://cryptofonts.com/img/SVG/${coin.symbol.toLowerCase()}.svg`} alt="" width={20} height={20} className="rounded-full" loading="lazy" />
                                 <Link href={`/markets/crypto/${coin.pair.toLowerCase()}`} className="font-medium text-[#0066cc] hover:underline" onClick={e => e.stopPropagation()}>{coin.name}</Link>
-                                <span className="text-[11px] text-[#64748b]">{coin.symbol}</span>
+                                <span className="text-[15px] text-[#64748b]">{coin.symbol}</span>
                               </span>
                             </td>
                             <td className="px-3 py-2 text-right font-mono font-semibold">
                               {d?.price != null ? <AnimatedPrice value={d.price} format={v => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} /> : '—'}
                             </td>
-                            <td className="px-3 py-2 text-right text-[12px]"><ChangeSpan value={dayChg} /></td>
-                            <td className="px-3 py-2 text-right text-[12px] hidden md:table-cell"><ChangeSpan value={d?.weeklyChg ?? null} /></td>
-                            <td className="px-3 py-2 text-right text-[12px] hidden md:table-cell"><ChangeSpan value={d?.monthlyChg ?? null} /></td>
-                            <td className="px-3 py-2 text-right text-[12px] hidden lg:table-cell"><ChangeSpan value={d?.ytdChg ?? null} /></td>
+                            <td className="px-3 py-2 text-right text-[14px]"><ChangeSpan value={dayChg} /></td>
+                            <td className="px-3 py-2 text-right text-[14px] hidden md:table-cell"><ChangeSpan value={d?.weeklyChg ?? null} /></td>
+                            <td className="px-3 py-2 text-right text-[14px] hidden md:table-cell"><ChangeSpan value={d?.monthlyChg ?? null} /></td>
+                            <td className="px-3 py-2 text-right text-[14px] hidden lg:table-cell"><ChangeSpan value={d?.ytdChg ?? null} /></td>
                           </tr>
                           {isExpanded && (
                             <tr>
@@ -553,7 +553,7 @@ export default function CryptoPage() {
                 <h2 className="text-[14px] font-semibold text-[#64748b] uppercase tracking-wider mb-3">
                   &#x1F52E; Crypto Predictions
                 </h2>
-                <p className="text-[12px] text-[#64748b] mb-3">
+                <p className="text-[14px] text-[#64748b] mb-3">
                   Live prediction market odds from <a href="https://polymarket.com" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Polymarket</a>. Real-money forecasts on crypto prices and events.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -564,7 +564,7 @@ export default function CryptoPage() {
           </div>
         )}
 
-        <div className="text-[11px] text-[#64748b] mt-6">
+        <div className="text-[15px] text-[#64748b] mt-6">
           Prices from Yahoo Finance (15-min delayed). Crypto markets trade 24/7.
         </div>
       </div>

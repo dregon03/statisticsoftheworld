@@ -268,7 +268,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
         {forecastData.length > 0 && (
           <div className="mt-8">
             <h2 className="text-lg font-semibold mb-3">IMF Forecast</h2>
-            <p className="text-[12px] text-[#64748b] mb-3">
+            <p className="text-[14px] text-[#64748b] mb-3">
               Projections from the IMF World Economic Outlook. These are staff estimates, not guarantees.
             </p>
             <div className="border border-gray-100 rounded-xl overflow-hidden">
@@ -292,7 +292,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
                       <tr key={d.year} className="border-b border-gray-50 bg-[#fffdf5] hover:bg-[#fffbeb] transition">
                         <td className="px-5 py-2.5 text-sm font-medium">
                           {d.year}
-                          <span className="ml-2 text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Forecast</span>
+                          <span className="ml-2 text-[14px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Forecast</span>
                         </td>
                         <td className="px-5 py-2.5 text-right font-mono text-sm">{formatValue(d.value, ind.format, ind.decimals)}</td>
                         <td className="px-5 py-2.5 text-right text-sm">

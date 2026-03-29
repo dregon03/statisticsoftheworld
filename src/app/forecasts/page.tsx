@@ -72,7 +72,7 @@ export function ForecastsContent() {
   const content = (
       <section className="max-w-[1200px] mx-auto px-4 py-6">
         <h2 className="text-[20px] font-bold mb-1">IMF Forecasts</h2>
-        <p className="text-[12px] text-[#64748b] mb-5">
+        <p className="text-[14px] text-[#64748b] mb-5">
           IMF World Economic Outlook projections for {years.join(' & ')}. Free data that Trading Economics charges for.
         </p>
 
@@ -82,7 +82,7 @@ export function ForecastsContent() {
             <button
               key={ind.id}
               onClick={() => setSelectedId(ind.id)}
-              className={`px-3 py-1.5 text-[12px] rounded-lg border transition ${
+              className={`px-3 py-1.5 text-[14px] rounded-lg border transition ${
                 selectedId === ind.id
                   ? 'bg-[#0d1b2a] text-white border-[#0066cc]'
                   : 'border-[#d5dce6] text-[#64748b] hover:bg-[#f4f6f9]'
@@ -100,9 +100,9 @@ export function ForecastsContent() {
             placeholder="Filter countries..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[12px] outline-none w-64"
+            className="border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[14px] outline-none w-64"
           />
-          <span className="text-[12px] text-[#64748b] ml-3">{sorted.length} countries</span>
+          <span className="text-[14px] text-[#64748b] ml-3">{sorted.length} countries</span>
         </div>
 
         {loading ? (
@@ -111,7 +111,7 @@ export function ForecastsContent() {
           <div className="border border-[#d5dce6] rounded-xl overflow-hidden overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="text-[11px] text-[#64748b] uppercase border-b border-[#d5dce6] bg-[#f4f6f9]">
+                <tr className="text-[15px] text-[#64748b] uppercase border-b border-[#d5dce6] bg-[#f4f6f9]">
                   <th className="px-4 py-2.5 text-left w-10">
                     <button onClick={() => setSortAsc(!sortAsc)} className="text-[#64748b] hover:text-[#0d1b2a]">
                       {sortAsc ? '#↑' : '#↓'}
@@ -138,19 +138,19 @@ export function ForecastsContent() {
                   const format = selectedIndicator?.format || 'number';
                   return (
                     <tr key={row.countryId} className="border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition">
-                      <td className="px-4 py-2 text-[#94a3b8] text-[12px]">{i + 1}</td>
+                      <td className="px-4 py-2 text-[#94a3b8] text-[14px]">{i + 1}</td>
                       <td className="px-4 py-2">
-                        <Link href={`/country/${row.countryId}`} className="inline-flex items-center gap-2 text-[13px] text-[#0066cc] hover:underline">
+                        <Link href={`/country/${row.countryId}`} className="inline-flex items-center gap-2 text-[15px] text-[#0066cc] hover:underline">
                           <Flag iso2={row.iso2} size={20} />
                           {row.country}
                         </Link>
                       </td>
-                      <td className="px-4 py-2 text-[12px] text-[#64748b] hidden md:table-cell">{row.region}</td>
+                      <td className="px-4 py-2 text-[14px] text-[#64748b] hidden md:table-cell">{row.region}</td>
                       {years.map(y => {
                         const val = row.values[y];
                         const isNeg = val != null && val < 0;
                         return (
-                          <td key={y} className={`px-4 py-2 text-right font-mono text-[13px] ${
+                          <td key={y} className={`px-4 py-2 text-right font-mono text-[15px] ${
                             isNeg ? 'text-red-600' : 'text-[#0d1b2a]'
                           }`}>
                             {formatVal(val, format)}
@@ -165,7 +165,7 @@ export function ForecastsContent() {
           </div>
         )}
 
-        <div className="mt-4 text-[11px] text-[#64748b]">
+        <div className="mt-4 text-[15px] text-[#64748b]">
           Source: <a href="https://www.imf.org/en/publications/weo" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">IMF World Economic Outlook</a>.
           Forecasts are IMF staff projections, not guarantees.
         </div>

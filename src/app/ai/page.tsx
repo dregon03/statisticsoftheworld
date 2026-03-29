@@ -11,12 +11,12 @@ function EndpointCard({ method, path, desc, example }: { method: string; path: s
   return (
     <div className="border border-[#d5dce6] rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center gap-3 px-5 py-3 bg-[#f4f6f9] border-b border-[#d5dce6]">
-        <span className={`text-[13px] font-bold tracking-wide px-2.5 py-1 rounded-md text-white ${method === 'POST' ? 'bg-[#16a34a]' : 'bg-[#0d1b2a]'}`}>{method}</span>
+        <span className={`text-[15px] font-bold tracking-wide px-2.5 py-1 rounded-md text-white ${method === 'POST' ? 'bg-[#16a34a]' : 'bg-[#0d1b2a]'}`}>{method}</span>
         <code className="text-[15px] font-mono text-[#0d1b2a] font-semibold">{path}</code>
       </div>
       <div className="px-5 py-4">
         <p className="text-[15px] text-[#555] mb-3 leading-relaxed">{desc}</p>
-        <pre className="bg-[#0d1b2a] text-[#e2e8f0] text-[13px] p-4 rounded-lg overflow-x-auto leading-relaxed">
+        <pre className="bg-[#0d1b2a] text-[#e2e8f0] text-[15px] p-4 rounded-lg overflow-x-auto leading-relaxed">
           <code>{example}</code>
         </pre>
       </div>
@@ -29,7 +29,7 @@ function SectionHeader({ color, title, count }: { color: string; title: string; 
     <div className="flex items-center gap-3 mb-5 mt-10">
       <div className="w-1.5 h-7 rounded-full" style={{ backgroundColor: color }} />
       <h3 className="text-[20px] font-bold text-[#0d1b2a]">{title}</h3>
-      {count && <span className="text-[13px] text-[#7a8599] bg-[#edf0f5] px-3 py-1 rounded-full font-medium">{count}</span>}
+      {count && <span className="text-[15px] text-[#7a8599] bg-[#edf0f5] px-3 py-1 rounded-full font-medium">{count}</span>}
     </div>
   );
 }
@@ -44,7 +44,7 @@ export default function AIPage() {
         <div className="max-w-[960px] mx-auto px-6 py-16 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-1.5 mb-6">
             <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-            <span className="text-[13px] font-medium tracking-wide text-white/80">Free &middot; No Auth Required</span>
+            <span className="text-[15px] font-medium tracking-wide text-white/80">Free &middot; No Auth Required</span>
           </div>
           <h1 className="text-[40px] font-extrabold mb-4 tracking-tight leading-tight">
             Build with <span className="text-[#60a5fa]">SOTW</span> Data
@@ -119,7 +119,7 @@ npm install -g @sotw/mcp-server
           <div className="bg-white border border-[#d5dce6] rounded-xl overflow-hidden shadow-sm">
             <table className="w-full text-[15px]">
               <thead>
-                <tr className="text-left text-[12px] text-[#7a8599] uppercase tracking-wider border-b border-[#d5dce6] bg-[#f4f6f9]">
+                <tr className="text-left text-[14px] text-[#7a8599] uppercase tracking-wider border-b border-[#d5dce6] bg-[#f4f6f9]">
                   <th className="px-5 py-3.5 font-semibold">Tool</th>
                   <th className="px-5 py-3.5 font-semibold">Description</th>
                 </tr>
@@ -311,7 +311,7 @@ const spec = await fetch("https://statisticsoftheworld.com/api/openapi.json")
                 ['NE.TRD.GNFS.ZS', 'Trade openness (% GDP)'],
               ].map(([id, label]) => (
                 <div key={id} className="flex items-center gap-3 py-1.5">
-                  <code className="text-[13px] bg-[#eff6ff] px-2 py-1 rounded-md text-[#2563eb] font-semibold shrink-0">{id}</code>
+                  <code className="text-[15px] bg-[#eff6ff] px-2 py-1 rounded-md text-[#2563eb] font-semibold shrink-0">{id}</code>
                   <span className="text-[#555]">{label}</span>
                 </div>
               ))}
@@ -339,7 +339,7 @@ const spec = await fetch("https://statisticsoftheworld.com/api/openapi.json")
                 ['YF.FUT.NASDAQ', 'NASDAQ Futures'],
               ].map(([id, label]) => (
                 <div key={id} className="flex items-center gap-3 py-1.5">
-                  <code className="text-[13px] bg-[#ecfdf5] px-2 py-1 rounded-md text-[#059669] font-semibold shrink-0">{id}</code>
+                  <code className="text-[15px] bg-[#ecfdf5] px-2 py-1 rounded-md text-[#059669] font-semibold shrink-0">{id}</code>
                   <span className="text-[#555]">{label}</span>
                 </div>
               ))}
@@ -367,7 +367,7 @@ const spec = await fetch("https://statisticsoftheworld.com/api/openapi.json")
                 ['SINA.IRON_ORE_CN', 'Iron Ore (DCE, China)'],
               ].map(([id, label]) => (
                 <div key={id} className="flex items-center gap-3 py-1.5">
-                  <code className="text-[13px] bg-[#fffbeb] px-2 py-1 rounded-md text-[#d97706] font-semibold shrink-0">{id}</code>
+                  <code className="text-[15px] bg-[#fffbeb] px-2 py-1 rounded-md text-[#d97706] font-semibold shrink-0">{id}</code>
                   <span className="text-[#555]">{label}</span>
                 </div>
               ))}
@@ -389,7 +389,7 @@ const spec = await fetch("https://statisticsoftheworld.com/api/openapi.json")
                 ['USDCNY', 'US Dollar / Chinese Yuan'],
               ].map(([id, label]) => (
                 <div key={id} className="flex items-center gap-3 py-1.5">
-                  <code className="text-[13px] bg-[#f5f3ff] px-2 py-1 rounded-md text-[#7c3aed] font-semibold shrink-0">{id}</code>
+                  <code className="text-[15px] bg-[#f5f3ff] px-2 py-1 rounded-md text-[#7c3aed] font-semibold shrink-0">{id}</code>
                   <span className="text-[#555]">{label}</span>
                 </div>
               ))}
@@ -456,7 +456,7 @@ const spec = await fetch("https://statisticsoftheworld.com/api/openapi.json")
             ].map(([name, desc]) => (
               <div key={name} className="bg-white border border-[#d5dce6] rounded-xl p-4 shadow-sm">
                 <div className="font-bold text-[#0d1b2a] text-[14px]">{name}</div>
-                <div className="text-[13px] text-[#7a8599] mt-1">{desc}</div>
+                <div className="text-[15px] text-[#7a8599] mt-1">{desc}</div>
               </div>
             ))}
           </div>

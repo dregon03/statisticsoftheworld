@@ -74,7 +74,7 @@ export default function AskSOTW() {
 
     const flushTable = () => {
       if (tableLines.length < 2) {
-        tableLines.forEach((l, i) => elements.push(<p key={`t-${elements.length}-${i}`} className="text-[13px] text-[#0d1b2a]">{l}</p>));
+        tableLines.forEach((l, i) => elements.push(<p key={`t-${elements.length}-${i}`} className="text-[15px] text-[#0d1b2a]">{l}</p>));
         tableLines = [];
         return;
       }
@@ -87,11 +87,11 @@ export default function AskSOTW() {
 
       elements.push(
         <div key={`table-${elements.length}`} className="overflow-x-auto my-2">
-          <table className="w-full text-[12px] border border-gray-100 rounded">
+          <table className="w-full text-[14px] border border-gray-100 rounded">
             <thead>
               <tr className="bg-gray-50">
                 {headers.map((h, i) => (
-                  <th key={i} className="px-2 py-1.5 text-left text-[11px] text-gray-500 font-medium border-b border-gray-100">{h}</th>
+                  <th key={i} className="px-2 py-1.5 text-left text-[15px] text-gray-500 font-medium border-b border-gray-100">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -99,7 +99,7 @@ export default function AskSOTW() {
               {rows.map((row, ri) => (
                 <tr key={ri} className="border-b border-gray-50">
                   {row.map((cell, ci) => (
-                    <td key={ci} className="px-2 py-1 text-[12px]">{cell}</td>
+                    <td key={ci} className="px-2 py-1 text-[14px]">{cell}</td>
                   ))}
                 </tr>
               ))}
@@ -124,15 +124,15 @@ export default function AskSOTW() {
         }
 
         if (line.startsWith('**') && line.endsWith('**')) {
-          elements.push(<p key={`b-${elements.length}`} className="text-[13px] font-semibold text-[#0d1b2a] mt-2">{line.replace(/\*\*/g, '')}</p>);
+          elements.push(<p key={`b-${elements.length}`} className="text-[15px] font-semibold text-[#0d1b2a] mt-2">{line.replace(/\*\*/g, '')}</p>);
         } else if (line.startsWith('- ')) {
           const text = line.slice(2).replace(/\*\*(.+?)\*\*/g, '$1').replace(/`(.+?)`/g, '$1');
-          elements.push(<p key={`li-${elements.length}`} className="text-[12px] text-[#555] pl-3">{text}</p>);
+          elements.push(<p key={`li-${elements.length}`} className="text-[14px] text-[#555] pl-3">{text}</p>);
         } else if (line.trim() === '') {
           elements.push(<div key={`br-${elements.length}`} className="h-1" />);
         } else {
           const text = line.replace(/\*\*(.+?)\*\*/g, '$1').replace(/`(.+?)`/g, '$1');
-          elements.push(<p key={`p-${elements.length}`} className="text-[13px] text-[#0d1b2a]">{text}</p>);
+          elements.push(<p key={`p-${elements.length}`} className="text-[15px] text-[#0d1b2a]">{text}</p>);
         }
       }
     }
@@ -164,7 +164,7 @@ export default function AskSOTW() {
           <div className="px-4 py-3 bg-[#0066cc] text-white flex items-center justify-between shrink-0">
             <div>
               <div className="text-[14px] font-semibold">Ask SOTW</div>
-              <div className="text-[11px] opacity-80">AI-powered global statistics</div>
+              <div className="text-[15px] opacity-80">AI-powered global statistics</div>
             </div>
             <button onClick={() => setOpen(false)} className="text-white/80 hover:text-white transition">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,13 +177,13 @@ export default function AskSOTW() {
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-[200px] max-h-[420px]">
             {messages.length === 0 && (
               <div className="text-center py-6">
-                <p className="text-[13px] text-[#64748b] mb-4">Ask anything about global statistics</p>
+                <p className="text-[15px] text-[#64748b] mb-4">Ask anything about global statistics</p>
                 <div className="space-y-1.5">
                   {EXAMPLE_QUERIES.map((q, i) => (
                     <button
                       key={i}
                       onClick={() => sendMessage(q)}
-                      className="block w-full text-left px-3 py-2 text-[12px] text-[#64748b] border border-gray-100 rounded-lg hover:bg-gray-50 hover:border-gray-200 transition"
+                      className="block w-full text-left px-3 py-2 text-[14px] text-[#64748b] border border-gray-100 rounded-lg hover:bg-gray-50 hover:border-gray-200 transition"
                     >
                       {q}
                     </button>
@@ -197,7 +197,7 @@ export default function AskSOTW() {
                 <div
                   className={`max-w-[85%] px-3 py-2 rounded-lg ${
                     msg.role === 'user'
-                      ? 'bg-[#0066cc] text-white text-[13px]'
+                      ? 'bg-[#0066cc] text-white text-[15px]'
                       : 'bg-gray-50 text-[#0d1b2a]'
                   }`}
                 >
@@ -232,18 +232,18 @@ export default function AskSOTW() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about any country or indicator..."
-                className="flex-1 px-3 py-2 text-[13px] border border-gray-200 rounded-lg focus:outline-none focus:border-[#0066cc] transition"
+                className="flex-1 px-3 py-2 text-[15px] border border-gray-200 rounded-lg focus:outline-none focus:border-[#0066cc] transition"
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="px-3 py-2 bg-[#0066cc] text-white rounded-lg text-[13px] hover:bg-[#0055aa] transition disabled:opacity-50"
+                className="px-3 py-2 bg-[#0066cc] text-white rounded-lg text-[15px] hover:bg-[#0055aa] transition disabled:opacity-50"
               >
                 Send
               </button>
             </form>
-            <div className="text-[10px] text-[#94a3b8] text-center mt-1">
+            <div className="text-[14px] text-[#94a3b8] text-center mt-1">
               Powered by SOTW data + Mistral AI
             </div>
           </div>

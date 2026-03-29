@@ -24,7 +24,7 @@ export default function EmbedButton({ indicatorId, countryId }: EmbedButtonProps
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="flex items-center gap-1 text-[12px] text-[#0066cc] hover:text-[#004999] transition"
+        className="flex items-center gap-1 text-[14px] text-[#0066cc] hover:text-[#004999] transition"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="16 18 22 12 16 6" />
@@ -42,23 +42,23 @@ export default function EmbedButton({ indicatorId, countryId }: EmbedButtonProps
               <button onClick={() => setShowModal(false)} className="text-[#999] hover:text-[#333] text-[18px]">&times;</button>
             </div>
 
-            <p className="text-[12px] text-[#999] mb-3">
+            <p className="text-[14px] text-[#999] mb-3">
               Copy the code below and paste it into your website or blog.
             </p>
 
             <div className="relative">
-              <pre className="bg-[#f8f9fa] rounded-lg p-3 text-[11px] text-[#333] overflow-x-auto whitespace-pre-wrap break-all border border-[#e8e8e8]">
+              <pre className="bg-[#f8f9fa] rounded-lg p-3 text-[15px] text-[#333] overflow-x-auto whitespace-pre-wrap break-all border border-[#e8e8e8]">
                 {iframeCode}
               </pre>
               <button
                 onClick={copyCode}
-                className="absolute top-2 right-2 px-2 py-1 bg-white border border-[#e8e8e8] rounded text-[11px] hover:bg-[#f0f0f0] transition"
+                className="absolute top-2 right-2 px-2 py-1 bg-white border border-[#e8e8e8] rounded text-[15px] hover:bg-[#f0f0f0] transition"
               >
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
 
-            <div className="mt-4 text-[11px] text-[#999]">
+            <div className="mt-4 text-[15px] text-[#999]">
               Preview:
             </div>
             <div className="mt-1 border border-[#e8e8e8] rounded-lg overflow-hidden" style={{ height: 350 }}>

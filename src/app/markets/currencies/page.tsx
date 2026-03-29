@@ -189,7 +189,7 @@ function DXYCard({ movers }: { movers: Mover[] }) {
     <div className="border border-[#d5dce6] rounded-xl p-5 mb-6 bg-gradient-to-r from-[#f8f9fa] to-white">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <div className="text-[11px] text-[#64748b] uppercase tracking-wider mb-1">US Dollar Index (DXY)</div>
+          <div className="text-[15px] text-[#64748b] uppercase tracking-wider mb-1">US Dollar Index (DXY)</div>
           <div className="flex items-baseline gap-3">
             <span className="text-[32px] font-bold font-mono text-[#0d1b2a]">
               {price != null ? price.toFixed(2) : '—'}
@@ -200,16 +200,16 @@ function DXYCard({ movers }: { movers: Mover[] }) {
               </span>
             )}
           </div>
-          <div className="text-[11px] text-[#64748b] mt-1">
+          <div className="text-[15px] text-[#64748b] mt-1">
             Measures USD against a basket of 6 major currencies (EUR, JPY, GBP, CAD, SEK, CHF)
           </div>
         </div>
         {movers.length > 0 && (
           <div className="flex gap-6">
             <div>
-              <div className="text-[10px] text-[#64748b] uppercase tracking-wider mb-1.5">USD Strongest vs</div>
+              <div className="text-[14px] text-[#64748b] uppercase tracking-wider mb-1.5">USD Strongest vs</div>
               {strongest.map(m => (
-                <div key={m.label} className="flex items-center gap-1.5 text-[12px] mb-0.5">
+                <div key={m.label} className="flex items-center gap-1.5 text-[14px] mb-0.5">
                   <FlagIcon code={m.flag} size={16} />
                   <span className="text-[#64748b] w-[32px]">{m.label}</span>
                   <span className="font-mono text-green-600">{m.changePct >= 0 ? '+' : ''}{m.changePct.toFixed(2)}%</span>
@@ -217,9 +217,9 @@ function DXYCard({ movers }: { movers: Mover[] }) {
               ))}
             </div>
             <div>
-              <div className="text-[10px] text-[#64748b] uppercase tracking-wider mb-1.5">USD Weakest vs</div>
+              <div className="text-[14px] text-[#64748b] uppercase tracking-wider mb-1.5">USD Weakest vs</div>
               {weakest.map(m => (
-                <div key={m.label} className="flex items-center gap-1.5 text-[12px] mb-0.5">
+                <div key={m.label} className="flex items-center gap-1.5 text-[14px] mb-0.5">
                   <FlagIcon code={m.flag} size={16} />
                   <span className="text-[#64748b] w-[32px]">{m.label}</span>
                   <span className="font-mono text-red-600">{m.changePct >= 0 ? '+' : ''}{m.changePct.toFixed(2)}%</span>
@@ -298,7 +298,7 @@ function CurrencyConverter() {
 
   return (
     <div className="border border-[#d5dce6] rounded-xl p-5 mb-6">
-      <div className="text-[13px] font-semibold text-[#0d1b2a] mb-3">Currency Converter</div>
+      <div className="text-[15px] font-semibold text-[#0d1b2a] mb-3">Currency Converter</div>
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <input
@@ -310,7 +310,7 @@ function CurrencyConverter() {
           <select
             value={from}
             onChange={e => setFrom(e.target.value)}
-            className="px-3 py-2 border border-[#ddd] rounded-lg text-[13px] bg-white focus:outline-none focus:border-[#0066cc]"
+            className="px-3 py-2 border border-[#ddd] rounded-lg text-[15px] bg-white focus:outline-none focus:border-[#0066cc]"
           >
             {CURRENCIES.map(c => <option key={c} value={c}>{FLAGS[c]} {c}</option>)}
           </select>
@@ -324,7 +324,7 @@ function CurrencyConverter() {
           <select
             value={to}
             onChange={e => setTo(e.target.value)}
-            className="px-3 py-2 border border-[#ddd] rounded-lg text-[13px] bg-white focus:outline-none focus:border-[#0066cc]"
+            className="px-3 py-2 border border-[#ddd] rounded-lg text-[15px] bg-white focus:outline-none focus:border-[#0066cc]"
           >
             {CURRENCIES.map(c => <option key={c} value={c}>{FLAGS[c]} {c}</option>)}
           </select>
@@ -337,7 +337,7 @@ function CurrencyConverter() {
         </div>
       </div>
       {rate && !loading && (
-        <div className="text-[11px] text-[#64748b] mt-2">
+        <div className="text-[15px] text-[#64748b] mt-2">
           1 {from} = {rate.toFixed(4)} {to} · Mid-market rate · Source: Yahoo Finance
         </div>
       )}
@@ -400,9 +400,9 @@ function FXChart({ pair, label }: { pair: string; label: string }) {
     <div className="border-t border-[#d5dce6] bg-[#fafbfd] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#0d1b2a]">{label}</span>
+          <span className="text-[15px] font-semibold text-[#0d1b2a]">{label}</span>
           {points.length > 1 && (
-            <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-[14px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}{changeAmt.toFixed(4)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
             </span>
           )}
@@ -412,7 +412,7 @@ function FXChart({ pair, label }: { pair: string; label: string }) {
             <button
               key={r.key}
               onClick={() => setRange(r.key)}
-              className={`px-2 py-0.5 text-[11px] rounded ${
+              className={`px-2 py-0.5 text-[15px] rounded ${
                 range === r.key
                   ? 'bg-[#0d1b2a] text-white'
                   : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'
@@ -425,9 +425,9 @@ function FXChart({ pair, label }: { pair: string; label: string }) {
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">Loading chart...</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">Loading chart...</div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">No chart data</div>
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">No chart data</div>
       ) : (() => {
         const vals = points.map(p => p.value).filter(v => v > 0);
         const minVal = Math.min(...vals);
@@ -501,7 +501,7 @@ function FXChart({ pair, label }: { pair: string; label: string }) {
                     ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })
                     : p.date;
                   return (
-                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                       <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[14px]">{p.value.toFixed(4)}</div>
                     </div>
@@ -529,14 +529,14 @@ function PredictionCard({ market }: { market: PredictionMarket }) {
     <a href={market.url} target="_blank" rel="noopener noreferrer"
       className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#d5dce6] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group">
       <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">{market.question}</div>
-        <div className="text-[10px] text-[#64748b] mt-0.5">Vol: {vol}{end ? ` · Resolves ${end}` : ''}</div>
+        <div className="text-[14px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">{market.question}</div>
+        <div className="text-[14px] text-[#64748b] mt-0.5">Vol: {vol}{end ? ` · Resolves ${end}` : ''}</div>
       </div>
       <div className="shrink-0 flex items-center gap-2">
         <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: pct >= 50 ? '#16a34a' : '#dc2626' }} />
         </div>
-        <span className="text-[13px] font-bold tabular-nums" style={{ color: pct >= 50 ? '#16a34a' : '#dc2626', minWidth: 36, textAlign: 'right' }}>{pct}%</span>
+        <span className="text-[15px] font-bold tabular-nums" style={{ color: pct >= 50 ? '#16a34a' : '#dc2626', minWidth: 36, textAlign: 'right' }}>{pct}%</span>
       </div>
     </a>
   );
@@ -704,7 +704,7 @@ export default function CurrenciesPage() {
                       <col style={{ width: '12%' }} />
                     </colgroup>
                     <thead>
-                      <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
+                      <tr className="text-[15px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                         <th className="text-left px-3 py-2">Pair</th>
                         <th className="text-right px-3 py-2">Rate</th>
                         <th className="text-right px-3 py-2">Day</th>
@@ -723,12 +723,12 @@ export default function CurrenciesPage() {
                         return (
                           <React.Fragment key={p.pair}>
                             <tr
-                              className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[13px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
+                              className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[15px] cursor-pointer ${isExpanded ? 'bg-[#f5f7fa]' : ''}`}
                               onClick={() => setExpanded(isExpanded ? null : p.pair)}
                             >
                               <td className="px-3 py-2">
                                 <span className="flex items-center gap-2">
-                                  <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                  <span className={`text-[14px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                   <FlagIcon code={p.flag} size={20} />
                                   <Link href={`/markets/currencies/${p.pair.toLowerCase()}`} className="font-medium text-[#0066cc] hover:underline" onClick={e => e.stopPropagation()}>{p.label}</Link>
                                 </span>
@@ -736,16 +736,16 @@ export default function CurrenciesPage() {
                               <td className="px-3 py-2 text-right font-mono font-semibold">
                                 {d?.price != null ? <AnimatedPrice value={d.price} format={v => v.toFixed(p.decimals)} /> : '—'}
                               </td>
-                              <td className="px-3 py-2 text-right text-[12px]">
+                              <td className="px-3 py-2 text-right text-[14px]">
                                 <ChangeSpan value={changePct ?? null} />
                               </td>
-                              <td className="px-3 py-2 text-right text-[12px] hidden md:table-cell">
+                              <td className="px-3 py-2 text-right text-[14px] hidden md:table-cell">
                                 <ChangeSpan value={d?.weeklyChg ?? null} />
                               </td>
-                              <td className="px-3 py-2 text-right text-[12px] hidden md:table-cell">
+                              <td className="px-3 py-2 text-right text-[14px] hidden md:table-cell">
                                 <ChangeSpan value={d?.monthlyChg ?? null} />
                               </td>
-                              <td className="px-3 py-2 text-right text-[12px] hidden lg:table-cell">
+                              <td className="px-3 py-2 text-right text-[14px] hidden lg:table-cell">
                                 <ChangeSpan value={d?.ytdChg ?? null} />
                               </td>
                             </tr>
@@ -771,7 +771,7 @@ export default function CurrenciesPage() {
                 <h2 className="text-[14px] font-semibold text-[#64748b] uppercase tracking-wider mb-3">
                   &#x1F52E; Currency & Trade Predictions
                 </h2>
-                <p className="text-[12px] text-[#64748b] mb-3">
+                <p className="text-[14px] text-[#64748b] mb-3">
                   Live prediction market odds from <a href="https://polymarket.com" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">Polymarket</a>. Real-money forecasts on currencies, tariffs, and trade policy.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

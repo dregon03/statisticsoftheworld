@@ -148,7 +148,7 @@ export default function TimeSeriesChart({
         </LineChart>
       </ResponsiveContainer>
       {hasForecast && (
-        <div className="flex items-center justify-center gap-4 mt-1 text-[11px] text-[#999]">
+        <div className="flex items-center justify-center gap-4 mt-1 text-[15px] text-[#999]">
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-0.5" style={{ backgroundColor: color }} />
             <span>Actual</span>

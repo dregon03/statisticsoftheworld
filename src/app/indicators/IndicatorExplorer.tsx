@@ -132,18 +132,18 @@ function ExplorerView({ initialId }: { initialId: string }) {
                 <div className="flex border border-gray-200 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setViewMode('table')}
-                    className={`px-2.5 py-1 text-[11px] transition ${viewMode === 'table' ? 'bg-[#0066cc] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                    className={`px-2.5 py-1 text-[15px] transition ${viewMode === 'table' ? 'bg-[#0066cc] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
                   >
                     Table
                   </button>
                   <button
                     onClick={() => setViewMode('chart')}
-                    className={`px-2.5 py-1 text-[11px] transition ${viewMode === 'chart' ? 'bg-[#0066cc] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                    className={`px-2.5 py-1 text-[15px] transition ${viewMode === 'chart' ? 'bg-[#0066cc] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
                   >
                     Chart
                   </button>
                 </div>
-                <Link href={`/map?id=${encodeURIComponent(selectedIndicator.id)}`} className="text-[12px] text-[#0066cc] hover:underline">
+                <Link href={`/map?id=${encodeURIComponent(selectedIndicator.id)}`} className="text-[14px] text-[#0066cc] hover:underline">
                   Map
                 </Link>
                 <ExportButton

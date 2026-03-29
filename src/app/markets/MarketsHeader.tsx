@@ -23,7 +23,7 @@ export default function MarketsHeader({ updatedAt }: { updatedAt?: string | null
       <div className="flex items-end justify-between mb-1">
         <h1 className="text-[28px] font-extrabold text-[#0d1b2a] tracking-tight">Markets</h1>
         {updatedStr && (
-          <span className="text-[12px] text-[#94a3b8] flex items-center gap-1.5">
+          <span className="text-[14px] text-[#94a3b8] flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-[#16a34a] rounded-full animate-pulse" />
             Live &middot; {updatedStr}
           </span>

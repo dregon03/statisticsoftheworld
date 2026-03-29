@@ -39,7 +39,7 @@ export default function ChartWrapper({
       )}
       {children}
       {source && (
-        <div className="text-[10px] text-gray-400 mt-1">Source: {source}</div>
+        <div className="text-[14px] text-gray-400 mt-1">Source: {source}</div>
       )}
     </div>
   );

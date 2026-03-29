@@ -99,7 +99,7 @@ export default function WorldMap({
 
   return (
     <div className="relative">
-      {label && <div className="text-[13px] font-medium text-[#666] mb-2">{label}</div>}
+      {label && <div className="text-[15px] font-medium text-[#666] mb-2">{label}</div>}
       <div className="border border-[#e8e8e8] rounded-xl overflow-hidden bg-[#f8fafe]">
         <ComposableMap
           projectionConfig={{ rotate: [-10, 0, 0], scale: 147 }}
@@ -161,7 +161,7 @@ export default function WorldMap({
         </ComposableMap>
 
         {/* Legend */}
-        <div className="flex items-center justify-center gap-2 px-4 py-2 text-[11px] text-[#999]">
+        <div className="flex items-center justify-center gap-2 px-4 py-2 text-[15px] text-[#999]">
           <span>{formatValue(rawMin, format, decimals)}</span>
           <div className="w-[120px] h-[8px] rounded-full" style={{
             background: `linear-gradient(to right, rgb(${lowColor.join(',')}), rgb(${highColor.join(',')}))`
@@ -176,8 +176,8 @@ export default function WorldMap({
           className="fixed z-[100] bg-white border border-[#e8e8e8] rounded-lg px-3 py-2 shadow-lg pointer-events-none"
           style={{ left: tooltip.x + 12, top: tooltip.y - 10 }}
         >
-          <div className="text-[12px] font-semibold text-[#333]">{tooltip.name}</div>
-          <div className="text-[12px] text-[#666]">{tooltip.value}</div>
+          <div className="text-[14px] font-semibold text-[#333]">{tooltip.name}</div>
+          <div className="text-[14px] text-[#666]">{tooltip.value}</div>
         </div>
       )}
     </div>

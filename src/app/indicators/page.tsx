@@ -54,7 +54,7 @@ export default async function IndicatorsPage({ searchParams }: { searchParams: P
       <HeroTabs active="/indicators" indicatorCount={INDICATORS.length} />
 
       {/* Category nav */}
-      <nav className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] border-b border-[#edf0f5]">
+      <nav className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] border-b border-[#edf0f5]">
         {categoriesWithData.map(({ category }) => (
           <a
             key={category}

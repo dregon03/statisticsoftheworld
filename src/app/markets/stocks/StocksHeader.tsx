@@ -19,7 +19,7 @@ export default function StocksHeader() {
         <Link
           key={t.href}
           href={t.href}
-          className={`px-3 py-1.5 text-[12px] transition border-b-2 -mb-[1px] ${
+          className={`px-3 py-1.5 text-[14px] transition border-b-2 -mb-[1px] ${
             pathname === t.href
               ? 'border-[#0066cc] text-[#0066cc] font-medium'
               : 'border-transparent text-[#666] hover:text-[#333]'

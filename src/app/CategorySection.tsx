@@ -45,7 +45,7 @@ export default function CategorySection({
                 <Link href={`/indicators?id=${encodeURIComponent(ind.id)}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition">
                   {ind.label}
                 </Link>
-                <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                <span className="text-[14px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
                   {ind.id.startsWith('IMF.') ? 'IMF' : ind.id.startsWith('UN.') ? 'UN' : 'World Bank'}
                 </span>
               </div>

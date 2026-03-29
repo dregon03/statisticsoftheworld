@@ -70,17 +70,17 @@ export default function CountriesPage() {
             placeholder="Search countries..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[#0066cc] transition w-56"
+            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[15px] outline-none focus:border-[#0066cc] transition w-56"
           />
           <select
             value={filterRegion}
             onChange={e => setFilterRegion(e.target.value)}
-            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[13px] outline-none cursor-pointer"
+            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[15px] outline-none cursor-pointer"
           >
             <option value="">All Regions</option>
             {regions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <span className="text-[12px] text-[#64748b] self-center ml-auto flex items-center gap-3">
+          <span className="text-[14px] text-[#64748b] self-center ml-auto flex items-center gap-3">
             {filtered.length} countries
             <ExportButton
               filename={`sotw-countries-${new Date().toISOString().slice(0, 10)}`}
@@ -96,7 +96,7 @@ export default function CountriesPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-[#64748b] text-[13px]">Loading countries...</div>
+          <div className="text-center py-20 text-[#64748b] text-[15px]">Loading countries...</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filtered.map(c => {
@@ -115,38 +115,38 @@ export default function CountriesPage() {
                         <Flag iso2={c.iso2} size={22} />
                         {c.name}
                       </h3>
-                      <div className="text-[11px] text-[#64748b]">{c.capitalCity || c.region}</div>
+                      <div className="text-[15px] text-[#64748b]">{c.capitalCity || c.region}</div>
                     </div>
-                    <span className="text-[10px] bg-[#f5f5f5] px-1.5 py-0.5 rounded text-[#64748b]">{c.id}</span>
+                    <span className="text-[14px] bg-[#f5f5f5] px-1.5 py-0.5 rounded text-[#64748b]">{c.id}</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[12px]">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[14px]">
                     <div>
-                      <div className="text-[#64748b] text-[10px]">GDP</div>
+                      <div className="text-[#64748b] text-[14px]">GDP</div>
                       <div className="font-mono text-[#0066cc] font-medium">{s.gdp ? formatValue(s.gdp, 'currency') : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#64748b] text-[10px]">Population</div>
+                      <div className="text-[#64748b] text-[14px]">Population</div>
                       <div className="font-mono">{s.population ? formatValue(s.population, 'number') : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#64748b] text-[10px]">GDP/Capita</div>
+                      <div className="text-[#64748b] text-[14px]">GDP/Capita</div>
                       <div className="font-mono">{s.gdpPerCapita ? formatValue(s.gdpPerCapita, 'currency') : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#64748b] text-[10px]">GDP Growth</div>
+                      <div className="text-[#64748b] text-[14px]">GDP Growth</div>
                       <div className={`font-mono ${growthColor}`}>{growth != null ? `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%` : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#64748b] text-[10px]">Inflation</div>
+                      <div className="text-[#64748b] text-[14px]">Inflation</div>
                       <div className="font-mono">{s.inflation != null ? `${s.inflation.toFixed(1)}%` : '—'}</div>
                     </div>
                     <div>
-                      <div className="text-[#64748b] text-[10px]">Life Exp.</div>
+                      <div className="text-[#64748b] text-[14px]">Life Exp.</div>
                       <div className="font-mono">{s.lifeExpectancy ? `${s.lifeExpectancy.toFixed(1)}y` : '—'}</div>
                     </div>
                   </div>
                   <div className="mt-3">
-                    <span className="text-[10px] bg-[#f0f0f0] px-2 py-0.5 rounded text-[#64748b]">{c.region}</span>
+                    <span className="text-[14px] bg-[#f0f0f0] px-2 py-0.5 rounded text-[#64748b]">{c.region}</span>
                   </div>
                 </Link>
               );

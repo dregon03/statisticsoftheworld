@@ -181,9 +181,9 @@ export default function PricingPage() {
                 <h3 className="text-[16px] font-bold">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="text-[28px] font-bold">{plan.price}</span>
-                  <span className="text-[13px] text-[#64748b]">{plan.period}</span>
+                  <span className="text-[15px] text-[#64748b]">{plan.period}</span>
                 </div>
-                <p className="text-[12px] text-[#64748b] mt-1">{plan.description}</p>
+                <p className="text-[14px] text-[#64748b] mt-1">{plan.description}</p>
               </div>
 
               <div className="bg-[#f4f6f9] rounded-lg px-3 py-2 mb-4 text-center">
@@ -192,7 +192,7 @@ export default function PricingPage() {
 
               <ul className="space-y-2 mb-6 flex-1">
                 {plan.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[12px] text-[#64748b]">
+                  <li key={i} className="flex items-start gap-2 text-[14px] text-[#64748b]">
                     <span className="text-[#2ecc40] mt-0.5 shrink-0">&#10003;</span>
                     {f}
                   </li>
@@ -202,21 +202,21 @@ export default function PricingPage() {
               {plan.ctaLink ? (
                 <Link
                   href={plan.ctaLink}
-                  className="block text-center px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#f0f0f0] text-[#0d1b2a] hover:bg-[#e0e0e0]"
+                  className="block text-center px-4 py-2 rounded-lg text-[15px] font-medium transition bg-[#f0f0f0] text-[#0d1b2a] hover:bg-[#e0e0e0]"
                 >
                   {plan.cta}
                 </Link>
               ) : plan.ctaAction === 'signup' ? (
                 <button
                   onClick={() => setShowSignup(true)}
-                  className="w-full px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#0d1b2a] text-white hover:bg-[#0055aa]"
+                  className="w-full px-4 py-2 rounded-lg text-[15px] font-medium transition bg-[#0d1b2a] text-white hover:bg-[#0055aa]"
                 >
                   {plan.cta}
                 </button>
               ) : plan.ctaAction === 'contact' ? (
                 <a
                   href="mailto:api@statisticsoftheworld.com?subject=Enterprise API Access"
-                  className="block text-center w-full px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#333] text-white hover:bg-[#222]"
+                  className="block text-center w-full px-4 py-2 rounded-lg text-[15px] font-medium transition bg-[#333] text-white hover:bg-[#222]"
                 >
                   {plan.cta}
                 </a>
@@ -241,7 +241,7 @@ export default function PricingPage() {
                       setMessage(data.error || 'Checkout failed');
                     }
                   }}
-                  className="w-full px-4 py-2 rounded-lg text-[13px] font-medium transition bg-[#333] text-white hover:bg-[#222]"
+                  className="w-full px-4 py-2 rounded-lg text-[15px] font-medium transition bg-[#333] text-white hover:bg-[#222]"
                 >
                   {plan.cta}
                 </button>
@@ -255,19 +255,19 @@ export default function PricingPage() {
           <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center" onClick={() => setShowSignup(false)}>
             <div className="bg-white rounded-xl shadow-2xl p-6 w-[420px] max-w-[90vw]" onClick={e => e.stopPropagation()}>
               <h3 className="text-[18px] font-bold mb-1">Get Your Free API Key</h3>
-              <p className="text-[12px] text-[#64748b] mb-4">1,000 requests/day. No credit card required.</p>
+              <p className="text-[14px] text-[#64748b] mb-4">1,000 requests/day. No credit card required.</p>
 
               {apiKey ? (
                 <div>
-                  <div className="text-[12px] text-[#2ecc40] font-medium mb-2">{message}</div>
+                  <div className="text-[14px] text-[#2ecc40] font-medium mb-2">{message}</div>
                   <div className="bg-[#f4f6f9] border border-[#d5dce6] rounded-lg p-3 mb-3">
-                    <div className="text-[11px] text-[#64748b] mb-1">Your API Key</div>
-                    <div className="font-mono text-[13px] text-[#0d1b2a] break-all">{apiKey}</div>
+                    <div className="text-[15px] text-[#64748b] mb-1">Your API Key</div>
+                    <div className="font-mono text-[15px] text-[#0d1b2a] break-all">{apiKey}</div>
                   </div>
-                  <button onClick={copyKey} className="w-full px-4 py-2 bg-[#0d1b2a] text-white rounded-lg text-[13px] font-medium hover:bg-[#0055aa] transition">
+                  <button onClick={copyKey} className="w-full px-4 py-2 bg-[#0d1b2a] text-white rounded-lg text-[15px] font-medium hover:bg-[#0055aa] transition">
                     {copied ? 'Copied!' : 'Copy to Clipboard'}
                   </button>
-                  <div className="mt-3 text-[11px] text-[#64748b]">
+                  <div className="mt-3 text-[15px] text-[#64748b]">
                     Usage: <code className="bg-[#f4f6f9] px-1 rounded">curl -H &quot;X-API-Key: {apiKey.slice(0, 12)}...&quot; https://statisticsoftheworld.com/api/v1/countries</code>
                   </div>
                 </div>
@@ -278,20 +278,20 @@ export default function PricingPage() {
                     placeholder="your@email.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] mb-2 outline-none focus:border-[#0066cc]"
+                    className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[15px] mb-2 outline-none focus:border-[#0066cc]"
                   />
                   <input
                     type="text"
                     placeholder="Name or project (optional)"
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] mb-3 outline-none focus:border-[#0066cc]"
+                    className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[15px] mb-3 outline-none focus:border-[#0066cc]"
                   />
-                  {message && <div className="text-[12px] text-[#e74c3c] mb-2">{message}</div>}
+                  {message && <div className="text-[14px] text-[#e74c3c] mb-2">{message}</div>}
                   <button
                     onClick={handleSignup}
                     disabled={loading}
-                    className="w-full px-4 py-2 bg-[#0d1b2a] text-white rounded-lg text-[13px] font-medium hover:bg-[#0055aa] transition disabled:opacity-50"
+                    className="w-full px-4 py-2 bg-[#0d1b2a] text-white rounded-lg text-[15px] font-medium hover:bg-[#0055aa] transition disabled:opacity-50"
                   >
                     {loading ? 'Creating...' : 'Generate API Key'}
                   </button>
@@ -306,7 +306,7 @@ export default function PricingPage() {
           <div className="overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead>
-              <tr className="text-[11px] text-[#64748b] uppercase bg-[#f4f6f9] border-b border-[#d5dce6]">
+              <tr className="text-[15px] text-[#64748b] uppercase bg-[#f4f6f9] border-b border-[#d5dce6]">
                 <th className="px-3 py-3 text-left">Feature</th>
                 <th className="px-3 py-3 text-center">Free</th>
                 <th className="px-3 py-3 text-center bg-[#f0f7ff]">Developer</th>
@@ -315,7 +315,7 @@ export default function PricingPage() {
                 <th className="px-3 py-3 text-center">Enterprise</th>
               </tr>
             </thead>
-            <tbody className="text-[13px]">
+            <tbody className="text-[15px]">
               {[
                 ['Monthly price', 'Free', 'Free', '$49', '$500', 'Custom'],
                 ['Daily requests', '100', '1,000', '50,000', '500,000', 'Unlimited'],
@@ -357,22 +357,22 @@ export default function PricingPage() {
               placeholder="Enter your email to look up your key"
               value={lookupEmail}
               onChange={e => setLookupEmail(e.target.value)}
-              className="flex-1 border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#0066cc] bg-white"
+              className="flex-1 border border-[#d5dce6] rounded-lg px-3 py-2 text-[15px] outline-none focus:border-[#0066cc] bg-white"
             />
             <button
               onClick={handleLookup}
-              className="px-4 py-2 bg-[#333] text-white rounded-lg text-[13px] font-medium hover:bg-[#222] transition"
+              className="px-4 py-2 bg-[#333] text-white rounded-lg text-[15px] font-medium hover:bg-[#222] transition"
             >
               Look Up
             </button>
           </div>
           {lookupResult && (
-            <div className="mt-3 text-[13px]">
+            <div className="mt-3 text-[15px]">
               {lookupResult.keys?.length > 0 ? (
                 lookupResult.keys.map((k: any, i: number) => (
                   <div key={i} className="bg-white border border-[#d5dce6] rounded-lg p-3 mt-2">
-                    <div className="font-mono text-[12px] break-all">{k.api_key}</div>
-                    <div className="flex gap-4 mt-1 text-[11px] text-[#64748b]">
+                    <div className="font-mono text-[14px] break-all">{k.api_key}</div>
+                    <div className="flex gap-4 mt-1 text-[15px] text-[#64748b]">
                       <span>Tier: {k.tier}</span>
                       <span>Limit: {k.rate_limit?.toLocaleString()}/day</span>
                       <span>Used today: {k.requests_today || 0}</span>
@@ -390,7 +390,7 @@ export default function PricingPage() {
         {/* FAQ */}
         <div className="max-w-[700px] mx-auto">
           <h2 className="text-[18px] font-bold mb-4 text-center">Frequently Asked Questions</h2>
-          <div className="space-y-4 text-[13px]">
+          <div className="space-y-4 text-[15px]">
             <div>
               <h3 className="font-semibold text-[#0d1b2a] mb-1">Is the data really free?</h3>
               <p className="text-[#64748b]">Yes. All data comes from public international organizations (IMF, World Bank, WHO, UN) and free APIs (Yahoo Finance, FRED). We believe global statistics should be accessible to everyone.</p>

@@ -48,7 +48,7 @@ export default function ExportButton({ getData, filename }: ExportButtonProps) {
     <div className="relative">
       <button
         onClick={() => setShowMenu(!showMenu)}
-        className="flex items-center gap-1 text-[12px] text-[#0066cc] hover:text-[#004999] transition"
+        className="flex items-center gap-1 text-[14px] text-[#0066cc] hover:text-[#004999] transition"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
@@ -61,10 +61,10 @@ export default function ExportButton({ getData, filename }: ExportButtonProps) {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
           <div className="absolute right-0 top-full mt-1 bg-white border border-[#d5dce6] rounded-lg shadow-lg z-50 min-w-[120px]">
-            <button onClick={exportCSV} className="w-full text-left px-3 py-2 text-[12px] hover:bg-[#f4f6f9] transition">
+            <button onClick={exportCSV} className="w-full text-left px-3 py-2 text-[14px] hover:bg-[#f4f6f9] transition">
               Download CSV
             </button>
-            <button onClick={exportJSON} className="w-full text-left px-3 py-2 text-[12px] hover:bg-[#f4f6f9] transition border-t border-[#edf0f5]">
+            <button onClick={exportJSON} className="w-full text-left px-3 py-2 text-[14px] hover:bg-[#f4f6f9] transition border-t border-[#edf0f5]">
               Download JSON
             </button>
           </div>

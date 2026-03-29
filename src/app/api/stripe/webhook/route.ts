@@ -13,14 +13,17 @@ const TIER_LIMITS: Record<string, number> = {
 export async function POST(request: Request) {
   const body = await request.text();
   const sig = request.headers.get('stripe-signature');
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  // In production, verify webhook signature with STRIPE_WEBHOOK_SECRET
-  // For now, parse the event directly (test mode)
   let event: Stripe.Event;
   try {
-    event = JSON.parse(body) as Stripe.Event;
-  } catch {
-    return Response.json({ error: 'Invalid payload' }, { status: 400 });
+    if (webhookSecret && sig) {
+      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    } else {
+      return Response.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
+  } catch (err: any) {
+    return Response.json({ error: `Webhook signature verification failed: ${err.message}` }, { status: 400 });
   }
 
   switch (event.type) {

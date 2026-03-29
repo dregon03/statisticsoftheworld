@@ -141,7 +141,7 @@ export default async function ChartPage({ params }: Props) {
           />
           <Link
             href={`/country/${countryId}/${encodeURIComponent(indicatorId)}`}
-            className="text-[12px] text-[#0066cc] hover:underline ml-auto"
+            className="text-[14px] text-[#0066cc] hover:underline ml-auto"
           >
             Full indicator detail →
           </Link>
@@ -191,7 +191,7 @@ export default async function ChartPage({ params }: Props) {
               .map(([s, id]) => {
                 const label = INDICATORS.find(i => i.id === id)?.label || s;
                 return (
-                  <Link key={s} href={`/chart/${countrySlug}/${s}`} className="text-[12px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-[#64748b]">
+                  <Link key={s} href={`/chart/${countrySlug}/${s}`} className="text-[14px] px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-[#64748b]">
                     {label}
                   </Link>
                 );

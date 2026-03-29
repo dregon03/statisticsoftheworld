@@ -48,9 +48,9 @@ export default function CountryTradePage() {
 
         {/* Sub-nav */}
         <div className="flex gap-1 mb-6 border-b border-gray-100">
-          <Link href={`/country/${countryId}`} className="px-4 py-2 text-[13px] text-[#64748b] hover:text-[#0d1b2a]">Overview</Link>
-          <Link href={`/country/${countryId}/forecast`} className="px-4 py-2 text-[13px] text-[#64748b] hover:text-[#0d1b2a]">Forecasts</Link>
-          <span className="px-4 py-2 text-[13px] font-medium text-[#0066cc] border-b-2 border-[#0066cc]">Trade</span>
+          <Link href={`/country/${countryId}`} className="px-4 py-2 text-[15px] text-[#64748b] hover:text-[#0d1b2a]">Overview</Link>
+          <Link href={`/country/${countryId}/forecast`} className="px-4 py-2 text-[15px] text-[#64748b] hover:text-[#0d1b2a]">Forecasts</Link>
+          <span className="px-4 py-2 text-[15px] font-medium text-[#0066cc] border-b-2 border-[#0066cc]">Trade</span>
         </div>
 
         {loading ? (
@@ -61,15 +61,15 @@ export default function CountryTradePage() {
           <>
             <div className="grid grid-cols-3 gap-4 mb-8">
               <div className="border border-gray-100 rounded-xl p-4">
-                <div className="text-[11px] text-[#64748b] mb-1">Exports ({data.year})</div>
+                <div className="text-[15px] text-[#64748b] mb-1">Exports ({data.year})</div>
                 <div className="text-[20px] font-bold text-green-600">{formatUSD(data.totalExports)}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-4">
-                <div className="text-[11px] text-[#64748b] mb-1">Imports ({data.year})</div>
+                <div className="text-[15px] text-[#64748b] mb-1">Imports ({data.year})</div>
                 <div className="text-[20px] font-bold text-red-500">{formatUSD(data.totalImports)}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-4">
-                <div className="text-[11px] text-[#64748b] mb-1">Balance</div>
+                <div className="text-[15px] text-[#64748b] mb-1">Balance</div>
                 <div className={`text-[20px] font-bold ${data.tradeBalance >= 0 ? 'text-green-600' : 'text-red-500'}`}>
                   {data.tradeBalance >= 0 ? '+' : ''}{formatUSD(data.tradeBalance)}
                 </div>
@@ -80,7 +80,7 @@ export default function CountryTradePage() {
               <div className="border border-gray-100 rounded-xl p-5">
                 <h2 className="text-[14px] font-semibold mb-3">Top Export Partners</h2>
                 {(data.topExportPartners || []).map((p: Partner, i: number) => (
-                  <div key={i} className="flex items-center justify-between py-1.5 text-[12px]">
+                  <div key={i} className="flex items-center justify-between py-1.5 text-[14px]">
                     <span className="text-[#0d1b2a]">{i + 1}. {p.name}</span>
                     <span className="font-mono text-[#64748b]">{formatUSD(p.value)}</span>
                   </div>
@@ -89,7 +89,7 @@ export default function CountryTradePage() {
               <div className="border border-gray-100 rounded-xl p-5">
                 <h2 className="text-[14px] font-semibold mb-3">Top Import Sources</h2>
                 {(data.topImportPartners || []).map((p: Partner, i: number) => (
-                  <div key={i} className="flex items-center justify-between py-1.5 text-[12px]">
+                  <div key={i} className="flex items-center justify-between py-1.5 text-[14px]">
                     <span className="text-[#0d1b2a]">{i + 1}. {p.name}</span>
                     <span className="font-mono text-[#64748b]">{formatUSD(p.value)}</span>
                   </div>
@@ -97,7 +97,7 @@ export default function CountryTradePage() {
               </div>
             </div>
 
-            <div className="text-[11px] text-[#64748b]">Source: UN COMTRADE ({data.year})</div>
+            <div className="text-[15px] text-[#64748b]">Source: UN COMTRADE ({data.year})</div>
           </>
         )}
       </section>

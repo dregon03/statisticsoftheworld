@@ -203,10 +203,10 @@ function PredictionCard({ market }: { market: PredictionMarket }) {
       className="flex items-center justify-between gap-3 px-3 py-2.5 border border-[#d5dce6] rounded-lg hover:border-[#ccc] hover:shadow-sm transition group"
     >
       <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">
+        <div className="text-[14px] text-[#0d1b2a] font-medium leading-tight truncate group-hover:text-[#0066cc] transition">
           {market.question}
         </div>
-        <div className="text-[10px] text-[#64748b] mt-0.5">
+        <div className="text-[14px] text-[#64748b] mt-0.5">
           Vol: {vol}{end ? ` · Resolves ${end}` : ''}
         </div>
       </div>
@@ -217,7 +217,7 @@ function PredictionCard({ market }: { market: PredictionMarket }) {
             style={{ width: `${pct}%`, backgroundColor: pct >= 50 ? '#16a34a' : '#dc2626' }}
           />
         </div>
-        <span className="text-[13px] font-bold tabular-nums" style={{ color: pct >= 50 ? '#16a34a' : '#dc2626', minWidth: 36, textAlign: 'right' }}>
+        <span className="text-[15px] font-bold tabular-nums" style={{ color: pct >= 50 ? '#16a34a' : '#dc2626', minWidth: 36, textAlign: 'right' }}>
           {pct}%
         </span>
       </div>
@@ -237,8 +237,8 @@ function SectionPredictions({ sectionTitle, markets }: { sectionTitle: string; m
   return (
     <div className="mt-3 mb-1">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-[#7c3aed]">&#x1F52E; Market Predictions</span>
-        <span className="text-[10px] text-[#94a3b8]">Polymarket</span>
+        <span className="text-[14px] font-semibold uppercase tracking-wider text-[#7c3aed]">&#x1F52E; Market Predictions</span>
+        <span className="text-[14px] text-[#94a3b8]">Polymarket</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {matched.slice(0, 4).map(m => <PredictionCard key={m.id} market={m} />)}
@@ -258,7 +258,7 @@ function FuturesCurve({ id }: { id: string }) {
       .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="px-4 py-3 text-[11px] text-[#64748b]">Loading futures curve...</div>;
+  if (loading) return <div className="px-4 py-3 text-[15px] text-[#64748b]">Loading futures curve...</div>;
   if (!data || data.contracts.length < 2) return null;
 
   const structureColor = data.structure === 'backwardation' ? '#dc2626' : data.structure === 'contango' ? '#16a34a' : '#666';
@@ -268,23 +268,23 @@ function FuturesCurve({ id }: { id: string }) {
     <div className="border-t border-[#d5dce6] bg-white px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[12px] font-semibold text-[#0d1b2a]">Futures Curve</span>
-          <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
+          <span className="text-[14px] font-semibold text-[#0d1b2a]">Futures Curve</span>
+          <span className="text-[14px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
             style={{ color: structureColor, backgroundColor: `${structureColor}12` }}>
             {structureLabel}
           </span>
         </div>
-        <span className="text-[10px] text-[#94a3b8]">CME settlements via Yahoo Finance</span>
+        <span className="text-[14px] text-[#94a3b8]">CME settlements via Yahoo Finance</span>
       </div>
-      <p className="text-[11px] text-[#64748b] mb-3">{data.structureDescription}</p>
+      <p className="text-[15px] text-[#64748b] mb-3">{data.structureDescription}</p>
       <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1.5">
         {data.contracts.map((c, i) => {
           const isFirst = i === 0;
           const changeColor = c.changeFromFront >= 0 ? '#16a34a' : '#dc2626';
           return (
             <div key={c.label} className={`border rounded-lg p-2 text-center ${isFirst ? 'border-[#0066cc] bg-[#f8fbff]' : 'border-[#d5dce6]'}`}>
-              <div className="text-[10px] text-[#64748b] mb-0.5">{c.label}</div>
-              <div className="text-[13px] font-mono font-semibold text-[#0d1b2a]">
+              <div className="text-[14px] text-[#64748b] mb-0.5">{c.label}</div>
+              <div className="text-[15px] font-mono font-semibold text-[#0d1b2a]">
                 ${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               {!isFirst && (
@@ -355,9 +355,9 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
     <div className="border-t border-[#d5dce6] bg-[#fafbfd] px-4 py-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[#0d1b2a]">{label}</span>
+          <span className="text-[15px] font-semibold text-[#0d1b2a]">{label}</span>
           {points.length > 1 && (
-            <span className={`text-[12px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-[14px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}{changeAmt.toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
             </span>
           )}
@@ -367,7 +367,7 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
             <button
               key={r.key}
               onClick={() => setRange(r.key)}
-              className={`px-2 py-0.5 text-[11px] rounded ${
+              className={`px-2 py-0.5 text-[15px] rounded ${
                 range === r.key
                   ? 'bg-[#0d1b2a] text-white'
                   : 'bg-white border border-[#ddd] text-[#64748b] hover:bg-[#f0f0f0]'
@@ -380,11 +380,11 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
       </div>
 
       {loading ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">
           Loading chart...
         </div>
       ) : points.length < 2 ? (
-        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[12px]">
+        <div className="h-[200px] flex items-center justify-center text-[#64748b] text-[14px]">
           No chart data available
         </div>
       ) : (() => {
@@ -469,7 +469,7 @@ function CommodityChart({ id, label, currency = '$' }: { id: string; label: stri
                     ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })
                     : p.date;
                   return (
-                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                       <div className="text-[#64748b] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[14px]">
                         {currency}{actualValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -612,7 +612,7 @@ export default function CommoditiesPage() {
                       <col style={{ width: '21%' }} />
                     </colgroup>
                     <thead>
-                      <tr className="text-[11px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
+                      <tr className="text-[15px] text-[#64748b] uppercase tracking-wider bg-[#f4f6f9] border-b border-[#d5dce6]">
                         <th className="text-left px-3 py-2">Commodity</th>
                         <th className="text-right px-3 py-2">Price</th>
                         <th className="text-right px-3 py-2 hidden md:table-cell">Change</th>
@@ -631,14 +631,14 @@ export default function CommoditiesPage() {
                         return (
                           <React.Fragment key={item.id}>
                             <tr
-                              className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[13px] cursor-pointer ${
+                              className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition text-[15px] cursor-pointer ${
                                 isExpanded ? 'bg-[#f5f7fa]' : ''
                               }`}
                               onClick={() => setExpanded(isExpanded ? null : item.id)}
                             >
                               <td className="px-3 py-2">
                                 <span className="flex items-center gap-1.5">
-                                  <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
+                                  <span className={`text-[14px] text-[#64748b] transition-transform inline-block ${isExpanded ? 'rotate-90' : ''}`}>&#9654;</span>
                                   <Link
                                     href={`/markets/commodities/${item.slug}`}
                                     className="text-[#0066cc] hover:underline font-medium"
@@ -656,7 +656,7 @@ export default function CommoditiesPage() {
                                   <>
                                     {change >= 0 ? '+' : ''}{change.toFixed(2)}
                                     {changePct != null && (
-                                      <span className="text-[11px] ml-1">({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)</span>
+                                      <span className="text-[15px] ml-1">({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)</span>
                                     )}
                                   </>
                                 ) : '—'}

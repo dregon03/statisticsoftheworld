@@ -29,7 +29,7 @@ function NewsletterForm() {
   };
 
   if (status === 'success') {
-    return <p className="text-[13px] text-emerald-400">Subscribed! You'll receive the weekly digest.</p>;
+    return <p className="text-[15px] text-emerald-400">Subscribed! You'll receive the weekly digest.</p>;
   }
 
   return (
@@ -39,17 +39,17 @@ function NewsletterForm() {
         value={email}
         onChange={e => setEmail(e.target.value)}
         placeholder="your@email.com"
-        className="px-3 py-1.5 text-[13px] border border-white/15 rounded-lg bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition w-[200px]"
+        className="px-3 py-1.5 text-[15px] border border-white/15 rounded-lg bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition w-[200px]"
         required
       />
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="px-3 py-1.5 text-[13px] bg-white text-[#0d1b2a] font-semibold rounded-lg hover:bg-white/90 transition disabled:opacity-50"
+        className="px-3 py-1.5 text-[15px] bg-white text-[#0d1b2a] font-semibold rounded-lg hover:bg-white/90 transition disabled:opacity-50"
       >
         {status === 'loading' ? '...' : 'Subscribe'}
       </button>
-      {status === 'error' && <span className="text-[12px] text-red-400 self-center">Failed</span>}
+      {status === 'error' && <span className="text-[14px] text-red-400 self-center">Failed</span>}
     </form>
   );
 }
@@ -63,13 +63,13 @@ export default function Footer() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="text-[14px] font-semibold text-white">Weekly Digest</div>
-              <div className="text-[12px] text-white/40">Prediction markets, data releases, and global trends — every Monday.</div>
+              <div className="text-[14px] text-white/40">Prediction markets, data releases, and global trends — every Monday.</div>
             </div>
             <NewsletterForm />
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-between gap-6 text-[13px] text-white/40">
+        <div className="flex flex-wrap justify-between gap-6 text-[15px] text-white/40">
           <div>
             <p>Data from IMF, World Bank, FRED, UN COMTRADE, ForexFactory, Finnhub, Polymarket, and Alpha Vantage.</p>
             <p className="mt-1 text-white/25">Statistics of the World &copy; {new Date().getFullYear()}</p>
@@ -89,6 +89,8 @@ export default function Footer() {
             <Link href="/pricing" className="hover:text-white transition">Pricing</Link>
             <Link href="/api-docs" className="hover:text-white transition">API</Link>
             <Link href="/ai" className="hover:text-white transition">AI</Link>
+            <Link href="/terms" className="hover:text-white transition">Terms</Link>
+            <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
           </div>
         </div>
       </div>

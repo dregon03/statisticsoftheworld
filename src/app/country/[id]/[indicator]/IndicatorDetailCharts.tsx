@@ -129,7 +129,7 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
         <div className="flex items-center gap-3">
           <span className="text-[14px] font-semibold text-[#333]">{isIndex ? 'Index' : fxPair ? 'Exchange Rate' : 'Daily Price'} Chart</span>
           {points.length > 1 && (
-            <span className={`text-[13px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-[15px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}{changeAmt.toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
             </span>
           )}
@@ -139,7 +139,7 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
             <button
               key={r.key}
               onClick={() => setRange(r.key)}
-              className={`px-2.5 py-1 text-[11px] rounded ${
+              className={`px-2.5 py-1 text-[15px] rounded ${
                 range === r.key
                   ? 'bg-[#0066cc] text-white'
                   : 'bg-white border border-[#ddd] text-[#666] hover:bg-[#f0f0f0]'
@@ -152,11 +152,11 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
       </div>
 
       {loading ? (
-        <div className="h-[300px] flex items-center justify-center text-[#999] text-[13px]">
+        <div className="h-[300px] flex items-center justify-center text-[#999] text-[15px]">
           Loading prices...
         </div>
       ) : points.length < 2 ? (
-        <div className="h-[300px] flex items-center justify-center text-[#999] text-[13px]">
+        <div className="h-[300px] flex items-center justify-center text-[#999] text-[15px]">
           No price data available
         </div>
       ) : (() => {
@@ -234,7 +234,7 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
                     ? new Date(p.date + 'T12:00:00').toLocaleDateString('en', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })
                     : p.date;
                   return (
-                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                    <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                       <div className="text-[#999] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[15px]">
                         {(isIndex || fxPair) ? '' : '$'}{p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: fxPair ? 4 : 2 })}
@@ -258,7 +258,7 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
         );
       })()}
 
-      <div className="text-[11px] text-[#999] mt-2">
+      <div className="text-[15px] text-[#999] mt-2">
         {points.length > 0 && `${points.length} data points`} · Source: {range === 'max' ? 'Stooq / FRED / Yahoo Finance' : 'Yahoo Finance (15-min delayed)'}
       </div>
     </div>
@@ -306,9 +306,9 @@ function MonthlyChart({ indicatorId, countryId }: { indicatorId: string; country
           <span className="text-[14px] font-semibold">
             {freq === 'Q' ? 'Quarterly' : 'Monthly'} Data
           </span>
-          <span className="text-[12px] text-[#999]">{points.length} observations</span>
+          <span className="text-[14px] text-[#999]">{points.length} observations</span>
         </div>
-        <span className="text-[12px] font-mono text-[#666]">
+        <span className="text-[14px] font-mono text-[#666]">
           Latest: {last.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} ({last.period})
         </span>
       </div>
@@ -343,7 +343,7 @@ function MonthlyChart({ indicatorId, countryId }: { indicatorId: string; country
                 if (!active || !payload?.[0]) return null;
                 const p = payload[0].payload as { period: string; value: number };
                 return (
-                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
+                  <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[14px]">
                     <div className="text-[#999] mb-0.5">{p.period}</div>
                     <div className="font-mono font-semibold text-[14px]">
                       {p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -364,7 +364,7 @@ function MonthlyChart({ indicatorId, countryId }: { indicatorId: string; country
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div className="text-[11px] text-[#999] mt-1">Source: FRED (Federal Reserve Economic Data)</div>
+      <div className="text-[15px] text-[#999] mt-1">Source: FRED (Federal Reserve Economic Data)</div>
     </div>
   );
 }

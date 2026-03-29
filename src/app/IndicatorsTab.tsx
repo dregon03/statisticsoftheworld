@@ -16,13 +16,13 @@ interface CategoryData {
 
 export default function IndicatorsTab({ categories }: { categories: CategoryData[] }) {
   if (categories.length === 0) {
-    return <div className="text-center py-20 text-[#999] text-[13px]">Loading indicators...</div>;
+    return <div className="text-center py-20 text-[#999] text-[15px]">Loading indicators...</div>;
   }
 
   return (
     <>
       {/* Category nav */}
-      <nav className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] border-b border-[#f0f0f0]">
+      <nav className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] border-b border-[#f0f0f0]">
         {categories.map(({ category }) => (
           <a
             key={category}

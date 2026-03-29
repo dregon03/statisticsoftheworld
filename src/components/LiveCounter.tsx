@@ -125,7 +125,7 @@ function SingleCounter({ config }: { config: CounterConfig }) {
       <div className={`text-[15px] md:text-[18px] font-bold font-mono tabular-nums ${config.color || 'text-[#0d1b2a]'}`}>
         {formatLargeNumber(value, config.format, config.prefix, config.suffix)}
       </div>
-      <div className="text-[11px] text-[#64748b] mt-1">{config.label}</div>
+      <div className="text-[15px] text-[#64748b] mt-1">{config.label}</div>
     </div>
   );
 }

@@ -56,16 +56,16 @@ export default function CountryForecastPage() {
 
         {/* Sub-nav */}
         <div className="flex gap-1 mb-6 border-b border-gray-100">
-          <Link href={`/country/${countryId}`} className="px-4 py-2 text-[13px] text-[#64748b] hover:text-[#0d1b2a]">Overview</Link>
-          <span className="px-4 py-2 text-[13px] font-medium text-[#0066cc] border-b-2 border-[#0066cc]">Forecasts</span>
-          <Link href={`/country/${countryId}/trade-data`} className="px-4 py-2 text-[13px] text-[#64748b] hover:text-[#0d1b2a]">Trade</Link>
+          <Link href={`/country/${countryId}`} className="px-4 py-2 text-[15px] text-[#64748b] hover:text-[#0d1b2a]">Overview</Link>
+          <span className="px-4 py-2 text-[15px] font-medium text-[#0066cc] border-b-2 border-[#0066cc]">Forecasts</span>
+          <Link href={`/country/${countryId}/trade-data`} className="px-4 py-2 text-[15px] text-[#64748b] hover:text-[#0d1b2a]">Trade</Link>
         </div>
 
         {/* Indicator buttons */}
         <div className="flex flex-wrap gap-2 mb-6">
           {indicators.map(ind => (
             <button key={ind.id} onClick={() => setSelectedId(ind.id)}
-              className={`px-3 py-1.5 text-[12px] rounded-lg border transition ${selectedId === ind.id ? 'bg-[#0066cc] text-white border-[#0066cc]' : 'border-[#d5dce6] text-[#64748b] hover:bg-[#f4f6f9]'}`}>
+              className={`px-3 py-1.5 text-[14px] rounded-lg border transition ${selectedId === ind.id ? 'bg-[#0066cc] text-white border-[#0066cc]' : 'border-[#d5dce6] text-[#64748b] hover:bg-[#f4f6f9]'}`}>
               {ind.label}
             </button>
           ))}
@@ -99,7 +99,7 @@ export default function CountryForecastPage() {
           </div>
         )}
 
-        <div className="mt-4 text-[11px] text-[#64748b]">
+        <div className="mt-4 text-[15px] text-[#64748b]">
           Source: <a href="https://www.imf.org/en/publications/weo" target="_blank" rel="noopener noreferrer" className="text-[#0066cc] hover:underline">IMF World Economic Outlook</a>
         </div>
       </section>

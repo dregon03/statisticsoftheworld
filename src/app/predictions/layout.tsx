@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Prediction Markets — Polymarket Odds & Trends | Statistics of the World',
+  title: 'Prediction Markets â€” Polymarket Odds & Trends | Statistics of the World',
   description: 'Live prediction market data from Polymarket. Track odds on elections, geopolitics, economics, and more with historical price charts.',
 };
 

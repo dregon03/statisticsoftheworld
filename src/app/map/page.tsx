@@ -9,6 +9,11 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import HeroTabs from '@/components/HeroTabs';
 
+// Categories that can't be visualized on a world map (single-asset or single-country data)
+const NON_MAP_CATEGORIES = new Set(['Stock Markets', 'Financial Markets', 'Commodities', 'Currencies', 'US Economy']);
+const MAP_INDICATORS = INDICATORS.filter(i => !NON_MAP_CATEGORIES.has(i.category));
+const MAP_CATEGORIES = CATEGORIES.filter(c => !NON_MAP_CATEGORIES.has(c));
+
 interface RankingEntry {
   country: string;
   countryId: string;
@@ -33,7 +38,7 @@ export default function MapPage() {
 export function MapContent() {
   const searchParams = useSearchParams();
   const initialId = searchParams.get('id');
-  const initialIndicator = (initialId && INDICATORS.find(i => i.id === initialId)) || INDICATORS[0];
+  const initialIndicator = (initialId && MAP_INDICATORS.find(i => i.id === initialId)) || MAP_INDICATORS[0];
 
   const [selectedIndicator, setSelectedIndicator] = useState(initialIndicator);
   const [data, setData] = useState<RankingEntry[]>([]);
@@ -57,7 +62,7 @@ export function MapContent() {
     year: d.year,
   }));
 
-  const filteredIndicators = INDICATORS.filter(ind =>
+  const filteredIndicators = MAP_INDICATORS.filter(ind =>
     ind.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ind.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -92,7 +97,7 @@ export function MapContent() {
               className="w-full border border-[#d5dce6] rounded-lg px-3 py-2 text-[13px] mb-3 outline-none focus:border-[#0066cc]"
             />
             <div className="border border-[#d5dce6] rounded-xl overflow-hidden max-h-[60vh] overflow-y-auto">
-              {CATEGORIES.map(cat => {
+              {MAP_CATEGORIES.map(cat => {
                 const catInds = filteredIndicators.filter(i => i.category === cat);
                 if (catInds.length === 0) return null;
                 return (

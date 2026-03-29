@@ -79,10 +79,14 @@ export default function WorldMap({
   }, [data]);
 
   // Compute min/max for color scale
-  const { min, max } = useMemo(() => {
+  const { min, max, useLog } = useMemo(() => {
     const values = data.filter(d => d.value != null).map(d => d.value as number);
-    if (values.length === 0) return { min: 0, max: 1 };
-    return { min: Math.min(...values), max: Math.max(...values) };
+    if (values.length === 0) return { min: 0, max: 1, useLog: false };
+    const mn = Math.min(...values);
+    const mx = Math.max(...values);
+    // Use log scale when data is highly skewed (max/min ratio > 100 and all positive)
+    const shouldLog = mn > 0 && mx / mn > 100;
+    return { min: mn, max: mx, useLog: shouldLog };
   }, [data]);
 
   const lowColor: [number, number, number] = [219, 234, 254]; // blue-100
@@ -109,7 +113,12 @@ export default function WorldMap({
 
                   let fill = '#e8e8e8'; // no data
                   if (hasData && max > min) {
-                    const t = ((d.value as number) - min) / (max - min);
+                    let t: number;
+                    if (useLog) {
+                      t = (Math.log(d.value as number) - Math.log(min)) / (Math.log(max) - Math.log(min));
+                    } else {
+                      t = ((d.value as number) - min) / (max - min);
+                    }
                     fill = interpolateColor(lowColor, highColor, Math.max(0, Math.min(1, t)));
                   } else if (hasData) {
                     fill = interpolateColor(lowColor, highColor, 0.5);

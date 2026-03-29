@@ -63,7 +63,7 @@ function formatCell(value: number, indId: string): string {
 
 export default function HeatmapPage() {
   const [preset, setPreset] = useState('macro');
-  const [group, setGroup] = useState('G20');
+  const [group, setGroup] = useState('Top20');
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   const [ranges, setRanges] = useState<Record<string, Range>>({});
   const [rows, setRows] = useState<CountryRow[]>([]);

@@ -65,18 +65,51 @@ const COUNTRY_GROUPS: Record<string, string[]> = {
   EU: ['DEU', 'FRA', 'ITA', 'ESP', 'NLD', 'BEL', 'AUT', 'IRL', 'FIN', 'PRT', 'GRC', 'POL', 'SWE', 'DNK', 'CZE', 'ROU', 'HUN'],
   Asia: ['CHN', 'JPN', 'KOR', 'IND', 'IDN', 'THA', 'MYS', 'SGP', 'PHL', 'VNM', 'BGD', 'PAK'],
   Americas: ['USA', 'CAN', 'BRA', 'MEX', 'ARG', 'COL', 'CHL', 'PER'],
-  Top20: ['USA', 'CHN', 'JPN', 'DEU', 'IND', 'GBR', 'FRA', 'ITA', 'BRA', 'CAN', 'RUS', 'KOR', 'AUS', 'ESP', 'MEX', 'IDN', 'NLD', 'SAU', 'TUR', 'CHE'],
 };
+
+// Dynamically compute Top 20 by the first indicator of the preset
+async function getTop20(primaryIndicatorId: string): Promise<string[]> {
+  const { data } = await supabase
+    .from('sotw_indicators')
+    .select('country_id, value')
+    .eq('id', primaryIndicatorId)
+    .not('value', 'is', null)
+    .order('value', { ascending: false })
+    .limit(500);
+
+  if (!data || data.length === 0) {
+    // Fallback to GDP-based top 20
+    return ['USA', 'CHN', 'JPN', 'DEU', 'IND', 'GBR', 'FRA', 'ITA', 'BRA', 'CAN', 'RUS', 'KOR', 'AUS', 'ESP', 'MEX', 'IDN', 'NLD', 'SAU', 'TUR', 'CHE'];
+  }
+
+  // Keep latest value per country, then take top 20
+  const best = new Map<string, number>();
+  for (const row of data) {
+    if (!best.has(row.country_id) || row.value > best.get(row.country_id)!) {
+      best.set(row.country_id, row.value);
+    }
+  }
+
+  return [...best.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 20)
+    .map(([cid]) => cid);
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const preset = searchParams.get('preset') || 'macro';
-  const group = searchParams.get('group') || 'G20';
+  const group = searchParams.get('group') || 'Top20';
 
   const config = HEATMAP_PRESETS[preset];
   if (!config) return Response.json({ error: 'Invalid preset' }, { status: 400 });
 
-  const countryIds = COUNTRY_GROUPS[group] || COUNTRY_GROUPS['G20'];
+  let countryIds: string[];
+  if (group === 'Top20') {
+    countryIds = await getTop20(config.indicators[0].id);
+  } else {
+    countryIds = COUNTRY_GROUPS[group] || COUNTRY_GROUPS['G20'];
+  }
   const indicatorIds = config.indicators.map(i => i.id);
 
   // Fetch all data in one query
@@ -131,6 +164,6 @@ export async function GET(request: Request) {
     ranges,
     countries: rows,
     availablePresets: Object.entries(HEATMAP_PRESETS).map(([k, v]) => ({ id: k, label: v.label })),
-    availableGroups: Object.keys(COUNTRY_GROUPS),
+    availableGroups: [...Object.keys(COUNTRY_GROUPS), 'Top20'],
   });
 }

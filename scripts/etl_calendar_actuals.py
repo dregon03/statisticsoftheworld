@@ -99,8 +99,9 @@ def main():
         except Exception:
             pass
 
-    # Find events from today and yesterday that have no actual yet
-    yesterday = (TODAY - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    # Find events from last 5 days that have no actual yet
+    # (covers weekends — Friday events checked on Monday)
+    lookback = (TODAY - datetime.timedelta(days=5)).strftime("%Y-%m-%d")
     today_str = TODAY.strftime("%Y-%m-%d")
 
     cur.execute("""
@@ -108,7 +109,7 @@ def main():
         FROM sotw_release_schedule
         WHERE release_date >= %s AND release_date <= %s AND actual IS NULL
         ORDER BY release_date ASC, release_time ASC
-    """, (yesterday, today_str))
+    """, (lookback, today_str))
     pending = cur.fetchall()
 
     if not pending:

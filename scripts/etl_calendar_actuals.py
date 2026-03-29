@@ -230,7 +230,7 @@ Return ONLY a JSON array: [{{"name":"...","date":"YYYY-MM-DD","actual":"...","ou
             WHERE event_type = 'earnings' AND symbol IS NOT NULL
               AND date >= %s AND date <= %s
             ORDER BY date ASC
-        """, (yesterday, today_str))
+        """, (lookback, today_str))
         our_earnings = cur.fetchall()
 
         if our_earnings:
@@ -238,7 +238,7 @@ Return ONLY a JSON array: [{{"name":"...","date":"YYYY-MM-DD","actual":"...","ou
 
             # Single Finnhub call for the date range
             try:
-                furl = f"https://finnhub.io/api/v1/calendar/earnings?from={yesterday}&to={today_str}&token={FINNHUB_KEY}"
+                furl = f"https://finnhub.io/api/v1/calendar/earnings?from={lookback}&to={today_str}&token={FINNHUB_KEY}"
                 freq = urllib.request.Request(furl)
                 with urllib.request.urlopen(freq, timeout=15) as fresp:
                     fdata = json.loads(fresp.read())

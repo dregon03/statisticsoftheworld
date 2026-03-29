@@ -21,14 +21,38 @@ DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "6543"))
 DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres.seyrycaldytfjvvkqopu")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 
 NOW = datetime.datetime.utcnow()
 TODAY = NOW.date()
 
 
-def call_gemini(prompt, retries=3):
-    """Call Gemini 2.5 Pro with Google Search grounding. Retries on 429."""
+def call_openrouter(prompt):
+    """Fallback: call OpenRouter (e.g. google/gemini-2.5-flash) when Gemini direct is rate-limited."""
+    if not OPENROUTER_KEY:
+        return ""
+    try:
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=json.dumps({
+                "model": "google/gemini-2.5-flash",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.1,
+                "max_tokens": 4096,
+            }).encode(),
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_KEY}"},
+        )
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            result = json.loads(resp.read())
+        return result.get("choices", [{}])[0].get("message", {}).get("content", "")
+    except Exception as e:
+        print(f"  OpenRouter error: {e}")
+        return ""
+
+
+def call_gemini(prompt, retries=2):
+    """Call Gemini 2.5 Pro with Google Search grounding. Falls back to OpenRouter on 429."""
     import time as _time
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_KEY}"
     for attempt in range(retries):
@@ -51,10 +75,13 @@ def call_gemini(prompt, retries=3):
             return text
         except urllib.error.HTTPError as e:
             if e.code == 429 and attempt < retries - 1:
-                wait = 10 * (attempt + 1)
+                wait = 15 * (attempt + 1)
                 print(f"  Gemini 429, retrying in {wait}s...", flush=True)
                 _time.sleep(wait)
                 continue
+            if e.code == 429:
+                print(f"  Gemini 429 exhausted, falling back to OpenRouter...", flush=True)
+                return call_openrouter(prompt)
             print(f"  Gemini error: {e}")
             return ""
         except Exception as e:
@@ -324,12 +351,12 @@ Return ONLY a JSON array: [{{"name":"...","date":"YYYY-MM-DD","actual":"...","ou
                 # Only update actual if not already set
                 if "actual" in updates:
                     cur.execute(
-                        f"UPDATE sotw_calendar_events SET {set_clauses}, updated_at=NOW() WHERE id=%s AND (actual IS NULL OR actual = '')",
+                        f"UPDATE sotw_calendar_events SET {set_clauses} WHERE id=%s AND (actual IS NULL OR actual = '')",
                         vals
                     )
                 else:
                     cur.execute(
-                        f"UPDATE sotw_calendar_events SET {set_clauses}, updated_at=NOW() WHERE id=%s",
+                        f"UPDATE sotw_calendar_events SET {set_clauses} WHERE id=%s",
                         vals
                     )
 

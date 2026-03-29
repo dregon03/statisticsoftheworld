@@ -41,8 +41,31 @@ TODAY = datetime.date.today()
 TODAY_FMT = TODAY.strftime("%B %d, %Y")
 
 
+def call_openrouter_gemini(prompt, max_tokens=8192):
+    """Call Gemini via OpenRouter as fallback."""
+    if not OPENROUTER_KEY:
+        return ""
+    try:
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=json.dumps({
+                "model": "google/gemini-2.5-flash",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.1,
+                "max_tokens": max_tokens,
+            }).encode(),
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_KEY}"},
+        )
+        with urllib.request.urlopen(req, timeout=180) as resp:
+            result = json.loads(resp.read())
+        return result.get("choices", [{}])[0].get("message", {}).get("content", "")
+    except Exception as e:
+        print(f"    OpenRouter error: {e}")
+        return ""
+
+
 def call_gemini(prompt, max_tokens=8192):
-    """Call Gemini 2.5 Pro with Google Search grounding."""
+    """Call Gemini 2.5 Pro with Google Search grounding. Falls back to OpenRouter on 403/429."""
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={GEMINI_KEY}"
         req = urllib.request.Request(
@@ -61,6 +84,12 @@ def call_gemini(prompt, max_tokens=8192):
             if "text" in part:
                 text += part["text"]
         return text
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 429):
+            print(f"    Gemini {e.code}, falling back to OpenRouter...", flush=True)
+            return call_openrouter_gemini(prompt, max_tokens)
+        print(f"    Gemini error: {e}")
+        return ""
     except Exception as e:
         print(f"    Gemini error: {e}")
         return ""

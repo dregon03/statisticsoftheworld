@@ -79,8 +79,8 @@ def call_gemini(prompt, retries=2):
                 print(f"  Gemini 429, retrying in {wait}s...", flush=True)
                 _time.sleep(wait)
                 continue
-            if e.code == 429:
-                print(f"  Gemini 429 exhausted, falling back to OpenRouter...", flush=True)
+            if e.code in (429, 403):
+                print(f"  Gemini {e.code}, falling back to OpenRouter...", flush=True)
                 return call_openrouter(prompt)
             print(f"  Gemini error: {e}")
             return ""

@@ -1,0 +1,3632 @@
+{
+  "NVDA": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 4070736130584
+  },
+  "AAPL": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 3652667535715
+  },
+  "GOOG": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 3317735102866
+  },
+  "GOOGL": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 3317735102866
+  },
+  "MSFT": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 2649241633719
+  },
+  "AMZN": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 2139899062669
+  },
+  "AVGO": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 1423620004158
+  },
+  "TSLA": {
+    "sector": "Consumer Cyclical",
+    "industry": "Automobiles",
+    "marketCap": 1357742375416
+  },
+  "META": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 1329837838004
+  },
+  "BRK.B": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 1012448350587
+  },
+  "WMT": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 1008668360000
+  },
+  "LLY": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 829777704765
+  },
+  "JPM": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 762828673591
+  },
+  "XOM": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 650515110000
+  },
+  "V": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 584782714969
+  },
+  "JNJ": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 579460210009
+  },
+  "ASML": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 445317901110
+  },
+  "COST": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 436491985949
+  },
+  "MA": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 431851185550
+  },
+  "CVX": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 421325634298
+  },
+  "MU": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 402849132935
+  },
+  "ORCL": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 401668563308
+  },
+  "NFLX": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 394476604588
+  },
+  "ABBV": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 370254568585
+  },
+  "PLTR": {
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
+    "marketCap": 342153101312
+  },
+  "BAC": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 337088771323
+  },
+  "PG": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 331658140259
+  },
+  "AMD": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 329326702308
+  },
+  "KO": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 325607759915
+  },
+  "CAT": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 323560826758
+  },
+  "HD": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 320367064031
+  },
+  "CSCO": {
+    "sector": "Communication Services",
+    "industry": "Communications",
+    "marketCap": 315675467937
+  },
+  "RY.TO": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 306902532096
+  },
+  "GE": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 296614963674
+  },
+  "MRK": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 295772266467
+  },
+  "AMAT": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 267581427954
+  },
+  "LRCX": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 264002670192
+  },
+  "RTX": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 254645388210
+  },
+  "PM": {
+    "sector": "Consumer Defensive",
+    "industry": "Tobacco",
+    "marketCap": 254579384736
+  },
+  "MS": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 251501175166
+  },
+  "GS": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 238259963959
+  },
+  "UNH": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 236372393704
+  },
+  "TMUS": {
+    "sector": "Communication Services",
+    "industry": "Telecommunication",
+    "marketCap": 232294709993
+  },
+  "GEV": {
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
+    "marketCap": 231479738368
+  },
+  "WFC": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 228645600000
+  },
+  "LIN": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 227582137848
+  },
+  "AZN.L": {
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General",
+    "marketCap": 221800103936
+  },
+  "IBM": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 221695039623
+  },
+  "MCD": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 217310932891
+  },
+  "VZ": {
+    "sector": "Communication Services",
+    "industry": "Telecommunication",
+    "marketCap": 216704610000
+  },
+  "INTC": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 215434342545
+  },
+  "AZN": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 214480175949
+  },
+  "TD.TO": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 212732592128
+  },
+  "PEP": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 209151972822
+  },
+  "HSBA.L": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 205678624768
+  },
+  "T": {
+    "sector": "Communication Services",
+    "industry": "Telecommunication",
+    "marketCap": 203716795557
+  },
+  "SHOP.TO": {
+    "sector": "Technology",
+    "industry": "Software - Application",
+    "marketCap": 203630919680
+  },
+  "AXP": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 200676687594
+  },
+  "SHEL.L": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Integrated",
+    "marketCap": 195462905856
+  },
+  "NEE": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 190433915950
+  },
+  "KLAC": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 189171081275
+  },
+  "AMGN": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 188010639489
+  },
+  "C": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 187841877088
+  },
+  "ABT": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 180701640222
+  },
+  "TMO": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 175845788162
+  },
+  "TXN": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 173288498187
+  },
+  "TJX": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 172255674344
+  },
+  "GILD": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 166660712396
+  },
+  "CRM": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 165503129456
+  },
+  "ENB.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream",
+    "marketCap": 165486608384
+  },
+  "ARM": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 164397603241
+  },
+  "DIS": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 163723868922
+  },
+  "COP": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 163548973095
+  },
+  "SCHW": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 161834147906
+  },
+  "ISRG": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 160753254335
+  },
+  "PFE": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 153756673610
+  },
+  "DE": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 153053583711
+  },
+  "BLK": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 152363280211
+  },
+  "APH": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 151955535595
+  },
+  "ANET": {
+    "sector": "Communication Services",
+    "industry": "Communications",
+    "marketCap": 151752078932
+  },
+  "ADI": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 150093494179
+  },
+  "BA": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 149624331282
+  },
+  "WELL": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 145006930000
+  },
+  "CNQ.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P",
+    "marketCap": 144951246848
+  },
+  "UBER": {
+    "sector": "Technology",
+    "industry": "Software - Application",
+    "marketCap": 142380466176
+  },
+  "UNP": {
+    "sector": "Industrials",
+    "industry": "Road & Rail",
+    "marketCap": 142093510513
+  },
+  "HON": {
+    "sector": "Industrials",
+    "industry": "Industrial Conglomerates",
+    "marketCap": 141831951923
+  },
+  "LMT": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 141692613142
+  },
+  "PDD": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 140077780830
+  },
+  "ETN": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 138619944188
+  },
+  "QCOM": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 135626363024
+  },
+  "AEM.TO": {
+    "sector": "Basic Materials",
+    "industry": "Gold",
+    "marketCap": 134375399424
+  },
+  "BX": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 132089856000
+  },
+  "BMO.TO": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 129750999040
+  },
+  "LOW": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 128988204562
+  },
+  "BKNG": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 128661556800
+  },
+  "APP": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 128570373583
+  },
+  "DHR": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 128359946751
+  },
+  "SYK": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 125307581955
+  },
+  "CB": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 124495054254
+  },
+  "PLD": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 123423875530
+  },
+  "BN.TO": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 121589260288
+  },
+  "SPGI": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 121384510633
+  },
+  "PANW": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 119968320468
+  },
+  "VRTX": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 119228410000
+  },
+  "BMY": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 119215174222
+  },
+  "CM.TO": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 118633111552
+  },
+  "ACN": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 118244702303
+  },
+  "GLW": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 117375888666
+  },
+  "PGR": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 116501619517
+  },
+  "BNS.TO": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 116324007936
+  },
+  "INTU": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 115166473666
+  },
+  "DELL": {
+    "sector": "Technology",
+    "industry": "Computer Hardware",
+    "marketCap": 113856700416
+  },
+  "PH": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 112135816509
+  },
+  "MDT": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 111877737414
+  },
+  "MO": {
+    "sector": "Consumer Defensive",
+    "industry": "Tobacco",
+    "marketCap": 111147788503
+  },
+  "NEM": {
+    "sector": "Basic Materials",
+    "industry": "Metals & Mining",
+    "marketCap": 111071963402
+  },
+  "SU.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Integrated",
+    "marketCap": 110069612544
+  },
+  "COF": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 109522148229
+  },
+  "IBKR": {
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
+    "marketCap": 109152215040
+  },
+  "CEG": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 109136473467
+  },
+  "SO": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 106957830485
+  },
+  "RIO.L": {
+    "sector": "Basic Materials",
+    "industry": "Other Industrial Metals & Mining",
+    "marketCap": 106404782080
+  },
+  "HCA": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 105516140284
+  },
+  "MCK": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 105358804389
+  },
+  "CME": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 105356989633
+  },
+  "NOW": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 103982859388
+  },
+  "BSX": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 102640357221
+  },
+  "CMCSA": {
+    "sector": "Communication Services",
+    "industry": "Telecommunication",
+    "marketCap": 101926974355
+  },
+  "DUK": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 101089443902
+  },
+  "SBUX": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 98902638562
+  },
+  "BAM.TO": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 98175459328
+  },
+  "ULVR.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Household & Personal Products",
+    "marketCap": 97874788352
+  },
+  "CP.TO": {
+    "sector": "Industrials",
+    "industry": "Railroads",
+    "marketCap": 97554259968
+  },
+  "NOC": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 96364785993
+  },
+  "WM": {
+    "sector": "Industrials",
+    "industry": "Commercial Services & Supplies",
+    "marketCap": 96207680000
+  },
+  "VRT": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
+    "marketCap": 96058998784
+  },
+  "ADBE": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 94922332790
+  },
+  "EQIX": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 94657817093
+  },
+  "BATS.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Tobacco",
+    "marketCap": 94280417280
+  },
+  "GD": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 93760345917
+  },
+  "CRWD": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 93730694203
+  },
+  "RR.L": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 92414631936
+  },
+  "WDC": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 92316640000
+  },
+  "TRP.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream",
+    "marketCap": 91829059584
+  },
+  "HWM": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 91374238289
+  },
+  "SNDK": {
+    "sector": "Technology",
+    "industry": "Computer Hardware",
+    "marketCap": 90897113088
+  },
+  "TT": {
+    "sector": "Industrials",
+    "industry": "Building",
+    "marketCap": 90796990191
+  },
+  "IMO.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Integrated",
+    "marketCap": 90056056832
+  },
+  "BP.L": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Integrated",
+    "marketCap": 89775931392
+  },
+  "WMB": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 89589440000
+  },
+  "ABX.TO": {
+    "sector": "Basic Materials",
+    "industry": "Gold",
+    "marketCap": 89514508288
+  },
+  "CVS": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 89156559991
+  },
+  "ICE": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 86700760001
+  },
+  "CNR.TO": {
+    "sector": "Industrials",
+    "industry": "Railroads",
+    "marketCap": 86097354752
+  },
+  "MAR": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 84143194058
+  },
+  "UPS": {
+    "sector": "Industrials",
+    "industry": "Logistics & Transportation",
+    "marketCap": 83254425770
+  },
+  "MRVL": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 82953583100
+  },
+  "STX": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 82883029434
+  },
+  "MRSH": {
+    "sector": "Financial Services",
+    "industry": "Insurance Brokers",
+    "marketCap": 82878021632
+  },
+  "PWR": {
+    "sector": "Industrials",
+    "industry": "Construction",
+    "marketCap": 82287688226
+  },
+  "FDX": {
+    "sector": "Industrials",
+    "industry": "Logistics & Transportation",
+    "marketCap": 82073561098
+  },
+  "KKR": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 81961574400
+  },
+  "GSK.L": {
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General",
+    "marketCap": 81937424384
+  },
+  "PNC": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 81638247449
+  },
+  "MELI": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 81091155590
+  },
+  "ADP": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 81032179028
+  },
+  "USB": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 81009698103
+  },
+  "FCX": {
+    "sector": "Basic Materials",
+    "industry": "Metals & Mining",
+    "marketCap": 80828224017
+  },
+  "JCI": {
+    "sector": "Industrials",
+    "industry": "Building",
+    "marketCap": 80358170897
+  },
+  "EOG": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 80237674138
+  },
+  "SLB": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 80000239648
+  },
+  "BK": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 78760797624
+  },
+  "AMT": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 78731044973
+  },
+  "WPM.TO": {
+    "sector": "Basic Materials",
+    "industry": "Gold",
+    "marketCap": 78389477376
+  },
+  "MFC.TO": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Life",
+    "marketCap": 78347010048
+  },
+  "SHW": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 78140724657
+  },
+  "REGN": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 77977904754
+  },
+  "NKE": {
+    "sector": "Consumer Cyclical",
+    "industry": "Textiles, Apparel & Luxury Goods",
+    "marketCap": 76047305367
+  },
+  "KMI": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 75710160993
+  },
+  "ORLY": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 75556066277
+  },
+  "PSX": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 75452081561
+  },
+  "MMM": {
+    "sector": "Industrials",
+    "industry": "Industrial Conglomerates",
+    "marketCap": 75339172620
+  },
+  "MCO": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 75324133084
+  },
+  "ABNB": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 74792682344
+  },
+  "MDLZ": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 74693144383
+  },
+  "ITW": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 74655329767
+  },
+  "MPC": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 74247988648
+  },
+  "CDNS": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 74098361246
+  },
+  "L.TO": {
+    "sector": "Consumer Defensive",
+    "industry": "Grocery Stores",
+    "marketCap": 73937362944
+  },
+  "CSX": {
+    "sector": "Industrials",
+    "industry": "Road & Rail",
+    "marketCap": 73768615353
+  },
+  "ECL": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 73698355644
+  },
+  "SNPS": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 72883606617
+  },
+  "MSI": {
+    "sector": "Communication Services",
+    "industry": "Communications",
+    "marketCap": 72611612828
+  },
+  "CMI": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 72293698591
+  },
+  "ATD.TO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail",
+    "marketCap": 71857545216
+  },
+  "RCL": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 70824314258
+  },
+  "EMR": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 70512677335
+  },
+  "AEP": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 70366085944
+  },
+  "MNST": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 70269191390
+  },
+  "CVE.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Integrated",
+    "marketCap": 70222282752
+  },
+  "NA.TO": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 69275115520
+  },
+  "CI": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 69033867387
+  },
+  "VLO": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 68952460000
+  },
+  "ROST": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 68470061655
+  },
+  "HLT": {
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
+    "marketCap": 68345237504
+  },
+  "CRH": {
+    "sector": "Basic Materials",
+    "industry": "Building Materials",
+    "marketCap": 68036841472
+  },
+  "CL": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 67562478207
+  },
+  "WBD": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 67305289999
+  },
+  "AON": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 67203064610
+  },
+  "RSG": {
+    "sector": "Industrials",
+    "industry": "Commercial Services & Supplies",
+    "marketCap": 66649376292
+  },
+  "CVNA": {
+    "sector": "Consumer Cyclical",
+    "industry": "Auto & Truck Dealerships",
+    "marketCap": 66583408640
+  },
+  "CTAS": {
+    "sector": "Industrials",
+    "industry": "Commercial Services & Supplies",
+    "marketCap": 66062882095
+  },
+  "GM": {
+    "sector": "Consumer Cyclical",
+    "industry": "Automobiles",
+    "marketCap": 65971575682
+  },
+  "APD": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 65057865790
+  },
+  "OXY": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 64422935025
+  },
+  "TDG": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 64381554061
+  },
+  "LHX": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 64064256637
+  },
+  "DASH": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 63686906003
+  },
+  "NSC": {
+    "sector": "Industrials",
+    "industry": "Road & Rail",
+    "marketCap": 63610029132
+  },
+  "ELV": {
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans",
+    "marketCap": 63207612416
+  },
+  "GLEN.L": {
+    "sector": "Basic Materials",
+    "industry": "Other Industrial Metals & Mining",
+    "marketCap": 63075725312
+  },
+  "APO": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 62929416192
+  },
+  "CCO.TO": {
+    "sector": "Energy",
+    "industry": "Uranium",
+    "marketCap": 62851764224
+  },
+  "SRE": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 62636881896
+  },
+  "FNV.TO": {
+    "sector": "Basic Materials",
+    "industry": "Gold",
+    "marketCap": 62514974720
+  },
+  "BKR": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 62476312851
+  },
+  "TRV": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 61686186705
+  },
+  "NG.L": {
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric",
+    "marketCap": 61470236672
+  },
+  "COR": {
+    "sector": "Healthcare",
+    "industry": "Medical Distribution",
+    "marketCap": 60781117440
+  },
+  "BA.L": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 60253945856
+  },
+  "DLR": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 60046799538
+  },
+  "HOOD": {
+    "sector": "Financial Services",
+    "industry": "Capital Markets",
+    "marketCap": 59438358528
+  },
+  "TEL": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 59314807632
+  },
+  "PCAR": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 59294595576
+  },
+  "OKE": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 59174469717
+  },
+  "SPG": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 59075053256
+  },
+  "FTNT": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 57862023395
+  },
+  "GWO.TO": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Life",
+    "marketCap": 57577058304
+  },
+  "CIEN": {
+    "sector": "Technology",
+    "industry": "Communication Equipment",
+    "marketCap": 56813137920
+  },
+  "FANG": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 56778378658
+  },
+  "O": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 56198170410
+  },
+  "TFC": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 55625467465
+  },
+  "WCN.TO": {
+    "sector": "Industrials",
+    "industry": "Waste Management",
+    "marketCap": 55596302336
+  },
+  "TRI.TO": {
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
+    "marketCap": 55266578432
+  },
+  "CTVA": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 55140243916
+  },
+  "AFL": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 54946872262
+  },
+  "AZO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 54648833164
+  },
+  "TGT": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 54270214003
+  },
+  "TRGP": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 53787388284
+  },
+  "D": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 53500471379
+  },
+  "AJG": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 53245412346
+  },
+  "LLOY.L": {
+    "sector": "Financial Services",
+    "industry": "Banks - Regional",
+    "marketCap": 52961304576
+  },
+  "VST": {
+    "sector": "Utilities",
+    "industry": "Utilities - Independent Power Producers",
+    "marketCap": 52637638656
+  },
+  "ALL": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 52610514736
+  },
+  "BARC.L": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 52588134400
+  },
+  "MPWR": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 51721746643
+  },
+  "FAST": {
+    "sector": "Industrials",
+    "industry": "Trading Companies & Distributors",
+    "marketCap": 51617366377
+  },
+  "CRH.L": {
+    "sector": "Basic Materials",
+    "industry": "Building Materials",
+    "marketCap": 51174023168
+  },
+  "XEL": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 51101750000
+  },
+  "NTR.TO": {
+    "sector": "Basic Materials",
+    "industry": "Agricultural Inputs",
+    "marketCap": 50770092032
+  },
+  "EA": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 50553755529
+  },
+  "DFS": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 50343260000
+  },
+  "LITE": {
+    "sector": "Technology",
+    "industry": "Communication Equipment",
+    "marketCap": 50174918656
+  },
+  "GWW": {
+    "sector": "Industrials",
+    "industry": "Trading Companies & Distributors",
+    "marketCap": 50076601547
+  },
+  "CSU.TO": {
+    "sector": "Technology",
+    "industry": "Software - Application",
+    "marketCap": 49988485120
+  },
+  "ETR": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 49774523656
+  },
+  "FFH.TO": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty",
+    "marketCap": 49524850688
+  },
+  "EXC": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 49426170933
+  },
+  "ZTS": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 48806410000
+  },
+  "CAH": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 48611580532
+  },
+  "ADSK": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 48496240369
+  },
+  "NXPI": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 48431109374
+  },
+  "FIX": {
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
+    "marketCap": 48208646144
+  },
+  "AME": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 47911190309
+  },
+  "KEYS": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 47859489578
+  },
+  "K.TO": {
+    "sector": "Basic Materials",
+    "industry": "Gold",
+    "marketCap": 47765753856
+  },
+  "SLF.TO": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Diversified",
+    "marketCap": 47235153920
+  },
+  "PSA": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 47037486576
+  },
+  "URI": {
+    "sector": "Industrials",
+    "industry": "Trading Companies & Distributors",
+    "marketCap": 46681630732
+  },
+  "KR": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 46337217705
+  },
+  "NDAQ": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 46316804032
+  },
+  "TER": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 46279504985
+  },
+  "EW": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 46080670175
+  },
+  "COHR": {
+    "sector": "Technology",
+    "industry": "Scientific & Technical Instruments",
+    "marketCap": 45648080896
+  },
+  "DOL.TO": {
+    "sector": "Consumer Defensive",
+    "industry": "Discount Stores",
+    "marketCap": 45480579072
+  },
+  "F": {
+    "sector": "Consumer Cyclical",
+    "industry": "Automobiles",
+    "marketCap": 45360336414
+  },
+  "CARR": {
+    "sector": "Industrials",
+    "industry": "Building",
+    "marketCap": 45322254387
+  },
+  "QSR.TO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Restaurants",
+    "marketCap": 45235060736
+  },
+  "CLS.TO": {
+    "sector": "Technology",
+    "industry": "Electronic Components",
+    "marketCap": 44710133760
+  },
+  "IDXX": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 44455687321
+  },
+  "YUM": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 44339390000
+  },
+  "GRMN": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 44301390349
+  },
+  "MET": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 44144047274
+  },
+  "BDX": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 43995460172
+  },
+  "IFC.TO": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty",
+    "marketCap": 43786678272
+  },
+  "COIN": {
+    "sector": "Financial Services",
+    "industry": "Financial Data & Stock Exchanges",
+    "marketCap": 43452624896
+  },
+  "HSY": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 43321191949
+  },
+  "NWG.L": {
+    "sector": "Financial Services",
+    "industry": "Banks - Regional",
+    "marketCap": 43044257792
+  },
+  "REL.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
+    "marketCap": 42876370944
+  },
+  "DAL": {
+    "sector": "Industrials",
+    "industry": "Airlines",
+    "marketCap": 42342462129
+  },
+  "EQT": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 42169708194
+  },
+  "POW.TO": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Life",
+    "marketCap": 42023174144
+  },
+  "VTR": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 41112990000
+  },
+  "CCEP": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 41063364791
+  },
+  "LSEG.L": {
+    "sector": "Financial Services",
+    "industry": "Financial Data & Stock Exchanges",
+    "marketCap": 41030467584
+  },
+  "DDOG": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 40386805000
+  },
+  "WAB": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 40371650000
+  },
+  "ED": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 40350281343
+  },
+  "PEG": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 40253297222
+  },
+  "CMG": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 40192770678
+  },
+  "FITB": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 40167016776
+  },
+  "PYPL": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 40131768446
+  },
+  "AMP": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 39827898820
+  },
+  "ROK": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 39493803553
+  },
+  "EBAY": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 39415040134
+  },
+  "ODFL": {
+    "sector": "Industrials",
+    "industry": "Road & Rail",
+    "marketCap": 39254881372
+  },
+  "FTS.TO": {
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric",
+    "marketCap": 39216947200
+  },
+  "SYY": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 39176528031
+  },
+  "AIG": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 39142027790
+  },
+  "CBRE": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 38893043977
+  },
+  "DHI": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 38875301120
+  },
+  "MSCI": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 38456310528
+  },
+  "WEC": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 38201110000
+  },
+  "PCG": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 37739112685
+  },
+  "WN.TO": {
+    "sector": "Consumer Defensive",
+    "industry": "Grocery Stores",
+    "marketCap": 37253722112
+  },
+  "NUE": {
+    "sector": "Basic Materials",
+    "industry": "Metals & Mining",
+    "marketCap": 37211537201
+  },
+  "PPL.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream",
+    "marketCap": 36948852736
+  },
+  "HIG": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Diversified",
+    "marketCap": 36904087552
+  },
+  "KDP": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 35637810210
+  },
+  "ROP": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 35450294809
+  },
+  "TPL": {
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P",
+    "marketCap": 35280838656
+  },
+  "ARES": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 35170111488
+  },
+  "TTWO": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 35125930488
+  },
+  "ADM": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 34757210018
+  },
+  "LVS": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 34731068536
+  },
+  "VMC": {
+    "sector": "Industrials",
+    "industry": "Construction",
+    "marketCap": 34658650000
+  },
+  "CPG.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Restaurants",
+    "marketCap": 34652143616
+  },
+  "AXON": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 34566176768
+  },
+  "MLM": {
+    "sector": "Industrials",
+    "industry": "Construction",
+    "marketCap": 34434558702
+  },
+  "WDAY": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 34204129999
+  },
+  "STT": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 34149781339
+  },
+  "STAN.L": {
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified",
+    "marketCap": 34070376448
+  },
+  "H.TO": {
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric",
+    "marketCap": 34049613824
+  },
+  "XYZ": {
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
+    "marketCap": 34017087488
+  },
+  "CCI": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 34000412316
+  },
+  "LYV": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 33858376991
+  },
+  "HAL": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 33853707162
+  },
+  "FERG.L": {
+    "sector": "Industrials",
+    "industry": "Industrial Distribution",
+    "marketCap": 33815670784
+  },
+  "KVUE": {
+    "sector": "Consumer Defensive",
+    "industry": "Household & Personal Products",
+    "marketCap": 33581146112
+  },
+  "MCHP": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 33550395500
+  },
+  "CCL": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 33509477514
+  },
+  "ACGL": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Diversified",
+    "marketCap": 33283006464
+  },
+  "SATS": {
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "marketCap": 33281388544
+  },
+  "RKT.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Household & Personal Products",
+    "marketCap": 33271072768
+  },
+  "TECK-B.TO": {
+    "sector": "Basic Materials",
+    "industry": "Other Industrial Metals & Mining",
+    "marketCap": 33029453824
+  },
+  "PAYX": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 32910133404
+  },
+  "ANSS": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 32907010000
+  },
+  "EME": {
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
+    "marketCap": 32808454144
+  },
+  "AAL.L": {
+    "sector": "Basic Materials",
+    "industry": "Other Industrial Metals & Mining",
+    "marketCap": 32798246912
+  },
+  "HLN.L": {
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
+    "marketCap": 32756381696
+  },
+  "KMB": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 32747459855
+  },
+  "BCE.TO": {
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "marketCap": 32694355968
+  },
+  "PRU": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 32464918856
+  },
+  "DVN": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 32283399040
+  },
+  "ANTO.L": {
+    "sector": "Basic Materials",
+    "industry": "Copper",
+    "marketCap": 32198080512
+  },
+  "RMD": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 32117718118
+  },
+  "HPE": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 31764887388
+  },
+  "NRG": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 31646716722
+  },
+  "GEHC": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 31551558114
+  },
+  "CPRT": {
+    "sector": "Industrials",
+    "industry": "Commercial Services & Supplies",
+    "marketCap": 31240088623
+  },
+  "DGE.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages - Wineries & Distilleries",
+    "marketCap": 31183917056
+  },
+  "A": {
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research",
+    "marketCap": 31180242944
+  },
+  "CHTR": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 31146706431
+  },
+  "IR": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 31114050778
+  },
+  "HBAN": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 30609269370
+  },
+  "VICI": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 30380670000
+  },
+  "ATO": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 30306759962
+  },
+  "AEE": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 30052871502
+  },
+  "DTE": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 30021410809
+  },
+  "MTB": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 29938618432
+  },
+  "SSE.L": {
+    "sector": "Utilities",
+    "industry": "Utilities - Diversified",
+    "marketCap": 29917231104
+  },
+  "IRM": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 29645645630
+  },
+  "OTIS": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 29523345286
+  },
+  "DOW": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 29289741137
+  },
+  "TSCO.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Grocery Stores",
+    "marketCap": 29209798656
+  },
+  "XYL": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 29147790000
+  },
+  "K": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 29031500000
+  },
+  "FE": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 28913980347
+  },
+  "RCI-B.TO": {
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "marketCap": 28880443392
+  },
+  "FISV": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 28824509172
+  },
+  "WSP.TO": {
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
+    "marketCap": 28679542784
+  },
+  "UAL": {
+    "sector": "Industrials",
+    "industry": "Airlines",
+    "marketCap": 28604187091
+  },
+  "CBOE": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 28574281359
+  },
+  "CTSH": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 28565687606
+  },
+  "PPL": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 28286702603
+  },
+  "WAT": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 28113050000
+  },
+  "TPR": {
+    "sector": "Consumer Cyclical",
+    "industry": "Textiles, Apparel & Luxury Goods",
+    "marketCap": 28110132774
+  },
+  "JBL": {
+    "sector": "Technology",
+    "industry": "Electronic Components",
+    "marketCap": 27891476480
+  },
+  "DOV": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 27863445190
+  },
+  "RJF": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 27852904326
+  },
+  "IQV": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 27805343497
+  },
+  "VRSK": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 27756670000
+  },
+  "T.TO": {
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "marketCap": 27676528640
+  },
+  "EXPE": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 27669497216
+  },
+  "CNP": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 27668698843
+  },
+  "CTRA": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 27569192626
+  },
+  "EXR": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 27551355039
+  },
+  "TDY": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 27473406090
+  },
+  "WTW": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 27374820000
+  },
+  "EXE": {
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P",
+    "marketCap": 27285202944
+  },
+  "EIX": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 27050800679
+  },
+  "BIIB": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 26980087748
+  },
+  "AWK": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 26716258767
+  },
+  "TOU.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P",
+    "marketCap": 26472798208
+  },
+  "STZ": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 26254002966
+  },
+  "KHC": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 26089733665
+  },
+  "PRU.L": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Life",
+    "marketCap": 26023184384
+  },
+  "FM.TO": {
+    "sector": "Basic Materials",
+    "industry": "Copper",
+    "marketCap": 25947070464
+  },
+  "LYB": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 25918575532
+  },
+  "DG": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 25801716185
+  },
+  "WRB": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 25749990000
+  },
+  "HUBB": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts",
+    "marketCap": 25569134592
+  },
+  "VOD.L": {
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "marketCap": 25477890048
+  },
+  "ES": {
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric",
+    "marketCap": 25379813376
+  },
+  "ROL": {
+    "sector": "Industrials",
+    "industry": "Commercial Services & Supplies",
+    "marketCap": 25238098734
+  },
+  "NTRS": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 25084892502
+  },
+  "MTD": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 25041521781
+  },
+  "STLD": {
+    "sector": "Basic Materials",
+    "industry": "Steel",
+    "marketCap": 24961062912
+  },
+  "BG": {
+    "sector": "Consumer Defensive",
+    "industry": "Farm Products",
+    "marketCap": 24908490752
+  },
+  "ZS": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 24723180000
+  },
+  "CFG": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 24556147914
+  },
+  "EL": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 24318908902
+  },
+  "FIS": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 24120388783
+  },
+  "FICO": {
+    "sector": "Technology",
+    "industry": "Software - Application",
+    "marketCap": 23984500736
+  },
+  "IMB.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Tobacco",
+    "marketCap": 23959683072
+  },
+  "DXCM": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 23957834816
+  },
+  "CINF": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 23915309232
+  },
+  "GFS": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 23892555964
+  },
+  "FOX": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 23765757867
+  },
+  "FOXA": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 23765757867
+  },
+  "III.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 23645544448
+  },
+  "TSCO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 23617383340
+  },
+  "Q": {
+    "sector": "Technology",
+    "industry": "Semiconductor Equipment & Materials",
+    "marketCap": 23431481344
+  },
+  "FRES.L": {
+    "sector": "Basic Materials",
+    "industry": "Other Precious Metals & Mining",
+    "marketCap": 23403739136
+  },
+  "CMS": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 23352337230
+  },
+  "PPG": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 23203221340
+  },
+  "ON": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 22991098007
+  },
+  "OMC": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 22909027449
+  },
+  "AVB": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 22891039623
+  },
+  "SYF": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 22718894091
+  },
+  "ULTA": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 22639791072
+  },
+  "EXPN.L": {
+    "sector": "Industrials",
+    "industry": "Consulting Services",
+    "marketCap": 22542931968
+  },
+  "EQR": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 22467826610
+  },
+  "CHD": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 22412576849
+  },
+  "LEN": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 22224537379
+  },
+  "DRI": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 22163154017
+  },
+  "TSN": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 22057390636
+  },
+  "AHT.L": {
+    "sector": "Industrials",
+    "industry": "Rental & Leasing Services",
+    "marketCap": 22026424320
+  },
+  "PHM": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 22025187055
+  },
+  "NI": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 21998167876
+  },
+  "VRSN": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 21879620000
+  },
+  "LH": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 21770080799
+  },
+  "RF": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 21725829115
+  },
+  "BRO": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 21592843185
+  },
+  "EMA.TO": {
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric",
+    "marketCap": 21530167296
+  },
+  "STE": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 21517658647
+  },
+  "DGX": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 21479963121
+  },
+  "L": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 21441862380
+  },
+  "GIB-A.TO": {
+    "sector": "Technology",
+    "industry": "Information Technology Services",
+    "marketCap": 21352622080
+  },
+  "MG.TO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Parts",
+    "marketCap": 21276977152
+  },
+  "KEY": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 21193639846
+  },
+  "ALB": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 21147683875
+  },
+  "DLTR": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 21110908875
+  },
+  "VLTO": {
+    "sector": "Industrials",
+    "industry": "Pollution & Treatment Controls",
+    "marketCap": 21074120704
+  },
+  "CF": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 20968110545
+  },
+  "WSM": {
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail",
+    "marketCap": 20862322688
+  },
+  "EFX": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 20668398272
+  },
+  "SW": {
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
+    "marketCap": 20660848640
+  },
+  "FSLR": {
+    "sector": "Technology",
+    "industry": "Solar",
+    "marketCap": 20420208640
+  },
+  "HUM": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 20300008336
+  },
+  "NTAP": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 20194793960
+  },
+  "MRU.TO": {
+    "sector": "Consumer Defensive",
+    "industry": "Grocery Stores",
+    "marketCap": 20061865984
+  },
+  "CPAY": {
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
+    "marketCap": 19933149184
+  },
+  "BT-A.L": {
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "marketCap": 19890694144
+  },
+  "RL": {
+    "sector": "Consumer Cyclical",
+    "industry": "Textiles, Apparel & Luxury Goods",
+    "marketCap": 19851185590
+  },
+  "LDOS": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 19657854516
+  },
+  "MRNA": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 19573197673
+  },
+  "GIS": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 19452680474
+  },
+  "JBHT": {
+    "sector": "Industrials",
+    "industry": "Road & Rail",
+    "marketCap": 19449653726
+  },
+  "IHG.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
+    "marketCap": 19441614848
+  },
+  "GFL.TO": {
+    "sector": "Industrials",
+    "industry": "Waste Management",
+    "marketCap": 19374499840
+  },
+  "TROW": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 19288549296
+  },
+  "CHRW": {
+    "sector": "Industrials",
+    "industry": "Logistics & Transportation",
+    "marketCap": 19165568625
+  },
+  "PKG": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaging",
+    "marketCap": 18935543455
+  },
+  "MDB": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 18927826052
+  },
+  "PFG": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 18866826401
+  },
+  "EXPD": {
+    "sector": "Industrials",
+    "industry": "Logistics & Transportation",
+    "marketCap": 18853389801
+  },
+  "IP": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaging",
+    "marketCap": 18769691780
+  },
+  "SNA": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 18638886701
+  },
+  "EVRG": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 18618267790
+  },
+  "DD": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 18507894026
+  },
+  "GPN": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 18445496397
+  },
+  "BR": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 18378583439
+  },
+  "LUV": {
+    "sector": "Industrials",
+    "industry": "Airlines",
+    "marketCap": 18355639657
+  },
+  "ZBH": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 18234770000
+  },
+  "IFF": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 18141456103
+  },
+  "LNT": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 18133572491
+  },
+  "AV.L": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Diversified",
+    "marketCap": 18083637248
+  },
+  "NVR": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 18021876245
+  },
+  "ILMN": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 17991742502
+  },
+  "INCY": {
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "marketCap": 17971008013
+  },
+  "AMCR": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaging",
+    "marketCap": 17844203869
+  },
+  "HPQ": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 17778855041
+  },
+  "LULU": {
+    "sector": "Consumer Cyclical",
+    "industry": "Textiles, Apparel & Luxury Goods",
+    "marketCap": 17606235079
+  },
+  "SBAC": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 17578890988
+  },
+  "TEAM": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 17235909158
+  },
+  "SAP.TO": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaged Foods",
+    "marketCap": 17223305216
+  },
+  "WST": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 16972340000
+  },
+  "WY": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 16906800000
+  },
+  "HOLX": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 16892942397
+  },
+  "CSGP": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 16695179409
+  },
+  "FTV": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 16599768043
+  },
+  "AKAM": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 16589688285
+  },
+  "PTC": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 16375054985
+  },
+  "IAG.L": {
+    "sector": "Industrials",
+    "industry": "Airlines",
+    "marketCap": 16157560832
+  },
+  "MRO": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 15971160000
+  },
+  "FFIV": {
+    "sector": "Communication Services",
+    "industry": "Communications",
+    "marketCap": 15937303944
+  },
+  "BALL": {
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
+    "marketCap": 15774892032
+  },
+  "CNC": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 15736672518
+  },
+  "ESS": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 15713326888
+  },
+  "APA": {
+    "sector": "Energy",
+    "industry": "Energy",
+    "marketCap": 15680832245
+  },
+  "VTRS": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 15555320000
+  },
+  "CCH.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages - Non-Alcoholic",
+    "marketCap": 15420809216
+  },
+  "LII": {
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
+    "marketCap": 15357320192
+  },
+  "CDW": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 15243172723
+  },
+  "TXT": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 15228429996
+  },
+  "INVH": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 15131055510
+  },
+  "HII": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 15033810944
+  },
+  "KIM": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 15004723792
+  },
+  "CCL-B.TO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Packaging & Containers",
+    "marketCap": 14971988992
+  },
+  "TKO": {
+    "sector": "Communication Services",
+    "industry": "Entertainment",
+    "marketCap": 14932110336
+  },
+  "J": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 14785366643
+  },
+  "TRMB": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 14730534440
+  },
+  "PODD": {
+    "sector": "Healthcare",
+    "industry": "Medical Devices",
+    "marketCap": 14657823744
+  },
+  "NDSN": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 14515449057
+  },
+  "GPC": {
+    "sector": "Industrials",
+    "industry": "Distributors",
+    "marketCap": 14453074464
+  },
+  "TYL": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 14358393468
+  },
+  "MAA": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 14279460243
+  },
+  "APTV": {
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Components",
+    "marketCap": 14262652999
+  },
+  "MKC": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 14250142134
+  },
+  "NXT.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Retail",
+    "marketCap": 14199285760
+  },
+  "NWS": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 14071012322
+  },
+  "NWSA": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 14071012322
+  },
+  "HLMA.L": {
+    "sector": "Industrials",
+    "industry": "Conglomerates",
+    "marketCap": 14050501632
+  },
+  "GIL.TO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Manufacturing",
+    "marketCap": 13993863168
+  },
+  "IAG.TO": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Diversified",
+    "marketCap": 13948692480
+  },
+  "IEX": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 13869586272
+  },
+  "PNR": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 13861975906
+  },
+  "DECK": {
+    "sector": "Consumer Cyclical",
+    "industry": "Footwear & Accessories",
+    "marketCap": 13707301888
+  },
+  "COO": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 13613131523
+  },
+  "REG": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 13602761011
+  },
+  "PEAK": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 13546259235
+  },
+  "LGEN.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 13539999744
+  },
+  "STN.TO": {
+    "sector": "Industrials",
+    "industry": "Engineering & Construction",
+    "marketCap": 13514657792
+  },
+  "CPT": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 13489028691
+  },
+  "JNPR": {
+    "sector": "Communication Services",
+    "industry": "Communications",
+    "marketCap": 13358580000
+  },
+  "HST": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 13357118486
+  },
+  "FLTR.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Gambling",
+    "marketCap": 13326742528
+  },
+  "WRK": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaging",
+    "marketCap": 13297210000
+  },
+  "BBY": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 13169910056
+  },
+  "SMCI": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 13159797474
+  },
+  "ABF.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaged Foods",
+    "marketCap": 12940491776
+  },
+  "AVY": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaging",
+    "marketCap": 12898580649
+  },
+  "AAF.L": {
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "marketCap": 12871833600
+  },
+  "EG": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Reinsurance",
+    "marketCap": 12841240576
+  },
+  "SMT.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 12774011904
+  },
+  "HRL": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 12695056237
+  },
+  "ERIE": {
+    "sector": "Financial Services",
+    "industry": "Insurance Brokers",
+    "marketCap": 12595060736
+  },
+  "BF.B": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 12516634039
+  },
+  "HAS": {
+    "sector": "Consumer Cyclical",
+    "industry": "Leisure Products",
+    "marketCap": 12463352023
+  },
+  "KEY.TO": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream",
+    "marketCap": 12459228160
+  },
+  "ALLE": {
+    "sector": "Industrials",
+    "industry": "Building",
+    "marketCap": 12448021998
+  },
+  "CLX": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 12337845986
+  },
+  "MAS": {
+    "sector": "Industrials",
+    "industry": "Building",
+    "marketCap": 12114620443
+  },
+  "PNW": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 12053057818
+  },
+  "TFII.TO": {
+    "sector": "Industrials",
+    "industry": "Trucking",
+    "marketCap": 11954781184
+  },
+  "ALGN": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 11859921745
+  },
+  "BEN": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 11847368057
+  },
+  "DPZ": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 11707563815
+  },
+  "CAE.TO": {
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense",
+    "marketCap": 11539936256
+  },
+  "DOC": {
+    "sector": "Real Estate",
+    "industry": "REIT - Healthcare Facilities",
+    "marketCap": 11534307328
+  },
+  "CTLT": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 11522360000
+  },
+  "RTO.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
+    "marketCap": 11514313728
+  },
+  "GNRC": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 11406580773
+  },
+  "CMA": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 11331505809
+  },
+  "GEN": {
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
+    "marketCap": 11310573568
+  },
+  "UHS": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 11240085292
+  },
+  "BWA": {
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Components",
+    "marketCap": 11230324782
+  },
+  "UDR": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 11194446592
+  },
+  "JKHY": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 11063978670
+  },
+  "IT": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 10949385197
+  },
+  "SOLV": {
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies",
+    "marketCap": 10888421376
+  },
+  "GDDY": {
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
+    "marketCap": 10807273472
+  },
+  "SWK": {
+    "sector": "Industrials",
+    "industry": "Machinery",
+    "marketCap": 10672568603
+  },
+  "GL": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 10624662967
+  },
+  "AIZ": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 10599966711
+  },
+  "WYNN": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 10473170000
+  },
+  "WBA": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 10369420000
+  },
+  "DVA": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 10315924109
+  },
+  "EDV.L": {
+    "sector": "Basic Materials",
+    "industry": "Gold",
+    "marketCap": 10306037760
+  },
+  "IVZ": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 10293231559
+  },
+  "SJM": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 10157186353
+  },
+  "TTD": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 10128799139
+  },
+  "SN.L": {
+    "sector": "Healthcare",
+    "industry": "Medical Devices",
+    "marketCap": 10128442368
+  },
+  "AES": {
+    "sector": "Utilities",
+    "industry": "Utilities",
+    "marketCap": 9975824747
+  },
+  "ZBRA": {
+    "sector": "Industrials",
+    "industry": "Electrical Equipment",
+    "marketCap": 9972140000
+  },
+  "PSKY": {
+    "sector": "Communication Services",
+    "industry": "Entertainment",
+    "marketCap": 9772204032
+  },
+  "CTC-A.TO": {
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail",
+    "marketCap": 9588334592
+  },
+  "INF.L": {
+    "sector": "Communication Services",
+    "industry": "Publishing",
+    "marketCap": 9475261440
+  },
+  "RVTY": {
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research",
+    "marketCap": 9380299776
+  },
+  "MGM": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 9291691833
+  },
+  "ADM.L": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty",
+    "marketCap": 9146401792
+  },
+  "CNA.L": {
+    "sector": "Utilities",
+    "industry": "Utilities - Independent Power Producers",
+    "marketCap": 9115062272
+  },
+  "SVT.L": {
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Water",
+    "marketCap": 9017590784
+  },
+  "FRT": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 9001465287
+  },
+  "SDR.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 8927113216
+  },
+  "AOS": {
+    "sector": "Industrials",
+    "industry": "Building",
+    "marketCap": 8908636523
+  },
+  "BLDR": {
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment",
+    "marketCap": 8895966208
+  },
+  "IPG": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 8882030000
+  },
+  "UU.L": {
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Water",
+    "marketCap": 8789541888
+  },
+  "SGRO.L": {
+    "sector": "Real Estate",
+    "industry": "REIT - Industrial",
+    "marketCap": 8646428672
+  },
+  "TAP": {
+    "sector": "Consumer Defensive",
+    "industry": "Beverages",
+    "marketCap": 8619250487
+  },
+  "FSV.TO": {
+    "sector": "Real Estate",
+    "industry": "Real Estate Services",
+    "marketCap": 8577897472
+  },
+  "BXP": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 8432723988
+  },
+  "NCLH": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 8423039310
+  },
+  "ARE": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 8320149705
+  },
+  "HSIC": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 8270166720
+  },
+  "BAX": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 8216406156
+  },
+  "EMN": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 8123728680
+  },
+  "SWKS": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 8067544232
+  },
+  "TECH": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 7971295385
+  },
+  "MOS": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 7937631226
+  },
+  "ZION": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 7852900000
+  },
+  "DPLM.L": {
+    "sector": "Industrials",
+    "industry": "Industrial Distribution",
+    "marketCap": 7837843456
+  },
+  "CRL": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 7835097241
+  },
+  "PHNX.L": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Life",
+    "marketCap": 7680948224
+  },
+  "OTEX.TO": {
+    "sector": "Technology",
+    "industry": "Software - Application",
+    "marketCap": 7547731968
+  },
+  "SGE.L": {
+    "sector": "Technology",
+    "industry": "Software - Application",
+    "marketCap": 7507467264
+  },
+  "CAG": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 7472131126
+  },
+  "BEZ.L": {
+    "sector": "Financial Services",
+    "industry": "Insurance - Specialty",
+    "marketCap": 7468826112
+  },
+  "LKQ": {
+    "sector": "Industrials",
+    "industry": "Distributors",
+    "marketCap": 7444759343
+  },
+  "SBRY.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Grocery Stores",
+    "marketCap": 7402469888
+  },
+  "FDS": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 7357896083
+  },
+  "EPAM": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 7319182063
+  },
+  "POOL": {
+    "sector": "Industrials",
+    "industry": "Distributors",
+    "marketCap": 7311210885
+  },
+  "QRVO": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 7170784468
+  },
+  "BIO": {
+    "sector": "Healthcare",
+    "industry": "Life Sciences Tools & Services",
+    "marketCap": 7161378443
+  },
+  "WEIR.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
+    "marketCap": 7149715968
+  },
+  "SMIN.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
+    "marketCap": 7079709184
+  },
+  "BNZL.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Distribution",
+    "marketCap": 6974349824
+  },
+  "CE": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 6947958599
+  },
+  "MTCH": {
+    "sector": "Communication Services",
+    "industry": "Media",
+    "marketCap": 6918846877
+  },
+  "MOH": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 6902545151
+  },
+  "LUMN": {
+    "sector": "Communication Services",
+    "industry": "Telecommunication",
+    "marketCap": 6832545656
+  },
+  "PSH.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 6753433088
+  },
+  "AQN.TO": {
+    "sector": "Utilities",
+    "industry": "Utilities - Diversified",
+    "marketCap": 6587688960
+  },
+  "CPB": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 6556242100
+  },
+  "MNG.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 6497835008
+  },
+  "LNC": {
+    "sector": "Financial Services",
+    "industry": "Insurance",
+    "marketCap": 6497290488
+  },
+  "PAYC": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 6353442779
+  },
+  "IMI.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
+    "marketCap": 6324484608
+  },
+  "VFC": {
+    "sector": "Consumer Cyclical",
+    "industry": "Textiles, Apparel & Luxury Goods",
+    "marketCap": 6244560000
+  },
+  "SEE": {
+    "sector": "Consumer Defensive",
+    "industry": "Packaging",
+    "marketCap": 6189692963
+  },
+  "MRO.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
+    "marketCap": 6148598784
+  },
+  "STJ.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 6005173760
+  },
+  "MHK": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 5916174138
+  },
+  "PSON.L": {
+    "sector": "Communication Services",
+    "industry": "Publishing",
+    "marketCap": 5900770816
+  },
+  "MKTX": {
+    "sector": "Financial Services",
+    "industry": "Financial Services",
+    "marketCap": 5834181682
+  },
+  "KMX": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 5793811002
+  },
+  "LW": {
+    "sector": "Consumer Defensive",
+    "industry": "Food Products",
+    "marketCap": 5777404019
+  },
+  "FCIT.L": {
+    "sector": "",
+    "industry": "",
+    "marketCap": 5670387200
+  },
+  "ITRK.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Business Services",
+    "marketCap": 5557508096
+  },
+  "CZR": {
+    "sector": "Consumer Cyclical",
+    "industry": "Hotels, Restaurants & Leisure",
+    "marketCap": 5261018023
+  },
+  "TFX": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 5136989160
+  },
+  "ENPH": {
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "marketCap": 4960779232
+  },
+  "VNO": {
+    "sector": "Real Estate",
+    "industry": "Real Estate",
+    "marketCap": 4947790000
+  },
+  "SPX.L": {
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery",
+    "marketCap": 4864063488
+  },
+  "KGF.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Home Improvement Retail",
+    "marketCap": 4614061568
+  },
+  "ICG.L": {
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "marketCap": 4317052928
+  },
+  "ALK": {
+    "sector": "Industrials",
+    "industry": "Airlines",
+    "marketCap": 4145435151
+  },
+  "LAND.L": {
+    "sector": "Real Estate",
+    "industry": "REIT - Diversified",
+    "marketCap": 3963623936
+  },
+  "CRDA.L": {
+    "sector": "Basic Materials",
+    "industry": "Specialty Chemicals",
+    "marketCap": 3957399552
+  },
+  "DCC.L": {
+    "sector": "Energy",
+    "industry": "Oil & Gas Refining & Marketing",
+    "marketCap": 3914086144
+  },
+  "WTB.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging",
+    "marketCap": 3772878592
+  },
+  "WHR": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 3725290000
+  },
+  "MNDI.L": {
+    "sector": "Basic Materials",
+    "industry": "Paper & Paper Products",
+    "marketCap": 3709754624
+  },
+  "AUTO.L": {
+    "sector": "Communication Services",
+    "industry": "Internet Content & Information",
+    "marketCap": 3681603328
+  },
+  "BRBY.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods",
+    "marketCap": 3676900352
+  },
+  "ENT.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Gambling",
+    "marketCap": 3451301632
+  },
+  "PSN.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Residential Construction",
+    "marketCap": 3446290944
+  },
+  "BLND.L": {
+    "sector": "Real Estate",
+    "industry": "REIT - Diversified",
+    "marketCap": 3431640832
+  },
+  "BBWI": {
+    "sector": "Consumer Cyclical",
+    "industry": "Retail",
+    "marketCap": 3379055588
+  },
+  "JD.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Retail",
+    "marketCap": 3309678080
+  },
+  "BKG.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Residential Construction",
+    "marketCap": 3228087808
+  },
+  "RMV.L": {
+    "sector": "Communication Services",
+    "industry": "Internet Content & Information",
+    "marketCap": 3121052928
+  },
+  "TW.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Residential Construction",
+    "marketCap": 3059618048
+  },
+  "PVH": {
+    "sector": "Consumer Cyclical",
+    "industry": "Textiles, Apparel & Luxury Goods",
+    "marketCap": 3041298890
+  },
+  "ITV.L": {
+    "sector": "Communication Services",
+    "industry": "Broadcasting",
+    "marketCap": 2819931904
+  },
+  "FRAS.L": {
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail",
+    "marketCap": 2707553536
+  },
+  "HIK.L": {
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic",
+    "marketCap": 2707012096
+  },
+  "RS1.L": {
+    "sector": "Industrials",
+    "industry": "Industrial Distribution",
+    "marketCap": 2678809344
+  },
+  "BB.TO": {
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
+    "marketCap": 2585781760
+  },
+  "RHI": {
+    "sector": "Industrials",
+    "industry": "Professional Services",
+    "marketCap": 2512406861
+  },
+  "WPP.L": {
+    "sector": "Communication Services",
+    "industry": "Advertising Agencies",
+    "marketCap": 2509726464
+  },
+  "UTG.L": {
+    "sector": "Real Estate",
+    "industry": "REIT - Diversified",
+    "marketCap": 2388690688
+  },
+  "XRAY": {
+    "sector": "Healthcare",
+    "industry": "Health Care",
+    "marketCap": 2305110000
+  },
+  "DXC": {
+    "sector": "Technology",
+    "industry": "Technology",
+    "marketCap": 2004865105
+  },
+  "FMC": {
+    "sector": "Basic Materials",
+    "industry": "Chemicals",
+    "marketCap": 1970709632
+  },
+  "LSPD.TO": {
+    "sector": "Technology",
+    "industry": "Software - Application",
+    "marketCap": 1627016192
+  },
+  "BME.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Discount Stores",
+    "marketCap": 1592985728
+  },
+  "OCDO.L": {
+    "sector": "Consumer Defensive",
+    "industry": "Grocery Stores",
+    "marketCap": 1544414464
+  },
+  "OGN": {
+    "sector": "Healthcare",
+    "industry": "Pharmaceuticals",
+    "marketCap": 1520243405
+  },
+  "NWL": {
+    "sector": "Consumer Defensive",
+    "industry": "Consumer products",
+    "marketCap": 1425280052
+  },
+  "SAG.L": {
+    "sector": "Industrials",
+    "industry": "Consulting Services",
+    "marketCap": 225133360
+  },
+  "SBNY": {
+    "sector": "Financial Services",
+    "industry": "Banking",
+    "marketCap": 40933126
+  }
+}

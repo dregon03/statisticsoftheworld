@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MarketsHeader from '../MarketsHeader';
@@ -389,7 +390,10 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [hovered, setHovered] = React.useState<Tile | null>(null);
   const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
-  const [dims, setDims] = React.useState({ w: 0, h: 640 });
+  // Taller canvas when more stocks — ensures all tiles are visible
+  const stockCount = sectors.reduce((s, sec) => s + sec.children.length, 0);
+  const canvasH = stockCount > 200 ? 900 : stockCount > 100 ? 750 : 640;
+  const [dims, setDims] = React.useState({ w: 0, h: canvasH });
   const tilesRef = React.useRef<Tile[]>([]);
   const headersRef = React.useRef<{ x: number; y: number; w: number; h: number; label: string; type: 'sector' | 'industry' }[]>([]);
 
@@ -399,30 +403,39 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
     if (!el) return;
     const obs = new ResizeObserver(entries => {
       const cr = entries[0].contentRect;
-      if (cr.width > 0) setDims({ w: cr.width, h: 640 });
+      if (cr.width > 0) setDims({ w: cr.width, h: canvasH });
     });
     obs.observe(el);
-    setDims({ w: el.clientWidth, h: 640 });
+    setDims({ w: el.clientWidth, h: canvasH });
     return () => obs.disconnect();
-  }, []);
+  }, [canvasH]);
 
   // Compute layout
   const { tiles, headers } = React.useMemo(() => {
     if (dims.w <= 0) return { tiles: [] as Tile[], headers: [] as typeof headersRef.current };
-    const totalCap = sectors.reduce((s, sec) => s + sec.totalCap, 0);
     const allTiles: Tile[] = [];
     const allHeaders: typeof headersRef.current = [];
     const SECTOR_H = 16;
     const INDUSTRY_H = 12;
 
-    // Lay out sectors as vertical columns (like Finviz)
-    let sx = 0;
+    // Use squarify for sectors (not vertical columns) — gives small sectors visible area
+    const sectorLayout = squarify(
+      sectors.map(sec => ({ key: sec.name, size: sec.totalCap })),
+      { x: 0, y: 0, w: dims.w, h: dims.h }
+    );
+
     for (const sector of sectors) {
-      const sectorW = (sector.totalCap / totalCap) * dims.w;
-      if (sectorW < 2) { sx += sectorW; continue; }
+      const sectorRect = sectorLayout.get(sector.name);
+      if (!sectorRect || sectorRect.w < 2 || sectorRect.h < 2) continue;
 
       // Sector header
-      allHeaders.push({ x: sx, y: 0, w: sectorW, h: SECTOR_H, label: sector.name.toUpperCase(), type: 'sector' });
+      const showSectorHeader = sectorRect.h > 20;
+      const sectorHeaderH = showSectorHeader ? SECTOR_H : 0;
+      if (showSectorHeader) {
+        allHeaders.push({ x: sectorRect.x, y: sectorRect.y, w: sectorRect.w, h: sectorHeaderH, label: sector.name.toUpperCase(), type: 'sector' });
+      }
+
+      const bodyRect = { x: sectorRect.x, y: sectorRect.y + sectorHeaderH, w: sectorRect.w, h: sectorRect.h - sectorHeaderH };
 
       // Group by industry
       const industries: Record<string, TreemapStock[]> = {};
@@ -435,17 +448,15 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
         .map(([name, stocks]) => ({ name, stocks, total: stocks.reduce((s, c) => s + c.size, 0) }))
         .sort((a, b) => b.total - a.total);
 
-      // Squarify industries within the sector column
-      const sectorBodyY = SECTOR_H;
-      const sectorBodyH = dims.h - SECTOR_H;
+      // Squarify industries within sector
       const indLayout = squarify(
         industryEntries.map(ie => ({ key: ie.name, size: ie.total })),
-        { x: sx, y: sectorBodyY, w: sectorW, h: sectorBodyH }
+        bodyRect
       );
 
       for (const ie of industryEntries) {
         const indRect = indLayout.get(ie.name);
-        if (!indRect || indRect.w < 2 || indRect.h < 2) continue;
+        if (!indRect || indRect.w < 1 || indRect.h < 1) continue;
 
         // Industry sub-header (only if big enough)
         const showIndHeader = indRect.w > 50 && indRect.h > 30;
@@ -458,7 +469,7 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
         // Squarify stocks within industry — enforce minimum size so all companies are visible
         const stockRect = { x: indRect.x, y: indRect.y + indHeaderH, w: indRect.w, h: indRect.h - indHeaderH };
         const indTotalCap = ie.stocks.reduce((s, c) => s + c.size, 0);
-        const minFraction = 0.005; // 0.5% minimum of industry area
+        const minFraction = 0.02;
         const minSize = indTotalCap * minFraction;
         const stockLayout = squarify(
           ie.stocks.map(s => ({ key: s.ticker, size: Math.max(s.size, minSize) })),
@@ -467,12 +478,10 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
 
         for (const stock of ie.stocks) {
           const r = stockLayout.get(stock.ticker);
-          if (!r || r.w < 1 || r.h < 1) continue;
+          if (!r) continue;
           allTiles.push({ ...r, ticker: stock.ticker, name: stock.name, changePct: stock.changePct, sector: sector.name, industry: ie.name, size: stock.size });
         }
       }
-
-      sx += sectorW;
     }
 
     return { tiles: allTiles, headers: allHeaders };
@@ -514,13 +523,14 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
         ctx.fillRect(tile.x, tile.y, tile.w, tile.h);
       }
 
-      // Adaptive text
+      // Adaptive text — show ticker on ALL tiles
       const area = tile.w * tile.h;
       ctx.fillStyle = '#fff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       if (area > 15000 && tile.w > 45 && tile.h > 30) {
+        // Large tile: ticker + change%
         const fs = Math.min(15, tile.w / 4.5, tile.h / 3.5);
         ctx.font = `bold ${fs}px system-ui, -apple-system, sans-serif`;
         ctx.fillText(tile.ticker, tile.x + tile.w / 2, tile.y + tile.h / 2 - fs * 0.5);
@@ -529,9 +539,24 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
         ctx.fillText(`${tile.changePct >= 0 ? '+' : ''}${tile.changePct.toFixed(2)}%`, tile.x + tile.w / 2, tile.y + tile.h / 2 + fs * 0.45);
         ctx.globalAlpha = 1;
       } else if (area > 3000 && tile.w > 25 && tile.h > 16) {
+        // Medium tile: ticker only
         const fs = Math.min(10, tile.w / 4, tile.h / 2.2);
         ctx.font = `bold ${fs}px system-ui, -apple-system, sans-serif`;
         ctx.fillText(tile.ticker, tile.x + tile.w / 2, tile.y + tile.h / 2);
+      } else if (tile.w > 12 && tile.h > 8) {
+        // Small tile: tiny ticker, clipped
+        const fs = Math.min(7, tile.w / 3.5, tile.h / 1.5);
+        if (fs >= 4) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(tile.x, tile.y, tile.w, tile.h);
+          ctx.clip();
+          ctx.globalAlpha = 0.85;
+          ctx.font = `bold ${fs}px system-ui, -apple-system, sans-serif`;
+          ctx.fillText(tile.ticker, tile.x + tile.w / 2, tile.y + tile.h / 2);
+          ctx.globalAlpha = 1;
+          ctx.restore();
+        }
       }
     }
 
@@ -564,15 +589,18 @@ function StockTreemap({ sectors, profiles: profs }: { sectors: TreemapSector[]; 
       }
     }
 
-    // Sector borders (thicker)
+    // Sector borders (thicker) — draw around squarified sector rects
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 2;
-    let bx = 0;
-    const totalCap = sectors.reduce((s, sec) => s + sec.totalCap, 0);
-    for (const sector of sectors) {
-      const sw = (sector.totalCap / totalCap) * dims.w;
-      ctx.strokeRect(bx, 0, sw, dims.h);
-      bx += sw;
+    for (const h of headers) {
+      if (h.type !== 'sector') continue;
+      const sectorTiles = tiles.filter(t => t.sector.toUpperCase() === h.label);
+      if (sectorTiles.length === 0) continue;
+      const minX = Math.min(h.x, ...sectorTiles.map(t => t.x));
+      const minY = h.y;
+      const maxX = Math.max(h.x + h.w, ...sectorTiles.map(t => t.x + t.w));
+      const maxY = Math.max(...sectorTiles.map(t => t.y + t.h));
+      ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
     }
   }, [tiles, headers, hovered, dims, sectors]);
 
@@ -684,22 +712,55 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
       .catch(() => {});
   }, []);
 
+  // Backfill prices for tickers missing from DB quotes (via server-side proxy)
+  const [backfillQuotes, setBackfillQuotes] = useState<Quote[]>([]);
+  const backfillDone = React.useRef(false);
+  useEffect(() => {
+    if (loading || Object.keys(profiles).length === 0 || backfillDone.current) return;
+    const quoteTickerSet = new Set(quotes.filter(q => q.id.startsWith('YF.STOCK.')).map(q => q.id.replace('YF.STOCK.', '')));
+    const missing = [...tickerSet].filter(t => !quoteTickerSet.has(t) && profiles[t]);
+    if (missing.length === 0) return;
+    backfillDone.current = true;
+
+    fetch(`/api/stock-quotes-backfill?tickers=${missing.join(',')}`)
+      .then(r => r.json())
+      .then((data: Quote[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setBackfillQuotes(data);
+        }
+      })
+      .catch(() => {});
+  }, [loading, profiles, quotes, tickerSet]);
+
+  // Merge DB quotes + backfill quotes
+  const allQuotes = useMemo(() => {
+    if (backfillQuotes.length === 0) return quotes;
+    const existing = new Set(quotes.map(q => q.id));
+    return [...quotes, ...backfillQuotes.filter(q => !existing.has(q.id))];
+  }, [quotes, backfillQuotes]);
+
   // Build treemap data grouped by sector → industry
+  // Include ALL stocks with profiles (even without live quotes — show 0% change)
   const treemapData = useMemo(() => {
     const sectors: Record<string, TreemapStock[]> = {};
-    for (const q of quotes) {
+    const quoteLookup = new Map<string, { changePct: number }>();
+    for (const q of allQuotes) {
       if (!q.id.startsWith('YF.STOCK.')) continue;
-      const ticker = q.id.replace('YF.STOCK.', '');
-      if (!tickerSet.has(ticker)) continue;
+      quoteLookup.set(q.id.replace('YF.STOCK.', ''), { changePct: q.changePct });
+    }
+
+    // Add all stocks that are in the current index ticker set AND have a profile
+    for (const ticker of tickerSet) {
       const profile = profiles[ticker];
       if (!profile || !profile.marketCap) continue;
       const sector = profile.sector || 'Other';
       if (!sectors[sector]) sectors[sector] = [];
+      const quote = quoteLookup.get(ticker);
       sectors[sector].push({
         ticker,
         name: COMPANY_NAMES[ticker] || ticker,
         size: profile.marketCap,
-        changePct: q.changePct,
+        changePct: quote?.changePct ?? 0,
         industry: profile.industry || '',
       });
     }
@@ -714,14 +775,35 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
         const bSize = b.children.reduce((sum, c) => sum + c.size, 0);
         return bSize - aSize;
       });
-  }, [quotes, profiles, tickerSet]);
+  }, [allQuotes, profiles, tickerSet]);
 
   const stockQuotes = useMemo(() => {
-    let list = quotes.filter(q => {
-      if (!q.id.startsWith('YF.STOCK.')) return false;
+    // Build from live quotes + backfill
+    const quoteLookup = new Map<string, Quote>();
+    for (const q of allQuotes) {
+      if (!q.id.startsWith('YF.STOCK.')) continue;
       const ticker = q.id.replace('YF.STOCK.', '');
-      return tickerSet.has(ticker);
-    });
+      if (tickerSet.has(ticker)) quoteLookup.set(ticker, q);
+    }
+
+    // Include ALL stocks in tickerSet that have a profile (even without live quotes)
+    let list: Quote[] = [];
+    for (const ticker of tickerSet) {
+      const existing = quoteLookup.get(ticker);
+      if (existing) {
+        list.push(existing);
+      } else if (profiles[ticker]) {
+        // No live quote — create a placeholder
+        list.push({
+          id: `YF.STOCK.${ticker}`,
+          label: ticker,
+          price: 0,
+          previousClose: 0,
+          change: 0,
+          changePct: 0,
+        });
+      }
+    }
 
     if (search) {
       const s = search.toUpperCase();
@@ -741,7 +823,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
     });
 
     return list;
-  }, [quotes, search, sortKey, sortAsc, tickerSet]);
+  }, [allQuotes, search, sortKey, sortAsc, tickerSet, profiles]);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) setSortAsc(!sortAsc);
@@ -854,18 +936,22 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
                             <span className="flex items-center gap-1.5">
                               <span className={`text-[10px] text-[#64748b] transition-transform inline-block ${isExpanded2 ? 'rotate-90' : ''}`}>&#9654;</span>
                               <StockLogo ticker={q.label} size={18} />
-                              {q.label}
+                              <Link href={`/markets/stocks/${q.label}`} className="hover:text-[#0066cc] transition" onClick={e => e.stopPropagation()}>{q.label}</Link>
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-[12px] text-[#64748b] hidden md:table-cell">{COMPANY_NAMES[q.label] || ''}</td>
+                          <td className="px-3 py-2 text-[12px] text-[#64748b] hidden md:table-cell">
+                            <Link href={`/markets/stocks/${q.label}`} className="hover:text-[#0066cc] transition">{COMPANY_NAMES[q.label] || ''}</Link>
+                          </td>
                           <td className="px-3 py-2 text-right font-mono font-semibold">
-                            <AnimatedPrice value={q.price} format={v => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
+                            {q.price > 0
+                              ? <AnimatedPrice value={q.price} format={v => `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
+                              : <span className="text-[#94a3b8]">&mdash;</span>}
                           </td>
                           <td className="px-3 py-2 text-right font-mono text-[12px] text-[#64748b] hidden sm:table-cell">
-                            ${q.previousClose.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            {q.previousClose > 0 ? `$${q.previousClose.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '\u2014'}
                           </td>
-                          <td className={`px-3 py-2 text-right font-mono text-[12px] ${color}`}>{sign}{q.change.toFixed(2)}</td>
-                          <td className={`px-3 py-2 text-right font-mono text-[12px] font-semibold ${color}`}>{sign}{q.changePct.toFixed(2)}%</td>
+                          <td className={`px-3 py-2 text-right font-mono text-[12px] ${q.price > 0 ? color : 'text-[#94a3b8]'}`}>{q.price > 0 ? `${sign}${q.change.toFixed(2)}` : '\u2014'}</td>
+                          <td className={`px-3 py-2 text-right font-mono text-[12px] font-semibold ${q.price > 0 ? color : 'text-[#94a3b8]'}`}>{q.price > 0 ? `${sign}${q.changePct.toFixed(2)}%` : '\u2014'}</td>
                         </tr>
                         {isExpanded2 && (
                           <tr>

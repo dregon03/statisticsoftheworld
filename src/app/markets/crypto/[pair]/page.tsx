@@ -50,6 +50,7 @@ export default function CryptoDetailPage({ params }: { params: Promise<{ pair: s
   const [range, setRange] = useState('1y');
   const [points, setPoints] = useState<ChartPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [annualHistory, setAnnualHistory] = useState<{ year: number; value: number; change: number | null }[]>([]);
 
   const fetchChart = useCallback(async (r: string, silent = false) => {
     if (!silent) setLoading(true);
@@ -66,6 +67,28 @@ export default function CryptoDetailPage({ params }: { params: Promise<{ pair: s
     const iv = setInterval(() => fetchChart(range, true), 30_000);
     return () => clearInterval(iv);
   }, [range, fetchChart]);
+
+  // Fetch full history for annual table
+  useEffect(() => {
+    fetch(`/api/fx-chart?pair=${apiPair}&range=max`)
+      .then(r => r.json())
+      .then(data => {
+        const pts: ChartPoint[] = data.points || [];
+        if (pts.length < 2) return;
+        const byYear = new Map<number, number>();
+        for (const pt of pts) {
+          const year = parseInt(pt.date.substring(0, 4));
+          if (year > 0 && pt.value > 0) byYear.set(year, pt.value);
+        }
+        const sorted = Array.from(byYear.entries()).sort((a, b) => b[0] - a[0]);
+        setAnnualHistory(sorted.map(([year, value], i) => {
+          const prev = sorted[i + 1];
+          const change = prev ? ((value - prev[1]) / prev[1]) * 100 : null;
+          return { year, value, change };
+        }));
+      })
+      .catch(() => {});
+  }, [apiPair]);
 
   if (!info) {
     return (
@@ -226,6 +249,42 @@ export default function CryptoDetailPage({ params }: { params: Promise<{ pair: s
         <div className="text-[11px] text-[#64748b] mt-2">
           {points.length > 0 && `${points.length} data points`} · Source: Yahoo Finance · Auto-refreshes every 30s
         </div>
+
+        {/* Historical Annual Prices */}
+        {annualHistory.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-[16px] font-semibold mb-3">Historical Annual Prices</h3>
+            <div className="border border-[#d5dce6] rounded-lg overflow-hidden">
+              <table className="w-full text-[13px]">
+                <thead>
+                  <tr className="bg-[#f4f6f9] text-[#64748b] text-[11px] uppercase tracking-wider">
+                    <th className="text-left px-4 py-2.5 font-medium">Year</th>
+                    <th className="text-right px-4 py-2.5 font-medium">Close Price</th>
+                    <th className="text-right px-4 py-2.5 font-medium">YoY Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {annualHistory.map((row, i) => (
+                    <tr key={row.year} className={i % 2 === 0 ? 'bg-white' : 'bg-[#fafbfc]'}>
+                      <td className="px-4 py-2 font-medium">{row.year}</td>
+                      <td className="px-4 py-2 text-right font-mono">${row.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                      <td className="px-4 py-2 text-right font-mono">
+                        {row.change != null ? (
+                          <span className={row.change >= 0 ? 'text-green-600' : 'text-red-600'}>
+                            {row.change >= 0 ? '+' : ''}{row.change.toFixed(1)}%
+                          </span>
+                        ) : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="text-[11px] text-[#64748b] mt-2">
+              {annualHistory.length} years · Last price per year · Source: Yahoo Finance
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </main>

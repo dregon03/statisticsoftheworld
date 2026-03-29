@@ -389,66 +389,66 @@ export const INDICATORS: Indicator[] = [
   { id: 'FRED.UMCSENT', label: 'US Consumer Sentiment (UMich)', category: 'US Economy', format: 'index', decimals: 1, source: 'wb' },
 
   // ── STOCK MARKET INDICES (Yahoo Finance) ────────────────────
-  { id: 'YF.IDX.USA', label: 'S&P 500', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.GBR', label: 'FTSE 100', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.DEU', label: 'DAX', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.FRA', label: 'CAC 40', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.JPN', label: 'Nikkei 225', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.CHN', label: 'Shanghai Composite', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.HKG', label: 'Hang Seng', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.IND', label: 'BSE Sensex', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.KOR', label: 'KOSPI', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.CAN', label: 'S&P/TSX Composite', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.AUS', label: 'S&P/ASX 200', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.BRA', label: 'Bovespa', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.MEX', label: 'IPC Mexico', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.ARG', label: 'MERVAL', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.ESP', label: 'IBEX 35', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.ITA', label: 'FTSE MIB', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.CHE', label: 'Swiss Market Index', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.NLD', label: 'AEX (Amsterdam)', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.SWE', label: 'OMX Stockholm 30', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.DNK', label: 'OMX Copenhagen 25', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.FIN', label: 'OMX Helsinki 25', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.NOR', label: 'Oslo All Share', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.AUT', label: 'ATX (Vienna)', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.BEL', label: 'BEL 20', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.PRT', label: 'PSI 20', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.IRL', label: 'ISEQ Overall', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.POL', label: 'WIG 20', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.NZL', label: 'NZX 50', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.SGP', label: 'Straits Times Index', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.IDN', label: 'Jakarta Composite', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.THA', label: 'SET Index', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.MYS', label: 'KLCI', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.PHL', label: 'PSEi', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.ISR', label: 'TA-125', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.SAU', label: 'Tadawul All Share', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.ZAF', label: 'JSE All Share', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.EGY', label: 'EGX 30', category: 'Stock Markets', format: 'number', decimals: 0 },
-  { id: 'YF.IDX.CHL', label: 'S&P CLX IPSA', category: 'Stock Markets', format: 'number', decimals: 0 },
+  { id: 'YF.IDX.USA', label: 'S&P 500', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.GBR', label: 'FTSE 100', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.DEU', label: 'DAX', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.FRA', label: 'CAC 40', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.JPN', label: 'Nikkei 225', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.CHN', label: 'Shanghai Composite', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.HKG', label: 'Hang Seng', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.IND', label: 'BSE Sensex', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.KOR', label: 'KOSPI', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.CAN', label: 'S&P/TSX Composite', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.AUS', label: 'S&P/ASX 200', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.BRA', label: 'Bovespa', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.MEX', label: 'IPC Mexico', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.ARG', label: 'MERVAL', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.ESP', label: 'IBEX 35', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.ITA', label: 'FTSE MIB', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.CHE', label: 'Swiss Market Index', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.NLD', label: 'AEX (Amsterdam)', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.SWE', label: 'OMX Stockholm 30', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.DNK', label: 'OMX Copenhagen 25', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.FIN', label: 'OMX Helsinki 25', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.NOR', label: 'Oslo All Share', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.AUT', label: 'ATX (Vienna)', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.BEL', label: 'BEL 20', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.PRT', label: 'PSI 20', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.IRL', label: 'ISEQ Overall', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.POL', label: 'WIG 20', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.NZL', label: 'NZX 50', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.SGP', label: 'Straits Times Index', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.IDN', label: 'Jakarta Composite', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.THA', label: 'SET Index', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.MYS', label: 'KLCI', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.PHL', label: 'PSEi', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.ISR', label: 'TA-125', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.SAU', label: 'Tadawul All Share', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.ZAF', label: 'JSE All Share', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.EGY', label: 'EGX 30', category: 'Stock Markets', format: 'number', decimals: 2 },
+  { id: 'YF.IDX.CHL', label: 'S&P CLX IPSA', category: 'Stock Markets', format: 'number', decimals: 2 },
 
   // ── COMMODITIES (Yahoo Finance + Alpha Vantage) ────────────
-  { id: 'YF.GOLD', label: 'Gold (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'YF.GOLD', label: 'Gold (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.SILVER', label: 'Silver (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.CRUDE_OIL', label: 'WTI Crude Oil (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.BRENT', label: 'Brent Crude Oil (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.NATGAS', label: 'Natural Gas (USD/MMBtu)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.COPPER', label: 'Copper (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
-  { id: 'YF.PLATINUM', label: 'Platinum (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 0 },
-  { id: 'YF.PALLADIUM', label: 'Palladium (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'YF.PLATINUM', label: 'Platinum (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 2 },
+  { id: 'YF.PALLADIUM', label: 'Palladium (USD/troy oz)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.WHEAT', label: 'Wheat (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.CORN', label: 'Corn (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.SOYBEANS', label: 'Soybeans (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.COFFEE', label: 'Coffee (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.COTTON', label: 'Cotton (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'YF.SUGAR', label: 'Sugar (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
-  { id: 'YF.COCOA', label: 'Cocoa (USD/tonne)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'YF.COCOA', label: 'Cocoa (USD/tonne)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'AV.WTI', label: 'WTI Crude Oil — AV (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'AV.BRENT', label: 'Brent Crude Oil — AV (USD/barrel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'AV.NATGAS', label: 'Natural Gas — AV (USD/MMBtu)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'AV.COPPER', label: 'Copper — AV (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
-  { id: 'AV.ALUMINUM', label: 'Aluminum (USD/tonne)', category: 'Commodities', format: 'currency', decimals: 0 },
+  { id: 'AV.ALUMINUM', label: 'Aluminum (USD/tonne)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'AV.WHEAT', label: 'Wheat — AV (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'AV.CORN', label: 'Corn — AV (USD/bushel)', category: 'Commodities', format: 'currency', decimals: 2 },
   { id: 'AV.COTTON', label: 'Cotton — AV (USD/lb)', category: 'Commodities', format: 'currency', decimals: 2 },
@@ -861,13 +861,21 @@ export async function getMultiSourceData(groupKey: string): Promise<{
 export function formatValue(value: number | null, format: string, decimals: number = 0): string {
   if (value === null || value === undefined) return 'N/A';
 
+  // For display: use up to `decimals` fractional digits, but strip trailing zeros
+  const fmtNum = (v: number, d: number) => {
+    const fixed = v.toFixed(d);
+    if (d === 0) return fixed;
+    // Strip trailing zeros but keep at least the precision the data has
+    return fixed.replace(/\.?0+$/, '') || fixed;
+  };
+
   switch (format) {
     case 'currency':
       if (Math.abs(value) >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
       if (Math.abs(value) >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
       if (Math.abs(value) >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
-      if (Math.abs(value) >= 1e3) return `$${(value / 1e3).toFixed(0)}K`;
-      return `$${value.toFixed(decimals)}`;
+      if (Math.abs(value) >= 1e3) return `$${new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: decimals }).format(value)}`;
+      return `$${fmtNum(value, decimals)}`;
     case 'percent':
       return `${value.toFixed(decimals ?? 1)}%`;
     case 'years':
@@ -881,8 +889,8 @@ export function formatValue(value: number | null, format: string, decimals: numb
       if (Math.abs(value) >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
       if (Math.abs(value) >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
       if (Math.abs(value) >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
-      if (Math.abs(value) >= 1e3) return new Intl.NumberFormat('en-US', { maximumFractionDigits: decimals ?? 0 }).format(value);
-      return value.toFixed(decimals ?? 0);
+      if (Math.abs(value) >= 1e3) return new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: decimals ?? 0 }).format(value);
+      return fmtNum(value, decimals ?? 0);
   }
 }
 
@@ -933,6 +941,79 @@ export interface HistoricalDataPoint {
   value: number | null;
 }
 
+// Static history files for market indicators (indices, commodities, currencies)
+// Maps indicator ID → filename in public/data/history/
+const STATIC_ANNUAL_MAP: Record<string, string> = {
+  // Indices
+  'YF.IDX.USA': 'sp500', 'YF.FUT.SP500': 'sp500', 'YF.FUT.DOW': 'djia',
+  'YF.FUT.NASDAQ': 'nasdaq', 'YF.FUT.RUSSELL': 'russell2000',
+  'YF.IDX.CAN': 'tsx', 'YF.IDX.BRA': 'bovespa',
+  'YF.IDX.MEX': 'ipc_mexico', 'YF.IDX.ARG': 'merval',
+  'YF.IDX.GBR': 'ftse100', 'YF.IDX.DEU': 'dax', 'YF.IDX.FRA': 'cac40',
+  'YF.IDX.NLD': 'aex', 'YF.IDX.ESP': 'ibex35', 'YF.IDX.ITA': 'ftse_mib',
+  'YF.IDX.CHE': 'smi', 'YF.IDX.JPN': 'nikkei', 'YF.IDX.HKG': 'hang_seng',
+  'YF.IDX.CHN': 'shanghai', 'YF.IDX.KOR': 'kospi', 'YF.IDX.IND': 'sensex',
+  'YF.IDX.AUS': 'asx200', 'YF.IDX.NZL': 'nzx50', 'YF.IDX.SGP': 'sti',
+  'YF.IDX.IDN': 'jakarta', 'YF.IDX.MYS': 'klci', 'YF.IDX.ISR': 'ta125',
+  'YF.IDX.SAU': 'tadawul', 'YF.IDX.ZAF': 'jse',
+  // Precious Metals
+  'YF.GOLD': 'gold', 'YF.SILVER': 'silver',
+  'YF.PLATINUM': 'platinum', 'YF.PALLADIUM': 'platinum',
+  // Energy
+  'YF.CRUDE_OIL': 'wti', 'YF.BRENT': 'brent', 'YF.NATGAS': 'natgas',
+  'YF.GASOLINE': 'wti', 'YF.HEATING_OIL': 'wti',
+  // Industrial Metals
+  'YF.COPPER': 'copper', 'AV.ALUMINUM': 'aluminum', 'YF.ALUMINUM': 'aluminum',
+  'YF.STEEL': 'iron_ore', 'YF.IRON_ORE': 'iron_ore',
+  'YF.NICKEL_ETC': 'nickel', 'YF.ZINC_ETC': 'zinc',
+  // Grains
+  'YF.WHEAT': 'wheat', 'YF.WHEAT_KC': 'wheat',
+  'YF.CORN': 'corn', 'YF.SOYBEANS': 'soybeans',
+  'YF.SOYBEAN_MEAL': 'soybean_meal', 'YF.SOYBEAN_OIL': 'soybean_oil',
+  'YF.OATS': 'barley', 'YF.RICE': 'rice',
+  // Softs
+  'YF.COFFEE': 'coffee_arabica', 'YF.COCOA': 'cocoa',
+  'YF.SUGAR': 'sugar', 'YF.COTTON': 'cotton',
+  'YF.OJ': 'orange', 'YF.LUMBER': 'logs',
+  // Livestock
+  'YF.LIVE_CATTLE': 'beef', 'YF.LEAN_HOGS': 'pork', 'YF.FEEDER_CATTLE': 'beef',
+  // Currencies (YF.FX.* → static files)
+  'YF.FX.EUR': 'eurusd', 'YF.FX.GBP': 'gbpusd', 'YF.FX.JPY': 'usdjpy',
+  'YF.FX.CAD': 'usdcad', 'YF.FX.AUD': 'audusd', 'YF.FX.CHF': 'usdchf',
+  'YF.FX.NZD': 'nzdusd', 'YF.FX.SEK': 'usdsek', 'YF.FX.NOK': 'usdnok',
+  'YF.FX.DKK': 'usddkk', 'YF.FX.CNY': 'usdcny', 'YF.FX.HKD': 'usdhkd',
+  'YF.FX.TWD': 'usdtwd', 'YF.FX.KRW': 'usdkrw', 'YF.FX.SGD': 'usdsgd',
+  'YF.FX.INR': 'usdinr', 'YF.FX.PHP': 'usdphp', 'YF.FX.THB': 'usdthb',
+  'YF.FX.IDR': 'usdidr', 'YF.FX.MYR': 'usdmyr', 'YF.FX.BRL': 'usdbrl',
+  'YF.FX.MXN': 'usdmxn', 'YF.FX.ARS': 'usdars', 'YF.FX.CLP': 'usdclp',
+  'YF.FX.COP': 'usdcop', 'YF.FX.PEN': 'usdpen', 'YF.FX.ZAR': 'usdzar',
+  'YF.FX.SAR': 'usdsar', 'YF.FX.AED': 'usdaed', 'YF.FX.ILS': 'usdils',
+  'YF.FX.EGP': 'usdegp', 'YF.FX.NGN': 'usdngn', 'YF.FX.TRY': 'usdtry',
+  'YF.FX.PLN': 'usdpln', 'YF.FX.CZK': 'usdczk', 'YF.FX.HUF': 'usdhuf',
+  'YF.FX.RUB': 'usdrub',
+};
+
+function loadStaticAnnualData(filename: string): HistoricalDataPoint[] {
+  try {
+    const { readFileSync } = require('fs');
+    const { join } = require('path');
+    const filePath = join(process.cwd(), 'public', 'data', 'history', `${filename}.json`);
+    const raw: { date: string; value: number }[] = JSON.parse(readFileSync(filePath, 'utf-8'));
+    // Convert monthly/daily data to annual (last value per year)
+    const byYear = new Map<number, number>();
+    for (const pt of raw) {
+      if (!pt.value || pt.value <= 0) continue;
+      const year = parseInt(pt.date.substring(0, 4));
+      if (year > 0) byYear.set(year, pt.value); // last value per year wins
+    }
+    return Array.from(byYear.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([year, value]) => ({ year, value }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getHistoricalData(
   indicatorId: string,
   countryId: string,
@@ -943,11 +1024,27 @@ export async function getHistoricalData(
     .eq('id', indicatorId)
     .eq('country_id', countryId)
     .order('year', { ascending: true });
-  if (error || !data) return [];
-  return data.map(r => ({
-    year: r.year,
-    value: adjustValue(indicatorId, r.value),
-  }));
+
+  const dbPoints = (data && !error)
+    ? data.map(r => ({ year: r.year, value: adjustValue(indicatorId, r.value) }))
+    : [];
+
+  // For market indicators, merge with static historical data
+  const staticFile = STATIC_ANNUAL_MAP[indicatorId];
+  if (staticFile) {
+    const staticPoints = loadStaticAnnualData(staticFile);
+    if (staticPoints.length > 0) {
+      // Merge: static data first, DB data overrides for overlapping years
+      const merged = new Map<number, number | null>();
+      for (const pt of staticPoints) merged.set(pt.year, pt.value);
+      for (const pt of dbPoints) merged.set(pt.year, pt.value); // DB takes precedence
+      return Array.from(merged.entries())
+        .sort((a, b) => a[0] - b[0])
+        .map(([year, value]) => ({ year, value }));
+    }
+  }
+
+  return dbPoints;
 }
 
 export async function getHistoricalDataMultiCountry(

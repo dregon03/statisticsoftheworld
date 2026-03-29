@@ -37,6 +37,22 @@ const INDEX_IDS = new Set([
   'YF.FUT.SP500', 'YF.FUT.NASDAQ', 'YF.FUT.DOW', 'YF.FUT.RUSSELL',
 ]);
 
+const FX_PAIR_MAP: Record<string, string> = {
+  'YF.FX.EUR': 'EURUSD', 'YF.FX.GBP': 'GBPUSD', 'YF.FX.JPY': 'USDJPY',
+  'YF.FX.CAD': 'USDCAD', 'YF.FX.AUD': 'AUDUSD', 'YF.FX.CHF': 'USDCHF',
+  'YF.FX.NZD': 'NZDUSD', 'YF.FX.SEK': 'USDSEK', 'YF.FX.NOK': 'USDNOK',
+  'YF.FX.DKK': 'USDDKK', 'YF.FX.CNY': 'USDCNY', 'YF.FX.HKD': 'USDHKD',
+  'YF.FX.TWD': 'USDTWD', 'YF.FX.KRW': 'USDKRW', 'YF.FX.SGD': 'USDSGD',
+  'YF.FX.INR': 'USDINR', 'YF.FX.PHP': 'USDPHP', 'YF.FX.THB': 'USDTHB',
+  'YF.FX.IDR': 'USDIDR', 'YF.FX.MYR': 'USDMYR', 'YF.FX.BRL': 'USDBRL',
+  'YF.FX.MXN': 'USDMXN', 'YF.FX.ARS': 'USDARS', 'YF.FX.CLP': 'USDCLP',
+  'YF.FX.COP': 'USDCOP', 'YF.FX.PEN': 'USDPEN', 'YF.FX.ZAR': 'USDZAR',
+  'YF.FX.SAR': 'USDSAR', 'YF.FX.AED': 'USDAED', 'YF.FX.ILS': 'USDILS',
+  'YF.FX.EGP': 'USDEGP', 'YF.FX.NGN': 'USDNGN', 'YF.FX.TRY': 'USDTRY',
+  'YF.FX.PLN': 'USDPLN', 'YF.FX.CZK': 'USDCZK', 'YF.FX.HUF': 'USDHUF',
+  'YF.FX.RUB': 'USDRUB',
+};
+
 const RANGES = [
   { key: '1d', label: '1D' },
   { key: '5d', label: '5D' },
@@ -56,11 +72,14 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
   const [points, setPoints] = useState<ChartPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const isIndex = INDEX_IDS.has(indicatorId);
+  const fxPair = FX_PAIR_MAP[indicatorId];
 
   const fetchChart = useCallback(async (r: string, silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const endpoint = isIndex
+      const endpoint = fxPair
+        ? `/api/fx-chart?pair=${fxPair}&range=${r}`
+        : isIndex
         ? `/api/index-chart?id=${encodeURIComponent(indicatorId)}&range=${r}`
         : `/api/commodity-chart?id=${encodeURIComponent(indicatorId)}&range=${r}`;
       const res = await fetch(endpoint);
@@ -70,7 +89,7 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
       if (!silent) setPoints([]);
     }
     if (!silent) setLoading(false);
-  }, [indicatorId, isIndex]);
+  }, [indicatorId, isIndex, fxPair]);
 
   useEffect(() => {
     fetchChart(range);
@@ -108,7 +127,7 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
     <div className="border border-gray-100 rounded-xl p-5 mt-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <span className="text-[14px] font-semibold text-[#333]">{isIndex ? 'Index' : 'Daily Price'} Chart</span>
+          <span className="text-[14px] font-semibold text-[#333]">{isIndex ? 'Index' : fxPair ? 'Exchange Rate' : 'Daily Price'} Chart</span>
           {points.length > 1 && (
             <span className={`text-[13px] font-mono ${isUp ? 'text-green-600' : 'text-red-600'}`}>
               {isUp ? '+' : ''}{changeAmt.toFixed(2)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
@@ -218,7 +237,7 @@ function DailyPriceChart({ indicatorId }: { indicatorId: string }) {
                     <div className="bg-white border border-[#ddd] shadow-lg rounded px-3 py-2 text-[12px]">
                       <div className="text-[#999] mb-0.5">{dateLabel}</div>
                       <div className="font-mono font-semibold text-[15px]">
-                        {isIndex ? '' : '$'}{p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {(isIndex || fxPair) ? '' : '$'}{p.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: fxPair ? 4 : 2 })}
                       </div>
                     </div>
                   );
@@ -376,9 +395,10 @@ export default function IndicatorDetailCharts({ history, format, decimals, sourc
 
   const isCommodity = indicatorId ? COMMODITY_IDS.has(indicatorId) : false;
   const isIndex = indicatorId ? INDEX_IDS.has(indicatorId) : false;
+  const isCurrency = indicatorId ? !!FX_PAIR_MAP[indicatorId] : false;
   const monthlyId = indicatorId ? MONTHLY_MAP[indicatorId] : undefined;
 
-  if ((isCommodity || isIndex) && indicatorId) {
+  if ((isCommodity || isIndex || isCurrency) && indicatorId) {
     return <DailyPriceChart indicatorId={indicatorId} />;
   }
 

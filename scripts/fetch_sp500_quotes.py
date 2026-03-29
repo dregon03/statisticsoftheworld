@@ -1,24 +1,29 @@
 #!/usr/bin/env python3
 """
-Fetch live quotes for major stock indices via Yahoo Finance quote API.
+Fetch live quotes for major stock indices via yfinance.
 
 Covers: S&P 500, Nasdaq 100, TSX 60, FTSE 100
-~1,200 unique tickers, fetched via direct HTTP in batches of 200 (~2-3s total).
+~660 unique tickers, fetched via yfinance.download() in batches.
 Stores as YF.STOCK.{TICKER} in sotw_live_quotes.
 
 Modes:
   --once     Single fetch (default)
-  --loop     Continuous loop (default 5s for real-time during market hours)
+  --loop     Continuous loop (default 30s for near real-time during market hours)
+
+Requirements: pip install yfinance psycopg2-binary
 """
 
 import argparse
 import datetime
-import json
 import os
 import time
-import urllib.request
 import psycopg2
-from concurrent.futures import ThreadPoolExecutor, as_completed
+
+try:
+    import yfinance as yf
+except ImportError:
+    print("ERROR: pip install yfinance")
+    exit(1)
 
 DB_HOST = os.environ.get("SUPABASE_DB_HOST", "db.seyrycaldytfjvvkqopu.supabase.co")
 DB_PASS = os.environ.get("SUPABASE_DB_PASSWORD", "")
@@ -34,75 +39,69 @@ QUOTES_TABLE = "sotw_live_quotes"
 # ═══════════════════════════════════════════════════════════
 
 SP500 = [
-    "AAPL","ABBV","ABT","ACN","ADBE","ADI","ADM","ADP","ADSK","AEE","AEP","AES","AFL","AIG","AIZ",
-    "AJG","AKAM","ALB","ALGN","ALK","ALL","ALLE","AMAT","AMCR","AMD","AME","AMGN","AMP","AMT","AMZN",
-    "ANET","ANSS","AON","AOS","APA","APD","APH","APTV","ARE","ATO","ATVI","AVB","AVGO","AVY","AWK",
-    "AXP","AZO","BA","BAC","BAX","BBWI","BBY","BDX","BEN","BF.B","BIIB","BIO","BK","BKNG","BKR",
-    "BLK","BMY","BR","BRK.B","BRO","BSX","BWA","BXP","C","CAG","CAH","CARR","CAT","CB","CBOE",
-    "CBRE","CCI","CCL","CDAY","CDNS","CDW","CE","CEG","CF","CFG","CHD","CHRW","CHTR","CI","CINF",
-    "CL","CLX","CMA","CMCSA","CME","CMG","CMI","CMS","CNC","CNP","COF","COO","COP","COST","CPB",
-    "CPRT","CPT","CRL","CRM","CSCO","CSGP","CSX","CTAS","CTLT","CTRA","CTSH","CTVA","CVS","CVX",
-    "CZR","D","DAL","DD","DE","DFS","DG","DGX","DHI","DHR","DIS","DISH","DLR","DLTR","DOV",
-    "DOW","DPZ","DRI","DTE","DUK","DVA","DVN","DXC","DXCM","EA","EBAY","ECL","ED","EFX","EIX",
-    "EL","EMN","EMR","ENPH","EOG","EPAM","EQIX","EQR","EQT","ESS","ETN","ETR","EVRG","EW",
-    "EXC","EXPD","EXPE","EXR","F","FANG","FAST","FBHS","FCX","FDS","FDX","FE","FFIV","FIS","FISV",
-    "FITB","FLT","FMC","FOX","FOXA","FRC","FRT","FTNT","FTV","GD","GE","GILD","GIS","GL","GLW",
-    "GM","GNRC","GOOG","GOOGL","GPC","GPN","GRMN","GS","GWW","HAL","HAS","HBAN","HCA","HD","HOLX",
-    "HON","HPE","HPQ","HRL","HSIC","HST","HSY","HUM","HWM","IBM","ICE","IDXX","IEX","IFF","ILMN",
-    "INCY","INTC","INTU","INVH","IP","IPG","IQV","IR","IRM","ISRG","IT","ITW","IVZ","J","JBHT",
-    "JCI","JKHY","JNJ","JNPR","JPM","K","KDP","KEY","KEYS","KHC","KIM","KLAC","KMB","KMI","KMX",
-    "KO","KR","L","LDOS","LEN","LH","LHX","LIN","LKQ","LLY","LMT","LNC","LNT","LOW","LRCX",
-    "LUMN","LUV","LVS","LW","LYB","LYV","MA","MAA","MAR","MAS","MCD","MCHP","MCK","MCO","MDLZ",
-    "MDT","MET","META","MGM","MHK","MKC","MKTX","MLM","MMC","MMM","MNST","MO","MOH","MOS","MPC",
-    "MPWR","MRK","MRNA","MRO","MS","MSCI","MSFT","MSI","MTB","MTCH","MTD","MU","NCLH","NDAQ",
-    "NDSN","NEE","NEM","NFLX","NI","NKE","NOC","NOW","NRG","NSC","NTAP","NTRS","NUE","NVDA",
-    "NVR","NWL","NWS","NWSA","NXPI","O","ODFL","OGN","OKE","OMC","ON","ORCL","ORLY","OTIS","OXY",
-    "PARA","PAYC","PAYX","PCAR","PCG","PEAK","PEG","PEP","PFE","PFG","PG","PGR","PH","PHM","PKG",
-    "PKI","PLD","PM","PNC","PNR","PNW","POOL","PPG","PPL","PRU","PSA","PSX","PTC","PVH","PWR",
-    "PXD","PYPL","QCOM","QRVO","RCL","RE","REG","REGN","RF","RHI","RJF","RL","RMD","ROK","ROL",
-    "ROP","ROST","RSG","RTX","SBAC","SBNY","SBUX","SCHW","SEE","SHW","SIVB","SJM","SLB","SNA",
-    "SNPS","SO","SPG","SPGI","SRE","STE","STT","STX","STZ","SWK","SWKS","SYF","SYK","SYY",
-    "T","TAP","TDG","TDY","TECH","TEL","TER","TFC","TFX","TGT","TJX","TMO","TMUS","TPR","TRGP",
-    "TRMB","TROW","TRV","TSCO","TSLA","TSN","TT","TTWO","TXN","TXT","TYL","UAL","UDR","UHS",
-    "ULTA","UNH","UNP","UPS","URI","USB","V","VFC","VICI","VLO","VMC","VNO","VRSK","VRSN","VRTX",
-    "VTR","VTRS","VZ","WAB","WAT","WBA","WBD","WDC","WEC","WELL","WFC","WHR","WM","WMB","WMT",
-    "WRB","WRK","WST","WTW","WY","WYNN","XEL","XOM","XRAY","XYL","YUM","ZBH","ZBRA","ZION","ZTS",
+    "A","AAPL","ABBV","ABNB","ABT","ACGL","ACN","ADBE","ADI","ADM","ADP","ADSK","AEE","AEP","AES",
+    "AFL","AIG","AIZ","AJG","AKAM","ALB","ALGN","ALL","ALLE","AMAT","AMCR","AMD","AME","AMGN","AMP",
+    "AMT","AMZN","ANET","AON","AOS","APA","APD","APH","APO","APP","APTV","ARE","ARES","ATO","AVB",
+    "AVGO","AVY","AWK","AXON","AXP","AZO","BA","BAC","BALL","BAX","BBY","BDX","BEN","BF.B","BG",
+    "BIIB","BK","BKNG","BKR","BLDR","BLK","BMY","BR","BRK.B","BRO","BSX","BX","BXP","C","CAG",
+    "CAH","CARR","CAT","CB","CBOE","CBRE","CCI","CCL","CDNS","CDW","CEG","CF","CFG","CHD","CHRW",
+    "CHTR","CI","CIEN","CINF","CL","CLX","CMCSA","CME","CMG","CMI","CMS","CNC","CNP","COF","COHR",
+    "COIN","COO","COP","COR","COST","CPAY","CPB","CPRT","CPT","CRH","CRL","CRM","CRWD","CSCO","CSGP",
+    "CSX","CTAS","CTRA","CTSH","CTVA","CVNA","CVS","CVX","D","DAL","DASH","DD","DDOG","DE","DECK",
+    "DELL","DG","DGX","DHI","DHR","DIS","DLR","DLTR","DOC","DOV","DOW","DPZ","DRI","DTE","DUK",
+    "DVA","DVN","DXCM","EA","EBAY","ECL","ED","EFX","EG","EIX","EL","ELV","EME","EMR","EOG",
+    "EPAM","EQIX","EQR","EQT","ERIE","ES","ESS","ETN","ETR","EVRG","EW","EXC","EXE","EXPD","EXPE",
+    "EXR","F","FANG","FAST","FCX","FDS","FDX","FE","FFIV","FICO","FIS","FISV","FITB","FIX","FOX",
+    "FOXA","FRT","FSLR","FTNT","FTV","GD","GDDY","GE","GEHC","GEN","GEV","GILD","GIS","GL","GLW",
+    "GM","GNRC","GOOG","GOOGL","GPC","GPN","GRMN","GS","GWW","HAL","HAS","HBAN","HCA","HD","HIG",
+    "HII","HLT","HOLX","HON","HOOD","HPE","HPQ","HRL","HSIC","HST","HSY","HUBB","HUM","HWM","IBKR",
+    "IBM","ICE","IDXX","IEX","IFF","INCY","INTC","INTU","INVH","IP","IQV","IR","IRM","ISRG","IT",
+    "ITW","IVZ","J","JBHT","JBL","JCI","JKHY","JNJ","JPM","KDP","KEY","KEYS","KHC","KIM","KKR",
+    "KLAC","KMB","KMI","KO","KR","KVUE","L","LDOS","LEN","LH","LHX","LII","LIN","LITE","LLY",
+    "LMT","LNT","LOW","LRCX","LULU","LUV","LVS","LYB","LYV","MA","MAA","MAR","MAS","MCD","MCHP",
+    "MCK","MCO","MDLZ","MDT","MET","META","MGM","MKC","MLM","MMM","MNST","MO","MOS","MPC","MPWR",
+    "MRK","MRNA","MRSH","MS","MSCI","MSFT","MSI","MTB","MTD","MU","NCLH","NDAQ","NDSN","NEE","NEM",
+    "NFLX","NI","NKE","NOC","NOW","NRG","NSC","NTAP","NTRS","NUE","NVDA","NVR","NWS","NWSA","NXPI",
+    "O","ODFL","OKE","OMC","ON","ORCL","ORLY","OTIS","OXY","PANW","PAYX","PCAR","PCG","PEG","PEP",
+    "PFE","PFG","PG","PGR","PH","PHM","PKG","PLD","PLTR","PM","PNC","PNR","PNW","PODD","POOL",
+    "PPG","PPL","PRU","PSA","PSKY","PSX","PTC","PWR","PYPL","Q","QCOM","RCL","REG","REGN","RF",
+    "RJF","RL","RMD","ROK","ROL","ROP","ROST","RSG","RTX","RVTY","SATS","SBAC","SBUX","SCHW","SHW",
+    "SJM","SLB","SMCI","SNA","SNDK","SNPS","SO","SOLV","SPG","SPGI","SRE","STE","STLD","STT","STX",
+    "STZ","SW","SWK","SWKS","SYF","SYK","SYY","T","TAP","TDG","TDY","TECH","TEL","TER","TFC",
+    "TGT","TJX","TKO","TMO","TMUS","TPL","TPR","TRGP","TRMB","TROW","TRV","TSCO","TSLA","TSN","TT",
+    "TTD","TTWO","TXN","TXT","TYL","UAL","UBER","UDR","UHS","ULTA","UNH","UNP","UPS","URI","USB",
+    "V","VICI","VLO","VLTO","VMC","VRSK","VRSN","VRT","VRTX","VST","VTR","VTRS","VZ","WAB","WAT",
+    "WBD","WDAY","WDC","WEC","WELL","WFC","WM","WMB","WMT","WRB","WSM","WST","WTW","WY","WYNN",
+    "XEL","XOM","XYL","XYZ","YUM","ZBH","ZBRA","ZTS",
 ]
 
 NASDAQ100 = [
-    "AAPL","ABNB","ADBE","ADI","ADP","ADSK","AEP","AMAT","AMD","AMGN","AMZN","ANSS","APP","ARM",
-    "ASML","AVGO","AZN","BIIB","BKNG","BKR","CCEP","CDNS","CDW","CEG","CHTR","CMCSA","COST",
-    "CPRT","CRWD","CSCO","CSGP","CTAS","CTSH","DASH","DDOG","DLTR","DXCM","EA","EXC","FANG",
-    "FAST","FTNT","GEHC","GFS","GILD","GOOG","GOOGL","HON","IDXX","ILMN","INTC","INTU","ISRG",
-    "KDP","KHC","KLAC","LIN","LRCX","LULU","MAR","MCHP","MDB","MDLZ","MELI","META","MNST",
-    "MRNA","MRVL","MSFT","MU","NFLX","NVDA","NXPI","ODFL","ON","ORLY","PANW","PAYX","PCAR",
-    "PDD","PEP","PYPL","QCOM","REGN","ROST","SBUX","SMCI","SNPS","SPLK","TEAM","TMUS","TSLA",
-    "TTD","TTWO","TXN","VRSK","VRTX","WBD","WDAY","XEL","ZS",
+    "AAPL","ABNB","ADBE","ADI","ADP","ADSK","AEP","AMAT","AMD","AMGN","AMZN","ANSS","APP","ARM","ASML",
+    "AVGO","AZN","BIIB","BKNG","BKR","CCEP","CDNS","CDW","CEG","CHTR","CMCSA","COST","CPRT","CRWD","CSCO",
+    "CSGP","CTAS","CTSH","DASH","DDOG","DLTR","DXCM","EA","EXC","FANG","FAST","FTNT","GEHC","GFS","GILD",
+    "GOOG","GOOGL","HON","IDXX","ILMN","INTC","INTU","ISRG","KDP","KHC","KLAC","LIN","LRCX","LULU","MAR",
+    "MCHP","MDB","MDLZ","MELI","META","MNST","MRNA","MRVL","MSFT","MU","NFLX","NVDA","NXPI","ODFL","ON",
+    "ORLY","PANW","PAYX","PCAR","PDD","PEP","PYPL","QCOM","REGN","ROST","SBUX","SMCI","SNPS","TEAM","TMUS",
+    "TSLA","TTD","TTWO","TXN","VRSK","VRTX","WBD","WDAY","XEL","ZS",
 ]
 
 TSX60 = [
-    "RY.TO","TD.TO","BNS.TO","BMO.TO","CM.TO","ENB.TO","CNR.TO","CP.TO","TRP.TO","SU.TO",
-    "CNQ.TO","MFC.TO","SLF.TO","BCE.TO","T.TO","ABX.TO","NTR.TO","FNV.TO","CSU.TO","SHOP.TO",
-    "ATD.TO","WCN.TO","IFC.TO","QSR.TO","DOL.TO","SAP.TO","GIB-A.TO","WSP.TO","CCO.TO","TRI.TO",
-    "BAM.TO","BN.TO","POW.TO","FFH.TO","GWO.TO","IAG.TO","NA.TO","EMA.TO","FTS.TO","AQN.TO",
-    "H.TO","MG.TO","L.TO","CTC-A.TO","WPM.TO","AEM.TO","K.TO","FM.TO","IMO.TO","CVE.TO",
-    "HSE.TO","PPL.TO","IPL.TO","KEY.TO","GFL.TO","TFII.TO","STN.TO","OTEX.TO","BB.TO","LSPD.TO",
+    "ABX.TO","AEM.TO","ATD.TO","BAM.TO","BCE.TO","BMO.TO","BN.TO","BNS.TO","CAE.TO","CCL-B.TO","CCO.TO","CLS.TO","CM.TO","CNQ.TO","CNR.TO",
+    "CP.TO","CSU.TO","CTC-A.TO","CVE.TO","DOL.TO","EMA.TO","ENB.TO","FFH.TO","FM.TO","FNV.TO","FSV.TO","FTS.TO","GFL.TO","GIB-A.TO","GIL.TO",
+    "H.TO","IFC.TO","IMO.TO","K.TO","L.TO","MFC.TO","MG.TO","MRU.TO","NA.TO","NTR.TO","OTEX.TO","POW.TO","PPL.TO","QSR.TO","RCI-B.TO",
+    "RY.TO","SAP.TO","SHOP.TO","SLF.TO","SU.TO","T.TO","TD.TO","TECK-B.TO","TOU.TO","TRI.TO","TRP.TO","WCN.TO","WN.TO","WPM.TO","WSP.TO",
 ]
 
 FTSE100 = [
-    "III.L","ADM.L","AAF.L","AAL.L","ANTO.L","AHT.L","ABF.L","AZN.L","AUTO.L","AVV.L",
-    "AV.L","BME.L","BA.L","BARC.L","BDEV.L","BEZ.L","BKG.L","BP.L","BATS.L","BLND.L",
-    "BT-A.L","BNZL.L","BRBY.L","CCH.L","CPG.L","CNA.L","CRH.L","CRDA.L","DCC.L","DGE.L",
-    "DPLM.L","EDV.L","ENT.L","EXPN.L","FCIT.L","FRAS.L","FRES.L","GLEN.L","GSK.L","HLN.L",
-    "HLMA.L","HSBA.L","IHG.L","III.L","IMB.L","INF.L","ITV.L","JD.L","KGF.L","LAND.L",
-    "LGEN.L","LLOY.L","LSEG.L","MNG.L","MRO.L","MNDI.L","NG.L","NWG.L","NXT.L","OCDO.L",
-    "PSON.L","PSH.L","PSN.L","PHNX.L","PRU.L","RKT.L","REL.L","RIO.L","RMV.L","RR.L",
-    "RS1.L","RTO.L","SAG.L","SBRY.L","SDR.L","SGE.L","SGRO.L","SHEL.L","SJP.L","SKG.L",
-    "SMDS.L","SMIN.L","SMT.L","SN.L","SPX.L","SSE.L","STAN.L","STJ.L","SVT.L","TSCO.L",
-    "TW.L","ULVR.L","UTG.L","UU.L","VOD.L","WEIR.L","WPP.L","WTB.L",
+    "AAF.L","AAL.L","ABF.L","ADM.L","AHT.L","ANTO.L","AUTO.L","AV.L","AZN.L","BA.L","BARC.L","BATS.L","BEZ.L","BKG.L","BLND.L",
+    "BME.L","BNZL.L","BP.L","BRBY.L","BT-A.L","CCH.L","CNA.L","CPG.L","CRDA.L","CRH.L","DCC.L","DGE.L","DPLM.L","EDV.L","ENT.L",
+    "EXPN.L","FCIT.L","FERG.L","FLTR.L","FRAS.L","FRES.L","GLEN.L","GSK.L","HIK.L","HLMA.L","HLN.L","HSBA.L","IAG.L","ICG.L","IHG.L",
+    "III.L","IMB.L","IMI.L","INF.L","ITRK.L","ITV.L","JD.L","KGF.L","LAND.L","LGEN.L","LLOY.L","LSEG.L","MNDI.L","MNG.L","MRO.L",
+    "NG.L","NWG.L","NXT.L","OCDO.L","PHNX.L","PRU.L","PSH.L","PSN.L","PSON.L","REL.L","RIO.L","RKT.L","RMV.L","RR.L","RS1.L",
+    "RTO.L","SAG.L","SBRY.L","SDR.L","SGE.L","SGRO.L","SHEL.L","SMIN.L","SMT.L","SN.L","SPX.L","SSE.L","STAN.L","STJ.L","SVT.L",
+    "TSCO.L","TW.L","ULVR.L","UTG.L","UU.L","VOD.L","WEIR.L","WPP.L","WTB.L",
 ]
 
-# All indices and their tickers
 INDICES = {
     "sp500": SP500,
     "nasdaq100": NASDAQ100,
@@ -112,93 +111,124 @@ INDICES = {
 
 
 def get_all_unique_tickers():
-    """Combine all index tickers, deduplicated."""
     all_tickers = set()
     for tickers in INDICES.values():
         all_tickers.update(tickers)
     return sorted(all_tickers)
 
 
-BATCH_SIZE = 200  # Yahoo quote API handles up to ~200 symbols per request
-YAHOO_HEADERS = {"User-Agent": "Mozilla/5.0"}
+def yf_ticker(t):
+    """Convert our ticker format to yfinance format (BRK.B -> BRK-B)."""
+    return t.replace("BRK.B", "BRK-B").replace("BF.B", "BF-B")
 
 
-def fetch_yahoo_batch(symbols):
-    """Fetch a batch of quotes from Yahoo Finance v7 quote API. Returns list of quote dicts."""
-    syms_str = ",".join(symbols)
-    url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={syms_str}&fields=regularMarketPrice,regularMarketPreviousClose,regularMarketChange,regularMarketChangePercent"
-    req = urllib.request.Request(url, headers=YAHOO_HEADERS)
-    try:
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            data = json.loads(resp.read().decode())
-        return data.get("quoteResponse", {}).get("result", [])
-    except Exception:
-        # Fallback to query2
-        try:
-            url2 = url.replace("query1", "query2")
-            req2 = urllib.request.Request(url2, headers=YAHOO_HEADERS)
-            with urllib.request.urlopen(req2, timeout=8) as resp:
-                data = json.loads(resp.read().decode())
-            return data.get("quoteResponse", {}).get("result", [])
-        except Exception:
-            return []
+def our_ticker(t):
+    """Convert yfinance format back to our format (BRK-B -> BRK.B)."""
+    return t.replace("BRK-B", "BRK.B").replace("BF-B", "BF.B")
 
 
 def fetch_once(conn):
-    """Batch fetch all stock quotes using Yahoo quote API with concurrent requests."""
+    """Fetch all stock quotes using yfinance and store in DB."""
     cur = conn.cursor()
     all_tickers = get_all_unique_tickers()
     count = 0
+    errors = 0
 
-    # Split into batches
-    batches = [all_tickers[i:i + BATCH_SIZE] for i in range(0, len(all_tickers), BATCH_SIZE)]
+    # yfinance.download() handles batching internally
+    # Convert tickers to yfinance format
+    yf_tickers = [yf_ticker(t) for t in all_tickers]
 
-    # Fetch all batches concurrently
-    all_quotes = []
-    with ThreadPoolExecutor(max_workers=len(batches)) as executor:
-        futures = {executor.submit(fetch_yahoo_batch, batch): batch for batch in batches}
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                all_quotes.extend(result)
+    # Fetch in batches of 100 to avoid timeouts
+    batch_size = 100
+    for i in range(0, len(yf_tickers), batch_size):
+        batch = yf_tickers[i:i + batch_size]
+        batch_str = " ".join(batch)
 
-    for q in all_quotes:
         try:
-            symbol = q.get("symbol", "")
-            price = q.get("regularMarketPrice")
-            prev = q.get("regularMarketPreviousClose")
+            # Download 2 days of data to get previous close
+            data = yf.download(batch_str, period="2d", interval="1d", progress=False, threads=True)
 
-            if not symbol or not price or price <= 0:
+            if data.empty:
+                print(f"  Batch {i // batch_size + 1}: no data returned")
+                errors += len(batch)
                 continue
 
-            prev = prev or price
-            change = price - prev
-            change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
+            # yfinance returns MultiIndex columns when multiple tickers
+            if isinstance(data.columns, __import__('pandas').MultiIndex):
+                # Multiple tickers: columns are (Price, Ticker)
+                tickers_in_data = data.columns.get_level_values(1).unique()
+                for yf_t in tickers_in_data:
+                    try:
+                        close_series = data[("Close", yf_t)].dropna()
+                        if len(close_series) == 0:
+                            errors += 1
+                            continue
 
-            sotw_id = f"YF.STOCK.{symbol}"
+                        price = float(close_series.iloc[-1])
+                        prev = float(close_series.iloc[-2]) if len(close_series) >= 2 else price
 
-            cur.execute(f"""
-                INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
-                VALUES (%s, %s, %s, %s, %s, %s, NOW())
-                ON CONFLICT (id) DO UPDATE SET
-                    price = EXCLUDED.price,
-                    previous_close = EXCLUDED.previous_close,
-                    change = EXCLUDED.change,
-                    change_pct = EXCLUDED.change_pct,
-                    updated_at = NOW()
-            """, (sotw_id, symbol, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
-            count += 1
-        except Exception:
-            pass
+                        if price <= 0:
+                            errors += 1
+                            continue
+
+                        ticker = our_ticker(str(yf_t))
+                        change = price - prev
+                        change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
+                        sotw_id = f"YF.STOCK.{ticker}"
+
+                        cur.execute(f"""
+                            INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
+                            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                            ON CONFLICT (id) DO UPDATE SET
+                                price = EXCLUDED.price,
+                                previous_close = EXCLUDED.previous_close,
+                                change = EXCLUDED.change,
+                                change_pct = EXCLUDED.change_pct,
+                                updated_at = NOW()
+                        """, (sotw_id, ticker, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
+                        count += 1
+                    except Exception as e:
+                        errors += 1
+            else:
+                # Single ticker case (shouldn't happen with batches but handle it)
+                if len(batch) == 1:
+                    try:
+                        close_series = data["Close"].dropna()
+                        if len(close_series) == 0:
+                            errors += 1
+                            continue
+                        price = float(close_series.iloc[-1])
+                        prev = float(close_series.iloc[-2]) if len(close_series) >= 2 else price
+                        ticker = our_ticker(batch[0])
+                        change = price - prev
+                        change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
+                        sotw_id = f"YF.STOCK.{ticker}"
+                        cur.execute(f"""
+                            INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
+                            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                            ON CONFLICT (id) DO UPDATE SET
+                                price = EXCLUDED.price,
+                                previous_close = EXCLUDED.previous_close,
+                                change = EXCLUDED.change,
+                                change_pct = EXCLUDED.change_pct,
+                                updated_at = NOW()
+                        """, (sotw_id, ticker, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
+                        count += 1
+                    except Exception:
+                        errors += 1
+
+        except Exception as e:
+            print(f"  Batch {i // batch_size + 1} error: {e}")
+            errors += len(batch)
 
     conn.commit()
-    return count, 0
+    return count, errors
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--loop", action="store_true")
-    parser.add_argument("--interval", type=int, default=5)
+    parser.add_argument("--interval", type=int, default=5, help="Seconds between fetches (default 5)")
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB)
@@ -220,7 +250,7 @@ def main():
 
     if not args.loop:
         count, errors = fetch_once(conn)
-        print(f"Updated {count} stock quotes")
+        print(f"Updated {count} stock quotes ({errors} errors)")
         conn.close()
         return
 
@@ -240,7 +270,7 @@ def main():
             count, errors = fetch_once(conn)
             iteration += 1
             elapsed = time.time() - start
-            print(f"  [{now.strftime('%H:%M:%S')}] #{iteration}: {count} stocks in {elapsed:.1f}s", flush=True)
+            print(f"  [{now.strftime('%H:%M:%S')}] #{iteration}: {count} stocks ({errors} errors) in {elapsed:.1f}s", flush=True)
         except Exception as e:
             print(f"  [{now.strftime('%H:%M:%S')}] Error: {e}", flush=True)
             try:

@@ -137,9 +137,13 @@ def main():
         except Exception:
             pass
 
-    # Find events from last 5 days that have no actual yet
-    # (covers weekends — Friday events checked on Monday)
-    lookback = (TODAY - datetime.timedelta(days=5)).strftime("%Y-%m-%d")
+    # Find events that have no actual yet
+    # Default 5 days, use --backfill for deeper lookback
+    backfill_days = 5
+    if '--backfill' in sys.argv:
+        backfill_days = 60
+        print(f"  Backfill mode: checking last {backfill_days} days", flush=True)
+    lookback = (TODAY - datetime.timedelta(days=backfill_days)).strftime("%Y-%m-%d")
     today_str = TODAY.strftime("%Y-%m-%d")
 
     cur.execute("""
@@ -195,13 +199,22 @@ def main():
 
     print(f"  Checking {len(events_to_check)} events for actuals...", flush=True)
 
-    # Ask Gemini to find the actual released data
-    event_list = "\n".join(
-        f"- {name} ({country}) released on {date}" + (f" at {time} ET" if time else "")
-        for _, name, country, date, time in events_to_check
-    )
+    # Batch events in groups of 15 to avoid overloading Gemini
+    import time as _time
+    batch_size = 15
+    updated = 0
 
-    prompt = f"""These economic data releases should have been published already. Search for the actual released numbers.
+    for batch_start in range(0, len(events_to_check), batch_size):
+        batch = events_to_check[batch_start:batch_start + batch_size]
+        batch_num = batch_start // batch_size + 1
+        total_batches = (len(events_to_check) + batch_size - 1) // batch_size
+
+        event_list = "\n".join(
+            f"- {name} ({country}) released on {date}" + (f" at {time} ET" if time else "")
+            for _, name, country, date, time in batch
+        )
+
+        prompt = f"""These economic data releases should have been published already. Search for the actual released numbers.
 
 Events:
 {event_list}
@@ -216,32 +229,35 @@ Only include events where the data has ACTUALLY been published. If you can't fin
 
 Return ONLY a JSON array: [{{"name":"...","date":"YYYY-MM-DD","actual":"...","outcome":"..."}}]"""
 
-    print("  Querying Gemini...", end="", flush=True)
-    raw = call_gemini(prompt)
-    results = extract_json(raw)
-    print(f" {len(results)} results", flush=True)
+        print(f"  Batch {batch_num}/{total_batches} ({len(batch)} events)...", end="", flush=True)
+        raw = call_gemini(prompt)
+        results = extract_json(raw)
+        print(f" {len(results)} results", flush=True)
 
-    updated = 0
-    for r in results:
-        rname = r.get("name", "")
-        rdate = r.get("date", "")
-        actual = r.get("actual", "")
-        outcome = r.get("outcome", "")
-        if not rname or not actual:
-            continue
+        for r in results:
+            rname = r.get("name", "")
+            rdate = r.get("date", "")
+            actual = r.get("actual", "")
+            outcome = r.get("outcome", "")
+            if not rname or not actual:
+                continue
 
-        # Match to stored event
-        for sid, name, country, date_str, _ in events_to_check:
-            if date_str == rdate or name.lower() in rname.lower() or rname.lower() in name.lower():
-                cur.execute("""
-                    UPDATE sotw_release_schedule
-                    SET actual = %s, outcome = %s, updated_at = NOW()
-                    WHERE series_id = %s AND release_date = %s AND actual IS NULL
-                """, (actual, outcome, sid, date_str))
-                if cur.rowcount > 0:
-                    updated += 1
-                    print(f"    {date_str} {name[:40]:40s} -> {actual}", flush=True)
-                break
+            # Match to stored event
+            for sid, name, country, date_str, _ in batch:
+                if date_str == rdate or name.lower() in rname.lower() or rname.lower() in name.lower():
+                    cur.execute("""
+                        UPDATE sotw_release_schedule
+                        SET actual = %s, outcome = %s, updated_at = NOW()
+                        WHERE series_id = %s AND release_date = %s AND actual IS NULL
+                    """, (actual, outcome, sid, date_str))
+                    if cur.rowcount > 0:
+                        updated += 1
+                        print(f"    {date_str} {name[:40]:40s} -> {actual}", flush=True)
+                    break
+
+        conn.commit()
+        if batch_start + batch_size < len(events_to_check):
+            _time.sleep(2)  # Small delay between batches
 
     print(f"  Updated {updated} macro events with actuals", flush=True)
 

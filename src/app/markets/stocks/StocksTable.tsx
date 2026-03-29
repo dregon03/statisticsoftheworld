@@ -681,8 +681,8 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [sortKey, setSortKey] = useState<SortKey>('changePct');
-  const [sortAsc, setSortAsc] = useState(false);
+  const [sortKey, setSortKey] = useState<SortKey>('label');
+  const [sortAsc, setSortAsc] = useState(true);
   const [profiles, setProfiles] = useState<Record<string, StockProfile>>({});
 
   const tickerSet = useMemo(() => new Set(tickers), [tickers]);

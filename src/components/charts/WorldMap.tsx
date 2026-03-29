@@ -78,15 +78,20 @@ export default function WorldMap({
     return m;
   }, [data]);
 
-  // Compute min/max for color scale
-  const { min, max, useLog } = useMemo(() => {
-    const values = data.filter(d => d.value != null).map(d => d.value as number);
-    if (values.length === 0) return { min: 0, max: 1, useLog: false };
-    const mn = Math.min(...values);
-    const mx = Math.max(...values);
+  // Compute color scale bounds using percentiles to handle outliers
+  const { min, max, useLog, rawMin, rawMax } = useMemo(() => {
+    const values = data.filter(d => d.value != null).map(d => d.value as number).sort((a, b) => a - b);
+    if (values.length === 0) return { min: 0, max: 1, useLog: false, rawMin: 0, rawMax: 1 };
+    const rawMn = values[0];
+    const rawMx = values[values.length - 1];
+    // Use 5th and 95th percentile to clip outliers
+    const p5 = values[Math.floor(values.length * 0.05)];
+    const p95 = values[Math.floor(values.length * 0.95)];
+    const mn = p5;
+    const mx = p95 > p5 ? p95 : rawMx;
     // Use log scale when data is highly skewed (max/min ratio > 100 and all positive)
     const shouldLog = mn > 0 && mx / mn > 100;
-    return { min: mn, max: mx, useLog: shouldLog };
+    return { min: mn, max: mx, useLog: shouldLog, rawMin: rawMn, rawMax: rawMx };
   }, [data]);
 
   const lowColor: [number, number, number] = [219, 234, 254]; // blue-100
@@ -157,11 +162,11 @@ export default function WorldMap({
 
         {/* Legend */}
         <div className="flex items-center justify-center gap-2 px-4 py-2 text-[11px] text-[#999]">
-          <span>{formatValue(min, format, decimals)}</span>
+          <span>{formatValue(rawMin, format, decimals)}</span>
           <div className="w-[120px] h-[8px] rounded-full" style={{
             background: `linear-gradient(to right, rgb(${lowColor.join(',')}), rgb(${highColor.join(',')}))`
           }} />
-          <span>{formatValue(max, format, decimals)}</span>
+          <span>{formatValue(rawMax, format, decimals)}</span>
         </div>
       </div>
 

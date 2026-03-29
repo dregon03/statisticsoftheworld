@@ -42,17 +42,22 @@ ETL=/opt/sotw-etl/run-etl.sh
 30 6 1 * * $ETL etl_history.py >> /var/log/sotw-etl.log 2>&1
 0 7 1 * * $ETL etl_trade.py >> /var/log/sotw-etl.log 2>&1
 
-# ── Twitter/X auto-posting (5x daily) ───────────────────
-# 8 AM ET (12 UTC) — Economic calendar: what's releasing today
+# ── Social auto-posting (5x daily, X + Bluesky) ─────────
+# 8 AM ET (12 UTC) — Economic calendar
 0 12 * * 1-5 $ETL post_twitter.py --type calendar >> /var/log/sotw-twitter.log 2>&1
-# 10 AM ET (14 UTC) — Market snapshot after open
+1 12 * * 1-5 $ETL post_bluesky.py --type calendar >> /var/log/sotw-bluesky.log 2>&1
+# 10 AM ET (14 UTC) — Market snapshot
 0 14 * * 1-5 $ETL post_twitter.py --type market >> /var/log/sotw-twitter.log 2>&1
-# 1 PM ET (17 UTC) — Indicator highlight (rankings, comparisons)
+1 14 * * 1-5 $ETL post_bluesky.py --type market >> /var/log/sotw-bluesky.log 2>&1
+# 1 PM ET (17 UTC) — Indicator highlight
 0 17 * * * $ETL post_twitter.py --type indicator >> /var/log/sotw-twitter.log 2>&1
+1 17 * * * $ETL post_bluesky.py --type indicator >> /var/log/sotw-bluesky.log 2>&1
 # 5 PM ET (21 UTC) — Country spotlight
 0 21 * * * $ETL post_twitter.py --type country >> /var/log/sotw-twitter.log 2>&1
-# 9 PM ET (1 UTC next day) — Country spotlight for non-US audience
+1 21 * * * $ETL post_bluesky.py --type country >> /var/log/sotw-bluesky.log 2>&1
+# 9 PM ET (1 UTC) — Country spotlight (intl audience)
 0 1 * * * $ETL post_twitter.py --type country >> /var/log/sotw-twitter.log 2>&1
+1 1 * * * $ETL post_bluesky.py --type country >> /var/log/sotw-bluesky.log 2>&1
 
 # ── Weekday live quote sessions (5s stocks, 30s indices) ──
 # Pre-market + morning: 8:30 AM - 12 PM ET (12:30 - 16:00 UTC)

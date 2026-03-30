@@ -700,7 +700,7 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
     };
 
     fetchQuotes();
-    const interval = setInterval(fetchQuotes, 5_000);
+    const interval = setInterval(fetchQuotes, 2_000);
     return () => clearInterval(interval);
   }, []);
 

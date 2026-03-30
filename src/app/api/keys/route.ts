@@ -27,8 +27,8 @@ export async function POST(request: Request) {
 
     if (existing) {
       return Response.json({
-        message: 'API key already exists for this email',
-        apiKey: existing.api_key,
+        message: 'API key already exists for this email. Check your inbox for the original key, or contact support to reset it.',
+        apiKey: `${existing.api_key.slice(0, 5)}...${existing.api_key.slice(-4)}`,
         tier: existing.tier,
         rateLimit: existing.rate_limit,
       });

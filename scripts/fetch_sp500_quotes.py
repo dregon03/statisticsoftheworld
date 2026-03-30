@@ -221,7 +221,9 @@ def fetch_once(conn):
             print(f"  Batch {i // batch_size + 1} error: {e}")
             errors += len(batch)
 
-    conn.commit()
+        # Commit after each batch so prices are visible in DB immediately
+        conn.commit()
+
     return count, errors
 
 

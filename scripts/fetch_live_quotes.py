@@ -169,6 +169,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--loop", action="store_true", help="Loop every 30s until market close (8 PM UTC)")
     parser.add_argument("--interval", type=int, default=30, help="Seconds between fetches in loop mode")
+    parser.add_argument("--duration", type=int, default=19800, help="Max runtime in seconds (default 5.5h)")
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB)
@@ -198,9 +199,9 @@ def main():
     # Loop mode: fetch every 30 seconds for up to 5.5 hours
     # (stays under GHA's 6-hour job limit)
     # Three cron triggers cover the full day: pre-market, core, after-hours
-    print(f"=== Live quotes loop (every {args.interval}s) ===", flush=True)
+    print(f"=== Live quotes loop (every {args.interval}s, max {args.duration}s) ===", flush=True)
     iteration = 0
-    max_runtime_seconds = 5.5 * 3600  # 5 hours 30 minutes
+    max_runtime_seconds = args.duration
     start_time = time.time()
 
     while True:

@@ -228,7 +228,8 @@ def fetch_once(conn):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--loop", action="store_true")
-    parser.add_argument("--interval", type=int, default=5, help="Seconds between fetches (default 5)")
+    parser.add_argument("--interval", type=int, default=30, help="Seconds between fetches (default 30)")
+    parser.add_argument("--duration", type=int, default=19800, help="Max runtime in seconds (default 5.5h)")
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB)
@@ -254,9 +255,9 @@ def main():
         conn.close()
         return
 
-    print(f"=== Stock quotes loop (every {args.interval}s) ===", flush=True)
+    print(f"=== Stock quotes loop (every {args.interval}s, max {args.duration}s) ===", flush=True)
     iteration = 0
-    max_runtime = 5.5 * 3600
+    max_runtime = args.duration
     start_time = time.time()
 
     while True:

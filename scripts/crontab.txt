@@ -59,15 +59,15 @@ ETL=/opt/sotw-etl/run-etl.sh
 0 1 * * * $ETL post_twitter.py --type country >> /var/log/sotw-twitter.log 2>&1
 1 1 * * * $ETL post_bluesky.py --type country >> /var/log/sotw-bluesky.log 2>&1
 
-# ── Weekday live quote sessions (5s stocks, 30s indices) ──
+# ── Weekday live quote sessions (30s stocks, 30s indices) ──
 # Pre-market + morning: 8:30 AM - 12 PM ET (12:30 - 16:00 UTC)
-30 12 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 5 --duration 12600 >> /var/log/sotw-quotes.log 2>&1
+30 12 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 30 --duration 12600 >> /var/log/sotw-quotes.log 2>&1
 
 # Afternoon: 12 PM - 4 PM ET (16:00 - 20:00 UTC)
-0 16 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 5 --duration 14400 >> /var/log/sotw-quotes.log 2>&1
+0 16 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 30 --duration 14400 >> /var/log/sotw-quotes.log 2>&1
 
 # After-hours: 4 PM - 6 PM ET (20:00 - 22:00 UTC)
-0 20 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 30 --duration 7200 >> /var/log/sotw-quotes.log 2>&1
+0 20 * * 1-5 $ETL fetch_sp500_quotes.py --loop --interval 60 --duration 7200 >> /var/log/sotw-quotes.log 2>&1
 
 # Live indices/commodities/FX (30s, during market hours)
 30 12 * * 1-5 $ETL fetch_live_quotes.py --loop --interval 30 --duration 34200 >> /var/log/sotw-quotes.log 2>&1

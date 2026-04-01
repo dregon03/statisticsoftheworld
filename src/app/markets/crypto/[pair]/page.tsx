@@ -43,7 +43,9 @@ const RANGES = [
 ] as const;
 
 export default function CryptoDetailPage({ params }: { params: Promise<{ pair: string }> }) {
-  const { pair: slug } = use(params);
+  const { pair: rawSlug } = use(params);
+  // Handle TradingView format like "BINANCE:BTCUSDT" -> "btcusdt"
+  const slug = decodeURIComponent(rawSlug).replace(/^[A-Z]+:/, '');
   const info = CRYPTO_MAP[slug.toLowerCase()];
   const apiPair = slug.toUpperCase();
 

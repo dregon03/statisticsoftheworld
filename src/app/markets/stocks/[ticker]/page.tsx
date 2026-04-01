@@ -24,7 +24,8 @@ const RANGES = [
 
 export default function StockDetailPage({ params }: { params: Promise<{ ticker: string }> }) {
   const { ticker: rawTicker } = use(params);
-  const ticker = rawTicker.toUpperCase();
+  // Handle TradingView format like "NASDAQ:AAPL" -> "AAPL"
+  const ticker = decodeURIComponent(rawTicker).replace(/^[A-Z]+:/, '').toUpperCase();
   const name = COMPANY_NAMES[ticker] || ticker;
 
   const [range, setRange] = useState('1y');

@@ -6,7 +6,7 @@ Fetches all active markets from Polymarket's Gamma API,
 filters to economics/politics/geopolitics, and upserts into
 sotw_predictions table.
 
-Schedule: Every 15 minutes via GitHub Actions or Vercel cron.
+Schedule: Every 4 hours via Hetzner cron.
 Runtime: ~30-60 seconds (paginated fetch of 30K+ markets, filter to ~1K).
 
 Usage:

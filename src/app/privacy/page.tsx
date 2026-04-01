@@ -42,7 +42,7 @@ export default function PrivacyPage() {
             <ul className="list-disc pl-6 space-y-1">
               <li><strong>Stripe:</strong> Payment processing. See <a href="https://stripe.com/privacy" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">Stripe&apos;s Privacy Policy</a>.</li>
               <li><strong>Supabase:</strong> Database hosting. Data stored in AWS ca-central-1 (Canada). See <a href="https://supabase.com/privacy" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">Supabase&apos;s Privacy Policy</a>.</li>
-              <li><strong>Vercel:</strong> Website hosting. See <a href="https://vercel.com/legal/privacy-policy" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">Vercel&apos;s Privacy Policy</a>.</li>
+              <li><strong>Hetzner:</strong> Website hosting. See <a href="https://www.hetzner.com/legal/privacy-policy/" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">Hetzner&apos;s Privacy Policy</a>.</li>
             </ul>
           </section>
 

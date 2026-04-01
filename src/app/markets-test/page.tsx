@@ -4,6 +4,78 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { useEffect, useRef } from 'react';
 
+// Intercept TradingView widget clicks and redirect to SOTW pages
+function useTradingViewInterceptor() {
+  useEffect(() => {
+    // Map TradingView symbol URLs to SOTW pages
+    function tvUrlToSotw(url: string): string | null {
+      try {
+        const u = new URL(url);
+        // TradingView links look like: tradingview.com/symbols/NASDAQ-AAPL/
+        // or: tradingview.com/chart/?symbol=NASDAQ:AAPL
+        const symbolMatch = u.pathname.match(/\/symbols\/([^/]+)/);
+        if (symbolMatch) {
+          const raw = symbolMatch[1].replace(/-/g, ':'); // NASDAQ-AAPL -> NASDAQ:AAPL
+          const ticker = raw.split(':').pop() || raw; // NASDAQ:AAPL -> AAPL
+
+          // Crypto detection
+          if (raw.includes('BINANCE') || raw.includes('COINBASE') || ticker.endsWith('USDT') || ticker.endsWith('USD')) {
+            const pair = ticker.replace('USDT', '-USD').replace(/USD$/, '-USD');
+            return `/markets/crypto/${pair.toLowerCase()}`;
+          }
+          // Commodity futures
+          if (/^(GC|SI|CL|NG|HG|ZC|ZW|ZS)\d/.test(ticker)) {
+            const slugMap: Record<string, string> = {
+              GC: 'gold', SI: 'silver', CL: 'crude-oil', NG: 'natural-gas',
+              HG: 'copper', ZC: 'corn', ZW: 'wheat', ZS: 'soybeans',
+            };
+            const prefix = ticker.replace(/\d.*/, '');
+            if (slugMap[prefix]) return `/markets/commodities/${slugMap[prefix]}`;
+          }
+          // Forex
+          if (raw.startsWith('FX:') || u.pathname.includes('forex')) {
+            return `/markets/currencies/${ticker.toLowerCase()}`;
+          }
+          // Default: stock page
+          return `/markets/stocks/${ticker}`;
+        }
+      } catch {}
+      return null;
+    }
+
+    // Intercept clicks that open new windows/tabs to TradingView
+    const origOpen = window.open;
+    window.open = function(url?: string | URL, target?: string, features?: string) {
+      const urlStr = url?.toString() || '';
+      if (urlStr.includes('tradingview.com')) {
+        const sotwUrl = tvUrlToSotw(urlStr);
+        if (sotwUrl) {
+          window.location.href = sotwUrl;
+          return null;
+        }
+      }
+      return origOpen.call(window, url, target, features);
+    };
+
+    // Also intercept link clicks that bubble up from iframes via postMessage
+    const handleMessage = (e: MessageEvent) => {
+      if (typeof e.data === 'string' && e.data.includes('tradingview.com')) {
+        const sotwUrl = tvUrlToSotw(e.data);
+        if (sotwUrl) {
+          e.preventDefault();
+          window.location.href = sotwUrl;
+        }
+      }
+    };
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.open = origOpen;
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+}
+
 function TradingViewWidget({ scriptSrc, config }: { scriptSrc: string; config: object }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -123,6 +195,7 @@ const TICKER_CONFIG = {
 };
 
 export default function MarketsTestPage() {
+  useTradingViewInterceptor();
   return (
     <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
       <Nav />

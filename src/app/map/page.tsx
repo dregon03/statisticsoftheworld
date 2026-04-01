@@ -165,7 +165,7 @@ export function MapContent() {
                       {bottom5.map((d, i) => (
                         <div key={d.countryId} className="flex items-center justify-between text-[15px]">
                           <div className="flex items-center gap-2">
-                            <span className="text-[#64748b] w-4">{sorted.length - 4 + i}.</span>
+                            <span className="text-[#64748b] w-8 shrink-0">{sorted.length - 4 + i}.</span>
                             <Link href={`/country/${d.countryId}`} className="text-[#0066cc] hover:underline">{d.country}</Link>
                           </div>
                           <span className="font-mono">{formatValue(d.value, selectedIndicator.format, selectedIndicator.decimals)}</span>

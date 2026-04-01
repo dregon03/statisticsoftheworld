@@ -34,7 +34,7 @@ function TradingViewWidget({ scriptSrc, config }: { scriptSrc: string; config: o
     return () => { if (ref.current) ref.current.innerHTML = ''; };
   }, [scriptSrc, config]);
 
-  return <div ref={ref} />;
+  return <div ref={ref} style={{ width: '100%', height: '100%' }} />;
 }
 
 const HEATMAP_CONFIG = {

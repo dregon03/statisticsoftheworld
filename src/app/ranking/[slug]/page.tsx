@@ -48,10 +48,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${config.title} — 2026 Rankings | Statistics of the World`,
-    description: config.description,
+    description: `${config.description} Compare 218 countries with interactive charts, historical data, and free API access.`,
     openGraph: {
-      title: config.title,
-      description: config.description,
+      title: `${config.title} — 2026 Rankings`,
+      description: `${config.description} Compare 218 countries.`,
       siteName: 'Statistics of the World',
     },
   };

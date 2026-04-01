@@ -31,11 +31,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (pop) parts.push(`Population: ${formatValue(pop.value, 'number')}`);
 
   return {
-    title: `${country.name} — Statistics & Data`,
-    description: `${parts.join(' | ')}. Explore ${country.name}'s economy, demographics, health, education, and 300+ indicators with data from IMF and World Bank.`,
+    title: `${country.name} Economy & Data 2026 — GDP, Population & More`,
+    description: `${parts.join(' · ')}. Explore ${country.name}'s economy, demographics, trade, health, and 400+ indicators with interactive charts and historical data from IMF and World Bank. Free API.`,
     openGraph: {
-      title: `${country.name} — Key Statistics`,
-      description: `${parts.join(' | ')}`,
+      title: `${country.name} — Economy & Key Statistics 2026`,
+      description: `${parts.join(' · ')}. 400+ indicators with charts.`,
       siteName: 'Statistics of the World',
     },
   };

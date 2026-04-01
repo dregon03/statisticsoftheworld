@@ -24,12 +24,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const latest = history.filter(d => d.value !== null).at(-1);
   const valueStr = latest ? formatValue(latest.value, ind.format, ind.decimals) : 'N/A';
 
+  const years = history.filter(d => d.value !== null).length;
+  const source = ind.source === 'imf' ? 'IMF' : 'World Bank';
+  const firstYear = history[0]?.year || '2000';
+  const latestYear = latest?.year || 'present';
+
   return {
-    title: `${country.name} ${ind.label} ${latest?.year || ''} — ${valueStr}`,
-    description: `${country.name} ${ind.label}: ${valueStr} (${latest?.year || 'latest'}). Historical data from ${history[0]?.year || '2000'} to ${latest?.year || 'present'}. Source: ${ind.source === 'imf' ? 'IMF' : 'World Bank'}.`,
+    title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
+    description: `${country.name}'s ${ind.label.toLowerCase()} was ${valueStr} in ${latestYear}. View ${years} years of historical data (${firstYear}–${latestYear}), charts, and comparisons. Source: ${source}. Free API available.`,
     openGraph: {
-      title: `${country.name} — ${ind.label}`,
-      description: `${valueStr} (${latest?.year || 'latest'}). ${history.filter(d => d.value !== null).length} years of data.`,
+      title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
+      description: `${years} years of data with interactive charts. Compare across 218 countries.`,
       siteName: 'Statistics of the World',
     },
   };

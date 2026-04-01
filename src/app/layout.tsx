@@ -18,18 +18,18 @@ export const metadata: Metadata = {
     default: 'Statistics of the World — Every Country, Every Indicator',
     template: '%s | Statistics of the World',
   },
-  description: '395+ indicators across 27 categories for 218 countries. GDP, population, stock markets, commodities, and more — free data from IMF, World Bank, FRED, Yahoo Finance, ECB, and Alpha Vantage.',
+  description: '440+ economic indicators for 218 countries. GDP, population, stock markets, commodities, and more — interactive charts, live data, and free API. Sources: IMF, World Bank, FRED, Yahoo Finance.',
   metadataBase: new URL('https://statisticsoftheworld.com'),
   openGraph: {
     type: 'website',
     siteName: 'Statistics of the World',
     title: 'Statistics of the World — Every Country, Every Indicator',
-    description: '490+ indicators for 218 countries. Free API and interactive visualizations from IMF, World Bank, FRED, and more.',
+    description: '440+ indicators for 218 countries. Free API, interactive charts, and live market data.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Statistics of the World',
-    description: '490+ indicators for 218 countries. Free API and interactive data visualizations.',
+    description: '440+ indicators for 218 countries. Free API, interactive charts, and live market data.',
   },
   robots: {
     index: true,

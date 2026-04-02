@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 /**
  * Redirect page for TradingView widget links.
@@ -17,13 +17,13 @@ const TV_TO_SOTW: Record<string, string> = {
   "FOREXCOM-NAS100": "/markets/stocks/nasdaq100",
   "FOREXCOM-DJI": "/markets/stocks/sp500",
   "FOREXCOM-US30": "/markets/stocks/sp500",
-  "INDEX-NKY": "/markets/stocks/sp500",
-  "INDEX-DEU40": "/markets/stocks/sp500",
+  "INDEX-NKY": "/markets/stocks",
+  "INDEX-DEU40": "/markets/stocks",
   "FOREXCOM-UKXGBP": "/markets/stocks/ftse100",
   "FOREXCOM-UK100": "/markets/stocks/ftse100",
   "TSX-TSX": "/markets/stocks/tsx60",
-  "BSE-SENSEX": "/markets/stocks/sp500",
-  // Commodities
+  "BSE-SENSEX": "/markets/stocks",
+  // Commodities (futures)
   "COMEX-GC1!": "/markets/commodities/gold",
   "COMEX-SI1!": "/markets/commodities/silver",
   "NYMEX-CL1!": "/markets/commodities/crude-oil",
@@ -31,6 +31,15 @@ const TV_TO_SOTW: Record<string, string> = {
   "COMEX-HG1!": "/markets/commodities/copper",
   "CBOT-ZC1!": "/markets/commodities/corn",
   "CBOT-ZW1!": "/markets/commodities/wheat",
+  // Commodities (TVC spot)
+  "TVC-GOLD": "/markets/commodities/gold",
+  "TVC-SILVER": "/markets/commodities/silver",
+  "TVC-USOIL": "/markets/commodities/crude-oil",
+  // Commodities (Pepperstone CFD)
+  "PEPPERSTONE-NATGAS": "/markets/commodities/natural-gas",
+  "PEPPERSTONE-COPPER": "/markets/commodities/copper",
+  "PEPPERSTONE-CORN": "/markets/commodities/corn",
+  "PEPPERSTONE-WHEAT": "/markets/commodities/wheat",
   // Crypto
   "BINANCE-BTCUSDT": "/markets/crypto/btcusd",
   "BINANCE-ETHUSDT": "/markets/crypto/ethusd",
@@ -91,12 +100,21 @@ function tickerToSotw(tvticker: string): string {
 export default function RedirectPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const tvticker = (params.tvticker as string) || '';
 
   useEffect(() => {
-    const target = tickerToSotw(tvticker);
+    // TradingView sends the actual symbol in ?tvwidgetsymbol=EXCHANGE:SYMBOL
+    // The path param {tvticker} may be literal if TradingView doesn't replace it
+    const querySymbol = searchParams.get('tvwidgetsymbol');
+    let key = tvticker;
+    if (querySymbol) {
+      // Convert EXCHANGE:SYMBOL to EXCHANGE-SYMBOL for lookup
+      key = querySymbol.replace(':', '-');
+    }
+    const target = tickerToSotw(key);
     router.replace(target);
-  }, [tvticker, router]);
+  }, [tvticker, searchParams, router]);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0d1b2a', color: '#fff' }}>

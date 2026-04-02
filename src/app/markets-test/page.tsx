@@ -180,15 +180,15 @@ const TV_TO_SOTW: Record<string, string> = {
   "FOREXCOM-SPX500": "/markets/stocks/sp500",
   "FOREXCOM-NSXUSD": "/markets/stocks/nasdaq100",
   "FOREXCOM-NAS100": "/markets/stocks/nasdaq100",
-  "FOREXCOM-DJI": "/markets/stocks/sp500", // Dow Jones — closest page
-  "FOREXCOM-US30": "/markets/stocks/sp500",
-  "INDEX-NKY": "/markets/stocks/sp500",
-  "INDEX-DEU40": "/markets/stocks/sp500",
+  "FOREXCOM-DJI": "/markets/stocks",
+  "FOREXCOM-US30": "/markets/stocks",
+  "INDEX-NKY": "/markets/stocks",
+  "INDEX-DEU40": "/markets/stocks",
   "FOREXCOM-UKXGBP": "/markets/stocks/ftse100",
   "FOREXCOM-UK100": "/markets/stocks/ftse100",
   "TSX-TSX": "/markets/stocks/tsx60",
-  "BSE-SENSEX": "/markets/stocks/sp500",
-  // Commodities
+  "BSE-SENSEX": "/markets/stocks",
+  // Commodities (futures)
   "COMEX-GC1!": "/markets/commodities/gold",
   "COMEX-SI1!": "/markets/commodities/silver",
   "NYMEX-CL1!": "/markets/commodities/crude-oil",
@@ -196,6 +196,15 @@ const TV_TO_SOTW: Record<string, string> = {
   "COMEX-HG1!": "/markets/commodities/copper",
   "CBOT-ZC1!": "/markets/commodities/corn",
   "CBOT-ZW1!": "/markets/commodities/wheat",
+  // Commodities (TVC spot)
+  "TVC-GOLD": "/markets/commodities/gold",
+  "TVC-SILVER": "/markets/commodities/silver",
+  "TVC-USOIL": "/markets/commodities/crude-oil",
+  // Commodities (Pepperstone CFD)
+  "PEPPERSTONE-NATGAS": "/markets/commodities/natural-gas",
+  "PEPPERSTONE-COPPER": "/markets/commodities/copper",
+  "PEPPERSTONE-CORN": "/markets/commodities/corn",
+  "PEPPERSTONE-WHEAT": "/markets/commodities/wheat",
   // Crypto
   "BINANCE-BTCUSDT": "/markets/crypto/btcusd",
   "BINANCE-ETHUSDT": "/markets/crypto/ethusd",
@@ -236,10 +245,10 @@ const OVERVIEW_CONFIG = {
       { s: "TSX:TSX", d: "S&P/TSX" }, { s: "BSE:SENSEX", d: "Sensex" },
     ]},
     { title: "Commodities", symbols: [
-      { s: "COMEX:GC1!", d: "Gold" }, { s: "COMEX:SI1!", d: "Silver" },
-      { s: "NYMEX:CL1!", d: "WTI Crude" }, { s: "NYMEX:NG1!", d: "Natural Gas" },
-      { s: "COMEX:HG1!", d: "Copper" }, { s: "CBOT:ZC1!", d: "Corn" },
-      { s: "CBOT:ZW1!", d: "Wheat" },
+      { s: "TVC:GOLD", d: "Gold" }, { s: "TVC:SILVER", d: "Silver" },
+      { s: "TVC:USOIL", d: "WTI Crude" }, { s: "PEPPERSTONE:NATGAS", d: "Natural Gas" },
+      { s: "PEPPERSTONE:COPPER", d: "Copper" }, { s: "PEPPERSTONE:CORN", d: "Corn" },
+      { s: "PEPPERSTONE:WHEAT", d: "Wheat" },
     ]},
     { title: "Crypto", symbols: [
       { s: "BINANCE:BTCUSDT", d: "Bitcoin" }, { s: "BINANCE:ETHUSDT", d: "Ethereum" },
@@ -276,8 +285,8 @@ const TICKER_CONFIG = {
     { proName: "BITSTAMP:BTCUSD", title: "Bitcoin" },
     { proName: "BITSTAMP:ETHUSD", title: "Ethereum" },
     { proName: "FX:EURUSD", title: "EUR/USD" },
-    { proName: "COMEX:GC1!", title: "Gold" },
-    { proName: "NYMEX:CL1!", title: "WTI Crude" },
+    { proName: "TVC:GOLD", title: "Gold" },
+    { proName: "TVC:USOIL", title: "WTI Crude" },
   ],
   showSymbolLogo: true,
   isTransparent: true,

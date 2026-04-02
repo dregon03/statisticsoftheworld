@@ -128,54 +128,86 @@ def our_ticker(t):
 
 
 def fetch_once(conn):
-    """Fetch all stock quotes using yfinance and store in DB.
+    """Fetch all stock quotes using yfinance batch download.
 
-    Uses Ticker.fast_info for each ticker to get accurate lastPrice and
-    previousClose, fetched in parallel via yfinance's built-in threading.
+    Uses yf.download with period='5d', interval='1d'. The key insight:
+    - During market hours, yfinance includes today's partial bar as the last entry
+    - previous_close = the second-to-last bar (yesterday's close)
+    - current price = last bar (today's partial or latest close)
+    - If only completed bars exist (market closed), last = yesterday, prev = day before
+
+    We always use: price = iloc[-1], prev = iloc[-2]. The change is always
+    "latest bar vs the bar before it", which equals today's change during
+    market hours or yesterday's change when market is closed.
     """
+    import pandas as pd
     cur = conn.cursor()
     all_tickers = get_all_unique_tickers()
     count = 0
     errors = 0
 
-    # Use yf.Tickers for batch creation, then fast_info for accurate live data
-    batch_size = 50
-    for i in range(0, len(all_tickers), batch_size):
-        batch = all_tickers[i:i + batch_size]
+    yf_tickers = [yf_ticker(t) for t in all_tickers]
 
-        for t in batch:
-            try:
-                yf_t = yf_ticker(t)
-                ticker_obj = yf.Ticker(yf_t)
-                info = ticker_obj.fast_info
+    batch_size = 100
+    for i in range(0, len(yf_tickers), batch_size):
+        batch = yf_tickers[i:i + batch_size]
+        batch_str = " ".join(batch)
 
-                price = float(info.get("lastPrice", 0) or 0)
-                prev = float(info.get("previousClose", 0) or 0)
+        try:
+            data = yf.download(batch_str, period="5d", interval="1d", progress=False, threads=True)
 
-                if price <= 0:
+            if data.empty:
+                print(f"  Batch {i // batch_size + 1}: no data returned")
+                errors += len(batch)
+                continue
+
+            is_multi = isinstance(data.columns, pd.MultiIndex)
+
+            if is_multi:
+                tickers_in_data = data.columns.get_level_values(1).unique()
+            else:
+                tickers_in_data = [batch[0]] if len(batch) == 1 else []
+
+            for yf_t in tickers_in_data:
+                try:
+                    close_series = (data[("Close", yf_t)] if is_multi else data["Close"]).dropna()
+                    if len(close_series) < 2:
+                        errors += 1
+                        continue
+
+                    # price = most recent bar, prev = the bar before it
+                    price = float(close_series.iloc[-1])
+                    prev = float(close_series.iloc[-2])
+
+                    if price <= 0:
+                        errors += 1
+                        continue
+
+                    ticker = our_ticker(str(yf_t))
+                    change = round(price - prev, 4)
+                    change_pct = round(((price / prev) - 1) * 100, 4) if prev > 0 else 0
+                    sotw_id = f"YF.STOCK.{ticker}"
+
+                    cur.execute(f"""
+                        INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                        ON CONFLICT (id) DO UPDATE SET
+                            price = EXCLUDED.price,
+                            previous_close = EXCLUDED.previous_close,
+                            change = EXCLUDED.change,
+                            change_pct = EXCLUDED.change_pct,
+                            updated_at = NOW()
+                    """, (sotw_id, ticker, round(price, 4), round(prev, 4), change, change_pct))
+                    count += 1
+                except Exception:
                     errors += 1
-                    continue
 
-                change = price - prev
-                change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
-                sotw_id = f"YF.STOCK.{t}"
+        except Exception as e:
+            print(f"  Batch {i // batch_size + 1} error: {e}")
+            errors += len(batch)
 
-                cur.execute(f"""
-                    INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, NOW())
-                    ON CONFLICT (id) DO UPDATE SET
-                        price = EXCLUDED.price,
-                        previous_close = EXCLUDED.previous_close,
-                        change = EXCLUDED.change,
-                        change_pct = EXCLUDED.change_pct,
-                        updated_at = NOW()
-                """, (sotw_id, t, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
-                count += 1
-            except Exception as e:
-                errors += 1
-
-        # Commit after each batch
         conn.commit()
+        time.sleep(1)  # Brief pause between batches to avoid rate limiting
 
     return count, errors
 

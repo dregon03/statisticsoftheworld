@@ -127,116 +127,54 @@ def our_ticker(t):
     return t.replace("BRK-B", "BRK.B").replace("BF-B", "BF.B")
 
 
-def extract_prices(data, yf_t, is_multi):
-    """Extract close prices from yfinance data for a ticker."""
-    if is_multi:
-        series = data[("Close", yf_t)].dropna()
-    else:
-        series = data["Close"].dropna()
-    if len(series) == 0:
-        return None, None
-    return series, float(series.iloc[-1])
-
-
 def fetch_once(conn):
     """Fetch all stock quotes using yfinance and store in DB.
 
-    Two-step approach for accurate live data:
-    1. Daily bars (5d) → previous close = last completed trading day's close
-    2. Intraday bars (1d, 5m) → current price = latest 5-min bar's close
+    Uses Ticker.fast_info for each ticker to get accurate lastPrice and
+    previousClose, fetched in parallel via yfinance's built-in threading.
     """
-    import pandas as pd
     cur = conn.cursor()
     all_tickers = get_all_unique_tickers()
     count = 0
     errors = 0
 
-    yf_tickers = [yf_ticker(t) for t in all_tickers]
+    # Use yf.Tickers for batch creation, then fast_info for accurate live data
+    batch_size = 50
+    for i in range(0, len(all_tickers), batch_size):
+        batch = all_tickers[i:i + batch_size]
 
-    batch_size = 100
-    for i in range(0, len(yf_tickers), batch_size):
-        batch = yf_tickers[i:i + batch_size]
-        batch_str = " ".join(batch)
+        for t in batch:
+            try:
+                yf_t = yf_ticker(t)
+                ticker_obj = yf.Ticker(yf_t)
+                info = ticker_obj.fast_info
 
-        try:
-            # Step 1: Daily bars for previous close
-            daily = yf.download(batch_str, period="5d", interval="1d", progress=False, threads=True)
-            # Step 2: Intraday bars for current/live price
-            intraday = yf.download(batch_str, period="1d", interval="5m", progress=False, threads=True)
+                price = float(info.get("lastPrice", 0) or 0)
+                prev = float(info.get("previousClose", 0) or 0)
 
-            if daily.empty:
-                print(f"  Batch {i // batch_size + 1}: no daily data returned")
-                errors += len(batch)
-                continue
-
-            is_multi = isinstance(daily.columns, pd.MultiIndex)
-
-            if is_multi:
-                tickers_in_data = daily.columns.get_level_values(1).unique()
-            else:
-                tickers_in_data = [batch[0]] if len(batch) == 1 else []
-
-            for yf_t in tickers_in_data:
-                try:
-                    # Get previous close from daily data
-                    daily_series = (daily[("Close", yf_t)] if is_multi else daily["Close"]).dropna()
-                    if len(daily_series) < 2:
-                        errors += 1
-                        continue
-
-                    # Previous close = second-to-last daily bar
-                    # (last bar may be today's partial or yesterday's completed)
-                    today = pd.Timestamp.now().normalize()
-                    last_bar_date = pd.Timestamp(daily_series.index[-1]).normalize()
-
-                    if last_bar_date >= today:
-                        # Last daily bar is today (partial) — prev close is the one before
-                        prev = float(daily_series.iloc[-2])
-                    else:
-                        # Last daily bar is yesterday (market not open yet, or closed)
-                        prev = float(daily_series.iloc[-1])
-
-                    # Get current price from intraday data (most accurate during market hours)
-                    price = None
-                    if not intraday.empty:
-                        try:
-                            intra_series = (intraday[("Close", yf_t)] if is_multi else intraday["Close"]).dropna()
-                            if len(intra_series) > 0:
-                                price = float(intra_series.iloc[-1])
-                        except (KeyError, IndexError):
-                            pass
-
-                    # Fallback: use last daily bar if no intraday data
-                    if price is None or price <= 0:
-                        price = float(daily_series.iloc[-1])
-
-                    if price <= 0:
-                        errors += 1
-                        continue
-
-                    ticker = our_ticker(str(yf_t))
-                    change = price - prev
-                    change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
-                    sotw_id = f"YF.STOCK.{ticker}"
-
-                    cur.execute(f"""
-                        INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
-                        VALUES (%s, %s, %s, %s, %s, %s, NOW())
-                        ON CONFLICT (id) DO UPDATE SET
-                            price = EXCLUDED.price,
-                            previous_close = EXCLUDED.previous_close,
-                            change = EXCLUDED.change,
-                            change_pct = EXCLUDED.change_pct,
-                            updated_at = NOW()
-                    """, (sotw_id, ticker, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
-                    count += 1
-                except Exception as e:
+                if price <= 0:
                     errors += 1
+                    continue
 
-        except Exception as e:
-            print(f"  Batch {i // batch_size + 1} error: {e}")
-            errors += len(batch)
+                change = price - prev
+                change_pct = ((price / prev) - 1) * 100 if prev > 0 else 0
+                sotw_id = f"YF.STOCK.{t}"
 
+                cur.execute(f"""
+                    INSERT INTO {QUOTES_TABLE} (id, label, price, previous_close, change, change_pct, updated_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                    ON CONFLICT (id) DO UPDATE SET
+                        price = EXCLUDED.price,
+                        previous_close = EXCLUDED.previous_close,
+                        change = EXCLUDED.change,
+                        change_pct = EXCLUDED.change_pct,
+                        updated_at = NOW()
+                """, (sotw_id, t, round(price, 4), round(prev, 4), round(change, 4), round(change_pct, 4)))
+                count += 1
+            except Exception as e:
+                errors += 1
+
+        # Commit after each batch
         conn.commit()
 
     return count, errors

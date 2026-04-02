@@ -692,7 +692,13 @@ export default function StocksTable({ tickers, title }: { tickers: string[]; tit
       fetch('/api/quotes')
         .then(r => r.json())
         .then((data: { quotes: Quote[]; updatedAt: string }) => {
-          setQuotes(data.quotes || []);
+          // Recalculate change from price & previousClose (DB values can be stale)
+          const fixed = (data.quotes || []).map(q => {
+            const change = q.previousClose > 0 ? q.price - q.previousClose : 0;
+            const changePct = q.previousClose > 0 ? ((q.price / q.previousClose) - 1) * 100 : 0;
+            return { ...q, change: Math.round(change * 100) / 100, changePct: Math.round(changePct * 100) / 100 };
+          });
+          setQuotes(fixed);
           setUpdatedAt(data.updatedAt);
           setLoading(false);
         })

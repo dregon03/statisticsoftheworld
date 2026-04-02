@@ -155,24 +155,6 @@ function TradingViewWidget({ scriptSrc, config, disableLinks }: { scriptSrc: str
   );
 }
 
-const HEATMAP_CONFIG = {
-  exchanges: [],
-  dataSource: "SPX500",
-  grouping: "sector",
-  blockSize: "market_cap_basic",
-  blockColor: "change",
-  locale: "en",
-  symbolUrl: "https://statisticsoftheworld.com/markets/stocks/{tvticker}",
-  colorTheme: "light",
-  hasTopBar: true,
-  isDataSetEnabled: true,
-  isZoomEnabled: true,
-  hasSymbolTooltip: true,
-  isMonoSize: false,
-  width: "100%",
-  height: "100%",
-};
-
 // Map TradingView symbols to SOTW URLs for largeChartUrl redirect
 const TV_TO_SOTW: Record<string, string> = {
   // Indices
@@ -303,13 +285,6 @@ export default function MarketsTestPage() {
       <div className="max-w-[1200px] mx-auto px-4 py-8">
         <h1 className="text-[28px] font-bold text-[#0d1b2a] mb-2">Markets (TradingView Test)</h1>
         <p className="text-[15px] text-[#64748b] mb-8">Testing TradingView widgets as replacement for yfinance live data.</p>
-
-        <section className="mb-10">
-          <h2 className="text-[18px] font-bold text-[#0d1b2a] mb-4">S&P 500 Heatmap</h2>
-          <div className="bg-white border border-[#d5dce6] rounded-xl overflow-hidden shadow-sm" style={{ height: '500px' }}>
-            <TradingViewWidget scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" config={HEATMAP_CONFIG} />
-          </div>
-        </section>
 
         <section className="mb-10">
           <h2 className="text-[18px] font-bold text-[#0d1b2a] mb-4">Market Overview</h2>

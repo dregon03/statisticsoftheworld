@@ -157,7 +157,13 @@ def fetch_once(conn):
             data = yf.download(batch_str, period="5d", interval="1d", progress=False, threads=True)
 
             if data.empty:
-                print(f"  Batch {i // batch_size + 1}: no data returned")
+                # Retry once after a longer pause (rate limit recovery)
+                print(f"  Batch {i // batch_size + 1}: no data, retrying in 10s...")
+                time.sleep(10)
+                data = yf.download(batch_str, period="5d", interval="1d", progress=False, threads=True)
+
+            if data.empty:
+                print(f"  Batch {i // batch_size + 1}: no data returned after retry")
                 errors += len(batch)
                 continue
 

@@ -76,7 +76,7 @@ function useTradingViewInterceptor() {
   }, []);
 }
 
-function TradingViewWidget({ scriptSrc, config }: { scriptSrc: string; config: object }) {
+function TradingViewWidget({ scriptSrc, config, disableLinks }: { scriptSrc: string; config: object; disableLinks?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -103,10 +103,56 @@ function TradingViewWidget({ scriptSrc, config }: { scriptSrc: string; config: o
 
     ref.current.appendChild(container);
 
-    return () => { if (ref.current) ref.current.innerHTML = ''; };
-  }, [scriptSrc, config]);
+    // Block TradingView links inside iframes by intercepting navigation
+    if (disableLinks) {
+      const interval = setInterval(() => {
+        const iframes = ref.current?.querySelectorAll('iframe');
+        iframes?.forEach((iframe) => {
+          try {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+            if (iframeDoc) {
+              // Override link clicks inside iframe
+              iframeDoc.addEventListener('click', (e: Event) => {
+                const target = e.target as HTMLElement;
+                const link = target.closest('a');
+                if (link && link.href && link.href.includes('tradingview.com')) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+              }, true);
+            }
+          } catch {
+            // Cross-origin iframe — can't access, use overlay instead
+          }
+        });
+      }, 2000);
 
-  return <div ref={ref} style={{ width: '100%', height: '100%' }} />;
+      // Add a transparent overlay that blocks pointer events on TradingView links
+      // but still allows scrolling and hover effects
+      setTimeout(() => {
+        const iframes = ref.current?.querySelectorAll('iframe');
+        iframes?.forEach((iframe) => {
+          // Add sandbox to prevent navigation
+          iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+        });
+      }, 3000);
+
+      return () => {
+        clearInterval(interval);
+        if (ref.current) ref.current.innerHTML = '';
+      };
+    }
+
+    return () => { if (ref.current) ref.current.innerHTML = ''; };
+  }, [scriptSrc, config, disableLinks]);
+
+  return (
+    <div ref={ref} style={{
+      width: '100%',
+      height: '100%',
+      ...(disableLinks ? { pointerEvents: 'none' as const } : {}),
+    }} />
+  );
 }
 
 const HEATMAP_CONFIG = {
@@ -127,6 +173,51 @@ const HEATMAP_CONFIG = {
   height: "100%",
 };
 
+// Map TradingView symbols to SOTW URLs for largeChartUrl redirect
+const TV_TO_SOTW: Record<string, string> = {
+  // Indices
+  "FOREXCOM-SPXUSD": "/markets/stocks/sp500",
+  "FOREXCOM-SPX500": "/markets/stocks/sp500",
+  "FOREXCOM-NSXUSD": "/markets/stocks/nasdaq100",
+  "FOREXCOM-NAS100": "/markets/stocks/nasdaq100",
+  "FOREXCOM-DJI": "/markets/stocks/sp500", // Dow Jones — closest page
+  "FOREXCOM-US30": "/markets/stocks/sp500",
+  "INDEX-NKY": "/markets/stocks/sp500",
+  "INDEX-DEU40": "/markets/stocks/sp500",
+  "FOREXCOM-UKXGBP": "/markets/stocks/ftse100",
+  "FOREXCOM-UK100": "/markets/stocks/ftse100",
+  "TSX-TSX": "/markets/stocks/tsx60",
+  "BSE-SENSEX": "/markets/stocks/sp500",
+  // Commodities
+  "COMEX-GC1!": "/markets/commodities/gold",
+  "COMEX-SI1!": "/markets/commodities/silver",
+  "NYMEX-CL1!": "/markets/commodities/crude-oil",
+  "NYMEX-NG1!": "/markets/commodities/natural-gas",
+  "COMEX-HG1!": "/markets/commodities/copper",
+  "CBOT-ZC1!": "/markets/commodities/corn",
+  "CBOT-ZW1!": "/markets/commodities/wheat",
+  // Crypto
+  "BINANCE-BTCUSDT": "/markets/crypto/btcusd",
+  "BINANCE-ETHUSDT": "/markets/crypto/ethusd",
+  "BINANCE-SOLUSDT": "/markets/crypto/solusd",
+  "BINANCE-XRPUSDT": "/markets/crypto/xrpusd",
+  "BINANCE-DOGEUSDT": "/markets/crypto/dogeusd",
+  "BINANCE-ADAUSDT": "/markets/crypto/adausd",
+  "BITSTAMP-BTCUSD": "/markets/crypto/btcusd",
+  "BITSTAMP-ETHUSD": "/markets/crypto/ethusd",
+  // Forex
+  "FX-EURUSD": "/markets/currencies/eurusd",
+  "FX-GBPUSD": "/markets/currencies/gbpusd",
+  "FX-USDJPY": "/markets/currencies/usdjpy",
+  "FX-USDCAD": "/markets/currencies/usdcad",
+  "FX-AUDUSD": "/markets/currencies/audusd",
+  "FX-USDCHF": "/markets/currencies/usdchf",
+};
+
+// Build largeChartUrl — TradingView replaces {tvticker} with "EXCHANGE-SYMBOL"
+// We use our own redirect page to map these to the correct SOTW pages
+const SOTW_BASE = typeof window !== 'undefined' ? window.location.origin : "https://statisticsoftheworld.com";
+
 const OVERVIEW_CONFIG = {
   colorTheme: "light",
   dateRange: "12M",
@@ -134,6 +225,7 @@ const OVERVIEW_CONFIG = {
   locale: "en",
   isTransparent: true,
   showSymbolLogo: true,
+  largeChartUrl: `${SOTW_BASE}/markets/redirect/{tvticker}`,
   width: "100%",
   height: "100%",
   tabs: [
@@ -226,7 +318,7 @@ export default function MarketsTestPage() {
 
         <section className="mb-10">
           <h2 className="text-[18px] font-bold text-[#0d1b2a] mb-4">Ticker Tape</h2>
-          <TradingViewWidget scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" config={TICKER_CONFIG} />
+          <TradingViewWidget scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" config={TICKER_CONFIG} disableLinks />
         </section>
       </div>
       <Footer />

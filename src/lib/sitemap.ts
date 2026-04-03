@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getCountries, INDICATORS } from '@/lib/data';
+import { getCountries } from '@/lib/data';
 import { getAllIndicatorSlugs } from '@/lib/indicator-slugs';
 import { BLOG_POSTS } from '@/lib/blog-posts';
 
@@ -29,12 +29,14 @@ const RANKING_SLUGS = [
 const CHART_COUNTRIES = ['united-states', 'china', 'japan', 'germany', 'united-kingdom', 'france', 'india', 'brazil', 'canada', 'australia', 'south-korea', 'mexico', 'russia', 'italy', 'spain', 'indonesia', 'netherlands', 'turkey', 'switzerland', 'saudi-arabia', 'argentina', 'south-africa', 'nigeria', 'singapore', 'israel', 'norway', 'sweden', 'egypt', 'world'];
 const CHART_SLUGS = ['gdp', 'gdp-growth', 'gdp-per-capita', 'inflation-rate', 'unemployment-rate', 'population', 'life-expectancy', 'co2-emissions', 'government-debt', 'trade-openness', 'health-spending', 'military-spending', 'gini-index', 'renewable-energy', 'internet-users', 'fertility-rate', 'current-account', 'fdi-inflows', 'infant-mortality', 'urban-population'];
 
+// Focused sitemap: only high-value pages that deserve crawl budget.
+// Country/indicator detail pages (~96K) are excluded — Google discovers them
+// via internal links from country pages and indicator pages.
+
 export async function getSitemapCount(): Promise<number> {
   const countries = await getCountries();
   const indicatorSlugs = getAllIndicatorSlugs();
-  const totalIndicatorPages = countries.length * INDICATORS.length;
-  const staticCount = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + (CHART_COUNTRIES.length * CHART_SLUGS.length) + INDICATORS.length + indicatorSlugs.length;
-  const totalUrls = staticCount + totalIndicatorPages;
+  const totalUrls = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + (CHART_COUNTRIES.length * CHART_SLUGS.length) + indicatorSlugs.length;
   return Math.ceil(totalUrls / MAX_URLS_PER_SITEMAP);
 }
 
@@ -61,9 +63,14 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     { url: `${BASE_URL}/credit-ratings`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE_URL}/pricing`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE_URL}/api-docs`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${BASE_URL}/predictions`, lastModified: new Date(), changeFrequency: 'hourly', priority: 0.8 },
+    { url: `${BASE_URL}/predictions`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE_URL}/ai`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/dashboard`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
+    { url: `${BASE_URL}/trending`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
+  );
+
+  // 2. Blog
+  allUrls.push(
     { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     ...BLOG_POSTS.map(post => ({
       url: `${BASE_URL}/blog/${post.slug}`,
@@ -71,15 +78,19 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
-    ...RANKING_SLUGS.map(slug => ({
+  );
+
+  // 3. Ranking pages
+  for (const slug of RANKING_SLUGS) {
+    allUrls.push({
       url: `${BASE_URL}/ranking/${slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.85,
-    })),
-  );
+    });
+  }
 
-  // 2. Country pages
+  // 4. Country pages
   for (const c of countries) {
     allUrls.push({
       url: `${BASE_URL}/country/${c.id}`,
@@ -89,7 +100,7 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     });
   }
 
-  // 3. Chart pages
+  // 5. Chart pages
   for (const c of CHART_COUNTRIES) {
     for (const s of CHART_SLUGS) {
       allUrls.push({
@@ -101,7 +112,7 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     }
   }
 
-  // 4. Indicator pages (/indicator/[slug])
+  // 6. Indicator pages (/indicator/[slug])
   const indicatorSlugs = getAllIndicatorSlugs();
   for (const slug of indicatorSlugs) {
     allUrls.push({
@@ -112,27 +123,9 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     });
   }
 
-  // 5. Map pages per indicator
-  for (const ind of INDICATORS) {
-    allUrls.push({
-      url: `${BASE_URL}/map?id=${encodeURIComponent(ind.id)}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    });
-  }
-
-  // 5. Country-indicator detail pages (the bulk)
-  for (const country of countries) {
-    for (const ind of INDICATORS) {
-      allUrls.push({
-        url: `${BASE_URL}/country/${country.id}/${encodeURIComponent(ind.id)}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.6,
-      });
-    }
-  }
+  // NOTE: Country/indicator detail pages (~96K) and map?id= pages (~440)
+  // are intentionally excluded from the sitemap to focus crawl budget.
+  // Google discovers them via internal links from country and indicator pages.
 
   // Slice for this sitemap chunk
   const start = id * MAX_URLS_PER_SITEMAP;

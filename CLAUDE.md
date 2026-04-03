@@ -7,3 +7,4 @@
 - **Database**: Supabase (PostgreSQL)
 - **Domain**: statisticsoftheworld.com → DNS points to Hetzner
 - **Do NOT use or reference Vercel** — the project has been fully migrated off Vercel.
+- **Auto-deploy**: Pushes to `master` auto-trigger Coolify builds via GitHub webhook.

@@ -33,6 +33,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${country.name} Economy & Data 2026 — GDP, Population & More`,
     description: `${parts.join(' · ')}. Explore ${country.name}'s economy, demographics, trade, health, and 400+ indicators with interactive charts and historical data from IMF and World Bank. Free API.`,
+    alternates: {
+      canonical: `https://statisticsoftheworld.com/country/${id}`,
+    },
     openGraph: {
       title: `${country.name} — Economy & Key Statistics 2026`,
       description: `${parts.join(' · ')}. 400+ indicators with charts.`,

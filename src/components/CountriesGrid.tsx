@@ -1,0 +1,133 @@
+'use client';
+
+import Link from 'next/link';
+import { useState, useMemo } from 'react';
+import { formatValue } from '@/lib/data';
+import Flag from '@/app/Flag';
+import ExportButton from '@/components/ExportButton';
+
+interface Country {
+  id: string;
+  iso2: string;
+  name: string;
+  region: string;
+  incomeLevel: string;
+  capitalCity: string;
+}
+
+interface CountryStats {
+  [countryId: string]: {
+    gdp?: number;
+    population?: number;
+    gdpPerCapita?: number;
+    lifeExpectancy?: number;
+    inflation?: number;
+    unemployment?: number;
+    gdpGrowth?: number;
+  };
+}
+
+export default function CountriesGrid({ countries, stats }: { countries: Country[]; stats: CountryStats }) {
+  const [search, setSearch] = useState('');
+  const [filterRegion, setFilterRegion] = useState('');
+
+  const regions = useMemo(() => [...new Set(countries.map(c => c.region))].sort(), [countries]);
+
+  const filtered = useMemo(() => {
+    return countries.filter(c => {
+      const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.id.toLowerCase().includes(search.toLowerCase());
+      const matchRegion = !filterRegion || c.region === filterRegion;
+      return matchSearch && matchRegion;
+    });
+  }, [countries, search, filterRegion]);
+
+  return (
+    <section className="max-w-[1400px] mx-auto px-4 py-6">
+      <div className="flex flex-wrap gap-3 mb-4">
+        <input
+          type="text"
+          placeholder="Search countries..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[15px] outline-none focus:border-[#0066cc] transition w-56"
+        />
+        <select
+          value={filterRegion}
+          onChange={e => setFilterRegion(e.target.value)}
+          className="bg-white border border-[#d5dce6] rounded-lg px-3 py-1.5 text-[15px] outline-none cursor-pointer"
+        >
+          <option value="">All Regions</option>
+          {regions.map(r => <option key={r} value={r}>{r}</option>)}
+        </select>
+        <span className="text-[14px] text-[#64748b] self-center ml-auto flex items-center gap-3">
+          {filtered.length} countries
+          <ExportButton
+            filename={`sotw-countries-${new Date().toISOString().slice(0, 10)}`}
+            getData={() => ({
+              headers: ['Country', 'Code', 'Region', 'GDP', 'Population', 'GDP/Capita', 'GDP Growth', 'Inflation', 'Unemployment', 'Life Expectancy'],
+              rows: filtered.map(c => {
+                const s = stats[c.id] || {};
+                return [c.name, c.id, c.region, s.gdp ?? null, s.population ?? null, s.gdpPerCapita ?? null, s.gdpGrowth ?? null, s.inflation ?? null, s.unemployment ?? null, s.lifeExpectancy ?? null];
+              }),
+            })}
+          />
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filtered.map(c => {
+          const s = stats[c.id] || {};
+          const growth = s.gdpGrowth;
+          const growthColor = growth != null ? (growth >= 0 ? 'text-green-600' : 'text-red-500') : 'text-[#64748b]';
+          return (
+            <Link
+              key={c.id}
+              href={`/country/${c.id}`}
+              className="border border-[#d5dce6] rounded-xl p-4 hover:border-[#ccc] hover:bg-[#fafbfd] transition group"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h3 className="font-semibold text-[15px] group-hover:text-[#0066cc] transition flex items-center gap-2">
+                    <Flag iso2={c.iso2} size={22} />
+                    {c.name}
+                  </h3>
+                  <div className="text-[15px] text-[#64748b]">{c.capitalCity || c.region}</div>
+                </div>
+                <span className="text-[14px] bg-[#f5f5f5] px-1.5 py-0.5 rounded text-[#64748b]">{c.id}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[14px]">
+                <div>
+                  <div className="text-[#64748b] text-[14px]">GDP</div>
+                  <div className="font-mono text-[#0066cc] font-medium">{s.gdp ? formatValue(s.gdp, 'currency') : '—'}</div>
+                </div>
+                <div>
+                  <div className="text-[#64748b] text-[14px]">Population</div>
+                  <div className="font-mono">{s.population ? formatValue(s.population, 'number') : '—'}</div>
+                </div>
+                <div>
+                  <div className="text-[#64748b] text-[14px]">GDP/Capita</div>
+                  <div className="font-mono">{s.gdpPerCapita ? formatValue(s.gdpPerCapita, 'currency') : '—'}</div>
+                </div>
+                <div>
+                  <div className="text-[#64748b] text-[14px]">GDP Growth</div>
+                  <div className={`font-mono ${growthColor}`}>{growth != null ? `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%` : '—'}</div>
+                </div>
+                <div>
+                  <div className="text-[#64748b] text-[14px]">Inflation</div>
+                  <div className="font-mono">{s.inflation != null ? `${s.inflation.toFixed(1)}%` : '—'}</div>
+                </div>
+                <div>
+                  <div className="text-[#64748b] text-[14px]">Life Exp.</div>
+                  <div className="font-mono">{s.lifeExpectancy ? `${s.lifeExpectancy.toFixed(1)}y` : '—'}</div>
+                </div>
+              </div>
+              <div className="mt-3">
+                <span className="text-[14px] bg-[#f0f0f0] px-2 py-0.5 rounded text-[#64748b]">{c.region}</span>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}

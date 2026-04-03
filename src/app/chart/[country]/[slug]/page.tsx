@@ -69,6 +69,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${country.name} ${ind.label} ${firstYear}-${lastYear} | Historical Chart & Data`,
     description: `${country.name} ${ind.label} historical chart and data from ${firstYear} to ${lastYear}. Free download. Source: ${ind.source === 'imf' ? 'IMF' : 'World Bank'}.`,
+    alternates: {
+      canonical: `https://statisticsoftheworld.com/chart/${countrySlug}/${slug}`,
+    },
     openGraph: {
       title: `${country.name} — ${ind.label} Historical Chart`,
       description: `${ind.label} data for ${country.name} from ${firstYear} to ${lastYear}.`,

@@ -72,8 +72,11 @@ ETL=/opt/sotw-etl/run-etl.sh
 # Live indices/commodities/FX (30s, during market hours)
 30 12 * * 1-5 $ETL fetch_live_quotes.py --loop --interval 30 --duration 34200 >> /var/log/sotw-quotes.log 2>&1
 
-# ── Finnhub WebSocket real-time (stocks, crypto, forex, commodities) ──
+# ── Finnhub WebSocket real-time (stocks, forex, commodities) ──
 # Runs all day weekdays: 8 AM - 8 PM ET (12:00 - 24:00 UTC)
 0 12 * * 1-5 $ETL ws_finnhub.py --duration 43200 --flush-interval 2 >> /var/log/sotw-finnhub.log 2>&1
-# Crypto + Forex stream 24/7 — weekend session
+# Forex stream on weekends
 0 0 * * 0,6 $ETL ws_finnhub.py --duration 86400 --flush-interval 5 >> /var/log/sotw-finnhub.log 2>&1
+
+# ── Binance WebSocket real-time crypto (24/7, no API key) ──
+0 0 * * * $ETL ws_binance.py --duration 86400 --flush-interval 2 >> /var/log/sotw-binance.log 2>&1

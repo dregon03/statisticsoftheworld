@@ -49,6 +49,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${config.title} — 2026 Rankings | Statistics of the World`,
     description: `${config.description} Compare 218 countries with interactive charts, historical data, and free API access.`,
+    alternates: {
+      canonical: `https://statisticsoftheworld.com/ranking/${slug}`,
+    },
     openGraph: {
       title: `${config.title} — 2026 Rankings`,
       description: `${config.description} Compare 218 countries.`,
@@ -76,22 +79,108 @@ export default async function RankingPage({ params }: Props) {
     .filter(([s]) => s !== slug)
     .slice(0, 8);
 
+  const top = data[0];
+  const bottom = data[data.length - 1];
+  const year = top?.year || 2026;
+  const fmtTop = top ? formatValue(top.value, ind.format, ind.decimals) : '';
+  const fmtBottom = bottom ? formatValue(bottom.value, ind.format, ind.decimals) : '';
+
+  // Compute median
+  const midIdx = Math.floor(data.length / 2);
+  const median = data[midIdx];
+  const fmtMedian = median ? formatValue(median.value, ind.format, ind.decimals) : '';
+
+  // Build FAQ Q&A pairs from the real data
+  const faqs = [
+    {
+      q: `Which country has the highest ${ind.label.toLowerCase()} in ${year}?`,
+      a: top ? `${top.country} has the highest ${ind.label.toLowerCase()} at ${fmtTop} as of ${year}, according to ${ind.source === 'imf' ? 'IMF' : 'World Bank'} data.` : '',
+    },
+    {
+      q: `Which country has the lowest ${ind.label.toLowerCase()} in ${year}?`,
+      a: bottom ? `${bottom.country} has the lowest ${ind.label.toLowerCase()} at ${fmtBottom} as of ${year}.` : '',
+    },
+    {
+      q: `How many countries are ranked by ${ind.label.toLowerCase()}?`,
+      a: `${data.length} countries have reported data for ${ind.label.toLowerCase()}. The data is sourced from the ${ind.source === 'imf' ? 'IMF World Economic Outlook' : 'World Bank World Development Indicators'}.`,
+    },
+    {
+      q: `What is the median ${ind.label.toLowerCase()} across all countries?`,
+      a: median ? `The median ${ind.label.toLowerCase()} is ${fmtMedian} (${median.country}, ranked #${midIdx + 1} out of ${data.length} countries).` : '',
+    },
+  ].filter(f => f.a);
+
+  // JSON-LD: FAQPage + BreadcrumbList + Dataset
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'Indicators', item: 'https://statisticsoftheworld.com/indicators' },
+          { '@type': 'ListItem', position: 3, name: config.title, item: `https://statisticsoftheworld.com/ranking/${slug}` },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
+      {
+        '@type': 'Dataset',
+        name: `${config.title} — ${year} Rankings`,
+        description: config.description,
+        url: `https://statisticsoftheworld.com/ranking/${slug}`,
+        temporalCoverage: `${year}`,
+        spatialCoverage: { '@type': 'Place', name: 'World' },
+        creator: { '@type': 'Organization', name: 'Statistics of the World' },
+        isAccessibleForFree: true,
+      },
+    ],
+  };
+
+  // Programmatic SEO summary paragraph
+  const top5 = data.slice(0, 5);
+  const bottom5 = data.slice(-5).reverse();
+  const summaryParagraph = top && bottom ? (
+    `In ${year}, ${top.country} leads the world in ${ind.label.toLowerCase()} with ${fmtTop}, ` +
+    `followed by ${top5.slice(1, 4).map(d => d.country).join(', ')}. ` +
+    `At the other end, ${bottom.country} ranks last at ${fmtBottom}. ` +
+    `The global median is ${fmtMedian} (${median?.country}). ` +
+    `Data covers ${data.length} countries and is sourced from the ${ind.source === 'imf' ? 'IMF World Economic Outlook' : 'World Bank World Development Indicators'}.`
+  ) : '';
+
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Nav />
 
       <section className="max-w-[1000px] mx-auto px-6 py-10">
         {/* Breadcrumbs */}
-        <div className="mb-4 text-sm text-gray-400">
+        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-gray-400">
           <Link href="/" className="hover:text-gray-600 transition">Home</Link>
           <span className="mx-2">/</span>
           <Link href="/indicators" className="hover:text-gray-600 transition">Indicators</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-600">{config.title}</span>
-        </div>
+        </nav>
 
-        <h1 className="text-[28px] font-bold mb-2">{config.title}</h1>
-        <p className="text-[14px] text-[#64748b] mb-6 leading-relaxed max-w-[700px]">{config.description}</p>
+        <h1 className="text-[28px] font-bold mb-2">{config.title} — {year} World Rankings</h1>
+        <p className="text-[14px] text-[#64748b] mb-4 leading-relaxed max-w-[700px]">{config.description}</p>
+
+        {/* SEO summary paragraph */}
+        {summaryParagraph && (
+          <p className="text-[14px] text-[#475569] mb-6 leading-relaxed max-w-[800px]">
+            {summaryParagraph}
+          </p>
+        )}
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -103,17 +192,17 @@ export default async function RankingPage({ params }: Props) {
             <>
               <div className="border border-gray-100 rounded-xl p-4">
                 <div className="text-[15px] text-gray-400 mb-1">Highest</div>
-                <div className="text-[16px] font-bold text-green-600">{formatValue(data[0].value, ind.format, ind.decimals)}</div>
-                <div className="text-[15px] text-gray-400">{data[0].country}</div>
+                <div className="text-[16px] font-bold text-green-600">{fmtTop}</div>
+                <div className="text-[15px] text-gray-400">{top.country}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-4">
                 <div className="text-[15px] text-gray-400 mb-1">Lowest</div>
-                <div className="text-[16px] font-bold text-red-500">{formatValue(data[data.length - 1].value, ind.format, ind.decimals)}</div>
-                <div className="text-[15px] text-gray-400">{data[data.length - 1].country}</div>
+                <div className="text-[16px] font-bold text-red-500">{fmtBottom}</div>
+                <div className="text-[15px] text-gray-400">{bottom.country}</div>
               </div>
               <div className="border border-gray-100 rounded-xl p-4">
                 <div className="text-[15px] text-gray-400 mb-1">Latest Year</div>
-                <div className="text-[20px] font-bold">{data[0].year}</div>
+                <div className="text-[20px] font-bold">{year}</div>
               </div>
             </>
           )}
@@ -159,6 +248,25 @@ export default async function RankingPage({ params }: Props) {
             </tbody>
           </table>
         </div>
+
+        {/* FAQ section — visible to users AND crawlers */}
+        {faqs.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-[18px] font-semibold mb-4">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              {faqs.map((faq, i) => (
+                <details key={i} className="border border-gray-100 rounded-xl" open={i === 0}>
+                  <summary className="px-4 py-3 cursor-pointer text-[15px] font-medium hover:bg-gray-50 transition">
+                    {faq.q}
+                  </summary>
+                  <p className="px-4 pb-3 text-[14px] text-[#475569] leading-relaxed">
+                    {faq.a}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Related rankings */}
         <div>

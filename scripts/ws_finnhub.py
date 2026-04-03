@@ -90,20 +90,20 @@ SYMBOLS = {
     "OANDA:AUD_USD": ("FH.FX.AUD", "AUD/USD"),
     "OANDA:USD_CHF": ("FH.FX.CHF", "USD/CHF"),
 
-    # ── Crypto (Binance + Coinbase) ───────────────────────
-    "BINANCE:BTCUSDT":  ("FH.CRYPTO.BTC",  "Bitcoin"),
-    "BINANCE:ETHUSDT":  ("FH.CRYPTO.ETH",  "Ethereum"),
-    "BINANCE:SOLUSDT":  ("FH.CRYPTO.SOL",  "Solana"),
-    "BINANCE:XRPUSDT":  ("FH.CRYPTO.XRP",  "XRP"),
-    "BINANCE:DOGEUSDT": ("FH.CRYPTO.DOGE", "Dogecoin"),
-    "BINANCE:ADAUSDT":  ("FH.CRYPTO.ADA",  "Cardano"),
+    # ── Crypto moved to ws_binance.py (direct Binance WebSocket) ──
 
-    # ── Extra high-volume stocks ──────────────────────────
+    # ── Extra high-volume stocks (6 freed from crypto) ────
     "INTC":  ("YF.STOCK.INTC",  "Intel"),
     "PEP":   ("YF.STOCK.PEP",   "PepsiCo"),
+    "DIS":   ("YF.STOCK.DIS",   "Disney"),
+    "PYPL":  ("YF.STOCK.PYPL",  "PayPal"),
+    "UBER":  ("YF.STOCK.UBER",  "Uber"),
+    "LLY":   ("YF.STOCK.LLY",   "Eli Lilly"),
+    "MRK":   ("YF.STOCK.MRK",   "Merck"),
+    "ORCL":  ("YF.STOCK.ORCL",  "Oracle"),
 }
 
-assert len(SYMBOLS) == 50, f"Expected 50 symbols, got {len(SYMBOLS)}"
+assert len(SYMBOLS) == 50, f"Expected 50 symbols, got {len(SYMBOLS)}  # crypto moved to ws_binance.py"
 
 # Latest prices from WebSocket (thread-safe via GIL for simple dict ops)
 latest_prices = {}  # finnhub_symbol -> {price, volume, timestamp}
@@ -202,7 +202,7 @@ def main():
         "Index ETFs": [s for s in SYMBOLS if SYMBOLS[s][0].startswith("FH.IDX")],
         "Commodity ETFs": [s for s in SYMBOLS if SYMBOLS[s][0].startswith("FH.CMD")],
         "Forex": [s for s in SYMBOLS if s.startswith("OANDA:")],
-        "Crypto": [s for s in SYMBOLS if s.startswith("BINANCE:")],
+        # Crypto moved to ws_binance.py (direct Binance WebSocket)
     }
 
     print(f"=== Finnhub WebSocket ({len(SYMBOLS)} symbols, flush every {args.flush_interval}s) ===", flush=True)

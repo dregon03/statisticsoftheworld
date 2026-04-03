@@ -32,6 +32,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
     description: `${country.name}'s ${ind.label.toLowerCase()} was ${valueStr} in ${latestYear}. View ${years} years of historical data (${firstYear}–${latestYear}), charts, and comparisons. Source: ${source}. Free API available.`,
+    alternates: {
+      canonical: `https://statisticsoftheworld.com/country/${id}/${encodeURIComponent(indicatorId)}`,
+    },
     openGraph: {
       title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
       description: `${years} years of data with interactive charts. Compare across 218 countries.`,

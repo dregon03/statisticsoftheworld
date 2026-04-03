@@ -4,6 +4,16 @@ import { getCountries, INDICATORS } from '@/lib/data';
 export const BASE_URL = 'https://statisticsoftheworld.com';
 export const MAX_URLS_PER_SITEMAP = 45000;
 
+/** Escape XML special characters in URLs */
+export function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 const RANKING_SLUGS = [
   'gdp', 'gdp-growth', 'gdp-per-capita', 'gdp-ppp', 'gdp-per-capita-ppp',
   'inflation-rate', 'unemployment-rate', 'government-debt', 'current-account',

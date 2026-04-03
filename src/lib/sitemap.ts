@@ -36,7 +36,7 @@ const CHART_SLUGS = ['gdp', 'gdp-growth', 'gdp-per-capita', 'inflation-rate', 'u
 export async function getSitemapCount(): Promise<number> {
   const countries = await getCountries();
   const indicatorSlugs = getAllIndicatorSlugs();
-  const totalUrls = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + (CHART_COUNTRIES.length * CHART_SLUGS.length) + indicatorSlugs.length;
+  const totalUrls = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + indicatorSlugs.length;
   return Math.ceil(totalUrls / MAX_URLS_PER_SITEMAP);
 }
 
@@ -100,19 +100,7 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     });
   }
 
-  // 5. Chart pages
-  for (const c of CHART_COUNTRIES) {
-    for (const s of CHART_SLUGS) {
-      allUrls.push({
-        url: `${BASE_URL}/chart/${c}/${s}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.7,
-      });
-    }
-  }
-
-  // 6. Indicator pages (/indicator/[slug])
+  // 5. Indicator pages (/indicator/[slug])
   const indicatorSlugs = getAllIndicatorSlugs();
   for (const slug of indicatorSlugs) {
     allUrls.push({
@@ -123,9 +111,9 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     });
   }
 
-  // NOTE: Country/indicator detail pages (~96K) and map?id= pages (~440)
-  // are intentionally excluded from the sitemap to focus crawl budget.
-  // Google discovers them via internal links from country and indicator pages.
+  // NOTE: Country/indicator detail pages (~96K), chart pages (~580), and
+  // map?id= pages (~440) are intentionally excluded from the sitemap to
+  // focus crawl budget. Google discovers them via internal links.
 
   // Slice for this sitemap chunk
   const start = id * MAX_URLS_PER_SITEMAP;

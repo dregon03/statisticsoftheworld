@@ -24,10 +24,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const latest = history.filter(d => d.value !== null).at(-1);
   const valueStr = latest ? formatValue(latest.value, ind.format, ind.decimals) : 'N/A';
 
-  const years = history.filter(d => d.value !== null).length;
+  const validData = history.filter(d => d.value !== null);
+  const years = validData.length;
   const source = ind.source === 'imf' ? 'IMF' : 'World Bank';
   const firstYear = history[0]?.year || '2000';
   const latestYear = latest?.year || 'present';
+
+  // noindex pages with no data or very thin data — saves crawl budget
+  if (years === 0) {
+    return { title: 'Not Found', robots: { index: false, follow: false } };
+  }
 
   return {
     title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
@@ -35,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: {
       canonical: `https://statisticsoftheworld.com/country/${id}/${encodeURIComponent(indicatorId)}`,
     },
+    ...(years < 3 ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
       description: `${years} years of data with interactive charts. Compare across 218 countries.`,
@@ -68,6 +75,10 @@ export default async function IndicatorDetailPage({ params }: Props) {
   ]);
 
   const validHistory = history.filter(d => d.value !== null);
+
+  // 404 if this country has no data for this indicator
+  if (validHistory.length === 0) notFound();
+
   const globalRank = allCountries.findIndex(c => c.countryId === id) + 1;
   const totalCountries = allCountries.length;
 

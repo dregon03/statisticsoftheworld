@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getCountries, INDICATORS } from '@/lib/data';
+import { getAllIndicatorSlugs } from '@/lib/indicator-slugs';
+import { BLOG_POSTS } from '@/lib/blog-posts';
 
 export const BASE_URL = 'https://statisticsoftheworld.com';
 export const MAX_URLS_PER_SITEMAP = 45000;
@@ -29,8 +31,9 @@ const CHART_SLUGS = ['gdp', 'gdp-growth', 'gdp-per-capita', 'inflation-rate', 'u
 
 export async function getSitemapCount(): Promise<number> {
   const countries = await getCountries();
+  const indicatorSlugs = getAllIndicatorSlugs();
   const totalIndicatorPages = countries.length * INDICATORS.length;
-  const staticCount = 20 + RANKING_SLUGS.length + countries.length + (CHART_COUNTRIES.length * CHART_SLUGS.length) + INDICATORS.length;
+  const staticCount = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + (CHART_COUNTRIES.length * CHART_SLUGS.length) + INDICATORS.length + indicatorSlugs.length;
   const totalUrls = staticCount + totalIndicatorPages;
   return Math.ceil(totalUrls / MAX_URLS_PER_SITEMAP);
 }
@@ -61,6 +64,13 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     { url: `${BASE_URL}/predictions`, lastModified: new Date(), changeFrequency: 'hourly', priority: 0.8 },
     { url: `${BASE_URL}/ai`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/dashboard`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
+    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    ...BLOG_POSTS.map(post => ({
+      url: `${BASE_URL}/blog/${post.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
     ...RANKING_SLUGS.map(slug => ({
       url: `${BASE_URL}/ranking/${slug}`,
       lastModified: new Date(),
@@ -91,7 +101,18 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     }
   }
 
-  // 4. Map pages per indicator
+  // 4. Indicator pages (/indicator/[slug])
+  const indicatorSlugs = getAllIndicatorSlugs();
+  for (const slug of indicatorSlugs) {
+    allUrls.push({
+      url: `${BASE_URL}/indicator/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
+    });
+  }
+
+  // 5. Map pages per indicator
   for (const ind of INDICATORS) {
     allUrls.push({
       url: `${BASE_URL}/map?id=${encodeURIComponent(ind.id)}`,

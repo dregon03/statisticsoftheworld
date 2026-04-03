@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getCountry, getAllIndicatorsForCountry, getHistoricalData, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
+import { getCountry, getCountries, getAllIndicatorsForCountry, getHistoricalData, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Flag from '../../Flag';
@@ -63,13 +63,25 @@ export default async function CountryPage({ params }: Props) {
   const pop = indicators['SP.POP.TOTL'];
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Country',
-    name: country.name,
-    url: `https://statisticsoftheworld.com/country/${id}`,
-    ...(country.capitalCity && { containsPlace: { '@type': 'City', name: country.capitalCity } }),
-    additionalProperty: [
-      ...(gdp ? [{ '@type': 'PropertyValue', name: 'GDP (USD Billions)', value: gdp.value, unitCode: 'USD' }] : []),
-      ...(pop ? [{ '@type': 'PropertyValue', name: 'Population', value: pop.value }] : []),
+    '@graph': [
+      {
+        '@type': 'Country',
+        name: country.name,
+        url: `https://statisticsoftheworld.com/country/${id}`,
+        ...(country.capitalCity && { containsPlace: { '@type': 'City', name: country.capitalCity } }),
+        additionalProperty: [
+          ...(gdp ? [{ '@type': 'PropertyValue', name: 'GDP (USD Billions)', value: gdp.value, unitCode: 'USD' }] : []),
+          ...(pop ? [{ '@type': 'PropertyValue', name: 'Population', value: pop.value }] : []),
+        ],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'Countries', item: 'https://statisticsoftheworld.com/countries' },
+          { '@type': 'ListItem', position: 3, name: country.name, item: `https://statisticsoftheworld.com/country/${id}` },
+        ],
+      },
     ],
   };
 
@@ -199,9 +211,47 @@ export default async function CountryPage({ params }: Props) {
             );
           })}
         </div>
+
+        {/* Similar Economies — internal linking mesh */}
+        <SimilarCountries countryId={id} region={country.region} incomeLevel={country.incomeLevel} />
       </section>
 
       <Footer />
     </main>
+  );
+}
+
+async function SimilarCountries({ countryId, region, incomeLevel }: { countryId: string; region: string; incomeLevel: string }) {
+  const allCountries = await getCountries();
+  const sameRegion = allCountries
+    .filter(c => c.id !== countryId && c.region === region)
+    .slice(0, 6);
+  const sameIncome = allCountries
+    .filter(c => c.id !== countryId && c.incomeLevel === incomeLevel && c.region !== region)
+    .slice(0, 6);
+  const peers = [...sameRegion, ...sameIncome].slice(0, 8);
+
+  if (peers.length === 0) return null;
+
+  return (
+    <div className="mt-12">
+      <h2 className="text-[18px] font-bold mb-3 text-[#0d1b2a]">Similar Economies</h2>
+      <p className="text-[13px] text-[#64748b] mb-4">Countries in the same region ({region}) or income group ({incomeLevel})</p>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {peers.map(c => (
+          <Link
+            key={c.id}
+            href={`/country/${c.id}`}
+            className="border border-[#d5dce6] rounded-lg p-3 hover:border-[#b0bdd0] hover:bg-[#fafbfd] transition group"
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <Flag iso2={c.iso2} size={18} />
+              <span className="text-[14px] font-medium text-[#0d1b2a] group-hover:text-[#0066cc] transition">{c.name}</span>
+            </div>
+            <div className="text-[12px] text-[#94a3b8]">{c.region}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }

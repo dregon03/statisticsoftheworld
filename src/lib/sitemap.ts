@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { getCountries, INDICATORS } from '@/lib/data';
 
-const BASE_URL = 'https://statisticsoftheworld.com';
-const MAX_URLS_PER_SITEMAP = 45000; // Stay under Google's 50K limit
+export const BASE_URL = 'https://statisticsoftheworld.com';
+export const MAX_URLS_PER_SITEMAP = 45000;
 
 const RANKING_SLUGS = [
   'gdp', 'gdp-growth', 'gdp-per-capita', 'gdp-ppp', 'gdp-per-capita-ppp',
@@ -17,26 +17,21 @@ const RANKING_SLUGS = [
 const CHART_COUNTRIES = ['united-states', 'china', 'japan', 'germany', 'united-kingdom', 'france', 'india', 'brazil', 'canada', 'australia', 'south-korea', 'mexico', 'russia', 'italy', 'spain', 'indonesia', 'netherlands', 'turkey', 'switzerland', 'saudi-arabia', 'argentina', 'south-africa', 'nigeria', 'singapore', 'israel', 'norway', 'sweden', 'egypt', 'world'];
 const CHART_SLUGS = ['gdp', 'gdp-growth', 'gdp-per-capita', 'inflation-rate', 'unemployment-rate', 'population', 'life-expectancy', 'co2-emissions', 'government-debt', 'trade-openness', 'health-spending', 'military-spending', 'gini-index', 'renewable-energy', 'internet-users', 'fertility-rate', 'current-account', 'fdi-inflows', 'infant-mortality', 'urban-population'];
 
-export async function generateSitemaps() {
+export async function getSitemapCount(): Promise<number> {
   const countries = await getCountries();
   const totalIndicatorPages = countries.length * INDICATORS.length;
   const staticCount = 20 + RANKING_SLUGS.length + countries.length + (CHART_COUNTRIES.length * CHART_SLUGS.length) + INDICATORS.length;
   const totalUrls = staticCount + totalIndicatorPages;
-  const numSitemaps = Math.ceil(totalUrls / MAX_URLS_PER_SITEMAP);
-  return Array.from({ length: numSitemaps }, (_, i) => ({ id: i }));
+  return Math.ceil(totalUrls / MAX_URLS_PER_SITEMAP);
 }
 
-export default async function sitemap(props: {
-  id: Promise<string>;
-}): Promise<MetadataRoute.Sitemap> {
-  const id = Number(await props.id);
+export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap> {
   const countries = await getCountries();
 
-  // Build all URLs in order: static, countries, charts, maps, then country-indicator pages
   const allUrls: MetadataRoute.Sitemap = [];
 
   // 1. Static pages
-  const staticPages: MetadataRoute.Sitemap = [
+  allUrls.push(
     { url: BASE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE_URL}/countries`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/indicators`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
@@ -62,8 +57,7 @@ export default async function sitemap(props: {
       changeFrequency: 'weekly' as const,
       priority: 0.85,
     })),
-  ];
-  allUrls.push(...staticPages);
+  );
 
   // 2. Country pages
   for (const c of countries) {
@@ -97,7 +91,7 @@ export default async function sitemap(props: {
     });
   }
 
-  // 5. Country-indicator detail pages (the bulk — ~96K URLs)
+  // 5. Country-indicator detail pages (the bulk)
   for (const country of countries) {
     for (const ind of INDICATORS) {
       allUrls.push({

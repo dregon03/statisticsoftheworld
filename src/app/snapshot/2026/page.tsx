@@ -96,7 +96,7 @@ export default async function Snapshot2026() {
           </p>
           <div className="flex flex-wrap justify-center gap-8 text-center">
             <div>
-              <div className="text-[36px] font-extrabold text-blue-400">${(worldGdp / 1000).toFixed(0)}T</div>
+              <div className="text-[36px] font-extrabold text-blue-400">${(worldGdp / 1e12).toFixed(0)}T</div>
               <div className="text-[13px] text-white/40 uppercase tracking-wider">World GDP</div>
             </div>
             <div>
@@ -118,7 +118,7 @@ export default async function Snapshot2026() {
       {/* The Big Numbers */}
       <Section title="The Big Picture" subtitle="What the global economy looks like right now">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-          <BigStat value={`$${(worldGdp / 1000).toFixed(1)}T`} label="Total World GDP" color="blue" />
+          <BigStat value={`$${(worldGdp / 1e12).toFixed(0)}T`} label="Total World GDP" color="blue" />
           <BigStat value={`${top10GdpShare.toFixed(0)}%`} label="of GDP from Top 10 economies" color="blue" />
           <BigStat value={`$${fmt(medianGdpPerCapita, 'currency')}`} label="Median GDP per capita" color="emerald" />
           <BigStat value={`${(worldPop / 1e9).toFixed(2)}B`} label="Global population" color="emerald" />

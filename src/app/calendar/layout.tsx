@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Economic Calendar — Macro Events & Earnings | Statistics of the World',
+  title: 'Economic Calendar — Macro Events & Earnings',
   description: 'Track this week\'s most important macro events, earnings reports, and central bank decisions. Verified data from ForexFactory, Finnhub, and FRED.',
   alternates: {
     canonical: 'https://statisticsoftheworld.com/calendar',

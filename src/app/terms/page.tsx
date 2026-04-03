@@ -2,7 +2,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata = {
-  title: 'Terms of Service | Statistics of the World',
+  title: 'Terms of Service',
 };
 
 export default function TermsPage() {

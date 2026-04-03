@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Not Found' };
 
   return {
-    title: `${post.title} (2026) | Statistics of the World`,
+    title: `${post.title} (2026)`,
     description: post.description,
     alternates: { canonical: `https://statisticsoftheworld.com/blog/${slug}` },
     openGraph: {

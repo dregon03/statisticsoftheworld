@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!config) return { title: 'Not Found' };
 
   return {
-    title: `${config.title} — 2026 Rankings | Statistics of the World`,
+    title: `${config.title} — 2026 Rankings`,
     description: `${config.description} Compare 218 countries with interactive charts, historical data, and free API access.`,
     alternates: {
       canonical: `https://statisticsoftheworld.com/ranking/${slug}`,

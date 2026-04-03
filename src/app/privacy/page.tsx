@@ -2,7 +2,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata = {
-  title: 'Privacy Policy | Statistics of the World',
+  title: 'Privacy Policy',
 };
 
 export default function PrivacyPage() {

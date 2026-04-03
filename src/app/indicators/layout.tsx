@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://statisticsoftheworld.com/indicators' },
-  title: 'Indicators — 440+ Global Statistics | Statistics of the World',
+  title: 'Indicators — 440+ Global Statistics',
   description: 'Explore 440+ indicators across 27 categories: GDP, inflation, health spending, education, environment, and more. Compare countries on any metric with data from IMF, World Bank, WHO, and UN.',
   openGraph: {
     title: 'Global Indicators — Statistics of the World',

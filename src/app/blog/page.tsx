@@ -5,7 +5,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Blog — Global Economy Insights & Data Analysis | Statistics of the World',
+  title: 'Blog — Global Economy Insights & Data Analysis',
   description: 'Data-driven articles on the global economy. GDP rankings, inflation trends, population statistics, and more — backed by IMF and World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/blog' },
 };

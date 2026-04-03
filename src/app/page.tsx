@@ -1,249 +1,110 @@
-'use client';
-
-import Link from 'next/link';
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { INDICATORS, formatValue } from '@/lib/data';
-import Flag from './Flag';
+import type { Metadata } from 'next';
+import { getCountries, getIndicatorForAllCountries, INDICATORS } from '@/lib/data';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
-import ExportButton from '@/components/ExportButton';
-import Sparkline from '@/components/Sparkline';
 import HeroTabs from '@/components/HeroTabs';
+import HomeTable from '@/components/HomeTable';
 
-interface Country {
-  id: string;
-  iso2: string;
-  name: string;
-  region: string;
-  incomeLevel: string;
-  capitalCity: string;
-}
-
-interface CountryStats {
-  [countryId: string]: {
-    gdp?: number;
-    population?: number;
-    gdpPerCapita?: number;
-    lifeExpectancy?: number;
-    inflation?: number;
-    unemployment?: number;
-    debtToGdp?: number;
-    gdpGrowth?: number;
-    tradeOpenness?: number;
-    fdi?: number;
-  };
-}
-
-type SortKey = 'name' | 'gdp' | 'population' | 'gdpPerCapita' | 'gdpGrowth' | 'inflation' | 'unemployment' | 'debtToGdp' | 'lifeExpectancy' | 'tradeOpenness';
-
-const SORT_KEY_TO_INDICATOR: Record<string, string> = {
-  gdp: 'IMF.NGDPD', population: 'SP.POP.TOTL', gdpPerCapita: 'IMF.NGDPDPC',
-  gdpGrowth: 'IMF.NGDP_RPCH', inflation: 'IMF.PCPIPCH', unemployment: 'IMF.LUR',
-  debtToGdp: 'IMF.GGXWDG_NGDP', lifeExpectancy: 'SP.DYN.LE00.IN', tradeOpenness: 'NE.TRD.GNFS.ZS',
+export const metadata: Metadata = {
+  title: 'Statistics of the World — GDP, Population & Economic Data for 218 Countries (2026)',
+  description: 'Compare GDP, population, inflation, unemployment, and 440+ economic indicators for 218 countries. Interactive charts, historical data from IMF & World Bank. Free API.',
+  alternates: {
+    canonical: 'https://statisticsoftheworld.com',
+  },
+  openGraph: {
+    title: 'Statistics of the World — Every Country, Every Indicator',
+    description: '440+ indicators for 218 countries. GDP, population, stock markets, commodities, and more — interactive charts, live data, and free API.',
+    url: 'https://statisticsoftheworld.com',
+  },
 };
 
-const COLUMNS: { key: SortKey; label: string; short: string; format: (v: number | undefined) => string; hideOnMobile?: boolean; outlier?: boolean; higherIsBetter?: boolean }[] = [
-  { key: 'gdp', label: 'GDP (USD)', short: 'GDP', format: v => v ? formatValue(v, 'currency') : '-' },
-  { key: 'population', label: 'Population', short: 'Pop.', format: v => v ? formatValue(v, 'number') : '-' },
-  { key: 'gdpPerCapita', label: 'GDP/Capita', short: 'GDP/Cap', format: v => v ? formatValue(v, 'currency') : '-' },
-  { key: 'gdpGrowth', label: 'GDP Growth', short: 'Growth', format: v => v != null ? `${v.toFixed(1)}%` : '-', outlier: true, higherIsBetter: true },
-  { key: 'inflation', label: 'Inflation', short: 'CPI', format: v => v != null ? `${v.toFixed(1)}%` : '-', outlier: true, higherIsBetter: false },
-  { key: 'unemployment', label: 'Unemployment', short: 'Unemp.', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true, outlier: true, higherIsBetter: false },
-  { key: 'debtToGdp', label: 'Debt/GDP', short: 'Debt', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true, outlier: true, higherIsBetter: false },
-  { key: 'lifeExpectancy', label: 'Life Exp.', short: 'Life', format: v => v != null ? `${v.toFixed(1)}` : '-', hideOnMobile: true, outlier: true, higherIsBetter: true },
-  { key: 'tradeOpenness', label: 'Trade/GDP', short: 'Trade', format: v => v != null ? `${v.toFixed(1)}%` : '-', hideOnMobile: true, outlier: true, higherIsBetter: true },
-];
+async function getHomeData() {
+  const [
+    countries,
+    gdpData, popData, gdpCapData, lifeExpData,
+    inflationData, unemploymentData, debtData, gdpGrowthData,
+    tradeData, fdiData,
+  ] = await Promise.all([
+    getCountries(),
+    getIndicatorForAllCountries('IMF.NGDPD'),
+    getIndicatorForAllCountries('SP.POP.TOTL'),
+    getIndicatorForAllCountries('IMF.NGDPDPC'),
+    getIndicatorForAllCountries('SP.DYN.LE00.IN'),
+    getIndicatorForAllCountries('IMF.PCPIPCH'),
+    getIndicatorForAllCountries('SL.UEM.TOTL.ZS'),
+    getIndicatorForAllCountries('IMF.GGXWDG_NGDP'),
+    getIndicatorForAllCountries('IMF.NGDP_RPCH'),
+    getIndicatorForAllCountries('NE.TRD.GNFS.ZS'),
+    getIndicatorForAllCountries('BX.KLT.DINV.WD.GD.ZS'),
+  ]);
 
-function computePercentiles(values: number[]): { p10: number; p90: number } {
-  const sorted = [...values].sort((a, b) => a - b);
-  return { p10: sorted[Math.floor(sorted.length * 0.1)] ?? -Infinity, p90: sorted[Math.floor(sorted.length * 0.9)] ?? Infinity };
+  type Stats = {
+    gdp?: number; population?: number; gdpPerCapita?: number; lifeExpectancy?: number;
+    inflation?: number; unemployment?: number; debtToGdp?: number; gdpGrowth?: number;
+    tradeOpenness?: number; fdi?: number;
+  };
+  const stats: Record<string, Stats> = {};
+  const assign = (data: any[], key: keyof Stats) => {
+    for (const d of data) {
+      if (!stats[d.countryId]) stats[d.countryId] = {};
+      (stats[d.countryId] as any)[key] = d.value ?? undefined;
+    }
+  };
+  assign(gdpData, 'gdp');
+  assign(popData, 'population');
+  assign(gdpCapData, 'gdpPerCapita');
+  assign(lifeExpData, 'lifeExpectancy');
+  assign(inflationData, 'inflation');
+  assign(unemploymentData, 'unemployment');
+  assign(debtData, 'debtToGdp');
+  assign(gdpGrowthData, 'gdpGrowth');
+  assign(tradeData, 'tradeOpenness');
+  assign(fdiData, 'fdi');
+
+  return { countries, stats };
 }
 
-export default function Home() {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [stats, setStats] = useState<CountryStats>({});
-  const [search, setSearch] = useState('');
-  const [filterRegion, setFilterRegion] = useState('');
-  const [sortKey, setSortKey] = useState<SortKey>('gdp');
-  const [sortAsc, setSortAsc] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [sparklines, setSparklines] = useState<Record<string, number[]>>({});
-  const [sparklineKey, setSparklineKey] = useState<string>('');
+export default async function Home() {
+  const { countries, stats } = await getHomeData();
 
-  const fetchSparklines = useCallback((key: string) => {
-    const indicatorId = SORT_KEY_TO_INDICATOR[key];
-    if (!indicatorId || key === 'name') { setSparklines({}); setSparklineKey(''); return; }
-    if (key === sparklineKey) return;
-    fetch(`/api/sparklines?indicator=${encodeURIComponent(indicatorId)}`)
-      .then(r => r.json())
-      .then(data => { setSparklines(data); setSparklineKey(key); })
-      .catch(() => {});
-  }, [sparklineKey]);
-
-  useEffect(() => { fetchSparklines(sortKey); }, [sortKey, fetchSparklines]);
-
-  useEffect(() => {
-    fetch('/api/countries')
-      .then(r => r.json())
-      .then(({ countries: list, stats: s }) => {
-        setCountries(list);
-        setStats(s);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  const regions = useMemo(() => [...new Set(countries.map(c => c.region))].sort(), [countries]);
-
-  const outlierThresholds = useMemo(() => {
-    const thresholds: Record<string, { p10: number; p90: number }> = {};
-    for (const col of COLUMNS) {
-      if (!col.outlier) continue;
-      const values = Object.values(stats)
-        .map(s => (s as any)[col.key] as number | undefined)
-        .filter((v): v is number => v != null && isFinite(v));
-      if (values.length > 10) thresholds[col.key] = computePercentiles(values);
-    }
-    return thresholds;
-  }, [stats]);
-
-  const getOutlierClass = (col: typeof COLUMNS[0], value: number | undefined): string => {
-    if (!col.outlier || value == null || !isFinite(value)) return '';
-    const t = outlierThresholds[col.key];
-    if (!t) return '';
-    if (col.higherIsBetter) {
-      if (value >= t.p90) return 'text-[#0066cc] font-bold';
-      if (value <= t.p10) return 'text-[#cc3333] font-bold';
-    } else {
-      if (value <= t.p10) return 'text-[#0066cc] font-bold';
-      if (value >= t.p90) return 'text-[#cc3333] font-bold';
-    }
-    return '';
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Statistics of the World — Global Economic Data',
+    description: 'Compare GDP, population, inflation, and 440+ indicators for 218 countries.',
+    url: 'https://statisticsoftheworld.com',
+    mainEntity: {
+      '@type': 'Dataset',
+      name: 'Global Economic Indicators',
+      description: '440+ economic, demographic, health, education, and environmental indicators for 218 countries. Sources: IMF, World Bank, FRED.',
+      creator: { '@type': 'Organization', name: 'Statistics of the World' },
+      temporalCoverage: '1960/2026',
+      spatialCoverage: { '@type': 'Place', name: 'World' },
+      license: 'https://statisticsoftheworld.com/terms',
+      isAccessibleForFree: true,
+      distribution: {
+        '@type': 'DataDownload',
+        encodingFormat: 'application/json',
+        contentUrl: 'https://statisticsoftheworld.com/api-docs',
+      },
+    },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+      ],
+    },
   };
-
-  const filtered = useMemo(() => {
-    let list = countries.filter(c => {
-      const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.id.toLowerCase().includes(search.toLowerCase());
-      const matchRegion = !filterRegion || c.region === filterRegion;
-      return matchSearch && matchRegion;
-    });
-    list.sort((a, b) => {
-      if (sortKey === 'name') return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-      const aVal = (stats[a.id] as any)?.[sortKey] ?? -Infinity;
-      const bVal = (stats[b.id] as any)?.[sortKey] ?? -Infinity;
-      return sortAsc ? aVal - bVal : bVal - aVal;
-    });
-    return list;
-  }, [countries, stats, search, filterRegion, sortKey, sortAsc]);
-
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) setSortAsc(!sortAsc);
-    else { setSortKey(key); setSortAsc(key === 'name'); }
-  };
-
-  const sortIcon = (key: SortKey) => sortKey !== key ? '' : sortAsc ? ' ↑' : ' ↓';
 
   return (
     <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Nav />
       <HeroTabs countryCount={countries.length} indicatorCount={INDICATORS.length} />
-
-      <section className="max-w-[1400px] mx-auto px-4 py-6">
-        <div className="flex flex-wrap gap-3 mb-4">
-          <input
-            type="text"
-            placeholder="Search countries..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#0066cc] transition w-56"
-          />
-          <select
-            value={filterRegion}
-            onChange={e => setFilterRegion(e.target.value)}
-            className="bg-white border border-[#d5dce6] rounded-lg px-3 py-2 text-[14px] outline-none cursor-pointer"
-          >
-            <option value="">All Regions</option>
-            {regions.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
-          <span className="text-[15px] text-[#64748b] self-center ml-auto flex items-center gap-3">
-            {filtered.length} countries
-            <ExportButton
-              filename={`sotw-countries-${new Date().toISOString().slice(0, 10)}`}
-              getData={() => ({
-                headers: ['Country', 'Code', ...COLUMNS.map(c => c.label)],
-                rows: filtered.map(c => {
-                  const s = stats[c.id] || {};
-                  return [c.name, c.id, ...COLUMNS.map(col => (s as any)[col.key] ?? null)];
-                }),
-              })}
-            />
-          </span>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-20 text-[#64748b] text-[14px]">Loading countries...</div>
-        ) : (
-          <div className="bg-white border border-[#d5dce6] rounded-xl overflow-x-auto shadow-sm">
-            <table className="w-full text-[14px]">
-              <thead>
-                <tr className="bg-[#f4f6f9] border-b border-[#d5dce6] text-[14px] text-[#64748b] uppercase tracking-wider">
-                  <th className="px-3 py-3 text-left font-semibold sticky left-0 bg-[#f4f6f9] z-10 min-w-[180px]">
-                    <button onClick={() => handleSort('name')} className="hover:text-[#0d1b2a] transition">
-                      Country{sortIcon('name')}
-                    </button>
-                  </th>
-                  {sortKey !== 'name' && (
-                    <th className="px-1 py-3 text-center font-semibold hidden md:table-cell w-[70px]">Trend</th>
-                  )}
-                  {COLUMNS.map(col => (
-                    <th key={col.key} className={`px-3 py-3 text-right font-semibold whitespace-nowrap ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
-                      <button onClick={() => handleSort(col.key)} className="hover:text-[#0d1b2a] transition">
-                        <span className="hidden md:inline">{col.label}</span>
-                        <span className="md:hidden">{col.short}</span>
-                        {sortIcon(col.key)}
-                      </button>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((c, i) => {
-                  const s = stats[c.id] || {};
-                  return (
-                    <tr
-                      key={c.id}
-                      className={`border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition cursor-pointer ${i % 2 === 0 ? 'bg-white' : 'bg-[#fafbfd]'}`}
-                      onClick={() => window.location.href = `/country/${c.id}`}
-                    >
-                      <td className="px-3 py-2.5 sticky left-0 bg-inherit z-10">
-                        <Link href={`/country/${c.id}`} className="inline-flex items-center gap-2 hover:text-[#0066cc] transition font-medium text-[#0d1b2a]" onClick={e => e.stopPropagation()}>
-                          <Flag iso2={c.iso2} size={18} />
-                          {c.name}
-                        </Link>
-                      </td>
-                      {sortKey !== 'name' && (
-                        <td className="px-1 py-2.5 text-center hidden md:table-cell">
-                          <Sparkline data={(s as any)[sortKey] != null ? (sparklines[c.id] || []) : []} />
-                        </td>
-                      )}
-                      {COLUMNS.map(col => {
-                        const val = (s as any)[col.key] as number | undefined;
-                        const outlierCls = getOutlierClass(col, val);
-                        return (
-                          <td key={col.key} className={`px-3 py-2.5 text-right font-mono text-[15px] ${outlierCls || 'text-[#475569]'} ${col.hideOnMobile ? 'hidden lg:table-cell' : ''}`}>
-                            {col.format(val)}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-
+      <HomeTable countries={countries} stats={stats} />
       <Footer />
     </main>
   );

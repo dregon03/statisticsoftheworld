@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://statisticsoftheworld.com/scatter' },
   title: 'Scatter Plot Explorer — Cross-Indicator Analysis',
   description: 'Gapminder-style scatter plots: GDP vs Life Expectancy, Education vs Income, and 100+ combinations. Explore correlations across 218 countries with population-weighted bubbles.',
   openGraph: {

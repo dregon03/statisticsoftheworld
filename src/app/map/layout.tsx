@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://statisticsoftheworld.com/map' },
   title: 'World Map — Visualize Global Indicators',
   description: 'Interactive choropleth world map for GDP, population, life expectancy, inflation, and 395+ indicators across 218 countries. Color-coded by value.',
   openGraph: {

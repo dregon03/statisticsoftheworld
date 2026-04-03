@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://statisticsoftheworld.com/trade' },
   title: 'Trade Explorer — Global Import/Export Data | Statistics of the World',
   description: 'Explore bilateral trade flows between countries using UN COMTRADE data. Filter by commodity, year, and trade partner.',
 };

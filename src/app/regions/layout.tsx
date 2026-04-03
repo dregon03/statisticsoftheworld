@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://statisticsoftheworld.com/regions' },
   title: 'Regional Analysis — Compare World Regions',
   description: 'Compare world regions and income groups across 395+ indicators. Average, median, and aggregate statistics for East Asia, Europe, Latin America, Sub-Saharan Africa, and more.',
   openGraph: {

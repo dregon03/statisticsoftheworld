@@ -104,6 +104,7 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
+    { url: `${BASE_URL}/blog/how-to-get-economic-data-api`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.85 },
   );
 
   // 3. Ranking pages

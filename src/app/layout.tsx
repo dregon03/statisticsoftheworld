@@ -55,6 +55,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://flagcdn.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://flagcdn.com" />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"

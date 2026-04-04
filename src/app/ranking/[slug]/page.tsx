@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getIndicatorForAllCountries, INDICATORS, formatValue } from '@/lib/data';
+import { BLOG_POSTS } from '@/lib/blog-posts';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Flag from '../../Flag';
@@ -283,6 +284,24 @@ export default async function RankingPage({ params }: Props) {
             ))}
           </div>
         </div>
+
+        {/* Related blog articles — cross-link for SEO */}
+        {(() => {
+          const relatedBlogs = BLOG_POSTS.filter(p => p.indicatorId === config.id).slice(0, 3);
+          if (relatedBlogs.length === 0) return null;
+          return (
+            <div className="mt-6">
+              <h2 className="text-[16px] font-semibold mb-3">Related Articles</h2>
+              <div className="space-y-2">
+                {relatedBlogs.map(bp => (
+                  <Link key={bp.slug} href={`/blog/${bp.slug}`} className="block text-[14px] text-[#2563eb] hover:text-[#1d4ed8] hover:underline transition">
+                    {bp.title} →
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </section>
 
       <Footer />

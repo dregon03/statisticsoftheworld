@@ -212,6 +212,30 @@ export default async function CountryPage({ params }: Props) {
           })}
         </div>
 
+        {/* Explore Rankings — internal cross-links for SEO */}
+        <div className="mt-12">
+          <h2 className="text-[18px] font-bold mb-3 text-[#0d1b2a]">Explore Rankings</h2>
+          <p className="text-[13px] text-[#64748b] mb-4">See where {country.name} ranks globally across key indicators</p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: '/ranking/gdp', label: 'GDP' },
+              { href: '/ranking/gdp-per-capita', label: 'GDP per Capita' },
+              { href: '/ranking/gdp-growth', label: 'GDP Growth' },
+              { href: '/ranking/population', label: 'Population' },
+              { href: '/ranking/inflation-rate', label: 'Inflation' },
+              { href: '/ranking/unemployment-rate', label: 'Unemployment' },
+              { href: '/ranking/life-expectancy', label: 'Life Expectancy' },
+              { href: '/ranking/government-debt', label: 'Debt-to-GDP' },
+              { href: '/ranking/gini-index', label: 'Inequality' },
+              { href: '/ranking/co2-emissions', label: 'CO₂ Emissions' },
+            ].map(r => (
+              <Link key={r.href} href={r.href} className="px-3 py-1.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-[#d5dce6] rounded-lg text-[12px] text-[#475569] hover:text-[#0d1b2a] transition">
+                {r.label} Rankings →
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Similar Economies — internal linking mesh */}
         <SimilarCountries countryId={id} region={country.region} incomeLevel={country.incomeLevel} />
       </section>

@@ -25,6 +25,12 @@ const RANKING_SLUGS = [
   'military-spending', 'trade-openness', 'fdi-inflows', 'gini-index',
   'poverty-rate', 'infant-mortality', 'urban-population', 'renewable-energy',
   'forest-area', 'corruption-control', 'rule-of-law', 'tourism-arrivals',
+  // High-traffic indicators from GSC
+  'air-passengers', 'air-freight', 'gni', 'gni-per-capita', 'homicide-rate',
+  'youth-dependency-ratio', 'rule-of-law-percentile', 'imports',
+  'household-consumption', 'road-traffic-deaths', 'population-under-15',
+  'rd-spending', 'population-over-65', 'youth-unemployment', 'suicide-rate',
+  'net-migration', 'tax-revenue',
 ];
 
 const COMPARISON_PAIRS = [

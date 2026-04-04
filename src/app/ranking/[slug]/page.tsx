@@ -38,6 +38,24 @@ const SLUG_MAP: Record<string, { id: string; title: string; description: string 
   'corruption-control': { id: 'CC.EST', title: 'Control of Corruption by Country', description: 'World Bank governance indicator measuring control of corruption (-2.5 to +2.5).' },
   'rule-of-law': { id: 'RL.EST', title: 'Rule of Law by Country', description: 'World Bank governance indicator measuring rule of law (-2.5 to +2.5).' },
   'tourism-arrivals': { id: 'ST.INT.ARVL', title: 'International Tourism Arrivals by Country', description: 'Number of international tourist arrivals per year.' },
+  // High-traffic indicators from GSC data — adding dedicated ranking pages
+  'air-passengers': { id: 'IS.AIR.PSGR', title: 'Air Passengers by Country', description: 'Total air transport passengers carried by country. Data from World Bank World Development Indicators.' },
+  'air-freight': { id: 'IS.AIR.GOOD.MT.K1', title: 'Air Freight by Country', description: 'Air transport freight in million ton-km by country. Data from World Bank WDI.' },
+  'gni': { id: 'NY.GNP.MKTP.CD', title: 'Gross National Income (GNI) by Country', description: 'Gross national income in current USD by country. Data from World Bank WDI.' },
+  'gni-per-capita': { id: 'NY.GNP.PCAP.CD', title: 'GNI per Capita by Country', description: 'Gross national income per capita in current USD. Key measure of average income. Data from World Bank.' },
+  'homicide-rate': { id: 'VC.IHR.PSRC.P5', title: 'Homicide Rate by Country', description: 'Intentional homicides per 100,000 people by country. Data from World Bank / UNODC.' },
+  'youth-dependency-ratio': { id: 'SP.POP.DPND.YG', title: 'Youth Dependency Ratio by Country', description: 'Ratio of younger dependents (ages 0–14) to working-age population (15–64). Data from World Bank.' },
+  'rule-of-law-percentile': { id: 'RL.PER.RNK', title: 'Rule of Law Ranking by Country', description: 'Rule of law percentile rank (0–100) from World Bank Worldwide Governance Indicators.' },
+  'imports': { id: 'NE.IMP.GNFS.CD', title: 'Total Imports by Country', description: 'Imports of goods and services in current USD by country. Data from World Bank WDI.' },
+  'household-consumption': { id: 'NE.CON.PRVT.ZS', title: 'Household Consumption (% of GDP) by Country', description: 'Household final consumption expenditure as a share of GDP. Data from World Bank.' },
+  'road-traffic-deaths': { id: 'WHO.ROAD_DEATHS', title: 'Road Traffic Death Rate by Country', description: 'Estimated road traffic death rate per 100,000 population. Data from WHO Global Health Observatory.' },
+  'population-under-15': { id: 'SP.POP.0014.TO.ZS', title: 'Population Under 15 by Country', description: 'Share of population ages 0–14 as percentage of total population. Data from World Bank.' },
+  'rd-spending': { id: 'GB.XPD.RSDV.GD.ZS', title: 'R&D Spending (% of GDP) by Country', description: 'Research and development expenditure as a share of GDP. Key innovation indicator. Data from World Bank.' },
+  'population-over-65': { id: 'SP.POP.65UP.TO.ZS', title: 'Population Over 65 by Country', description: 'Share of population ages 65 and above. Key aging indicator. Data from World Bank.' },
+  'youth-unemployment': { id: 'SL.UEM.1524.ZS', title: 'Youth Unemployment Rate by Country', description: 'Unemployment rate for ages 15–24 (%). Data from World Bank / ILO.' },
+  'suicide-rate': { id: 'SH.STA.SUIC.P5', title: 'Suicide Rate by Country', description: 'Suicide mortality rate per 100,000 population. Data from World Bank / WHO.' },
+  'net-migration': { id: 'SM.POP.NETM', title: 'Net Migration by Country', description: 'Net migration (immigrants minus emigrants) over five-year periods. Data from World Bank / UN.' },
+  'tax-revenue': { id: 'GC.TAX.TOTL.GD.ZS', title: 'Tax Revenue (% of GDP) by Country', description: 'Tax revenue as a share of GDP. Reflects government fiscal capacity. Data from World Bank.' },
 };
 
 type Props = { params: Promise<{ slug: string }> };

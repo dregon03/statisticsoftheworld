@@ -81,6 +81,15 @@ const RANKING_SLUGS: Record<string, string> = {
   'SH.DYN.MORT': 'infant-mortality', 'SP.URB.TOTL.IN.ZS': 'urban-population',
   'EG.FEC.RNEW.ZS': 'renewable-energy', 'AG.LND.FRST.ZS': 'forest-area',
   'CC.EST': 'corruption-control', 'RL.EST': 'rule-of-law', 'ST.INT.ARVL': 'tourism-arrivals',
+  'IS.AIR.PSGR': 'air-passengers', 'IS.AIR.GOOD.MT.K1': 'air-freight',
+  'NY.GNP.MKTP.CD': 'gni', 'NY.GNP.PCAP.CD': 'gni-per-capita',
+  'VC.IHR.PSRC.P5': 'homicide-rate', 'SP.POP.DPND.YG': 'youth-dependency-ratio',
+  'RL.PER.RNK': 'rule-of-law-percentile', 'NE.IMP.GNFS.CD': 'imports',
+  'NE.CON.PRVT.ZS': 'household-consumption', 'WHO.ROAD_DEATHS': 'road-traffic-deaths',
+  'SP.POP.0014.TO.ZS': 'population-under-15', 'GB.XPD.RSDV.GD.ZS': 'rd-spending',
+  'SP.POP.65UP.TO.ZS': 'population-over-65', 'SL.UEM.1524.ZS': 'youth-unemployment',
+  'SH.STA.SUIC.P5': 'suicide-rate', 'SM.POP.NETM': 'net-migration',
+  'GC.TAX.TOTL.GD.ZS': 'tax-revenue',
 };
 
 // Top comparison pairs by country for cross-linking

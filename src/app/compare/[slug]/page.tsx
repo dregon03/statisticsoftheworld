@@ -385,11 +385,61 @@ export default async function ComparisonPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Interactive tool link */}
-        <div className="mt-8 text-center">
-          <Link href="/compare" className="text-[14px] text-[#2563eb] hover:underline">
-            Want to compare different countries? Use our interactive comparison tool →
-          </Link>
+        {/* Cross-links for SEO */}
+        <div className="mt-10 space-y-6">
+          {/* Country pages */}
+          <div>
+            <h2 className="text-[16px] font-semibold text-[#0d1b2a] mb-3">Explore These Countries</h2>
+            <div className="flex flex-wrap gap-2">
+              <Link href={`/country/${slugA}`} className="px-3 py-1.5 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition">
+                {countryA.name} — Full Profile →
+              </Link>
+              <Link href={`/country/${slugB}`} className="px-3 py-1.5 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition">
+                {countryB.name} — Full Profile →
+              </Link>
+            </div>
+          </div>
+
+          {/* Related comparisons */}
+          <div>
+            <h2 className="text-[16px] font-semibold text-[#0d1b2a] mb-3">More Comparisons</h2>
+            <div className="flex flex-wrap gap-2">
+              {PAIRS
+                .filter(([a, b]) => (a === slugA || a === slugB || b === slugA || b === slugB) && `${a}-vs-${b}` !== slug)
+                .slice(0, 6)
+                .map(([a, b]) => (
+                  <Link key={`${a}-vs-${b}`} href={`/compare/${a}-vs-${b}`} className="px-3 py-1.5 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition">
+                    {slugToName(a)} vs {slugToName(b)}
+                  </Link>
+                ))}
+            </div>
+          </div>
+
+          {/* Top rankings */}
+          <div>
+            <h2 className="text-[16px] font-semibold text-[#0d1b2a] mb-3">Global Rankings</h2>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { href: '/ranking/gdp', label: 'GDP' },
+                { href: '/ranking/gdp-per-capita', label: 'GDP per Capita' },
+                { href: '/ranking/population', label: 'Population' },
+                { href: '/ranking/inflation-rate', label: 'Inflation' },
+                { href: '/ranking/unemployment-rate', label: 'Unemployment' },
+                { href: '/ranking/life-expectancy', label: 'Life Expectancy' },
+              ].map(r => (
+                <Link key={r.href} href={r.href} className="px-3 py-1.5 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition">
+                  {r.label} Rankings →
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Compare tool */}
+          <div className="text-center pt-4">
+            <Link href="/compare" className="text-[14px] text-[#2563eb] hover:underline">
+              Compare any two countries →
+            </Link>
+          </div>
         </div>
       </section>
 

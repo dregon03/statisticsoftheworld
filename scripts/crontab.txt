@@ -17,11 +17,17 @@ ETL=/opt/sotw-etl/run-etl.sh
 5 7 * * * $ETL etl.py >> /var/log/sotw-etl.log 2>&1
 10 7 * * * $ETL etl_financial.py >> /var/log/sotw-etl.log 2>&1
 15 7 * * * $ETL fetch_china_quotes.py >> /var/log/sotw-etl.log 2>&1
-20 7 * * * $ETL etl_calendar_ai.py >> /var/log/sotw-etl.log 2>&1
-25 7 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
 
-# ── Every 4 hours: Polymarket ────────────────────────────
-0 */4 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
+# ── Calendar ETL (needs ~10 min for 7 Gemini calls) ─────
+# Run at 7:30 UTC with no competing jobs until 8:00
+30 7 * * * $ETL etl_calendar_ai.py >> /var/log/sotw-calendar.log 2>&1
+
+# ── Every 4 hours: Polymarket (skip 8 UTC to avoid overlap with calendar) ──
+0 4 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
+0 12 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
+0 16 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
+0 20 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
+0 0 * * * $ETL etl_polymarket.py >> /var/log/sotw-etl.log 2>&1
 
 # ── Weekdays: Calendar actuals (after major releases) ────
 # Runs ~30 min after common release windows to catch actuals

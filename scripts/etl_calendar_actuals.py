@@ -242,18 +242,38 @@ Return ONLY a JSON array: [{{"name":"...","date":"YYYY-MM-DD","actual":"...","ou
             if not rname or not actual:
                 continue
 
-            # Match to stored event
+            # Match to stored event — require date match + name similarity
+            best_match = None
+            best_score = 0
             for sid, name, country, date_str, _ in batch:
-                if date_str == rdate or name.lower() in rname.lower() or rname.lower() in name.lower():
-                    cur.execute("""
-                        UPDATE sotw_release_schedule
-                        SET actual = %s, outcome = %s, updated_at = NOW()
-                        WHERE series_id = %s AND release_date = %s AND actual IS NULL
-                    """, (actual, outcome, sid, date_str))
-                    if cur.rowcount > 0:
-                        updated += 1
-                        print(f"    {date_str} {name[:40]:40s} -> {actual}", flush=True)
-                    break
+                # Date must match
+                if date_str != rdate:
+                    continue
+                # Score name similarity
+                rname_lower = rname.lower()
+                name_lower = name.lower()
+                # Extract key words (>3 chars) from both names
+                r_words = set(w for w in re.split(r'[^a-z0-9]+', rname_lower) if len(w) > 3)
+                n_words = set(w for w in re.split(r'[^a-z0-9]+', name_lower) if len(w) > 3)
+                if not r_words or not n_words:
+                    continue
+                overlap = len(r_words & n_words)
+                score = overlap / max(len(r_words), len(n_words))
+                # Require at least 40% word overlap
+                if score > best_score and score >= 0.4:
+                    best_score = score
+                    best_match = (sid, name, date_str)
+
+            if best_match:
+                sid, name, date_str = best_match
+                cur.execute("""
+                    UPDATE sotw_release_schedule
+                    SET actual = %s, outcome = %s, updated_at = NOW()
+                    WHERE series_id = %s AND release_date = %s AND actual IS NULL
+                """, (actual, outcome, sid, date_str))
+                if cur.rowcount > 0:
+                    updated += 1
+                    print(f"    {date_str} {name[:40]:40s} -> {actual} (score={best_score:.2f})", flush=True)
 
         conn.commit()
         if batch_start + batch_size < len(events_to_check):

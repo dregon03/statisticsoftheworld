@@ -534,17 +534,31 @@ Only include events where data was actually released. Return ONLY JSON array."""
             rdate = r.get("date", "")
             if not rname or not actual:
                 continue
+            # Strict matching: require date + word overlap
+            best_match = None
+            best_score = 0
             for sid, name, country, date in past:
                 ds = date.isoformat() if hasattr(date, 'isoformat') else str(date)
-                if ds == rdate or name.lower() in rname.lower() or rname.lower() in name.lower():
-                    cur.execute("""
-                        UPDATE sotw_release_schedule SET actual=%s, outcome=%s, updated_at=NOW()
-                        WHERE series_id=%s AND release_date=%s
-                    """, (actual, outcome, sid, ds))
-                    if cur.rowcount > 0:
-                        updated += 1
-                        print(f"    {ds}  {name[:35]:35s} -> {actual}", flush=True)
-                    break
+                if ds != rdate:
+                    continue
+                r_words = set(w for w in re.split(r'[^a-z0-9]+', rname.lower()) if len(w) > 3)
+                n_words = set(w for w in re.split(r'[^a-z0-9]+', name.lower()) if len(w) > 3)
+                if not r_words or not n_words:
+                    continue
+                overlap = len(r_words & n_words)
+                score = overlap / max(len(r_words), len(n_words))
+                if score > best_score and score >= 0.4:
+                    best_score = score
+                    best_match = (sid, name, ds)
+            if best_match:
+                sid, name, ds = best_match
+                cur.execute("""
+                    UPDATE sotw_release_schedule SET actual=%s, outcome=%s, updated_at=NOW()
+                    WHERE series_id=%s AND release_date=%s AND actual IS NULL
+                """, (actual, outcome, sid, ds))
+                if cur.rowcount > 0:
+                    updated += 1
+                    print(f"    {ds}  {name[:35]:35s} -> {actual} (score={best_score:.2f})", flush=True)
         print(f"  Updated {updated} events", flush=True)
     else:
         print("  No past events need results", flush=True)

@@ -165,17 +165,71 @@ export default async function IndicatorDetailPage({ params }: Props) {
     ? validHistory.filter(d => d.year < currentYear)
     : validHistory;
 
+  const seoLabel = SEO_LABELS[indicatorId] || ind.label;
+  const latestVal = validHistory.length > 0 ? validHistory[validHistory.length - 1] : null;
+  const latestValueStr = latestVal ? formatValue(latestVal.value, ind.format, ind.decimals) : null;
+
+  const sourceUrl = ind.source === 'imf'
+    ? 'https://www.imf.org/en/Publications/WEO'
+    : indicatorId.startsWith('WHO.') ? 'https://www.who.int/data/gho'
+    : indicatorId.startsWith('UN.') ? 'https://unstats.un.org/UNSDWebsite/'
+    : `https://data.worldbank.org/indicator/${indicatorId}`;
+
+  const sourceShort = ind.source === 'imf' ? 'IMF WEO'
+    : indicatorId.startsWith('WHO.') ? 'WHO GHO'
+    : indicatorId.startsWith('UN.') ? 'UN'
+    : 'World Bank WDI';
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Dataset',
-    name: `${country.name} — ${ind.label}`,
-    description: `Historical ${ind.label} data for ${country.name}`,
-    url: `https://statisticsoftheworld.com/country/${id}/${encodeURIComponent(indicatorId)}`,
-    creator: { '@type': 'Organization', name: sourceName },
-    temporalCoverage: validHistory.length > 0
-      ? `${validHistory[0].year}/${validHistory[validHistory.length - 1].year}`
-      : undefined,
-    variableMeasured: ind.label,
+    '@graph': [
+      {
+        '@type': 'Dataset',
+        name: `${country.name} ${seoLabel} — Historical Data`,
+        description: `${validHistory.length} years of ${seoLabel.toLowerCase()} data for ${country.name} (${validHistory[0]?.year}–${validHistory[validHistory.length - 1]?.year}). Source: ${sourceName}.`,
+        url: `https://statisticsoftheworld.com/country/${id}/${encodeURIComponent(indicatorId)}`,
+        identifier: indicatorId,
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        isAccessibleForFree: true,
+        creator: { '@type': 'Organization', name: sourceName, url: sourceUrl },
+        provider: { '@type': 'Organization', name: 'Statistics of the World', url: 'https://statisticsoftheworld.com' },
+        temporalCoverage: `${validHistory[0]?.year}/${validHistory[validHistory.length - 1]?.year}`,
+        spatialCoverage: { '@type': 'Place', name: country.name },
+        variableMeasured: {
+          '@type': 'PropertyValue',
+          name: seoLabel,
+          unitText: meta?.unit || undefined,
+        },
+        distribution: {
+          '@type': 'DataDownload',
+          encodingFormat: 'application/json',
+          contentUrl: `https://statisticsoftheworld.com/api/v2/history?indicator=${encodeURIComponent(indicatorId)}&country=${id}`,
+        },
+        keywords: [seoLabel, country.name, sourceShort, 'economic data', 'statistics', ind.category].filter(Boolean),
+        dateModified: new Date().toISOString().split('T')[0],
+      },
+      ...(latestVal && globalRank > 0 ? [{
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: `What is ${country.name}'s ${seoLabel.toLowerCase()} in ${latestVal.year}?`,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: `${country.name}'s ${seoLabel.toLowerCase()} was ${latestValueStr} in ${latestVal.year}, ranking #${globalRank} out of ${totalCountries} countries. Source: ${sourceName}.`,
+            },
+          },
+          {
+            '@type': 'Question',
+            name: `How does ${country.name}'s ${seoLabel.toLowerCase()} compare globally?`,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: `${country.name} ranks #${globalRank} out of ${totalCountries} countries for ${seoLabel.toLowerCase()}. The data covers ${validHistory.length} years from ${validHistory[0]?.year} to ${validHistory[validHistory.length - 1]?.year}. Source: ${sourceName}.`,
+            },
+          },
+        ],
+      }] : []),
+    ],
   };
 
   return (
@@ -208,7 +262,9 @@ export default async function IndicatorDetailPage({ params }: Props) {
           </h1>
           <div className="flex flex-wrap gap-4 text-sm text-gray-400">
             <span>Category: {ind.category}</span>
-            <span>Source: {sourceName}</span>
+            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 transition">
+              Source: {sourceName} ↗
+            </a>
             {globalRank > 0 && <span>Global Rank: #{globalRank} of {totalCountries}</span>}
           </div>
         </div>

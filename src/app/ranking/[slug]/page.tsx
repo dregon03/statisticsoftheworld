@@ -290,11 +290,12 @@ export default async function RankingPage({ params }: Props) {
         {/* Rankings table */}
         <div className="border border-gray-100 rounded-xl overflow-hidden mb-8">
           <table className="w-full">
+            <caption className="sr-only">{config.title} — {data.length} countries ranked by {ind.label.toLowerCase()} ({year}). Source: {ind.source === 'imf' ? 'IMF' : ind.source === 'who' ? 'WHO' : 'World Bank'}.</caption>
             <thead>
               <tr className="text-left text-[15px] text-gray-400 uppercase border-b border-gray-100 bg-gray-50">
-                <th className="px-4 py-2.5 w-12">#</th>
-                <th className="px-4 py-2.5">Country</th>
-                <th className="px-4 py-2.5 text-right">{ind.label}</th>
+                <th scope="col" className="px-4 py-2.5 w-12">#</th>
+                <th scope="col" className="px-4 py-2.5">Country</th>
+                <th scope="col" className="px-4 py-2.5 text-right">{ind.label}</th>
                 <th className="px-4 py-2.5 w-48 hidden md:table-cell"></th>
                 <th className="px-4 py-2.5 text-right w-16">Year</th>
               </tr>

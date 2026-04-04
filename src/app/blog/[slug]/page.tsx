@@ -105,6 +105,17 @@ export default async function BlogPostPage({ params }: Props) {
           acceptedAnswer: { '@type': 'Answer', text: f.a },
         })),
       },
+      {
+        '@type': 'ItemList',
+        name: post.title,
+        numberOfItems: data.length,
+        itemListOrder: post.direction === 'top' ? 'https://schema.org/ItemListOrderDescending' : 'https://schema.org/ItemListOrderAscending',
+        itemListElement: data.slice(0, 10).map((d, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: `${d.country}: ${formatValue(d.value, ind.format, ind.decimals)}`,
+        })),
+      },
     ],
   };
 

@@ -113,14 +113,40 @@ export default async function IndicatorPage({ params }: Props) {
         })),
       },
       {
+        '@type': 'ItemList',
+        name: `${ind.label} by Country (${year})`,
+        numberOfItems: data.length,
+        itemListOrder: 'https://schema.org/ItemListOrderDescending',
+        itemListElement: data.slice(0, 20).map((d, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: d.country,
+          url: `https://statisticsoftheworld.com${getCleanCountryIndicatorUrl(d.countryId, match.id)}`,
+        })),
+      },
+      {
         '@type': 'Dataset',
-        name: `${ind.label} — Global Data by Country`,
-        description: ind.description || `${ind.label} data for ${data.length} countries.`,
+        name: `${ind.label} — Global Data for ${data.length} Countries`,
+        description: `${ind.label} data for ${data.length} countries as of ${year}. ${top ? `Highest: ${top.country} (${fmtTop}). Lowest: ${bottom?.country} (${fmtBottom}).` : ''} Source: ${source}.`,
         url: `https://statisticsoftheworld.com/indicator/${slug}`,
-        creator: { '@type': 'Organization', name: 'Statistics of the World' },
+        identifier: match.id,
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        creator: {
+          '@type': 'Organization',
+          name: ind.source === 'imf' ? 'IMF' : ind.source === 'who' ? 'WHO' : 'World Bank',
+          url: ind.source === 'imf' ? 'https://www.imf.org' : ind.source === 'who' ? 'https://www.who.int' : 'https://www.worldbank.org',
+        },
+        provider: { '@type': 'Organization', name: 'Statistics of the World', url: 'https://statisticsoftheworld.com' },
         temporalCoverage: `${year}`,
         spatialCoverage: { '@type': 'Place', name: 'World' },
         isAccessibleForFree: true,
+        distribution: {
+          '@type': 'DataDownload',
+          encodingFormat: 'application/json',
+          contentUrl: `https://statisticsoftheworld.com/api/v2/indicator/${encodeURIComponent(match.id)}`,
+        },
+        keywords: [ind.label, 'by country', ind.category, source, `${year}`],
+        dateModified: new Date().toISOString().split('T')[0],
       },
     ],
   };
@@ -155,9 +181,19 @@ export default async function IndicatorPage({ params }: Props) {
         </nav>
 
         <h1 className="text-[28px] font-bold mb-1">{ind.label} by Country</h1>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
           <span className="text-[13px] px-2 py-0.5 bg-[#f0f0f0] rounded text-[#64748b]">{ind.category}</span>
-          <span className="text-[13px] text-[#94a3b8]">Source: {source}</span>
+          <a
+            href={ind.source === 'imf' ? 'https://www.imf.org/en/Publications/WEO' : ind.source === 'who' ? 'https://www.who.int/data/gho' : `https://data.worldbank.org/indicator/${match.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[13px] text-[#94a3b8] hover:text-blue-600 transition"
+          >
+            Source: {source} ↗
+          </a>
+          <span className="text-[12px] text-[#94a3b8] bg-[#f1f5f9] px-2.5 py-1 rounded-full">
+            Updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </span>
         </div>
 
         {summaryParagraph && (
@@ -197,11 +233,12 @@ export default async function IndicatorPage({ params }: Props) {
         <h2 className="text-[18px] font-semibold mb-3">All Countries Ranked</h2>
         <div className="border border-gray-100 rounded-xl overflow-hidden mb-8">
           <table className="w-full">
+            <caption className="sr-only">{ind.label} by country — {data.length} countries ranked ({year}). Source: {source}.</caption>
             <thead>
               <tr className="text-left text-[13px] text-gray-400 uppercase border-b border-gray-100 bg-gray-50">
-                <th className="px-4 py-2.5 w-12">#</th>
-                <th className="px-4 py-2.5">Country</th>
-                <th className="px-4 py-2.5 text-right">{ind.label}</th>
+                <th scope="col" className="px-4 py-2.5 w-12">#</th>
+                <th scope="col" className="px-4 py-2.5">Country</th>
+                <th scope="col" className="px-4 py-2.5 text-right">{ind.label}</th>
                 <th className="px-4 py-2.5 w-48 hidden md:table-cell"></th>
                 <th className="px-4 py-2.5 text-right w-16">Year</th>
               </tr>

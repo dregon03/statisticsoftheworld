@@ -8,6 +8,40 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { getCleanCountryIndicatorUrl } from '@/lib/country-slugs';
 
+// Expert editorial content for top ranking pages — what FedPay does well
+const EDITORIAL: Record<string, string[]> = {
+  'gdp': [
+    'Gross Domestic Product (GDP) measures the total monetary value of all goods and services produced within a country\'s borders in a given year. It is the single most widely used indicator of economic size and is published by the International Monetary Fund (IMF) in their World Economic Outlook, released biannually in April and October. The nominal GDP figures on this page are expressed in current US dollars — meaning they reflect both real output changes and exchange rate movements against the dollar.',
+    'The global economy is heavily concentrated: the United States and China together account for over 40% of world GDP, and the top 10 economies produce roughly two-thirds of all global output. This concentration has deepened over the past two decades as the US economy grew through technology-led productivity gains and China industrialized at an unprecedented pace. India, now the fourth or fifth largest economy depending on the data vintage, has emerged as the fastest-growing major economy.',
+    'When comparing GDP across countries, it\'s important to understand what the number does and doesn\'t capture. Nominal GDP in US dollars is sensitive to exchange rate fluctuations — a country\'s GDP can shrink in dollar terms even if its domestic economy is growing, simply because its currency weakened. For a fairer cross-country comparison of living standards, economists prefer GDP per capita adjusted for purchasing power parity (PPP). GDP also does not measure wealth distribution, environmental sustainability, or quality of life — a country can have a high GDP while most citizens remain poor.',
+  ],
+  'population': [
+    'Population figures represent the total number of people living within a country\'s borders as of mid-year, based on estimates from the World Bank using United Nations Population Division data. These figures include all residents regardless of citizenship status but exclude refugees not permanently settled. The data is revised annually as countries conduct censuses and update vital statistics.',
+    'Global population crossed 8 billion in late 2022 and is projected to reach 8.5 billion by 2030. However, growth rates have slowed dramatically: the world population growth rate has fallen from over 2% in the 1960s to about 0.8% today. This deceleration is driven by falling fertility rates across virtually every region — even sub-Saharan Africa, the last region with high fertility, is now seeing declines. India overtook China as the most populous country in 2023, a milestone that reflects China\'s decades-old one-child policy and its lasting demographic consequences.',
+    'Population size alone tells you little about a country\'s economic capacity or quality of life. Nigeria has a larger population than Germany but a fraction of its GDP. What matters for economic analysis is the interaction between population, age structure, and productivity. Countries with large working-age populations (the "demographic dividend") can grow faster if they can productively employ their youth — this is the opportunity facing India, Indonesia, and parts of Africa. Countries with aging populations (Japan, South Korea, much of Europe) face the opposite challenge: shrinking labor forces and rising dependency ratios.',
+  ],
+  'inflation-rate': [
+    'Inflation rate measures the annual percentage change in consumer prices — how much more (or less) expensive a typical basket of goods and services has become compared to the previous year. The figures on this page come from the IMF\'s World Economic Outlook, which compiles consumer price index (CPI) data from national statistical agencies and produces projections for current and future years.',
+    'After decades of low and stable inflation in advanced economies, the post-pandemic period brought a global inflation shock. Supply chain disruptions, energy price spikes driven by Russia\'s invasion of Ukraine, and the lingering effects of massive fiscal stimulus combined to push inflation to levels not seen since the 1970s in many countries. Central banks responded with aggressive interest rate hikes — the US Federal Reserve raised rates from near-zero to over 5% in 18 months, and the European Central Bank followed a similar trajectory.',
+    'When comparing inflation across countries, context matters enormously. A 3% inflation rate in Switzerland represents a different economic reality than 3% in Turkey, because Switzerland is coming from a baseline of decades of price stability while Turkey has experienced chronic inflation. Similarly, headline inflation numbers can be misleading if driven by volatile food and energy prices — core inflation (excluding food and energy) is often a better guide to underlying price pressures. Countries with inflation consistently above 10% typically have structural fiscal or monetary policy problems that simple interest rate adjustments cannot fix.',
+  ],
+  'unemployment-rate': [
+    'The unemployment rate measures the percentage of the labor force that is actively seeking work but unable to find it. It is perhaps the most politically sensitive economic indicator — high unemployment affects real people\'s lives in ways that abstract GDP numbers don\'t. The figures on this page come from the IMF, which harmonizes data from national labor force surveys to enable cross-country comparison.',
+    'Unemployment rates vary enormously across countries, from below 2% in some East Asian and Gulf economies to over 25% in parts of Southern Africa and the Middle East. However, the headline number can be misleading. Countries with very low official unemployment may have high underemployment (people working part-time who want full-time work) or large informal sectors not captured in official statistics. Conversely, some countries with moderate unemployment rates have robust safety nets that allow people to search longer for suitable work rather than accepting the first available job.',
+    'Youth unemployment — the unemployment rate for ages 15-24 — is typically two to three times higher than the overall rate, and is one of the most important indicators of social stability. Countries with very high youth unemployment (Southern Europe, North Africa, parts of the Middle East) face long-term risks: a generation that enters adulthood without stable employment develops fewer skills, earns less over their lifetime, and may become politically disaffected. The IMF tracks youth unemployment separately, and we provide dedicated rankings for it on this site.',
+  ],
+  'gdp-per-capita': [
+    'GDP per capita divides a country\'s total GDP by its population, yielding a rough measure of average economic output per person. It is the most commonly used proxy for comparing living standards across countries, though it has significant limitations. The nominal GDP per capita figures on this page are in current US dollars and come from the IMF World Economic Outlook.',
+    'The range in GDP per capita across countries is staggering: the richest countries (Luxembourg, Ireland, Switzerland, Norway) report figures above $80,000 per person, while the poorest (Burundi, South Sudan, Central African Republic) fall below $500. This 100x+ gap reflects not just differences in natural resources or geography, but accumulated differences in institutions, education, infrastructure, and governance built over decades or centuries.',
+    'Two important caveats apply when interpreting these numbers. First, nominal GDP per capita is distorted by exchange rates and doesn\'t reflect local purchasing power — a salary of $10,000 goes much further in India than in Switzerland. For a fairer comparison, use GDP per capita in purchasing power parity (PPP) terms. Second, GDP per capita is an average, not a measure of how income is distributed. Qatar has one of the highest GDP per capita figures in the world, but most of that GDP accrues to a small citizen population while a large migrant labor force earns far less. The Gini index provides a complementary view of inequality within countries.',
+  ],
+  'life-expectancy': [
+    'Life expectancy at birth estimates the average number of years a newborn would live if current mortality rates persisted throughout their lifetime. It is one of the most powerful single-number summaries of a country\'s health and development status. The data comes from the World Bank, which compiles mortality data from national vital registration systems, censuses, and WHO estimates.',
+    'Global average life expectancy has increased dramatically over the past century — from about 47 years in 1950 to over 73 years today — driven primarily by reductions in infant and child mortality, control of infectious diseases, and improvements in nutrition and sanitation. However, the gap between countries remains enormous: life expectancy exceeds 84 years in Japan and Switzerland but falls below 55 in several sub-Saharan African countries.',
+    'The COVID-19 pandemic caused the first significant global decline in life expectancy in decades, with particularly severe impacts in Latin America, South Asia, and parts of Eastern Europe. Most countries have since recovered to pre-pandemic levels, though some (notably the United States) have seen slower recovery. Beyond infectious disease, the main determinants of life expectancy differences between countries are access to healthcare, nutrition, environmental quality, and behavioral factors like smoking and alcohol consumption. Life expectancy data is particularly valuable when disaggregated by sex — women live longer than men in virtually every country, with the gap ranging from 2 to 10 years.',
+  ],
+};
+
 // Slug → Indicator ID mapping for SEO-friendly URLs
 const SLUG_MAP: Record<string, { id: string; title: string; description: string }> = {
   'gdp': { id: 'IMF.NGDPD', title: 'GDP by Country', description: 'Gross Domestic Product (nominal USD) rankings for all countries. Data from IMF World Economic Outlook.' },
@@ -328,6 +362,18 @@ export default async function RankingPage({ params }: Props) {
             </tbody>
           </table>
         </div>
+
+        {/* Expert editorial content — the FedPay pattern */}
+        {EDITORIAL[slug] && (
+          <div className="mb-10">
+            <h2 className="text-[20px] font-bold mb-4 text-[#0d1b2a]">Understanding {config.title}</h2>
+            <div className="space-y-4 max-w-[800px]">
+              {EDITORIAL[slug].map((p, i) => (
+                <p key={i} className="text-[15px] text-[#374151] leading-[1.8]">{p}</p>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* FAQ section — visible to users AND crawlers */}
         {faqs.length > 0 && (

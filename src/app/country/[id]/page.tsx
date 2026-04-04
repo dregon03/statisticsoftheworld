@@ -38,21 +38,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const gdp = indicators['IMF.NGDPD'];
   const pop = indicators['SP.POP.TOTL'];
 
-  const parts = [country.name];
-  if (gdp) parts.push(`GDP: ${formatValue(gdp.value, 'currency')}`);
-  if (pop) parts.push(`Population: ${formatValue(pop.value, 'number')}`);
+  const gdpStr = gdp ? formatValue(gdp.value, 'currency') : null;
+  const popStr = pop ? formatValue(pop.value, 'number') : null;
+  const gdpYear = gdp?.year || 2026;
+
+  const titleParts = [country.name];
+  if (gdpStr) titleParts.push(`GDP: ${gdpStr}`);
+  if (popStr) titleParts.push(`Population: ${popStr}`);
 
   const canonicalUrl = getCleanCountryUrl(id);
 
+  // Title format: "Japan GDP: $4.2T | Population: 125M (2026)"
+  const title = gdpStr && popStr
+    ? `${country.name} GDP: ${gdpStr} | Population: ${popStr} (${gdpYear})`
+    : `${country.name} Economy — GDP, Population & Key Data (${gdpYear})`;
+
   return {
-    title: `${country.name} Economy & Data 2026 — GDP, Population & More`,
-    description: `${parts.join(' · ')}. Explore ${country.name}'s economy, demographics, trade, health, and 400+ indicators with interactive charts and historical data from IMF and World Bank. Free API.`,
+    title,
+    description: `${titleParts.join(' · ')}. 440+ indicators with interactive charts and historical data. Ranked across 218 countries. Source: IMF World Economic Outlook & World Bank WDI.`,
     alternates: {
       canonical: `https://statisticsoftheworld.com${canonicalUrl}`,
     },
     openGraph: {
-      title: `${country.name} — Economy & Key Statistics 2026`,
-      description: `${parts.join(' · ')}. 400+ indicators with charts.`,
+      title,
+      description: `${titleParts.join(' · ')}. 440+ indicators with charts. Source: IMF & World Bank.`,
       siteName: 'Statistics of the World',
     },
   };

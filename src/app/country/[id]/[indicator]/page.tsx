@@ -262,7 +262,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
       {
         '@type': 'Dataset',
         name: `${country.name} ${seoLabel} — Historical Data`,
-        description: `${validHistory.length} years of ${seoLabel.toLowerCase()} data for ${country.name} (${validHistory[0]?.year}–${validHistory[validHistory.length - 1]?.year}). Source: ${sourceName}.`,
+        description: `Historical ${seoLabel.toLowerCase()} data for ${country.name}, covering ${validHistory.length} years from ${validHistory[0]?.year} to ${validHistory[validHistory.length - 1]?.year}. ${latestVal ? `Latest value: ${latestValueStr} (${latestVal.year}).` : ''} ${globalRank > 0 ? `Ranked #${globalRank} out of ${totalCountries} countries globally.` : ''} Source: ${sourceName}. Free to access via API at statisticsoftheworld.com.`,
         url: `https://statisticsoftheworld.com${getCleanCountryIndicatorUrl(id, indicatorId)}`,
         identifier: indicatorId,
         license: 'https://creativecommons.org/licenses/by/4.0/',

@@ -69,31 +69,45 @@ export default async function Home() {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: 'Statistics of the World — Global Economic Data',
-    description: 'Compare GDP, population, inflation, and 440+ indicators for 218 countries.',
-    url: 'https://statisticsoftheworld.com',
-    mainEntity: {
-      '@type': 'Dataset',
-      name: 'Global Economic Indicators',
-      description: '440+ economic, demographic, health, education, and environmental indicators for 218 countries. Sources: IMF, World Bank, FRED.',
-      creator: { '@type': 'Organization', name: 'Statistics of the World' },
-      temporalCoverage: '1960/2026',
-      spatialCoverage: { '@type': 'Place', name: 'World' },
-      license: 'https://statisticsoftheworld.com/terms',
-      isAccessibleForFree: true,
-      distribution: {
-        '@type': 'DataDownload',
-        encodingFormat: 'application/json',
-        contentUrl: 'https://statisticsoftheworld.com/api-docs',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        name: 'Statistics of the World — Global Economic Data',
+        description: 'Compare GDP, population, inflation, and 440+ indicators for 218 countries.',
+        url: 'https://statisticsoftheworld.com',
       },
-    },
-    breadcrumb: {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
-      ],
-    },
+      {
+        '@type': 'Dataset',
+        name: 'Global Economic Indicators — 440+ Metrics for 218 Countries',
+        description: '440+ economic, demographic, health, education, and environmental indicators for 218 countries covering 1960–2026. Updated weekly with data from IMF World Economic Outlook, World Bank World Development Indicators, WHO Global Health Observatory, FRED, and United Nations.',
+        url: 'https://statisticsoftheworld.com',
+        creator: [
+          { '@type': 'Organization', name: 'IMF', url: 'https://www.imf.org' },
+          { '@type': 'Organization', name: 'World Bank', url: 'https://www.worldbank.org' },
+          { '@type': 'Organization', name: 'WHO', url: 'https://www.who.int' },
+          { '@type': 'Organization', name: 'FRED', url: 'https://fred.stlouisfed.org' },
+          { '@type': 'Organization', name: 'United Nations', url: 'https://www.un.org' },
+        ],
+        provider: { '@type': 'Organization', name: 'Statistics of the World', url: 'https://statisticsoftheworld.com' },
+        temporalCoverage: '1960/2026',
+        spatialCoverage: { '@type': 'Place', name: 'World' },
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        isAccessibleForFree: true,
+        distribution: {
+          '@type': 'DataDownload',
+          encodingFormat: 'application/json',
+          contentUrl: 'https://statisticsoftheworld.com/api/v2/country/USA',
+        },
+        keywords: ['GDP', 'population', 'inflation', 'unemployment', 'economic data', 'country statistics', 'IMF', 'World Bank', 'macroeconomics'],
+        dateModified: new Date().toISOString().split('T')[0],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+        ],
+      },
+    ],
   };
 
   return (

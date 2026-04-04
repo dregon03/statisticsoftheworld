@@ -93,6 +93,11 @@ export default function RootLayout({
                   '@type': 'Organization',
                   name: 'Statistics of the World',
                   url: 'https://statisticsoftheworld.com',
+                  description: 'Free global statistics platform aggregating data from IMF, World Bank, WHO, FRED, and United Nations for 218 countries.',
+                  sameAs: [
+                    'https://x.com/sotwdata',
+                    'https://bsky.app/profile/sotwdata.bsky.social',
+                  ],
                   contactPoint: {
                     '@type': 'ContactPoint',
                     email: 'statisticsoftheworldcontact@gmail.com',

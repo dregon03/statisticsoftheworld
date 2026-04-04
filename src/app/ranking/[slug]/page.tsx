@@ -182,16 +182,33 @@ export default async function RankingPage({ params }: Props) {
     ],
   };
 
-  // Programmatic SEO summary paragraph
+  // Programmatic SEO summary paragraphs
   const top5 = data.slice(0, 5);
+  const top10 = data.slice(0, 10);
   const bottom5 = data.slice(-5).reverse();
+  const sourceFull = ind.source === 'imf' ? 'IMF World Economic Outlook' : ind.id.startsWith('WHO.') ? 'WHO Global Health Observatory' : 'World Bank World Development Indicators';
+
   const summaryParagraph = top && bottom ? (
     `In ${year}, ${top.country} leads the world in ${ind.label.toLowerCase()} with ${fmtTop}, ` +
-    `followed by ${top5.slice(1, 4).map(d => d.country).join(', ')}. ` +
+    `followed by ${top5.slice(1, 5).map(d => `${d.country} (${formatValue(d.value, ind.format, ind.decimals)})`).join(', ')}. ` +
     `At the other end, ${bottom.country} ranks last at ${fmtBottom}. ` +
     `The global median is ${fmtMedian} (${median?.country}). ` +
-    `Data covers ${data.length} countries and is sourced from the ${ind.source === 'imf' ? 'IMF World Economic Outlook' : 'World Bank World Development Indicators'}.`
+    `This ranking covers ${data.length} countries and is sourced from the ${sourceFull}, one of the most authoritative sources for international economic statistics.`
   ) : '';
+
+  // Second paragraph with distribution context
+  const top10Share = ind.format === 'currency' && top10.length > 0
+    ? top10.reduce((sum, d) => sum + (d.value || 0), 0)
+    : null;
+  const totalValue = ind.format === 'currency'
+    ? data.reduce((sum, d) => sum + (d.value || 0), 0)
+    : null;
+  const contextParagraph = top10Share && totalValue && totalValue > 0
+    ? `The top 10 countries account for ${((top10Share / totalValue) * 100).toFixed(0)}% of the global total. ` +
+      `The top 10 are: ${top10.map((d, i) => `${i + 1}. ${d.country}`).join(', ')}. ` +
+      `All data on this page is free to use with attribution. An API endpoint is available at /api/v2/indicator/${encodeURIComponent(config.id)} for programmatic access.`
+    : `The top 10 countries are: ${top10.map((d, i) => `${i + 1}. ${d.country}`).join(', ')}. ` +
+      `All data is sourced from the ${sourceFull} and updated regularly. Free API access is available for developers and researchers.`;
 
   return (
     <main className="min-h-screen">
@@ -214,11 +231,16 @@ export default async function RankingPage({ params }: Props) {
         <h1 className="text-[28px] font-bold mb-2">{config.title} — {year} World Rankings</h1>
         <p className="text-[14px] text-[#64748b] mb-4 leading-relaxed max-w-[700px]">{config.description}</p>
 
-        {/* SEO summary paragraph */}
+        {/* SEO summary paragraphs */}
         {summaryParagraph && (
-          <p className="text-[14px] text-[#475569] mb-6 leading-relaxed max-w-[800px]">
-            {summaryParagraph}
-          </p>
+          <div className="mb-6 max-w-[800px] space-y-3">
+            <p className="text-[14px] text-[#475569] leading-relaxed">
+              {summaryParagraph}
+            </p>
+            <p className="text-[14px] text-[#64748b] leading-relaxed">
+              {contextParagraph}
+            </p>
+          </div>
         )}
 
         {/* Summary stats */}

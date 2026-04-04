@@ -1,9 +1,36 @@
+import type { Metadata } from 'next';
 import ForecastContent from './ForecastContent';
 import { INTERNAL_BASE } from '@/lib/internal-fetch';
+import { getCountry } from '@/lib/data';
+import { getCountryFromSlug, getCleanCountryUrl, isIso3 } from '@/lib/country-slugs';
 
 export const revalidate = 3600;
 
 type Props = { params: Promise<{ id: string }> };
+
+function resolveId(rawId: string): string {
+  const fromSlug = getCountryFromSlug(rawId);
+  return fromSlug || rawId;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id: rawId } = await params;
+  const id = resolveId(rawId);
+  const country = await getCountry(id);
+  if (!country) return { title: 'Not Found' };
+
+  const year = new Date().getFullYear();
+  return {
+    title: `${country.name} Economic Forecast ${year}–${year + 4} — GDP Growth, Inflation & More`,
+    description: `${country.name} economic forecast: GDP growth, inflation, unemployment, and government debt projections for ${year}–${year + 4}. IMF World Economic Outlook data with interactive charts.`,
+    alternates: { canonical: `https://statisticsoftheworld.com${getCleanCountryUrl(id)}/forecast` },
+    openGraph: {
+      title: `${country.name} Economic Forecast ${year}–${year + 4}`,
+      description: `IMF projections for ${country.name}: GDP growth, inflation, unemployment. Interactive charts.`,
+      siteName: 'Statistics of the World',
+    },
+  };
+}
 
 async function getForecastData(countryId: string) {
   try {

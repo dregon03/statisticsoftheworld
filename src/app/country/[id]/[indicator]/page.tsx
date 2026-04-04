@@ -66,6 +66,49 @@ const SEO_LABELS: Record<string, string> = {
   'SH.XPD.CHEX.PC.CD': 'Health Spending per Capita',
 };
 
+// Indicator ID → SEO ranking slug (for cross-linking to /ranking/ pages)
+const RANKING_SLUGS: Record<string, string> = {
+  'IMF.NGDPD': 'gdp', 'IMF.NGDP_RPCH': 'gdp-growth', 'IMF.NGDPDPC': 'gdp-per-capita',
+  'IMF.PPPGDP': 'gdp-ppp', 'IMF.PPPPC': 'gdp-per-capita-ppp', 'IMF.PCPIPCH': 'inflation-rate',
+  'IMF.LUR': 'unemployment-rate', 'IMF.GGXWDG_NGDP': 'government-debt',
+  'IMF.BCA_NGDPD': 'current-account', 'SP.POP.TOTL': 'population',
+  'SP.POP.GROW': 'population-growth', 'SP.DYN.LE00.IN': 'life-expectancy',
+  'SP.DYN.TFRT.IN': 'fertility-rate', 'EN.ATM.CO2E.PC': 'co2-emissions',
+  'IT.NET.USER.ZS': 'internet-users', 'SH.XPD.CHEX.GD.ZS': 'health-spending',
+  'SE.XPD.TOTL.GD.ZS': 'education-spending', 'MS.MIL.XPND.GD.ZS': 'military-spending',
+  'NE.TRD.GNFS.ZS': 'trade-openness', 'BX.KLT.DINV.WD.GD.ZS': 'fdi-inflows',
+  'SI.POV.GINI': 'gini-index', 'SI.POV.DDAY': 'poverty-rate',
+  'SH.DYN.MORT': 'infant-mortality', 'SP.URB.TOTL.IN.ZS': 'urban-population',
+  'EG.FEC.RNEW.ZS': 'renewable-energy', 'AG.LND.FRST.ZS': 'forest-area',
+  'CC.EST': 'corruption-control', 'RL.EST': 'rule-of-law', 'ST.INT.ARVL': 'tourism-arrivals',
+};
+
+// Top comparison pairs by country for cross-linking
+const COMPARISON_MAP: Record<string, string[]> = {
+  USA: ['united-states-vs-china', 'united-states-vs-japan', 'united-states-vs-germany', 'united-states-vs-india'],
+  CHN: ['united-states-vs-china', 'china-vs-india', 'china-vs-japan', 'china-vs-russia'],
+  JPN: ['united-states-vs-japan', 'japan-vs-germany', 'japan-vs-south-korea', 'china-vs-japan'],
+  DEU: ['united-states-vs-germany', 'germany-vs-france', 'germany-vs-united-kingdom', 'japan-vs-germany'],
+  GBR: ['united-states-vs-united-kingdom', 'germany-vs-united-kingdom', 'united-kingdom-vs-france', 'united-kingdom-vs-canada'],
+  IND: ['united-states-vs-india', 'china-vs-india', 'india-vs-brazil', 'india-vs-pakistan'],
+  FRA: ['united-states-vs-france', 'germany-vs-france', 'france-vs-italy', 'united-kingdom-vs-france'],
+  BRA: ['united-states-vs-brazil', 'india-vs-brazil', 'brazil-vs-mexico', 'brazil-vs-argentina'],
+  CAN: ['united-states-vs-canada', 'united-kingdom-vs-canada', 'canada-vs-australia', 'canada-vs-mexico'],
+  AUS: ['united-states-vs-australia', 'canada-vs-australia', 'australia-vs-new-zealand', 'south-korea-vs-australia'],
+  RUS: ['united-states-vs-russia', 'china-vs-russia', 'russia-vs-india', 'russia-vs-brazil'],
+  KOR: ['united-states-vs-south-korea', 'south-korea-vs-japan', 'south-korea-vs-australia'],
+  MEX: ['united-states-vs-mexico', 'brazil-vs-mexico', 'canada-vs-mexico', 'turkey-vs-mexico'],
+  ITA: ['germany-vs-italy', 'france-vs-italy', 'italy-vs-spain', 'italy-vs-netherlands'],
+  ESP: ['france-vs-spain', 'italy-vs-spain'],
+  IDN: ['india-vs-indonesia'],
+  TUR: ['turkey-vs-mexico', 'turkey-vs-brazil'],
+  SAU: ['saudi-arabia-vs-uae', 'saudi-arabia-vs-iran'],
+  NGA: ['nigeria-vs-south-africa', 'nigeria-vs-kenya'],
+  SGP: ['singapore-vs-switzerland'],
+  ARG: ['brazil-vs-argentina'],
+  ZAF: ['nigeria-vs-south-africa'],
+};
+
 function getSeoTitle(country: { name: string; id: string }, ind: { id: string; label: string }, valueStr: string, latestYear: string | number) {
   const seoLabel = SEO_LABELS[ind.id] || ind.label;
   const countryName = country.id === 'WLD' ? 'Global' : country.name;
@@ -528,6 +571,51 @@ export default async function IndicatorDetailPage({ params }: Props) {
             </div>
           </div>
         )}
+        {/* Cross-links for SEO — ranking pages, comparisons, related indicators */}
+        <div className="mt-10 border border-gray-100 rounded-xl p-6">
+          <h2 className="text-lg font-semibold mb-4">Explore More</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Link to ranking page if this indicator has one */}
+            {RANKING_SLUGS[indicatorId] && (
+              <div>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Rankings</h3>
+                <Link href={`/ranking/${RANKING_SLUGS[indicatorId]}`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+                  {seoLabel} by Country — Full Rankings →
+                </Link>
+              </div>
+            )}
+
+            {/* Country comparisons */}
+            {COMPARISON_MAP[id] && (
+              <div>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Compare</h3>
+                {COMPARISON_MAP[id].slice(0, 3).map(slug => (
+                  <Link key={slug} href={`/compare/${slug}`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+                    {slug.split('-vs-').map(s => s.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')).join(' vs ')} →
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Related indicators for this country */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{country.name} Data</h3>
+              <Link href={`/country/${id}`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+                {country.name} — All Indicators →
+              </Link>
+              {indicatorId !== 'IMF.NGDPD' && (
+                <Link href={`/country/${id}/IMF.NGDPD`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+                  {country.name} GDP →
+                </Link>
+              )}
+              {indicatorId !== 'SP.POP.TOTL' && (
+                <Link href={`/country/${id}/SP.POP.TOTL`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+                  {country.name} Population →
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       <Footer />

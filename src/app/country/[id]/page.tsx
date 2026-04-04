@@ -236,12 +236,120 @@ export default async function CountryPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Country Comparisons — cross-links for SEO */}
+        <CountryComparisons countryId={id} countryName={country.name} />
+
         {/* Similar Economies — internal linking mesh */}
         <SimilarCountries countryId={id} region={country.region} incomeLevel={country.incomeLevel} />
       </section>
 
       <Footer />
     </main>
+  );
+}
+
+const COMPARISON_PAIRS: Record<string, { slug: string; label: string }[]> = {
+  USA: [
+    { slug: 'united-states-vs-china', label: 'US vs China' },
+    { slug: 'united-states-vs-japan', label: 'US vs Japan' },
+    { slug: 'united-states-vs-germany', label: 'US vs Germany' },
+    { slug: 'united-states-vs-india', label: 'US vs India' },
+    { slug: 'united-states-vs-united-kingdom', label: 'US vs UK' },
+    { slug: 'united-states-vs-canada', label: 'US vs Canada' },
+  ],
+  CHN: [
+    { slug: 'united-states-vs-china', label: 'China vs US' },
+    { slug: 'china-vs-india', label: 'China vs India' },
+    { slug: 'china-vs-japan', label: 'China vs Japan' },
+    { slug: 'china-vs-russia', label: 'China vs Russia' },
+  ],
+  JPN: [
+    { slug: 'united-states-vs-japan', label: 'Japan vs US' },
+    { slug: 'japan-vs-germany', label: 'Japan vs Germany' },
+    { slug: 'japan-vs-south-korea', label: 'Japan vs South Korea' },
+  ],
+  DEU: [
+    { slug: 'united-states-vs-germany', label: 'Germany vs US' },
+    { slug: 'germany-vs-france', label: 'Germany vs France' },
+    { slug: 'germany-vs-united-kingdom', label: 'Germany vs UK' },
+  ],
+  GBR: [
+    { slug: 'united-states-vs-united-kingdom', label: 'UK vs US' },
+    { slug: 'germany-vs-united-kingdom', label: 'UK vs Germany' },
+    { slug: 'united-kingdom-vs-france', label: 'UK vs France' },
+    { slug: 'united-kingdom-vs-canada', label: 'UK vs Canada' },
+  ],
+  IND: [
+    { slug: 'united-states-vs-india', label: 'India vs US' },
+    { slug: 'china-vs-india', label: 'India vs China' },
+    { slug: 'india-vs-brazil', label: 'India vs Brazil' },
+    { slug: 'india-vs-pakistan', label: 'India vs Pakistan' },
+  ],
+  FRA: [
+    { slug: 'germany-vs-france', label: 'France vs Germany' },
+    { slug: 'united-kingdom-vs-france', label: 'France vs UK' },
+    { slug: 'france-vs-italy', label: 'France vs Italy' },
+  ],
+  BRA: [
+    { slug: 'united-states-vs-brazil', label: 'Brazil vs US' },
+    { slug: 'india-vs-brazil', label: 'Brazil vs India' },
+    { slug: 'brazil-vs-mexico', label: 'Brazil vs Mexico' },
+    { slug: 'brazil-vs-argentina', label: 'Brazil vs Argentina' },
+  ],
+  CAN: [
+    { slug: 'united-states-vs-canada', label: 'Canada vs US' },
+    { slug: 'united-kingdom-vs-canada', label: 'Canada vs UK' },
+    { slug: 'canada-vs-australia', label: 'Canada vs Australia' },
+  ],
+  AUS: [
+    { slug: 'united-states-vs-australia', label: 'Australia vs US' },
+    { slug: 'canada-vs-australia', label: 'Australia vs Canada' },
+    { slug: 'australia-vs-new-zealand', label: 'Australia vs NZ' },
+  ],
+  RUS: [
+    { slug: 'united-states-vs-russia', label: 'Russia vs US' },
+    { slug: 'china-vs-russia', label: 'Russia vs China' },
+    { slug: 'russia-vs-india', label: 'Russia vs India' },
+  ],
+  KOR: [
+    { slug: 'japan-vs-south-korea', label: 'South Korea vs Japan' },
+    { slug: 'united-states-vs-south-korea', label: 'South Korea vs US' },
+    { slug: 'south-korea-vs-australia', label: 'South Korea vs Australia' },
+  ],
+  MEX: [
+    { slug: 'united-states-vs-mexico', label: 'Mexico vs US' },
+    { slug: 'brazil-vs-mexico', label: 'Mexico vs Brazil' },
+    { slug: 'canada-vs-mexico', label: 'Mexico vs Canada' },
+  ],
+  ITA: [
+    { slug: 'germany-vs-italy', label: 'Italy vs Germany' },
+    { slug: 'france-vs-italy', label: 'Italy vs France' },
+    { slug: 'italy-vs-spain', label: 'Italy vs Spain' },
+  ],
+  ARG: [{ slug: 'brazil-vs-argentina', label: 'Argentina vs Brazil' }],
+  NGA: [{ slug: 'nigeria-vs-south-africa', label: 'Nigeria vs South Africa' }, { slug: 'nigeria-vs-kenya', label: 'Nigeria vs Kenya' }],
+  SAU: [{ slug: 'saudi-arabia-vs-uae', label: 'Saudi Arabia vs UAE' }],
+  SGP: [{ slug: 'singapore-vs-switzerland', label: 'Singapore vs Switzerland' }],
+  TUR: [{ slug: 'turkey-vs-mexico', label: 'Turkey vs Mexico' }, { slug: 'turkey-vs-brazil', label: 'Turkey vs Brazil' }],
+  ESP: [{ slug: 'france-vs-spain', label: 'Spain vs France' }, { slug: 'italy-vs-spain', label: 'Spain vs Italy' }],
+};
+
+function CountryComparisons({ countryId, countryName }: { countryId: string; countryName: string }) {
+  const pairs = COMPARISON_PAIRS[countryId];
+  if (!pairs || pairs.length === 0) return null;
+
+  return (
+    <div className="mt-12">
+      <h2 className="text-[18px] font-bold mb-3 text-[#0d1b2a]">Compare {countryName}</h2>
+      <p className="text-[13px] text-[#64748b] mb-4">Side-by-side economic comparison with other major economies</p>
+      <div className="flex flex-wrap gap-2">
+        {pairs.map(p => (
+          <Link key={p.slug} href={`/compare/${p.slug}`} className="px-3 py-1.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-[#d5dce6] rounded-lg text-[12px] text-[#475569] hover:text-[#0d1b2a] transition">
+            {p.label} →
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 

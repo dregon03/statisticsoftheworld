@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getCountries } from '@/lib/data';
 import { getAllIndicatorSlugs } from '@/lib/indicator-slugs';
 import { BLOG_POSTS } from '@/lib/blog-posts';
+import { GLOSSARY_TERMS } from '@/lib/glossary';
 
 export const BASE_URL = 'https://statisticsoftheworld.com';
 export const MAX_URLS_PER_SITEMAP = 45000;
@@ -26,6 +27,30 @@ const RANKING_SLUGS = [
   'forest-area', 'corruption-control', 'rule-of-law', 'tourism-arrivals',
 ];
 
+const COMPARISON_PAIRS = [
+  'united-states-vs-china', 'united-states-vs-japan', 'united-states-vs-germany',
+  'united-states-vs-united-kingdom', 'united-states-vs-india', 'united-states-vs-canada',
+  'united-states-vs-russia', 'united-states-vs-brazil', 'united-states-vs-australia',
+  'united-states-vs-mexico', 'united-states-vs-france', 'united-states-vs-south-korea',
+  'china-vs-india', 'china-vs-japan', 'china-vs-russia', 'china-vs-germany',
+  'china-vs-united-kingdom', 'china-vs-brazil',
+  'japan-vs-germany', 'japan-vs-south-korea', 'japan-vs-india',
+  'germany-vs-france', 'germany-vs-united-kingdom', 'germany-vs-italy',
+  'united-kingdom-vs-france', 'united-kingdom-vs-canada', 'united-kingdom-vs-australia',
+  'france-vs-italy', 'france-vs-spain',
+  'india-vs-brazil', 'india-vs-pakistan', 'india-vs-indonesia', 'india-vs-bangladesh',
+  'brazil-vs-mexico', 'brazil-vs-argentina',
+  'canada-vs-australia', 'canada-vs-mexico',
+  'south-korea-vs-japan', 'south-korea-vs-australia',
+  'russia-vs-india', 'russia-vs-brazil',
+  'italy-vs-spain', 'italy-vs-netherlands',
+  'australia-vs-new-zealand',
+  'turkey-vs-mexico', 'turkey-vs-brazil',
+  'saudi-arabia-vs-uae', 'saudi-arabia-vs-iran',
+  'nigeria-vs-south-africa', 'nigeria-vs-kenya',
+  'singapore-vs-switzerland',
+];
+
 const CHART_COUNTRIES = ['united-states', 'china', 'japan', 'germany', 'united-kingdom', 'france', 'india', 'brazil', 'canada', 'australia', 'south-korea', 'mexico', 'russia', 'italy', 'spain', 'indonesia', 'netherlands', 'turkey', 'switzerland', 'saudi-arabia', 'argentina', 'south-africa', 'nigeria', 'singapore', 'israel', 'norway', 'sweden', 'egypt', 'world'];
 const CHART_SLUGS = ['gdp', 'gdp-growth', 'gdp-per-capita', 'inflation-rate', 'unemployment-rate', 'population', 'life-expectancy', 'co2-emissions', 'government-debt', 'trade-openness', 'health-spending', 'military-spending', 'gini-index', 'renewable-energy', 'internet-users', 'fertility-rate', 'current-account', 'fdi-inflows', 'infant-mortality', 'urban-population'];
 
@@ -36,7 +61,7 @@ const CHART_SLUGS = ['gdp', 'gdp-growth', 'gdp-per-capita', 'inflation-rate', 'u
 export async function getSitemapCount(): Promise<number> {
   const countries = await getCountries();
   const indicatorSlugs = getAllIndicatorSlugs();
-  const totalUrls = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + indicatorSlugs.length;
+  const totalUrls = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + indicatorSlugs.length + COMPARISON_PAIRS.length + GLOSSARY_TERMS.length + 1;
   return Math.ceil(totalUrls / MAX_URLS_PER_SITEMAP);
 }
 
@@ -109,6 +134,32 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.75,
+    });
+  }
+
+  // 6. Comparison pages
+  for (const pair of COMPARISON_PAIRS) {
+    allUrls.push({
+      url: `${BASE_URL}/compare/${pair}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    });
+  }
+
+  // 7. Glossary pages
+  allUrls.push({
+    url: `${BASE_URL}/glossary`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  });
+  for (const term of GLOSSARY_TERMS) {
+    allUrls.push({
+      url: `${BASE_URL}/glossary/${term.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
     });
   }
 

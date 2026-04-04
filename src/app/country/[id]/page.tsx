@@ -168,6 +168,51 @@ export default async function CountryPage({ params }: Props) {
           </Link>
         </div>
 
+        {/* Server-rendered economic summary — crawlable by Google */}
+        {(() => {
+          const gdpVal = indicators['IMF.NGDPD'];
+          const popVal = indicators['SP.POP.TOTL'];
+          const gdpPcVal = indicators['IMF.NGDPDPC'];
+          const growthVal = indicators['IMF.NGDP_RPCH'];
+          const inflVal = indicators['IMF.PCPIPCH'];
+          const unempVal = indicators['IMF.LUR'];
+          const debtVal = indicators['IMF.GGXWDG_NGDP'];
+          const lifeVal = indicators['SP.DYN.LE00.IN'];
+
+          if (!gdpVal && !popVal) return null;
+
+          const parts: string[] = [];
+
+          if (gdpVal) {
+            const gdpFmt = formatValue(gdpVal.value, 'currency');
+            parts.push(`${country.name}'s GDP is ${gdpFmt} (${gdpVal.year})`);
+          }
+          if (popVal) {
+            parts.push(`with a population of ${formatValue(popVal.value, 'number')}`);
+          }
+          if (gdpPcVal) {
+            parts.push(`and GDP per capita of ${formatValue(gdpPcVal.value, 'currency')}`);
+          }
+
+          const details: string[] = [];
+          if (growthVal) details.push(`real GDP growth of ${formatValue(growthVal.value, 'percent', 1)}`);
+          if (inflVal) details.push(`inflation at ${formatValue(inflVal.value, 'percent', 1)}`);
+          if (unempVal) details.push(`unemployment at ${formatValue(unempVal.value, 'percent', 1)}`);
+          if (debtVal) details.push(`government debt at ${formatValue(debtVal.value, 'percent', 1)} of GDP`);
+          if (lifeVal) details.push(`life expectancy of ${formatValue(lifeVal.value, 'years', 1)}`);
+
+          return (
+            <div className="mb-6 max-w-[800px]">
+              <p className="text-[15px] text-[#374151] leading-[1.8]">
+                {parts.join(', ')}.
+                {details.length > 0 && ` Key indicators include ${details.join(', ')}.`}
+                {' '}Data sourced from the IMF World Economic Outlook and World Bank World Development Indicators.
+                {' '}Explore {country.name}&apos;s full economic profile with 440+ indicators, interactive charts, and historical data below.
+              </p>
+            </div>
+          );
+        })()}
+
         {/* AI-generated country profile */}
         <CountryNarrative countryId={id} />
 

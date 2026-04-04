@@ -86,7 +86,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${nameA} vs ${nameB} — Economy Compared (2026)`,
-    description: `Compare ${nameA} and ${nameB} side-by-side: GDP, population, inflation, unemployment, life expectancy, and more. Updated ${new Date().getFullYear()} data from IMF and World Bank.`,
+    description: `${nameA} vs ${nameB}: GDP, population, inflation, unemployment, debt, life expectancy, and 400+ indicators compared. Interactive charts with IMF & World Bank data. Updated ${new Date().getFullYear()}.`,
     alternates: { canonical: `https://statisticsoftheworld.com/compare/${slug}` },
     openGraph: {
       title: `${nameA} vs ${nameB} — Economy & Data Compared`,

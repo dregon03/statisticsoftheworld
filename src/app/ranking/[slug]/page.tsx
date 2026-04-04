@@ -65,15 +65,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const config = SLUG_MAP[slug];
   if (!config) return { title: 'Not Found' };
 
+  const ind = INDICATORS.find(i => i.id === config.id);
+  const source = config.id.startsWith('IMF.') ? 'IMF World Economic Outlook'
+    : config.id.startsWith('WHO.') ? 'WHO Global Health Observatory'
+    : 'World Bank';
+
   return {
-    title: `${config.title} — 2026 Rankings`,
-    description: `${config.description} Compare 218 countries with interactive charts, historical data, and free API access.`,
+    title: `${config.title} (2026) — Ranked List of 218 Countries`,
+    description: `${config.description} Ranked list of 218 countries with interactive charts and historical trends. Data from ${source}. Updated 2026.`,
     alternates: {
       canonical: `https://statisticsoftheworld.com/ranking/${slug}`,
     },
     openGraph: {
-      title: `${config.title} — 2026 Rankings`,
-      description: `${config.description} Compare 218 countries.`,
+      title: `${config.title} (2026) — Ranked List of 218 Countries`,
+      description: `${config.description} Compare 218 countries. Source: ${source}.`,
       siteName: 'Statistics of the World',
     },
   };
@@ -152,12 +157,26 @@ export default async function RankingPage({ params }: Props) {
       {
         '@type': 'Dataset',
         name: `${config.title} — ${year} Rankings`,
-        description: config.description,
+        description: `${config.description} Covers ${data.length} countries. Source: ${ind.source === 'imf' ? 'IMF World Economic Outlook' : ind.id.startsWith('WHO.') ? 'WHO Global Health Observatory' : 'World Bank World Development Indicators'}.`,
         url: `https://statisticsoftheworld.com/ranking/${slug}`,
+        identifier: config.id,
+        license: 'https://creativecommons.org/licenses/by/4.0/',
         temporalCoverage: `${year}`,
         spatialCoverage: { '@type': 'Place', name: 'World' },
-        creator: { '@type': 'Organization', name: 'Statistics of the World' },
+        creator: {
+          '@type': 'Organization',
+          name: ind.source === 'imf' ? 'IMF' : ind.id.startsWith('WHO.') ? 'WHO' : 'World Bank',
+          url: ind.source === 'imf' ? 'https://www.imf.org' : ind.id.startsWith('WHO.') ? 'https://www.who.int' : 'https://www.worldbank.org',
+        },
+        provider: { '@type': 'Organization', name: 'Statistics of the World', url: 'https://statisticsoftheworld.com' },
         isAccessibleForFree: true,
+        distribution: {
+          '@type': 'DataDownload',
+          encodingFormat: 'application/json',
+          contentUrl: `https://statisticsoftheworld.com/api/v2/indicator/${encodeURIComponent(config.id)}`,
+        },
+        keywords: [config.title, 'country rankings', ind.source === 'imf' ? 'IMF' : 'World Bank', 'economic data', `${year}`],
+        dateModified: new Date().toISOString().split('T')[0],
       },
     ],
   };

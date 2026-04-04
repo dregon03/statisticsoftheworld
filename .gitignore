@@ -36,3 +36,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+SOTW-2026-Global-Economic-Snapshot.pdf

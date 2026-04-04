@@ -163,15 +163,48 @@ export default async function ComparisonPage({ params }: Props) {
   const winsA = rows.filter(r => r.winner === 'A').length;
   const winsB = rows.filter(r => r.winner === 'B').length;
 
+  // FAQ for comparison queries
+  const gdpAFmt = gdpA ? formatValue(gdpA, 'currency') : null;
+  const gdpBFmt = gdpB ? formatValue(gdpB, 'currency') : null;
+  const compFaqs = [
+    ...(gdpAFmt && gdpBFmt ? [{
+      q: `Which has a larger economy, ${countryA.name} or ${countryB.name}?`,
+      a: `${gdpA! > gdpB! ? countryA.name : countryB.name} has the larger economy with a GDP of ${gdpA! > gdpB! ? gdpAFmt : gdpBFmt}, compared to ${gdpA! > gdpB! ? countryB.name : countryA.name}'s ${gdpA! > gdpB! ? gdpBFmt : gdpAFmt}${gdpRatio ? ` (${gdpRatio}x larger)` : ''}. Source: IMF World Economic Outlook.`,
+    }] : []),
+    ...(popA && popB ? [{
+      q: `Which country has a larger population, ${countryA.name} or ${countryB.name}?`,
+      a: `${popA > popB ? countryA.name : countryB.name} has a larger population at ${formatValue(Math.max(popA, popB), 'number')}, compared to ${popA > popB ? countryB.name : countryA.name}'s ${formatValue(Math.min(popA, popB), 'number')}. Source: World Bank.`,
+    }] : []),
+    {
+      q: `How do ${countryA.name} and ${countryB.name} compare overall?`,
+      a: `Across ${COMPARE_INDICATORS.length} key indicators, ${winsA > winsB ? countryA.name : winsB > winsA ? countryB.name : 'neither country'} leads in ${Math.max(winsA, winsB)} categories. The comparison covers GDP, population, inflation, unemployment, debt, life expectancy, and more. Data from IMF and World Bank.`,
+    },
+  ];
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Dataset',
-        name: `${countryA.name} vs ${countryB.name} Economic Comparison`,
-        description: `Side-by-side comparison of ${countryA.name} and ${countryB.name} across ${COMPARE_INDICATORS.length} key indicators.`,
+        name: `${countryA.name} vs ${countryB.name} — Economic Comparison`,
+        description: `Side-by-side comparison of ${countryA.name} and ${countryB.name} across ${COMPARE_INDICATORS.length} key indicators including GDP, population, inflation, unemployment, and life expectancy. Data from IMF World Economic Outlook and World Bank.`,
         url: `https://statisticsoftheworld.com/compare/${slug}`,
-        creator: { '@type': 'Organization', name: 'Statistics of the World' },
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        creator: [
+          { '@type': 'Organization', name: 'IMF', url: 'https://www.imf.org' },
+          { '@type': 'Organization', name: 'World Bank', url: 'https://www.worldbank.org' },
+        ],
+        provider: { '@type': 'Organization', name: 'Statistics of the World', url: 'https://statisticsoftheworld.com' },
+        isAccessibleForFree: true,
+        dateModified: new Date().toISOString().split('T')[0],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: compFaqs.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
       },
       {
         '@type': 'BreadcrumbList',
@@ -203,8 +236,16 @@ export default async function ComparisonPage({ params }: Props) {
         <h1 className="text-[28px] md:text-[36px] font-extrabold text-[#0d1b2a] mb-2">
           {countryA.name} vs {countryB.name}
         </h1>
-        <p className="text-[15px] text-[#64748b] mb-8">
-          Side-by-side economic and demographic comparison · {new Date().getFullYear()} data
+        <p className="text-[15px] text-[#64748b] mb-4">
+          Side-by-side economic and demographic comparison · {new Date().getFullYear()} data · Source: IMF & World Bank
+        </p>
+
+        {/* SEO summary paragraph */}
+        <p className="text-[14px] text-[#475569] leading-relaxed mb-8 max-w-[800px]">
+          {gdpAFmt && gdpBFmt ? `${countryA.name} has a GDP of ${gdpAFmt} compared to ${countryB.name}'s ${gdpBFmt}${gdpRatio ? `, making it ${gdpA! > gdpB! ? gdpRatio + 'x larger' : (gdpB! / gdpA!).toFixed(1) + 'x smaller'}` : ''}. ` : ''}
+          {popA && popB ? `${countryA.name}'s population is ${formatValue(popA, 'number')} vs ${countryB.name}'s ${formatValue(popB, 'number')}. ` : ''}
+          Across {COMPARE_INDICATORS.length} key indicators, {winsA > winsB ? `${countryA.name} leads in ${winsA}` : winsB > winsA ? `${countryB.name} leads in ${winsB}` : 'both countries are evenly matched in'} categories.
+          All data sourced from the IMF World Economic Outlook and World Bank World Development Indicators.
         </p>
 
         {/* Score overview */}

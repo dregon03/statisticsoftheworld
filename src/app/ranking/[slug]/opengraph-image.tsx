@@ -30,6 +30,23 @@ const SLUG_MAP: Record<string, { title: string }> = {
   'corruption-control': { title: 'Control of Corruption by Country' },
   'rule-of-law': { title: 'Rule of Law by Country' },
   'tourism-arrivals': { title: 'Tourism Arrivals by Country' },
+  'air-passengers': { title: 'Air Passengers by Country' },
+  'air-freight': { title: 'Air Freight by Country' },
+  'gni': { title: 'GNI by Country' },
+  'gni-per-capita': { title: 'GNI per Capita by Country' },
+  'homicide-rate': { title: 'Homicide Rate by Country' },
+  'youth-dependency-ratio': { title: 'Youth Dependency Ratio by Country' },
+  'rule-of-law-percentile': { title: 'Rule of Law Ranking by Country' },
+  'imports': { title: 'Total Imports by Country' },
+  'household-consumption': { title: 'Household Consumption by Country' },
+  'road-traffic-deaths': { title: 'Road Traffic Deaths by Country' },
+  'population-under-15': { title: 'Population Under 15 by Country' },
+  'rd-spending': { title: 'R&D Spending by Country' },
+  'population-over-65': { title: 'Population Over 65 by Country' },
+  'youth-unemployment': { title: 'Youth Unemployment by Country' },
+  'suicide-rate': { title: 'Suicide Rate by Country' },
+  'net-migration': { title: 'Net Migration by Country' },
+  'tax-revenue': { title: 'Tax Revenue by Country' },
 };
 
 export const alt = 'Country Rankings';

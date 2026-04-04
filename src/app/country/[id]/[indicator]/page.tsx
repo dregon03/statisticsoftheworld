@@ -13,6 +13,65 @@ import IndicatorContext from './IndicatorContext';
 
 type Props = { params: Promise<{ id: string; indicator: string }> };
 
+// SEO-friendly labels for top-traffic indicators — matches how people actually search
+const SEO_LABELS: Record<string, string> = {
+  'IS.AIR.PSGR': 'Air Passengers',
+  'IS.AIR.GOOD.MT.K1': 'Air Freight',
+  'NY.GNP.MKTP.CD': 'Gross National Income (GNI)',
+  'NY.GNP.PCAP.CD': 'GNI per Capita',
+  'VC.IHR.PSRC.P5': 'Homicide Rate',
+  'SP.POP.DPND.YG': 'Youth Dependency Ratio',
+  'RL.PER.RNK': 'Rule of Law Index',
+  'SH.DYN.MORT': 'Infant Mortality Rate',
+  'SE.XPD.TOTL.GD.ZS': 'Education Spending (% of GDP)',
+  'NE.IMP.GNFS.CD': 'Total Imports',
+  'NE.IMP.GNFS.ZS': 'Imports (% of GDP)',
+  'NE.CON.PRVT.ZS': 'Household Consumption (% of GDP)',
+  'WHO.ROAD_DEATHS': 'Road Traffic Death Rate',
+  'SP.POP.0014.TO.ZS': 'Population Under 15',
+  'SP.POP.65UP.TO.ZS': 'Population Over 65',
+  'IMF.NGDP_RPCH': 'GDP Growth Rate',
+  'IMF.NGDPDPC': 'GDP per Capita',
+  'IMF.PPPGDP': 'GDP (PPP)',
+  'GB.XPD.RSDV.GD.ZS': 'R&D Spending (% of GDP)',
+  'SL.UEM.1524.ZS': 'Youth Unemployment Rate',
+  'SP.DYN.LE00.IN': 'Life Expectancy',
+  'SP.POP.GROW': 'Population Growth Rate',
+  'SP.URB.TOTL.IN.ZS': 'Urban Population (%)',
+  'SH.STA.SUIC.P5': 'Suicide Rate',
+  'VA.EST': 'Voice & Accountability Index',
+  'SM.POP.NETM': 'Net Migration',
+  'GC.TAX.TOTL.GD.ZS': 'Tax Revenue (% of GDP)',
+  'IP.JRN.ARTC.SC': 'Scientific Publications',
+  'GE.PER.RNK': 'Government Effectiveness Index',
+  'CC.PER.RNK': 'Corruption Control Index',
+  'IMF.NGDPD': 'GDP (Nominal)',
+  'IMF.PCPIPCH': 'Inflation Rate',
+  'IMF.LUR': 'Unemployment Rate',
+  'IMF.GGXWDG_NGDP': 'Government Debt (% of GDP)',
+  'SP.POP.TOTL': 'Population',
+  'SP.DYN.TFRT.IN': 'Fertility Rate',
+  'SL.UEM.TOTL.ZS': 'Unemployment Rate',
+  'EN.GHG.CO2.PC.CE.AR5': 'CO₂ Emissions per Capita',
+  'NE.TRD.GNFS.ZS': 'Trade Openness (% of GDP)',
+  'BX.KLT.DINV.WD.GD.ZS': 'Foreign Direct Investment (% of GDP)',
+  'SH.XPD.CHEX.GD.ZS': 'Health Spending (% of GDP)',
+  'MS.MIL.XPND.GD.ZS': 'Military Spending (% of GDP)',
+  'SI.POV.GINI': 'Gini Index',
+  'EG.FEC.RNEW.ZS': 'Renewable Energy (%)',
+  'IT.NET.USER.ZS': 'Internet Users (%)',
+  'SG.GEN.PARL.ZS': 'Women in Parliament (%)',
+  'NE.EXP.GNFS.CD': 'Total Exports',
+  'NV.IND.TOTL.ZS': 'Industry (% of GDP)',
+  'SH.XPD.CHEX.PC.CD': 'Health Spending per Capita',
+};
+
+function getSeoTitle(country: { name: string; id: string }, ind: { id: string; label: string }, valueStr: string, latestYear: string | number) {
+  const seoLabel = SEO_LABELS[ind.id] || ind.label;
+  const countryName = country.id === 'WLD' ? 'Global' : country.name;
+  return `${countryName} ${seoLabel}: ${valueStr} (${latestYear})`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, indicator: rawIndicator } = await params;
   const indicatorId = decodeURIComponent(rawIndicator);
@@ -35,15 +94,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Not Found', robots: { index: false, follow: false } };
   }
 
+  const seoLabel = SEO_LABELS[ind.id] || ind.label;
+  const countryName = id === 'WLD' ? 'Global' : country.name;
+  const title = getSeoTitle(country, ind, valueStr, latestYear);
+
   return {
-    title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
-    description: `${country.name}'s ${ind.label.toLowerCase()} was ${valueStr} in ${latestYear}. View ${years} years of historical data (${firstYear}–${latestYear}), charts, and comparisons. Source: ${source}. Free API available.`,
+    title,
+    description: `${countryName}'s ${seoLabel.toLowerCase()} is ${valueStr} in ${latestYear}. ${years} years of historical data (${firstYear}–${latestYear}) with charts, rankings, and country comparisons. Source: ${source}.`,
     alternates: {
       canonical: `https://statisticsoftheworld.com/country/${id}/${encodeURIComponent(indicatorId)}`,
     },
     ...(years < 3 ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
-      title: `${country.name} ${ind.label}: ${valueStr} (${latestYear})`,
+      title,
       description: `${years} years of data with interactive charts. Compare across 218 countries.`,
       siteName: 'Statistics of the World',
     },

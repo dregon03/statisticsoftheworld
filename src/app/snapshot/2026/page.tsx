@@ -4,7 +4,7 @@ import { getIndicatorForAllCountries, getCountries, formatValue, getHistoricalDa
 import Flag from '../../Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
-import { SnapshotTOC, ShareBar, AnimatedBar, PDFDataProvider } from './SnapshotClient';
+import { SnapshotTOC, ShareBar, AnimatedBar, PDFDataProvider, DownloadPDFButtonProminent } from './SnapshotClient';
 import type { SnapshotPDFData } from './pdfTypes';
 
 export const metadata: Metadata = {
@@ -226,6 +226,11 @@ export default async function Snapshot2026() {
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-[1000px] mx-auto px-6 pt-24 pb-16 text-center">
+          {/* PDF Download — top right */}
+          <div className="absolute top-6 right-6">
+            <DownloadPDFButtonProminent />
+          </div>
+
           <div className="inline-block mb-6 px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full">
             <span className="text-[12px] uppercase tracking-[0.25em] text-blue-400 font-medium">Annual Report · April 2026</span>
           </div>

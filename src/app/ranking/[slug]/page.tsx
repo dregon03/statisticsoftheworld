@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import Flag from '../../Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import { getCleanCountryIndicatorUrl } from '@/lib/country-slugs';
 
 // Slug → Indicator ID mapping for SEO-friendly URLs
 const SLUG_MAP: Record<string, { id: string; title: string; description: string }> = {
@@ -266,7 +267,7 @@ export default async function RankingPage({ params }: Props) {
                   <tr key={entry.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
                     <td className="px-4 py-2 text-gray-300 text-[15px]">{i + 1}</td>
                     <td className="px-4 py-2">
-                      <Link href={`/country/${entry.countryId}/${encodeURIComponent(config.id)}`} className="inline-flex items-center gap-2 text-[15px] text-blue-600 hover:text-blue-800">
+                      <Link href={getCleanCountryIndicatorUrl(entry.countryId, config.id)} className="inline-flex items-center gap-2 text-[15px] text-blue-600 hover:text-blue-800">
                         <Flag iso2={entry.iso2} size={20} />
                         {entry.country}
                       </Link>

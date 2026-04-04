@@ -204,13 +204,22 @@ UN_NAME_ALIASES = {
 # HELPERS
 # ============================================================
 
-def fetch_json(url):
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "Mozilla/5.0 (StatisticsOfTheWorld ETL)",
-        "Accept": "application/json",
-    })
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read())
+def fetch_json(url, retries=3):
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (StatisticsOfTheWorld ETL)",
+                "Accept": "application/json",
+            })
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read())
+        except Exception as e:
+            if attempt < retries - 1:
+                wait = 2 ** attempt
+                print(f"  Retry {attempt + 1}/{retries - 1} for {url[:80]}... (waiting {wait}s): {e}")
+                time.sleep(wait)
+            else:
+                raise
 
 
 def upsert(cur, table, ind_id, country_id, value, year, source):
@@ -298,12 +307,19 @@ def _fetch_wb_indicator(args):
     best = {}
     try:
         for page in [1, 2, 3]:
-            req = urllib.request.Request(
-                f"{WB_BASE}/country/all/indicator/{ind_id}?format=json&mrv=5&per_page=500&page={page}",
-                headers={"User-Agent": "Mozilla/5.0 (StatisticsOfTheWorld ETL)", "Accept": "application/json"},
-            )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                data = json.loads(resp.read())
+            url = f"{WB_BASE}/country/all/indicator/{ind_id}?format=json&mrv=5&per_page=500&page={page}"
+            data = None
+            for attempt in range(3):
+                try:
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (StatisticsOfTheWorld ETL)", "Accept": "application/json"})
+                    with urllib.request.urlopen(req, timeout=30) as resp:
+                        data = json.loads(resp.read())
+                    break
+                except Exception:
+                    if attempt < 2:
+                        time.sleep(2 ** attempt)
+                    else:
+                        raise
             if not data[1]:
                 break
             for d in data[1]:

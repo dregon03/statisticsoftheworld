@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getCountry, getHistoricalData, getHistoricalStats, getYoYChange, getIndicatorForAllCountries, getIndicatorMeta, INDICATORS, formatValue } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -10,8 +11,21 @@ import StatsRow from '@/components/StatsRow';
 import HistoryExportButton from '@/components/HistoryExportButton';
 import EmbedButton from '@/components/EmbedButton';
 import IndicatorContext from './IndicatorContext';
+import { getCountryFromSlug, getCleanCountryIndicatorUrl, getCleanCountryUrl, isIso3, getIndicatorFromSlug } from '@/lib/country-slugs';
 
 type Props = { params: Promise<{ id: string; indicator: string }> };
+
+/** Resolve [id] param — ISO3 or slug */
+function resolveCountryId(rawId: string): string {
+  const fromSlug = getCountryFromSlug(rawId);
+  return fromSlug || rawId;
+}
+
+/** Resolve [indicator] param — encoded ID or slug */
+function resolveIndicatorId(raw: string): string {
+  const fromSlug = getIndicatorFromSlug(raw);
+  return fromSlug || decodeURIComponent(raw);
+}
 
 // SEO-friendly labels for top-traffic indicators — matches how people actually search
 const SEO_LABELS: Record<string, string> = {
@@ -125,8 +139,9 @@ function getSeoTitle(country: { name: string; id: string }, ind: { id: string; l
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id, indicator: rawIndicator } = await params;
-  const indicatorId = decodeURIComponent(rawIndicator);
+  const { id: rawId, indicator: rawIndicator } = await params;
+  const id = resolveCountryId(rawId);
+  const indicatorId = resolveIndicatorId(rawIndicator);
   const country = await getCountry(id);
   const ind = INDICATORS.find(i => i.id === indicatorId);
   if (!country || !ind) return { title: 'Not Found' };
@@ -154,7 +169,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description: `${countryName}'s ${seoLabel.toLowerCase()} is ${valueStr} in ${latestYear}. ${years} years of historical data (${firstYear}–${latestYear}) with charts, rankings, and country comparisons. Source: ${source}.`,
     alternates: {
-      canonical: `https://statisticsoftheworld.com/country/${id}/${encodeURIComponent(indicatorId)}`,
+      canonical: `https://statisticsoftheworld.com${getCleanCountryIndicatorUrl(id, indicatorId)}`,
     },
     ...(years < 3 ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
@@ -174,9 +189,18 @@ const ID_ALIASES: Record<string, string> = {
 };
 
 export default async function IndicatorDetailPage({ params }: Props) {
-  const { id, indicator: rawIndicator } = await params;
-  const rawId = decodeURIComponent(rawIndicator);
+  const { id: rawCountryId, indicator: rawIndicator } = await params;
+  const id = resolveCountryId(rawCountryId);
+  const rawId = resolveIndicatorId(rawIndicator);
   const indicatorId = ID_ALIASES[rawId] || rawId;
+
+  // 301 redirect old encoded URLs to clean slug URLs
+  const cleanUrl = getCleanCountryIndicatorUrl(id, indicatorId);
+  const currentPath = `/country/${rawCountryId}/${rawIndicator}`;
+  if (cleanUrl !== currentPath && (isIso3(rawCountryId) || rawIndicator.includes('.'))) {
+    redirect(cleanUrl);
+  }
+
   const country = await getCountry(id);
   const ind = INDICATORS.find(i => i.id === indicatorId);
   if (!country || !ind) notFound();
@@ -239,7 +263,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
         '@type': 'Dataset',
         name: `${country.name} ${seoLabel} — Historical Data`,
         description: `${validHistory.length} years of ${seoLabel.toLowerCase()} data for ${country.name} (${validHistory[0]?.year}–${validHistory[validHistory.length - 1]?.year}). Source: ${sourceName}.`,
-        url: `https://statisticsoftheworld.com/country/${id}/${encodeURIComponent(indicatorId)}`,
+        url: `https://statisticsoftheworld.com${getCleanCountryIndicatorUrl(id, indicatorId)}`,
         identifier: indicatorId,
         license: 'https://creativecommons.org/licenses/by/4.0/',
         isAccessibleForFree: true,
@@ -299,7 +323,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
           <span className="mx-2">/</span>
           <Link href="/countries" className="hover:text-gray-600 transition">Countries</Link>
           <span className="mx-2">/</span>
-          <Link href={`/country/${id}`} className="hover:text-gray-600 transition">{country.name}</Link>
+          <Link href={getCleanCountryUrl(id)} className="hover:text-gray-600 transition">{country.name}</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-600">{ind.label}</span>
         </div>
@@ -524,7 +548,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
                     >
                       <td className="px-5 py-2.5 text-sm text-gray-400">{i + 1}</td>
                       <td className="px-5 py-2.5 text-sm">
-                        <Link href={`/country/${c.countryId}/${encodeURIComponent(indicatorId)}`} className="text-blue-600 hover:text-blue-800 transition">
+                        <Link href={getCleanCountryIndicatorUrl(c.countryId, indicatorId)} className="text-blue-600 hover:text-blue-800 transition">
                           {c.country}
                         </Link>
                       </td>
@@ -609,16 +633,16 @@ export default async function IndicatorDetailPage({ params }: Props) {
             {/* Related indicators for this country */}
             <div>
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{country.name} Data</h3>
-              <Link href={`/country/${id}`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+              <Link href={getCleanCountryUrl(id)} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
                 {country.name} — All Indicators →
               </Link>
               {indicatorId !== 'IMF.NGDPD' && (
-                <Link href={`/country/${id}/IMF.NGDPD`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+                <Link href={getCleanCountryIndicatorUrl(id, 'IMF.NGDPD')} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
                   {country.name} GDP →
                 </Link>
               )}
               {indicatorId !== 'SP.POP.TOTL' && (
-                <Link href={`/country/${id}/SP.POP.TOTL`} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
+                <Link href={getCleanCountryIndicatorUrl(id, 'SP.POP.TOTL')} className="text-sm text-blue-600 hover:text-blue-800 transition block mb-1">
                   {country.name} Population →
                 </Link>
               )}

@@ -1,35 +1,66 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
-import Flag from '../Flag';
-import { formatValue } from '@/lib/data';
+import TrendingContent from './TrendingContent';
+import { supabase } from '@/lib/supabase';
+import { INDICATORS } from '@/lib/data';
 
-interface Country { id: string; name: string; iso2: string; value: number; year: string; }
-interface Insight {
-  title: string;
-  description: string;
-  countries: Country[];
-  indicatorId: string;
-  indicatorLabel: string;
-  type: 'highest' | 'lowest' | 'fastest' | 'slowest';
+export const revalidate = 3600;
+
+const QUERIES = [
+  { id: 'IMF.NGDP_RPCH', title: 'Fastest Growing Economies', type: 'highest' as const, limit: 10 },
+  { id: 'IMF.NGDP_RPCH', title: 'Slowest Growing Economies', type: 'lowest' as const, limit: 10 },
+  { id: 'IMF.PCPIPCH', title: 'Highest Inflation', type: 'highest' as const, limit: 10 },
+  { id: 'IMF.PCPIPCH', title: 'Lowest Inflation', type: 'lowest' as const, limit: 10 },
+  { id: 'IMF.LUR', title: 'Highest Unemployment', type: 'highest' as const, limit: 10 },
+  { id: 'IMF.LUR', title: 'Lowest Unemployment', type: 'lowest' as const, limit: 10 },
+  { id: 'IMF.NGDPDPC', title: 'Richest Countries (GDP per Capita)', type: 'highest' as const, limit: 10 },
+  { id: 'IMF.GGXWDG_NGDP', title: 'Most Indebted (Govt Debt/GDP)', type: 'highest' as const, limit: 10 },
+  { id: 'SP.DYN.LE00.IN', title: 'Highest Life Expectancy', type: 'highest' as const, limit: 10 },
+  { id: 'SP.DYN.LE00.IN', title: 'Lowest Life Expectancy', type: 'lowest' as const, limit: 10 },
+  { id: 'SI.POV.GINI', title: 'Most Unequal (Gini Index)', type: 'highest' as const, limit: 10 },
+  { id: 'EN.ATM.CO2E.PC', title: 'Highest CO2 Emissions per Capita', type: 'highest' as const, limit: 10 },
+];
+
+async function getTrendingData() {
+  const insights = [];
+
+  for (const q of QUERIES) {
+    const ind = INDICATORS.find(i => i.id === q.id);
+    if (!ind) continue;
+
+    const ascending = q.type === 'lowest';
+
+    const { data } = await supabase
+      .from('sotw_indicators')
+      .select('country_id, value, year, sotw_countries(name, iso2)')
+      .eq('id', q.id)
+      .not('value', 'is', null)
+      .order('value', { ascending })
+      .limit(q.limit);
+
+    if (!data || data.length === 0) continue;
+
+    insights.push({
+      title: q.title,
+      description: `${q.title} based on latest available data.`,
+      countries: data.map((r: any) => ({
+        id: r.country_id,
+        name: r.sotw_countries?.name || r.country_id,
+        iso2: r.sotw_countries?.iso2 || '',
+        value: r.value,
+        year: String(r.year),
+      })),
+      indicatorId: q.id,
+      indicatorLabel: ind.label,
+      type: q.type,
+    });
+  }
+
+  return insights;
 }
 
-export default function TrendingPage() {
-  const [insights, setInsights] = useState<Insight[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/trending')
-      .then(r => r.json())
-      .then(data => {
-        setInsights(data.insights || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+export default async function TrendingPage() {
+  const insights = await getTrendingData();
 
   return (
     <main className="min-h-screen bg-[#f8f9fb] text-[#1a1a2e]">
@@ -41,56 +72,7 @@ export default function TrendingPage() {
           Auto-generated insights from the latest global statistics. Updated daily.
         </p>
 
-        {loading ? (
-          <div className="text-center py-20 text-[#64748b]">Loading insights...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insights.map((insight, i) => {
-              const isNeg = insight.type === 'lowest' || insight.type === 'slowest';
-              const ind = { format: insight.indicatorId.includes('NGDPDPC') ? 'currency' : insight.indicatorId.includes('POP') ? 'number' : 'percent' };
-              const maxVal = Math.max(...insight.countries.map(c => Math.abs(c.value)));
-
-              return (
-                <div key={i} className="border border-gray-100 rounded-xl overflow-hidden">
-                  <div className="px-4 py-3 bg-[#f4f6f9] border-b border-gray-100 flex items-center justify-between">
-                    <h2 className="text-[14px] font-semibold">{insight.title}</h2>
-                    <Link
-                      href={`/indicators?id=${encodeURIComponent(insight.indicatorId)}`}
-                      className="text-[15px] text-[#0066cc] hover:underline"
-                    >
-                      {insight.indicatorLabel} →
-                    </Link>
-                  </div>
-                  <div className="divide-y divide-gray-50">
-                    {insight.countries.map((c, j) => {
-                      const barWidth = maxVal > 0 ? (Math.abs(c.value) / maxVal) * 100 : 0;
-                      return (
-                        <div key={c.id} className="flex items-center px-4 py-2 gap-3 hover:bg-[#fafafa] transition">
-                          <span className="text-[15px] text-[#94a3b8] w-5 text-right">{j + 1}</span>
-                          <Flag iso2={c.iso2} size={18} />
-                          <Link href={`/country/${c.id}`} className="text-[15px] text-[#0066cc] hover:underline flex-1 truncate">
-                            {c.name}
-                          </Link>
-                          <div className="w-20 hidden sm:block">
-                            <div className="w-full bg-gray-100 rounded-full h-1">
-                              <div
-                                className={`h-1 rounded-full ${isNeg ? 'bg-red-400' : 'bg-green-500'}`}
-                                style={{ width: `${barWidth}%` }}
-                              />
-                            </div>
-                          </div>
-                          <span className={`text-[14px] font-mono w-20 text-right ${c.value < 0 ? 'text-red-500' : ''}`}>
-                            {formatValue(c.value, ind.format, 1)}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <TrendingContent insights={insights} />
       </section>
 
       <Footer />

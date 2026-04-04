@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getCountry, getCountries, getAllIndicatorsForCountry, getHistoricalData, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -7,8 +8,18 @@ import CountryCharts from './CountryCharts';
 import CountryNarrative from './CountryNarrative';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import { getCountryFromSlug, getCleanCountryUrl, getCleanCountryIndicatorUrl, isIso3 } from '@/lib/country-slugs';
 
 type Props = { params: Promise<{ id: string }> };
+
+/** Resolve the [id] param — could be ISO3 (USA) or slug (united-states) */
+function resolveCountryId(rawId: string): string {
+  // If it's a slug, resolve to ISO3
+  const fromSlug = getCountryFromSlug(rawId);
+  if (fromSlug) return fromSlug;
+  // Otherwise assume it's an ISO3 code
+  return rawId;
+}
 
 const KEY_STATS = [
   { id: 'IMF.NGDPD', label: 'GDP' },
@@ -18,7 +29,8 @@ const KEY_STATS = [
 ];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const id = resolveCountryId(rawId);
   const country = await getCountry(id);
   if (!country) return { title: 'Country Not Found' };
 
@@ -30,11 +42,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (gdp) parts.push(`GDP: ${formatValue(gdp.value, 'currency')}`);
   if (pop) parts.push(`Population: ${formatValue(pop.value, 'number')}`);
 
+  const canonicalUrl = getCleanCountryUrl(id);
+
   return {
     title: `${country.name} Economy & Data 2026 — GDP, Population & More`,
     description: `${parts.join(' · ')}. Explore ${country.name}'s economy, demographics, trade, health, and 400+ indicators with interactive charts and historical data from IMF and World Bank. Free API.`,
     alternates: {
-      canonical: `https://statisticsoftheworld.com/country/${id}`,
+      canonical: `https://statisticsoftheworld.com${canonicalUrl}`,
     },
     openGraph: {
       title: `${country.name} — Economy & Key Statistics 2026`,
@@ -45,7 +59,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CountryPage({ params }: Props) {
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const id = resolveCountryId(rawId);
+
+  // 301 redirect ISO3 codes to clean slug URLs
+  if (isIso3(rawId)) {
+    const cleanUrl = getCleanCountryUrl(rawId);
+    if (cleanUrl !== `/country/${rawId}`) {
+      redirect(cleanUrl);
+    }
+  }
+
   const country = await getCountry(id);
   if (!country) notFound();
 
@@ -67,7 +91,7 @@ export default async function CountryPage({ params }: Props) {
       {
         '@type': 'Country',
         name: country.name,
-        url: `https://statisticsoftheworld.com/country/${id}`,
+        url: `https://statisticsoftheworld.com${getCleanCountryUrl(id)}`,
         ...(country.capitalCity && { containsPlace: { '@type': 'City', name: country.capitalCity } }),
         additionalProperty: [
           ...(gdp ? [{ '@type': 'PropertyValue', name: 'GDP (USD Billions)', value: gdp.value, unitCode: 'USD' }] : []),
@@ -79,7 +103,7 @@ export default async function CountryPage({ params }: Props) {
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
           { '@type': 'ListItem', position: 2, name: 'Countries', item: 'https://statisticsoftheworld.com/countries' },
-          { '@type': 'ListItem', position: 3, name: country.name, item: `https://statisticsoftheworld.com/country/${id}` },
+          { '@type': 'ListItem', position: 3, name: country.name, item: `https://statisticsoftheworld.com${getCleanCountryUrl(id)}` },
         ],
       },
     ],
@@ -121,10 +145,10 @@ export default async function CountryPage({ params }: Props) {
           <span className="px-4 py-2.5 text-[14px] font-semibold text-[#0d1b2a] border-b-2 border-[#0d1b2a]">
             Overview
           </span>
-          <Link href={`/country/${id}/forecast`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
+          <Link href={`${getCleanCountryUrl(id)}/forecast`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
             Forecasts
           </Link>
-          <Link href={`/country/${id}/trade-data`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
+          <Link href={`${getCleanCountryUrl(id)}/trade-data`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
             Trade
           </Link>
           <Link href={`/calendar`} className="px-4 py-2.5 text-[14px] text-[#64748b] hover:text-[#0d1b2a] transition">
@@ -146,7 +170,7 @@ export default async function CountryPage({ params }: Props) {
             return (
               <Link
                 key={stat.id}
-                href={`/country/${id}/${encodeURIComponent(stat.id)}`}
+                href={getCleanCountryIndicatorUrl(id, stat.id)}
                 className="bg-white border border-[#d5dce6] rounded-xl p-5 hover:border-[#b0bdd0] hover:shadow-md transition-all group"
               >
                 <div className="text-[14px] text-[#64748b] mb-1">{stat.label}</div>
@@ -193,7 +217,7 @@ export default async function CountryPage({ params }: Props) {
                           <tr key={ind.id} className="border-b border-[#edf0f5] hover:bg-[#f4f6f9] transition">
                             <td className="px-5 py-2.5 text-[14px]">
                               <Link
-                                href={`/country/${id}/${encodeURIComponent(ind.id)}`}
+                                href={getCleanCountryIndicatorUrl(id, ind.id)}
                                 className="text-[#0d1b2a] hover:text-[#0066cc] transition"
                               >
                                 {ind.label}
@@ -331,7 +355,23 @@ const COMPARISON_PAIRS: Record<string, { slug: string; label: string }[]> = {
   SAU: [{ slug: 'saudi-arabia-vs-uae', label: 'Saudi Arabia vs UAE' }],
   SGP: [{ slug: 'singapore-vs-switzerland', label: 'Singapore vs Switzerland' }],
   TUR: [{ slug: 'turkey-vs-mexico', label: 'Turkey vs Mexico' }, { slug: 'turkey-vs-brazil', label: 'Turkey vs Brazil' }],
-  ESP: [{ slug: 'france-vs-spain', label: 'Spain vs France' }, { slug: 'italy-vs-spain', label: 'Spain vs Italy' }],
+  ESP: [{ slug: 'france-vs-spain', label: 'Spain vs France' }, { slug: 'italy-vs-spain', label: 'Spain vs Italy' }, { slug: 'united-states-vs-spain', label: 'Spain vs US' }],
+  IDN: [{ slug: 'indonesia-vs-india', label: 'Indonesia vs India' }, { slug: 'indonesia-vs-brazil', label: 'Indonesia vs Brazil' }, { slug: 'indonesia-vs-mexico', label: 'Indonesia vs Mexico' }],
+  POL: [{ slug: 'poland-vs-germany', label: 'Poland vs Germany' }, { slug: 'poland-vs-united-kingdom', label: 'Poland vs UK' }],
+  THA: [{ slug: 'thailand-vs-vietnam', label: 'Thailand vs Vietnam' }, { slug: 'thailand-vs-indonesia', label: 'Thailand vs Indonesia' }],
+  VNM: [{ slug: 'vietnam-vs-indonesia', label: 'Vietnam vs Indonesia' }, { slug: 'vietnam-vs-india', label: 'Vietnam vs India' }, { slug: 'thailand-vs-vietnam', label: 'Vietnam vs Thailand' }],
+  PHL: [{ slug: 'philippines-vs-vietnam', label: 'Philippines vs Vietnam' }, { slug: 'philippines-vs-indonesia', label: 'Philippines vs Indonesia' }],
+  EGY: [{ slug: 'egypt-vs-saudi-arabia', label: 'Egypt vs Saudi Arabia' }, { slug: 'egypt-vs-nigeria', label: 'Egypt vs Nigeria' }, { slug: 'south-africa-vs-egypt', label: 'Egypt vs South Africa' }],
+  PAK: [{ slug: 'india-vs-pakistan', label: 'Pakistan vs India' }, { slug: 'pakistan-vs-bangladesh', label: 'Pakistan vs Bangladesh' }],
+  BGD: [{ slug: 'india-vs-bangladesh', label: 'Bangladesh vs India' }, { slug: 'pakistan-vs-bangladesh', label: 'Bangladesh vs Pakistan' }],
+  CHE: [{ slug: 'singapore-vs-switzerland', label: 'Switzerland vs Singapore' }, { slug: 'switzerland-vs-norway', label: 'Switzerland vs Norway' }, { slug: 'switzerland-vs-germany', label: 'Switzerland vs Germany' }],
+  NLD: [{ slug: 'italy-vs-netherlands', label: 'Netherlands vs Italy' }, { slug: 'netherlands-vs-belgium', label: 'Netherlands vs Belgium' }],
+  NOR: [{ slug: 'switzerland-vs-norway', label: 'Norway vs Switzerland' }, { slug: 'sweden-vs-norway', label: 'Norway vs Sweden' }],
+  SWE: [{ slug: 'sweden-vs-norway', label: 'Sweden vs Norway' }],
+  COL: [{ slug: 'argentina-vs-colombia', label: 'Colombia vs Argentina' }],
+  CHL: [{ slug: 'chile-vs-argentina', label: 'Chile vs Argentina' }],
+  ETH: [{ slug: 'kenya-vs-ethiopia', label: 'Ethiopia vs Kenya' }],
+  KEN: [{ slug: 'nigeria-vs-kenya', label: 'Kenya vs Nigeria' }, { slug: 'kenya-vs-ethiopia', label: 'Kenya vs Ethiopia' }],
 };
 
 function CountryComparisons({ countryId, countryName }: { countryId: string; countryName: string }) {

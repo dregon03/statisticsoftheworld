@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import Flag from '../../Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import { getCleanCountryIndicatorUrl } from '@/lib/country-slugs';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -175,14 +176,14 @@ export default async function IndicatorPage({ params }: Props) {
             <div className="border border-gray-100 rounded-xl p-4">
               <div className="text-[13px] text-gray-400 mb-1">Highest</div>
               <div className="text-[16px] font-bold text-green-600">{fmtTop}</div>
-              <Link href={`/country/${top.countryId}/${encodeURIComponent(match.id)}`} className="text-[13px] text-[#0066cc] hover:underline">{top.country}</Link>
+              <Link href={getCleanCountryIndicatorUrl(top.countryId, match.id)}} className="text-[13px] text-[#0066cc] hover:underline">{top.country}</Link>
             </div>
           )}
           {bottom && (
             <div className="border border-gray-100 rounded-xl p-4">
               <div className="text-[13px] text-gray-400 mb-1">Lowest</div>
               <div className="text-[16px] font-bold text-red-500">{fmtBottom}</div>
-              <Link href={`/country/${bottom.countryId}/${encodeURIComponent(match.id)}`} className="text-[13px] text-[#0066cc] hover:underline">{bottom.country}</Link>
+              <Link href={getCleanCountryIndicatorUrl(bottom.countryId, match.id)}} className="text-[13px] text-[#0066cc] hover:underline">{bottom.country}</Link>
             </div>
           )}
           <div className="border border-gray-100 rounded-xl p-4">
@@ -213,7 +214,7 @@ export default async function IndicatorPage({ params }: Props) {
                   <tr key={entry.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
                     <td className="px-4 py-2 text-gray-300 text-[13px]">{i + 1}</td>
                     <td className="px-4 py-2">
-                      <Link href={`/country/${entry.countryId}/${encodeURIComponent(match.id)}`} className="inline-flex items-center gap-2 text-[14px] text-blue-600 hover:text-blue-800">
+                      <Link href={getCleanCountryIndicatorUrl(entry.countryId, match.id)}} className="inline-flex items-center gap-2 text-[14px] text-blue-600 hover:text-blue-800">
                         <Flag iso2={entry.iso2} size={20} />
                         {entry.country}
                       </Link>

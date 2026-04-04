@@ -8,6 +8,12 @@ ALERT_EMAIL="statisticsoftheworldcontact@gmail.com"
 LOG_FILE="/var/log/sotw-monitor.log"
 STATE_FILE="/tmp/sotw-monitor-state"
 
+# External heartbeat URL — set in .env to get alerted if VPS goes down
+# Works with: Healthchecks.io (free), Better Uptime, Cronitor, etc.
+# e.g. HEARTBEAT_URL="https://hc-ping.com/your-uuid-here"
+set -a; source /opt/sotw-etl/.env 2>/dev/null; set +a
+HEARTBEAT_URL="${HEARTBEAT_URL:-}"
+
 check_health() {
   RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$HEALTH_URL")
   if [ "$RESPONSE" != "200" ]; then
@@ -49,7 +55,18 @@ check_etl() {
 }
 
 check_health
+HEALTH_RESULT=$?
 check_etl
+
+# Ping external heartbeat service (signals "VPS is alive")
+# If health check failed, ping the /fail endpoint so the service knows
+if [ -n "$HEARTBEAT_URL" ]; then
+  if [ "$HEALTH_RESULT" -eq 0 ]; then
+    curl -s -o /dev/null --max-time 5 "$HEARTBEAT_URL"
+  else
+    curl -s -o /dev/null --max-time 5 "$HEARTBEAT_URL/fail"
+  fi
+fi
 
 # Keep log file small (last 1000 lines)
 if [ -f "$LOG_FILE" ] && [ $(wc -l < "$LOG_FILE") -gt 1000 ]; then

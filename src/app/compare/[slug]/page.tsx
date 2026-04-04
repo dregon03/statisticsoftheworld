@@ -46,6 +46,27 @@ const PAIRS: [string, string][] = [
   ['saudi-arabia', 'uae'], ['saudi-arabia', 'iran'],
   ['nigeria', 'south-africa'], ['nigeria', 'kenya'],
   ['singapore', 'switzerland'],
+  // Added: high-volume missing pairs
+  ['united-states', 'italy'], ['united-states', 'spain'],
+  ['china', 'south-korea'], ['china', 'indonesia'],
+  ['india', 'russia'], ['india', 'japan'], ['india', 'united-kingdom'],
+  ['japan', 'united-kingdom'], ['japan', 'france'],
+  ['germany', 'japan'], ['germany', 'china'], ['germany', 'india'],
+  ['indonesia', 'india'], ['indonesia', 'brazil'], ['indonesia', 'mexico'],
+  ['russia', 'united-states'], ['russia', 'germany'],
+  ['mexico', 'indonesia'], ['mexico', 'argentina'],
+  ['south-korea', 'germany'], ['south-korea', 'united-kingdom'],
+  ['poland', 'germany'], ['poland', 'united-kingdom'],
+  ['thailand', 'vietnam'], ['thailand', 'indonesia'],
+  ['philippines', 'vietnam'], ['philippines', 'indonesia'],
+  ['egypt', 'saudi-arabia'], ['egypt', 'nigeria'],
+  ['israel', 'uae'], ['israel', 'saudi-arabia'],
+  ['vietnam', 'indonesia'], ['vietnam', 'india'],
+  ['pakistan', 'bangladesh'], ['pakistan', 'nigeria'],
+  ['switzerland', 'norway'], ['switzerland', 'germany'],
+  ['netherlands', 'belgium'], ['sweden', 'norway'],
+  ['argentina', 'colombia'], ['chile', 'argentina'],
+  ['kenya', 'ethiopia'], ['south-africa', 'egypt'],
 ];
 
 // ─── Indicators to compare ──────────────────────────────

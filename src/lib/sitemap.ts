@@ -3,6 +3,7 @@ import { getCountries } from '@/lib/data';
 import { getAllIndicatorSlugs } from '@/lib/indicator-slugs';
 import { BLOG_POSTS } from '@/lib/blog-posts';
 import { GLOSSARY_TERMS } from '@/lib/glossary';
+import { getCleanCountryUrl, getCleanCountryIndicatorUrl, TOP_INDICATOR_SLUGS, getIndicatorFromSlug } from '@/lib/country-slugs';
 
 export const BASE_URL = 'https://statisticsoftheworld.com';
 export const MAX_URLS_PER_SITEMAP = 45000;
@@ -55,6 +56,27 @@ const COMPARISON_PAIRS = [
   'saudi-arabia-vs-uae', 'saudi-arabia-vs-iran',
   'nigeria-vs-south-africa', 'nigeria-vs-kenya',
   'singapore-vs-switzerland',
+  // Added: high-volume missing pairs
+  'united-states-vs-italy', 'united-states-vs-spain',
+  'china-vs-south-korea', 'china-vs-indonesia',
+  'india-vs-russia', 'india-vs-japan', 'india-vs-united-kingdom',
+  'japan-vs-united-kingdom', 'japan-vs-france', 'japan-vs-china',
+  'germany-vs-japan', 'germany-vs-china', 'germany-vs-india',
+  'indonesia-vs-india', 'indonesia-vs-brazil', 'indonesia-vs-mexico',
+  'russia-vs-united-states', 'russia-vs-germany',
+  'mexico-vs-indonesia', 'mexico-vs-argentina',
+  'south-korea-vs-germany', 'south-korea-vs-united-kingdom',
+  'poland-vs-germany', 'poland-vs-united-kingdom',
+  'thailand-vs-vietnam', 'thailand-vs-indonesia',
+  'philippines-vs-vietnam', 'philippines-vs-indonesia',
+  'egypt-vs-saudi-arabia', 'egypt-vs-nigeria',
+  'israel-vs-uae', 'israel-vs-saudi-arabia',
+  'vietnam-vs-indonesia', 'vietnam-vs-india',
+  'pakistan-vs-bangladesh', 'pakistan-vs-nigeria',
+  'switzerland-vs-norway', 'switzerland-vs-germany',
+  'netherlands-vs-belgium', 'sweden-vs-norway',
+  'argentina-vs-colombia', 'chile-vs-argentina',
+  'kenya-vs-ethiopia', 'south-africa-vs-egypt',
 ];
 
 const CHART_COUNTRIES = ['united-states', 'china', 'japan', 'germany', 'united-kingdom', 'france', 'india', 'brazil', 'canada', 'australia', 'south-korea', 'mexico', 'russia', 'italy', 'spain', 'indonesia', 'netherlands', 'turkey', 'switzerland', 'saudi-arabia', 'argentina', 'south-africa', 'nigeria', 'singapore', 'israel', 'norway', 'sweden', 'egypt', 'world'];
@@ -67,7 +89,8 @@ const CHART_SLUGS = ['gdp', 'gdp-growth', 'gdp-per-capita', 'inflation-rate', 'u
 export async function getSitemapCount(): Promise<number> {
   const countries = await getCountries();
   const indicatorSlugs = getAllIndicatorSlugs();
-  const totalUrls = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + indicatorSlugs.length + COMPARISON_PAIRS.length + GLOSSARY_TERMS.length + 1;
+  const countryIndicatorCombos = countries.length * TOP_INDICATOR_SLUGS.length;
+  const totalUrls = 20 + BLOG_POSTS.length + 1 + RANKING_SLUGS.length + countries.length + indicatorSlugs.length + COMPARISON_PAIRS.length + GLOSSARY_TERMS.length + 1 + countryIndicatorCombos;
   return Math.ceil(totalUrls / MAX_URLS_PER_SITEMAP);
 }
 
@@ -123,10 +146,10 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     });
   }
 
-  // 4. Country pages
+  // 4. Country pages (clean slug URLs)
   for (const c of countries) {
     allUrls.push({
-      url: `${BASE_URL}/country/${c.id}`,
+      url: `${BASE_URL}${getCleanCountryUrl(c.id)}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -170,7 +193,22 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     });
   }
 
-  // NOTE: Country/indicator detail pages (~96K), chart pages (~580), and
+  // 8. Top country/indicator detail pages (clean slug URLs)
+  // ~218 countries × 20 top indicators = ~4,360 URLs for highest-traffic queries
+  for (const c of countries) {
+    for (const indSlug of TOP_INDICATOR_SLUGS) {
+      const indicatorId = getIndicatorFromSlug(indSlug);
+      if (!indicatorId) continue;
+      allUrls.push({
+        url: `${BASE_URL}${getCleanCountryIndicatorUrl(c.id, indicatorId)}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.75,
+      });
+    }
+  }
+
+  // NOTE: Remaining country/indicator detail pages (~92K), chart pages (~580), and
   // map?id= pages (~440) are intentionally excluded from the sitemap to
   // focus crawl budget. Google discovers them via internal links.
 

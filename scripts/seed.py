@@ -147,13 +147,22 @@ WB_AGGREGATES = {
 }
 
 
-def fetch_json(url):
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "application/json",
-    })
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read())
+def fetch_json(url, retries=3):
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Accept": "application/json",
+            })
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read())
+        except Exception as e:
+            if attempt < retries - 1:
+                wait = 2 ** attempt
+                print(f"  Retry {attempt + 1}/{retries - 1} for {url[:80]}... (waiting {wait}s): {e}")
+                time.sleep(wait)
+            else:
+                raise
 
 
 def seed_countries(cur):

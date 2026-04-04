@@ -342,6 +342,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
               Source: {sourceName} ↗
             </a>
             {globalRank > 0 && <span>Global Rank: #{globalRank} of {totalCountries}</span>}
+            <span>Updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
           </div>
         </div>
 
@@ -411,6 +412,17 @@ export default async function IndicatorDetailPage({ params }: Props) {
               source={sourceName}
             />
           </div>
+        )}
+
+        {/* Server-rendered SEO summary — visible to Google crawlers */}
+        {latestVal && (
+          <p className="text-[14px] text-[#475569] leading-relaxed mb-6 max-w-[800px]">
+            {country.name}&apos;s {seoLabel.toLowerCase()} was {latestValueStr} in {latestVal.year}
+            {globalRank > 0 ? `, ranking #${globalRank} out of ${totalCountries} countries` : ''}.
+            {yoy && yoy.changePercent !== null ? ` This represents a ${yoy.changePercent >= 0 ? '+' : ''}${yoy.changePercent.toFixed(1)}% change from ${yoy.previousYear}.` : ''}
+            {stats ? ` Over the past ${stats.dataPoints} years, the highest recorded value was ${formatValue(stats.max, ind.format, ind.decimals)} (${stats.maxYear}) and the lowest was ${formatValue(stats.min, ind.format, ind.decimals)} (${stats.minYear}).` : ''}
+            {' '}Data sourced from the {sourceName}.
+          </p>
         )}
 
         {/* AI-generated context */}

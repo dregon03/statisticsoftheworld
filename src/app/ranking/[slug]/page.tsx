@@ -135,10 +135,23 @@ export default async function RankingPage({ params }: Props) {
     },
   ].filter(f => f.a);
 
-  // JSON-LD: FAQPage + BreadcrumbList + Dataset
+  // JSON-LD: ItemList + FAQPage + BreadcrumbList + Dataset
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
+      {
+        '@type': 'ItemList',
+        name: `${config.title} (${year})`,
+        description: `Ranked list of ${data.length} countries by ${ind.label.toLowerCase()}. Source: ${ind.source === 'imf' ? 'IMF' : ind.id.startsWith('WHO.') ? 'WHO' : 'World Bank'}.`,
+        numberOfItems: data.length,
+        itemListOrder: 'https://schema.org/ItemListOrderDescending',
+        itemListElement: data.slice(0, 20).map((d, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: d.country,
+          url: `https://statisticsoftheworld.com${getCleanCountryIndicatorUrl(d.countryId, config.id)}`,
+        })),
+      },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -229,7 +242,12 @@ export default async function RankingPage({ params }: Props) {
         </nav>
 
         <h1 className="text-[28px] font-bold mb-2">{config.title} — {year} World Rankings</h1>
-        <p className="text-[14px] text-[#64748b] mb-4 leading-relaxed max-w-[700px]">{config.description}</p>
+        <div className="flex flex-wrap items-center gap-3 mb-4">
+          <p className="text-[14px] text-[#64748b] leading-relaxed max-w-[700px]">{config.description}</p>
+          <span className="text-[12px] text-[#94a3b8] bg-[#f1f5f9] px-2.5 py-1 rounded-full whitespace-nowrap">
+            Updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} · Source: {ind.source === 'imf' ? 'IMF' : ind.id.startsWith('WHO.') ? 'WHO' : 'World Bank'}
+          </span>
+        </div>
 
         {/* SEO summary paragraphs */}
         {summaryParagraph && (

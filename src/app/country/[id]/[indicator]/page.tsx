@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import { getCountry, getHistoricalData, getHistoricalStats, getYoYChange, getIndicatorForAllCountries, getIndicatorMeta, INDICATORS, formatValue } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -198,7 +198,7 @@ export default async function IndicatorDetailPage({ params }: Props) {
   const cleanUrl = getCleanCountryIndicatorUrl(id, indicatorId);
   const currentPath = `/country/${rawCountryId}/${rawIndicator}`;
   if (cleanUrl !== currentPath && (isIso3(rawCountryId) || rawIndicator.includes('.'))) {
-    redirect(cleanUrl);
+    permanentRedirect(cleanUrl);
   }
 
   const country = await getCountry(id);

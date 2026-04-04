@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import { getCountry, getCountries, getAllIndicatorsForCountry, getHistoricalData, INDICATORS, CATEGORIES, formatValue } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -75,7 +75,7 @@ export default async function CountryPage({ params }: Props) {
   if (isIso3(rawId)) {
     const cleanUrl = getCleanCountryUrl(rawId);
     if (cleanUrl !== `/country/${rawId}`) {
-      redirect(cleanUrl);
+      permanentRedirect(cleanUrl);
     }
   }
 

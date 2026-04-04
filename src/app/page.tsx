@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getCountries, getIndicatorForAllCountries, INDICATORS } from '@/lib/data';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -102,6 +103,31 @@ export default async function Home() {
         dateModified: new Date().toISOString().split('T')[0],
       },
       {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What economic data does Statistics of the World provide?',
+            acceptedAnswer: { '@type': 'Answer', text: `Statistics of the World provides ${INDICATORS.length}+ economic, demographic, health, and environmental indicators for ${countries.length} countries. Data is sourced from the IMF World Economic Outlook, World Bank World Development Indicators, WHO Global Health Observatory, FRED, and United Nations. All data is free to access with no login required.` },
+          },
+          {
+            '@type': 'Question',
+            name: 'How often is the data updated?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Macroeconomic data from the IMF and World Bank is updated weekly as new releases become available. Financial market data (stock indices, commodities, currencies) is updated daily during trading hours. The IMF World Economic Outlook is published biannually in April and October with comprehensive revisions.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Is there a free API for economic data?',
+            acceptedAnswer: { '@type': 'Answer', text: 'Yes. Statistics of the World offers a free REST API that returns JSON data for all countries and indicators. No authentication is required for up to 100 requests per day. Free API keys are available for higher rate limits (1,000 requests/day). Documentation is available at statisticsoftheworld.com/api-docs.' },
+          },
+          {
+            '@type': 'Question',
+            name: 'Where does the GDP data come from?',
+            acceptedAnswer: { '@type': 'Answer', text: 'GDP data comes from the IMF World Economic Outlook (WEO), which is the most authoritative source for cross-country GDP comparisons. The IMF collects data from national statistical agencies worldwide and publishes harmonized estimates and projections. World Bank GDP data (from the World Development Indicators) is also available as a complementary source.' },
+          },
+        ],
+      },
+      {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
@@ -119,6 +145,97 @@ export default async function Home() {
       <Nav />
       <HeroTabs countryCount={countries.length} indicatorCount={INDICATORS.length} />
       <HomeTable countries={countries} stats={stats} />
+
+      {/* SEO content section — crawlable text for Google */}
+      <section className="max-w-[1100px] mx-auto px-6 py-12">
+        <h2 className="text-[24px] font-bold text-[#0d1b2a] mb-6">Global Economic Data — Free Access to 440+ Indicators</h2>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-10">
+          <div className="space-y-4">
+            <h3 className="text-[18px] font-semibold text-[#0d1b2a]">Comprehensive Country Statistics</h3>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              Statistics of the World aggregates economic, demographic, health, education, and environmental data for {countries.length} countries from the world&apos;s most authoritative sources: the IMF World Economic Outlook, World Bank World Development Indicators, WHO Global Health Observatory, FRED (Federal Reserve Economic Data), and United Nations. Our database covers {INDICATORS.length}+ indicators with historical data going back to 1960 for many series.
+            </p>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              Every data point is sourced directly from official international organizations — we do not estimate, interpolate, or generate data. When the IMF publishes new GDP projections or the World Bank updates its development indicators, our database reflects those changes within days. All data is free to access, free to use with attribution, and available through our public API.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-[18px] font-semibold text-[#0d1b2a]">How to Use This Platform</h3>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              Start by selecting a country to see its full economic profile — GDP, population, inflation, unemployment, government debt, life expectancy, and hundreds more indicators with interactive charts and historical trends. Use the rankings pages to compare countries on any indicator: which country has the highest GDP, the lowest unemployment, or the most CO₂ emissions per capita.
+            </p>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              The comparison tool lets you put two countries side by side across all major indicators. For developers and researchers, our free API provides programmatic access to all data in JSON format — no authentication required for basic usage, with higher rate limits available through free API keys.
+            </p>
+          </div>
+        </div>
+
+        {/* Quick links to top ranking pages */}
+        <div className="mb-10">
+          <h3 className="text-[18px] font-semibold text-[#0d1b2a] mb-4">Popular Rankings</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+            {[
+              { href: '/ranking/gdp', label: 'GDP by Country' },
+              { href: '/ranking/gdp-per-capita', label: 'GDP per Capita' },
+              { href: '/ranking/gdp-growth', label: 'GDP Growth Rate' },
+              { href: '/ranking/population', label: 'Population' },
+              { href: '/ranking/inflation-rate', label: 'Inflation Rate' },
+              { href: '/ranking/unemployment-rate', label: 'Unemployment' },
+              { href: '/ranking/life-expectancy', label: 'Life Expectancy' },
+              { href: '/ranking/government-debt', label: 'Government Debt' },
+              { href: '/ranking/co2-emissions', label: 'CO₂ Emissions' },
+              { href: '/ranking/homicide-rate', label: 'Homicide Rate' },
+            ].map(r => (
+              <Link key={r.href} href={r.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">
+                {r.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Data sources section */}
+        <div className="mb-10">
+          <h3 className="text-[18px] font-semibold text-[#0d1b2a] mb-4">Our Data Sources</h3>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { name: 'IMF World Economic Outlook', desc: 'GDP, inflation, unemployment, government debt, and current account data for 193 countries. Updated biannually.', url: 'https://www.imf.org/en/Publications/WEO' },
+              { name: 'World Bank WDI', desc: '300+ development indicators covering health, education, environment, infrastructure, trade, and governance.', url: 'https://data.worldbank.org' },
+              { name: 'WHO Global Health Observatory', desc: 'Health indicators including life expectancy, mortality rates, disease prevalence, and healthcare spending.', url: 'https://www.who.int/data/gho' },
+              { name: 'FRED (Federal Reserve)', desc: 'US economic data including interest rates, bond yields, money supply, and Treasury securities.', url: 'https://fred.stlouisfed.org' },
+              { name: 'United Nations', desc: 'Population data, demographic projections, trade statistics, and development indicators.', url: 'https://data.un.org' },
+              { name: 'Yahoo Finance', desc: 'Real-time stock market indices, commodity prices, currency exchange rates, and cryptocurrency data.', url: 'https://finance.yahoo.com' },
+            ].map(s => (
+              <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="border border-[#d5dce6] rounded-lg p-4 hover:border-[#b0bdd0] hover:bg-white transition block">
+                <div className="text-[14px] font-semibold text-[#0d1b2a] mb-1">{s.name} ↗</div>
+                <div className="text-[13px] text-[#64748b] leading-relaxed">{s.desc}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Popular comparisons */}
+        <div>
+          <h3 className="text-[18px] font-semibold text-[#0d1b2a] mb-4">Popular Country Comparisons</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            {[
+              { href: '/compare/united-states-vs-china', label: 'US vs China' },
+              { href: '/compare/united-states-vs-japan', label: 'US vs Japan' },
+              { href: '/compare/china-vs-india', label: 'China vs India' },
+              { href: '/compare/germany-vs-france', label: 'Germany vs France' },
+              { href: '/compare/united-states-vs-india', label: 'US vs India' },
+              { href: '/compare/japan-vs-south-korea', label: 'Japan vs S. Korea' },
+              { href: '/compare/united-kingdom-vs-france', label: 'UK vs France' },
+              { href: '/compare/brazil-vs-mexico', label: 'Brazil vs Mexico' },
+            ].map(c => (
+              <Link key={c.href} href={c.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">
+                {c.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </main>
   );

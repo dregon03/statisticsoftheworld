@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T13:12:00Z",
-  "totalRuns": 6,
+  "lastRun": "2026-04-05T13:24:00Z",
+  "totalRuns": 7,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -11,14 +11,16 @@
       "chile", "czech-republic", "romania", "uae", "peru",
       "new-zealand", "portugal", "greece", "hungary", "denmark",
       "finland", "austria", "belgium", "kenya", "ethiopia",
-      "morocco", "algeria", "ukraine", "kazakhstan", "qatar"
+      "morocco", "algeria", "ukraine", "kazakhstan", "qatar",
+      "kuwait", "oman", "sri-lanka", "myanmar", "cambodia"
     ],
     "byCountryPages": [
       "gdp", "gdp-per-capita", "gdp-growth", "inflation", "unemployment", "life-expectancy",
       "world-population", "population", "debt", "co2-emissions", "military-spending",
       "fertility-rate", "health-spending", "corruption", "poverty-rate", "homicide-rate",
       "education-spending", "trade", "internet-users", "renewable-energy", "gini-index", "tourism",
-      "fdi", "remittances", "youth-unemployment", "urban-population", "gdp-ppp"
+      "fdi", "remittances", "youth-unemployment", "urban-population", "gdp-ppp",
+      "birth-rate", "death-rate", "population-density", "tax-revenue", "external-debt"
     ],
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
@@ -27,14 +29,11 @@
     "comparisonEditorialCount": 102
   },
   "pendingWork": {
-    "countryEconomyPages": [
-      "kuwait", "oman", "sri-lanka", "myanmar", "cambodia"
-    ],
+    "countryEconomyPages": [],
     "byCountryPages": [
-      "electricity-access-by-country", "forest-coverage-by-country", "birth-rate-by-country",
-      "death-rate-by-country", "population-density-by-country",
-      "tax-revenue-by-country", "government-spending-by-country", "savings-rate-by-country",
-      "investment-rate-by-country", "external-debt-by-country"
+      "electricity-access-by-country", "forest-coverage-by-country",
+      "government-spending-by-country", "savings-rate-by-country",
+      "investment-rate-by-country"
     ],
     "contentImprovements": [
       "add-breadcrumblist-schema-to-all-new-pages",
@@ -82,6 +81,9 @@
     "Run 4 completed: added Finland, Austria, Belgium, Kenya, Ethiopia (50 total country pages)",
     "Run 5 completed: added Morocco, Algeria, Ukraine, Kazakhstan, Qatar (55 total country pages)",
     "All major pending country pages done — shift to by-country landing pages and content improvements next",
-    "Run 6 completed: added FDI, remittances, youth unemployment, urban population, GDP PPP by-country pages (27 total by-country pages)"
+    "Run 6 completed: added FDI, remittances, youth unemployment, urban population, GDP PPP by-country pages (27 total by-country pages)",
+    "Run 7 completed: final 5 country pages (Kuwait, Oman, Sri Lanka, Myanmar, Cambodia = 60 total) + 5 by-country pages (birth rate, death rate, density, tax revenue, external debt = 32 total)",
+    "ALL pending country economy pages now complete — 60 country pages covering every major/mid-size economy",
+    "Next priorities: remaining by-country pages, content improvements (methodology, E-E-A-T), blog posts"
   ]
 }

@@ -1,13 +1,14 @@
 {
-  "lastRun": "2026-04-05T12:00:00Z",
-  "totalRuns": 1,
+  "lastRun": "2026-04-05T12:24:00Z",
+  "totalRuns": 2,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
       "australia", "south-korea", "italy", "spain", "mexico", "indonesia", "turkey",
       "saudi-arabia", "netherlands", "switzerland", "nigeria", "poland", "argentina",
       "south-africa", "egypt", "thailand", "vietnam", "ireland", "singapore", "norway", "israel",
-      "malaysia", "colombia", "philippines", "bangladesh", "pakistan"
+      "malaysia", "colombia", "philippines", "bangladesh", "pakistan",
+      "chile", "czech-republic", "romania", "uae", "peru"
     ],
     "byCountryPages": [
       "gdp", "gdp-per-capita", "gdp-growth", "inflation", "unemployment", "life-expectancy",
@@ -23,7 +24,7 @@
   },
   "pendingWork": {
     "countryEconomyPages": [
-      "chile", "czech-republic", "romania", "uae", "peru", "new-zealand", "portugal",
+      "new-zealand", "portugal",
       "greece", "hungary", "denmark", "finland", "austria", "belgium", "kenya",
       "ethiopia", "morocco", "algeria", "ukraine", "kazakhstan", "qatar",
       "kuwait", "oman", "sri-lanka", "myanmar", "cambodia"
@@ -75,6 +76,7 @@
     "Duplicate comparison keys cause build failures — always check for existing keys before adding",
     "Run 1 completed: added Malaysia, Colombia, Philippines, Bangladesh, Pakistan economy pages",
     "Country economy pages are the highest-value SEO asset per page — each targets '[country] economy' head term",
-    "Compact page format works well — single-file with inline data cards, editorial, cross-links"
+    "Compact page format works well — single-file with inline data cards, editorial, cross-links",
+    "Run 2 completed: added Chile, Czech Republic, Romania, UAE, Peru economy pages (40 total country pages)"
   ]
 }

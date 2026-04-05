@@ -82,6 +82,12 @@ export default function Footer() {
             <Link href="/world-economy" className="hover:text-white transition">World Economy</Link>
             <Link href="/us-economy" className="hover:text-white transition">US Economy</Link>
             <Link href="/gdp-by-country" className="hover:text-white transition">GDP by Country</Link>
+            <Link href="/inflation-by-country" className="hover:text-white transition">Inflation</Link>
+            <Link href="/population-by-country" className="hover:text-white transition">Population</Link>
+            <Link href="/largest-economies" className="hover:text-white transition">Largest Economies</Link>
+            <Link href="/richest-countries" className="hover:text-white transition">Richest Countries</Link>
+            <Link href="/g7-economy" className="hover:text-white transition">G7</Link>
+            <Link href="/brics-economy" className="hover:text-white transition">BRICS</Link>
             <Link href="/world-population" className="hover:text-white transition">World Population</Link>
             <Link href="/map" className="hover:text-white transition">Map</Link>
             <Link href="/calendar" className="hover:text-white transition">Calendar</Link>

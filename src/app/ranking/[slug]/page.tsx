@@ -631,13 +631,32 @@ export default async function RankingPage({ params }: Props) {
         </div>
 
         {/* Cross-links to overview pages */}
-        <div className="mt-6 flex flex-wrap gap-2">
-          <Link href="/world-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">World Economy →</Link>
-          <Link href="/us-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">US Economy →</Link>
-          <Link href="/china-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">China Economy →</Link>
-          <Link href="/india-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">India Economy →</Link>
-          <Link href="/gdp-by-country" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">GDP by Country →</Link>
-          <Link href="/world-population" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">World Population →</Link>
+        <div className="mt-6">
+          <h2 className="text-[16px] font-semibold mb-3">Explore More</h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: '/largest-economies', label: 'Largest Economies' },
+              { href: '/richest-countries', label: 'Richest Countries' },
+              { href: '/poorest-countries', label: 'Poorest Countries' },
+              { href: '/most-populous-countries', label: 'Most Populous' },
+              { href: '/safest-countries', label: 'Safest Countries' },
+              { href: '/gdp-by-country', label: 'GDP by Country' },
+              { href: '/inflation-by-country', label: 'Inflation' },
+              { href: '/unemployment-by-country', label: 'Unemployment' },
+              { href: '/population-by-country', label: 'Population' },
+              { href: '/debt-by-country', label: 'Debt by Country' },
+              { href: '/life-expectancy-by-country', label: 'Life Expectancy' },
+              { href: '/co2-emissions-by-country', label: 'CO2 Emissions' },
+              { href: '/corruption-by-country', label: 'Corruption' },
+              { href: '/g7-economy', label: 'G7' },
+              { href: '/brics-economy', label: 'BRICS' },
+              { href: '/world-economy', label: 'World Economy' },
+              { href: '/us-economy', label: 'US Economy' },
+              { href: '/china-economy', label: 'China Economy' },
+            ].map(l => (
+              <Link key={l.href} href={l.href} className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">{l.label} →</Link>
+            ))}
+          </div>
         </div>
 
         {/* Related blog articles — cross-link for SEO */}

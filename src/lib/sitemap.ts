@@ -175,6 +175,11 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     { url: `${BASE_URL}/poverty-rate-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/homicide-rate-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/education-spending-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/trade-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/internet-users-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/renewable-energy-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/gini-index-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/tourism-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
   );
 
   // 2. Blog

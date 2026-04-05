@@ -1,0 +1,80 @@
+{
+  "lastRun": "2026-04-05T12:00:00Z",
+  "totalRuns": 1,
+  "completedWork": {
+    "countryEconomyPages": [
+      "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
+      "australia", "south-korea", "italy", "spain", "mexico", "indonesia", "turkey",
+      "saudi-arabia", "netherlands", "switzerland", "nigeria", "poland", "argentina",
+      "south-africa", "egypt", "thailand", "vietnam", "ireland", "singapore", "norway", "israel",
+      "malaysia", "colombia", "philippines", "bangladesh", "pakistan"
+    ],
+    "byCountryPages": [
+      "gdp", "gdp-per-capita", "gdp-growth", "inflation", "unemployment", "life-expectancy",
+      "world-population", "population", "debt", "co2-emissions", "military-spending",
+      "fertility-rate", "health-spending", "corruption", "poverty-rate", "homicide-rate",
+      "education-spending", "trade", "internet-users", "renewable-energy", "gini-index", "tourism"
+    ],
+    "groupPages": ["brics", "g7", "g20", "eu", "asean"],
+    "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
+    "blogPostCount": 147,
+    "glossaryTermCount": 68,
+    "comparisonEditorialCount": 102
+  },
+  "pendingWork": {
+    "countryEconomyPages": [
+      "chile", "czech-republic", "romania", "uae", "peru", "new-zealand", "portugal",
+      "greece", "hungary", "denmark", "finland", "austria", "belgium", "kenya",
+      "ethiopia", "morocco", "algeria", "ukraine", "kazakhstan", "qatar",
+      "kuwait", "oman", "sri-lanka", "myanmar", "cambodia"
+    ],
+    "byCountryPages": [
+      "fdi-by-country", "remittances-by-country", "youth-unemployment-by-country",
+      "electricity-access-by-country", "forest-coverage-by-country", "birth-rate-by-country",
+      "death-rate-by-country", "urban-population-by-country", "population-density-by-country",
+      "tax-revenue-by-country", "government-spending-by-country", "savings-rate-by-country",
+      "investment-rate-by-country", "gdp-ppp-by-country", "external-debt-by-country"
+    ],
+    "contentImprovements": [
+      "add-breadcrumblist-schema-to-all-new-pages",
+      "add-visible-last-updated-dates-everywhere",
+      "create-methodology-page",
+      "create-data-sources-page",
+      "expand-homepage-editorial-to-1000-words",
+      "add-internal-links-from-blog-posts-to-landing-pages",
+      "add-comparison-links-from-country-economy-pages",
+      "add-20-more-glossary-terms",
+      "add-20-more-blog-posts",
+      "add-20-more-comparison-editorials",
+      "create-year-in-review-2025-page",
+      "create-economic-calendar-seo-page",
+      "add-table-of-contents-to-long-pages",
+      "add-author-schema-for-eeat",
+      "create-about-team-page-for-eeat"
+    ]
+  },
+  "priorities": [
+    "Country economy pages have the highest per-page SEO value — each targets a unique head term",
+    "By-country landing pages target high-volume queries like 'X by country 2026'",
+    "Blog posts target long-tail question queries for featured snippets",
+    "Glossary terms build topical authority and internal link density",
+    "Comparison editorials add unique editorial value to comparison pages",
+    "E-E-A-T pages (methodology, about, data sources) build trust signals",
+    "Schema markup improvements help with rich results",
+    "Internal linking passes distribute PageRank to new pages"
+  ],
+  "learnings": [
+    "Each country economy page needs: unique 500+ word editorial, 8 live data cards, FAQ schema, comparison links, cross-links",
+    "By-country pages need: Dataset schema, FAQ schema, editorial, color-coded data table, breadcrumbs",
+    "Blog posts are programmatic — just add to BLOG_POSTS array with indicatorId, they auto-generate",
+    "Comparison editorials go in COMPARISON_EDITORIAL Record in compare/[slug]/page.tsx",
+    "Glossary terms go in GLOSSARY_TERMS array in lib/glossary.ts",
+    "All new pages must be added to sitemap in lib/sitemap.ts",
+    "Build must pass (npx next build) before committing",
+    "Push to master auto-deploys via Coolify webhook",
+    "Duplicate comparison keys cause build failures — always check for existing keys before adding",
+    "Run 1 completed: added Malaysia, Colombia, Philippines, Bangladesh, Pakistan economy pages",
+    "Country economy pages are the highest-value SEO asset per page — each targets '[country] economy' head term",
+    "Compact page format works well — single-file with inline data cards, editorial, cross-links"
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T13:00:00Z",
-  "totalRuns": 5,
+  "lastRun": "2026-04-05T13:12:00Z",
+  "totalRuns": 6,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -17,7 +17,8 @@
       "gdp", "gdp-per-capita", "gdp-growth", "inflation", "unemployment", "life-expectancy",
       "world-population", "population", "debt", "co2-emissions", "military-spending",
       "fertility-rate", "health-spending", "corruption", "poverty-rate", "homicide-rate",
-      "education-spending", "trade", "internet-users", "renewable-energy", "gini-index", "tourism"
+      "education-spending", "trade", "internet-users", "renewable-energy", "gini-index", "tourism",
+      "fdi", "remittances", "youth-unemployment", "urban-population", "gdp-ppp"
     ],
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
@@ -30,11 +31,10 @@
       "kuwait", "oman", "sri-lanka", "myanmar", "cambodia"
     ],
     "byCountryPages": [
-      "fdi-by-country", "remittances-by-country", "youth-unemployment-by-country",
       "electricity-access-by-country", "forest-coverage-by-country", "birth-rate-by-country",
-      "death-rate-by-country", "urban-population-by-country", "population-density-by-country",
+      "death-rate-by-country", "population-density-by-country",
       "tax-revenue-by-country", "government-spending-by-country", "savings-rate-by-country",
-      "investment-rate-by-country", "gdp-ppp-by-country", "external-debt-by-country"
+      "investment-rate-by-country", "external-debt-by-country"
     ],
     "contentImprovements": [
       "add-breadcrumblist-schema-to-all-new-pages",
@@ -81,6 +81,7 @@
     "Run 3 completed: added New Zealand, Portugal, Greece, Hungary, Denmark (45 total country pages)",
     "Run 4 completed: added Finland, Austria, Belgium, Kenya, Ethiopia (50 total country pages)",
     "Run 5 completed: added Morocco, Algeria, Ukraine, Kazakhstan, Qatar (55 total country pages)",
-    "All major pending country pages done — shift to by-country landing pages and content improvements next"
+    "All major pending country pages done — shift to by-country landing pages and content improvements next",
+    "Run 6 completed: added FDI, remittances, youth unemployment, urban population, GDP PPP by-country pages (27 total by-country pages)"
   ]
 }

@@ -58,6 +58,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://flagcdn.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://flagcdn.com" />
+        <link rel="alternate" type="application/rss+xml" title="Statistics of the World" href="/feed" />
+        <link rel="search" type="application/opensearchdescription+xml" title="Statistics of the World" href="/opensearch.xml" />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"

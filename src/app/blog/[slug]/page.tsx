@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getBlogPost, BLOG_POSTS } from '@/lib/blog-posts';
 import { getIndicatorForAllCountries, INDICATORS, formatValue } from '@/lib/data';
+import { getCleanCountryUrl, getCleanCountryIndicatorUrl } from '@/lib/country-slugs';
 import Flag from '../../Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
@@ -174,7 +175,7 @@ export default async function BlogPostPage({ params }: Props) {
                 <tr key={entry.countryId} className="border-b border-gray-50 hover:bg-gray-50 transition">
                   <td className="px-4 py-2 text-gray-300 text-[13px]">{i + 1}</td>
                   <td className="px-4 py-2">
-                    <Link href={`/country/${entry.countryId}`} className="inline-flex items-center gap-2 text-[14px] text-blue-600 hover:text-blue-800">
+                    <Link href={getCleanCountryIndicatorUrl(entry.countryId, post.indicatorId)} className="inline-flex items-center gap-2 text-[14px] text-blue-600 hover:text-blue-800">
                       <Flag iso2={entry.iso2} size={20} />
                       {entry.country}
                     </Link>
@@ -212,13 +213,34 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Related posts */}
-        <div>
+        <div className="mb-8">
           <h2 className="text-[16px] font-semibold mb-3">Related Articles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {related.map(r => (
               <Link key={r.slug} href={`/blog/${r.slug}`} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition">
                 <div className="text-[14px] font-medium text-[#0d1b2a] mb-1">{r.title}</div>
                 <div className="text-[12px] text-[#94a3b8]">{r.category}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Cross-links for SEO */}
+        <div className="border-t border-gray-100 pt-6">
+          <h2 className="text-[16px] font-semibold mb-3">Explore More Data</h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: '/ranking/gdp', label: 'GDP Rankings' },
+              { href: '/ranking/population', label: 'Population Rankings' },
+              { href: '/ranking/inflation-rate', label: 'Inflation Rankings' },
+              { href: '/ranking/gdp-per-capita', label: 'GDP per Capita' },
+              { href: '/ranking/life-expectancy', label: 'Life Expectancy' },
+              { href: '/compare/united-states-vs-china', label: 'US vs China' },
+              { href: '/compare/china-vs-india', label: 'China vs India' },
+              { href: '/countries', label: 'All Countries' },
+            ].map(l => (
+              <Link key={l.href} href={l.href} className="px-3 py-1.5 bg-[#f1f5f9] border border-[#d5dce6] rounded-lg text-[12px] text-[#475569] hover:text-[#0d1b2a] transition">
+                {l.label} →
               </Link>
             ))}
           </div>

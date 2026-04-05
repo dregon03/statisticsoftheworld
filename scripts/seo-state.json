@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T12:36:00Z",
-  "totalRuns": 3,
+  "lastRun": "2026-04-05T12:48:00Z",
+  "totalRuns": 4,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -9,7 +9,8 @@
       "south-africa", "egypt", "thailand", "vietnam", "ireland", "singapore", "norway", "israel",
       "malaysia", "colombia", "philippines", "bangladesh", "pakistan",
       "chile", "czech-republic", "romania", "uae", "peru",
-      "new-zealand", "portugal", "greece", "hungary", "denmark"
+      "new-zealand", "portugal", "greece", "hungary", "denmark",
+      "finland", "austria", "belgium", "kenya", "ethiopia"
     ],
     "byCountryPages": [
       "gdp", "gdp-per-capita", "gdp-growth", "inflation", "unemployment", "life-expectancy",
@@ -25,8 +26,7 @@
   },
   "pendingWork": {
     "countryEconomyPages": [
-      "finland", "austria", "belgium", "kenya",
-      "ethiopia", "morocco", "algeria", "ukraine", "kazakhstan", "qatar",
+      "morocco", "algeria", "ukraine", "kazakhstan", "qatar",
       "kuwait", "oman", "sri-lanka", "myanmar", "cambodia"
     ],
     "byCountryPages": [
@@ -78,6 +78,7 @@
     "Country economy pages are the highest-value SEO asset per page — each targets '[country] economy' head term",
     "Compact page format works well — single-file with inline data cards, editorial, cross-links",
     "Run 2 completed: added Chile, Czech Republic, Romania, UAE, Peru economy pages (40 total country pages)",
-    "Run 3 completed: added New Zealand, Portugal, Greece, Hungary, Denmark (45 total country pages)"
+    "Run 3 completed: added New Zealand, Portugal, Greece, Hungary, Denmark (45 total country pages)",
+    "Run 4 completed: added Finland, Austria, Belgium, Kenya, Ethiopia (50 total country pages)"
   ]
 }

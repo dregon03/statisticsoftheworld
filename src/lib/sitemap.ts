@@ -230,6 +230,12 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     { url: `${BASE_URL}/population-density-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/tax-revenue-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/external-debt-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/electricity-access-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/forest-coverage-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/government-spending-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/savings-rate-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/investment-rate-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/methodology`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
   );
 
   // 2. Blog

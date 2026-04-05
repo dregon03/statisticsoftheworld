@@ -120,8 +120,9 @@ export function getCleanCountryIndicatorUrl(iso3: string, indicatorId: string): 
   if (countrySlug && indicatorSlug) {
     return `/country/${countrySlug}/${indicatorSlug}`;
   }
-  // Fallback to old format
-  return `/country/${iso3}/${encodeURIComponent(indicatorId)}`;
+  // Use country slug even if indicator has no slug mapping
+  const country = countrySlug || iso3;
+  return `/country/${country}/${encodeURIComponent(indicatorId)}`;
 }
 
 /** Build a clean canonical URL for a country page */

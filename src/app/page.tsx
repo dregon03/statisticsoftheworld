@@ -214,6 +214,27 @@ export default async function Home() {
           </div>
         </div>
 
+        {/* Economy overviews — new landing pages */}
+        <div className="mb-10">
+          <h3 className="text-[18px] font-semibold text-[#0d1b2a] mb-4">Economy Overviews</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            {[
+              { href: '/world-economy', label: 'World Economy 2026' },
+              { href: '/us-economy', label: 'US Economy' },
+              { href: '/china-economy', label: 'China Economy' },
+              { href: '/india-economy', label: 'India Economy' },
+              { href: '/gdp-by-country', label: 'GDP by Country' },
+              { href: '/world-population', label: 'World Population' },
+              { href: '/inflation-by-country', label: 'Inflation by Country' },
+              { href: '/snapshot/2026', label: '2026 Snapshot Report' },
+            ].map(l => (
+              <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">
+                {l.label} →
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Popular comparisons */}
         <div>
           <h3 className="text-[18px] font-semibold text-[#0d1b2a] mb-4">Popular Country Comparisons</h3>

@@ -141,6 +141,7 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     { url: `${BASE_URL}/canada-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/russia-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/australia-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/unemployment-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
   );
 
   // 2. Blog

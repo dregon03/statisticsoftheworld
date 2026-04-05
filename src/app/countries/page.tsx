@@ -1,8 +1,20 @@
+import type { Metadata } from 'next';
 import { getCountries, getIndicatorForAllCountries, INDICATORS } from '@/lib/data';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import HeroTabs from '@/components/HeroTabs';
 import CountriesGrid from '@/components/CountriesGrid';
+
+export const metadata: Metadata = {
+  title: 'All 218 Countries — GDP, Population & Economic Data',
+  description: 'Browse economic data for all 218 countries and territories. GDP, population, inflation, unemployment, and 440+ indicators with interactive charts. Source: IMF & World Bank.',
+  alternates: { canonical: 'https://statisticsoftheworld.com/countries' },
+  openGraph: {
+    title: 'All 218 Countries — Economic Data & Statistics',
+    description: '440+ indicators for 218 countries. GDP, population, inflation, and more.',
+    siteName: 'Statistics of the World',
+  },
+};
 
 async function getCountriesData() {
   const [

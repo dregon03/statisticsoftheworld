@@ -186,6 +186,11 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     { url: `${BASE_URL}/ukraine-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },
     { url: `${BASE_URL}/kazakhstan-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },
     { url: `${BASE_URL}/qatar-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },
+    { url: `${BASE_URL}/kuwait-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },
+    { url: `${BASE_URL}/oman-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },
+    { url: `${BASE_URL}/sri-lanka-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.75 },
+    { url: `${BASE_URL}/myanmar-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${BASE_URL}/cambodia-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${BASE_URL}/brics-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/g7-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/g20-economy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
@@ -220,6 +225,11 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
     { url: `${BASE_URL}/youth-unemployment-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/urban-population-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/gdp-ppp-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${BASE_URL}/birth-rate-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/death-rate-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/population-density-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/tax-revenue-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/external-debt-by-country`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
   );
 
   // 2. Blog

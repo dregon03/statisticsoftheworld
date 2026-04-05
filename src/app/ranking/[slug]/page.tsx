@@ -165,6 +165,46 @@ const EDITORIAL: Record<string, string[]> = {
     'Nordic countries collect 40–50% of GDP in taxes, reflecting comprehensive welfare states. Many developing countries collect less than 15% — below the IMF\'s threshold for funding basic services. Low collection rates reflect large informal economies, weak tax administration, and narrow tax bases.',
     'The relationship between tax revenue and growth is nuanced. High-tax Nordic economies rank among the world\'s most competitive, while low-tax economies like Singapore have also achieved rapid growth. The key variable is not the tax level but the quality of public spending — taxes funding productive investments generate positive returns.',
   ],
+  'population-growth': [
+    'Population growth rate measures the annual percentage increase in a country\'s total population, reflecting births, deaths, and net migration. The data comes from the World Bank using UN Population Division estimates.',
+    'Global population growth has decelerated from over 2% per year in the 1960s to approximately 0.8% today. The fastest-growing populations are in sub-Saharan Africa, where countries like Niger, Chad, and the DRC grow at 3% annually — doubling every 23 years. Many European and East Asian countries now have negative growth rates.',
+    'For economists, population growth is a double-edged sword. Moderate growth with a young demographic profile can fuel economic expansion. Rapid growth strains education, healthcare, and employment systems. The most consequential indicator is the dependency ratio: how many non-working-age people each working-age person must support.',
+  ],
+  'urban-population': [
+    'Urban population as a share of total population indicates how urbanized a country is. Urbanization is one of the most powerful structural forces in economic development — when people move from farms to cities, productivity increases and growth accelerates. The data comes from the UN World Urbanization Prospects via the World Bank.',
+    'The world crossed 50% urbanization around 2007 and now stands at approximately 57%. Singapore, Hong Kong, and Kuwait are essentially 100% urban, while Burundi, Niger, and Chad remain over 85% rural.',
+    'Urbanization drives growth because cities enable specialization, knowledge spillovers, and efficient service delivery. GDP per capita is strongly correlated with urbanization — there is no wealthy, low-urbanization country. However, unmanaged urbanization creates slums, congestion, and strain on infrastructure.',
+  ],
+  'fdi-inflows': [
+    'Foreign direct investment (FDI) inflows as a percentage of GDP measure foreign capital entering a country for long-term business operations. Unlike portfolio investment, FDI represents a lasting commitment. The data comes from UNCTAD via the World Bank.',
+    'Small open economies and tax havens often show the highest FDI/GDP ratios — Ireland, Singapore, Luxembourg. For developing countries, healthy FDI inflows (2–5% of GDP) are associated with technology transfer, job creation, and growth.',
+    'Geopolitical tensions have redirected FDI flows since 2020 — "friend-shoring" is moving supply chains from China to Vietnam, India, Mexico, and Eastern Europe. The CHIPS Act and similar policies have created massive new semiconductor FDI.',
+  ],
+  'suicide-rate': [
+    'Suicide mortality rate measures deaths by suicide per 100,000 population. Approximately 700,000 people die by suicide annually — more than homicide and armed conflict combined. The data comes from the WHO Global Health Observatory.',
+    'South Korea has the highest rate among OECD countries, driven by social pressure, elderly poverty, and mental health stigma. Men die by suicide at roughly three to four times the rate of women in most countries.',
+    'Effective prevention includes restricting access to lethal means (particularly pesticides in agricultural countries), school-based mental health programs, and crisis hotlines. South Korea\'s rate has declined since implementing comprehensive prevention policies.',
+  ],
+  'road-traffic-deaths': [
+    'Road traffic death rate measures estimated deaths from road accidents per 100,000 population. Road injuries are the leading cause of death for ages 5–29 globally, killing 1.35 million people per year. The data comes from the WHO.',
+    'Africa has the highest rates despite having only 2% of the world\'s vehicles. Libya, Central African Republic, and Zimbabwe report rates above 30 per 100,000 — over ten times Norway, Sweden, or the UK.',
+    'High-income countries reduced road deaths through the "safe systems" approach: segregated lanes, speed reduction, vehicle safety standards, and trauma care. Sweden\'s "Vision Zero" framework has been adopted globally.',
+  ],
+  'corruption-control': [
+    'Control of Corruption is one of six Worldwide Governance Indicators from the World Bank. It measures perceptions of public power exercised for private gain. Scores range from -2.5 (highly corrupt) to +2.5 (very clean).',
+    'Denmark, Finland, New Zealand, Norway, and Switzerland consistently score above +2.0, sharing independent judiciaries, free press, and transparent procurement. Somalia, South Sudan, and North Korea score below -1.5.',
+    'The IMF estimates corruption costs 2% of GDP growth annually. Effective reforms focus on transparency (open budgets), accountability (independent anti-corruption agencies), and economic liberalization (reducing permits that create bribery opportunities).',
+  ],
+  'forest-area': [
+    'Forest area as a percentage of total land area tracks the extent of a country\'s forest cover. Forests are critical for carbon sequestration, biodiversity, water cycling, and the livelihoods of 1.6 billion people. The data comes from the Food and Agriculture Organization (FAO) via the World Bank.',
+    'The most forested countries include Suriname (over 95%), Gabon, and several Pacific islands. Large economies with significant forest cover include Brazil (59%), Russia (50%), and Canada (38%). Deforestation is concentrated in the tropics — Brazil, Indonesia, and the Democratic Republic of Congo lose the most forest annually.',
+    'Global forest area has declined from 31.6% of land area in 1990 to approximately 31.0% today. While the rate of loss has slowed, net deforestation continues. China and India have actually increased forest cover through massive reforestation programs, partially offsetting tropical losses.',
+  ],
+  'rule-of-law': [
+    'The Rule of Law indicator from the World Bank measures perceptions of the extent to which agents have confidence in and abide by the rules of society: quality of contract enforcement, property rights, the police, and the courts, as well as the likelihood of crime and violence.',
+    'Nordic countries, New Zealand, and Switzerland score highest, reflecting institutional strength built over centuries. The lowest-scoring countries are typically conflict-affected or authoritarian states where the rule of law has broken down.',
+    'Rule of law is the single strongest institutional predictor of long-term economic development. Countries with strong rule of law attract more investment, have more productive economies, and experience less corruption. The World Bank research shows that a one-standard-deviation improvement in rule of law is associated with a 300% increase in per capita income in the long run.',
+  ],
 };
 
 // Slug → Indicator ID mapping for SEO-friendly URLs

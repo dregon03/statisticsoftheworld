@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T13:36:00Z",
-  "totalRuns": 8,
+  "lastRun": "2026-04-05T13:48:00Z",
+  "totalRuns": 9,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -25,8 +25,8 @@
     ],
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
-    "blogPostCount": 147,
-    "glossaryTermCount": 68,
+    "blogPostCount": 167,
+    "glossaryTermCount": 88,
     "comparisonEditorialCount": 102
   },
   "pendingWork": {
@@ -39,8 +39,8 @@
       "expand-homepage-editorial-to-1000-words",
       "add-internal-links-from-blog-posts-to-landing-pages",
       "add-comparison-links-from-country-economy-pages",
-      "add-20-more-glossary-terms",
-      "add-20-more-blog-posts",
+      "add-20-more-glossary-terms-round-2",
+      "add-20-more-blog-posts-round-2",
       "add-20-more-comparison-editorials",
       "create-year-in-review-2025-page",
       "create-economic-calendar-seo-page",
@@ -85,6 +85,7 @@
     "ALL pending by-country pages now complete — 37 indicator landing pages live",
     "ALL pending country economy pages complete — 60 country pages live",
     "Methodology page adds critical E-E-A-T trust signal — explains data sources, processing, limitations",
-    "Next priorities: more blog posts, glossary expansion, comparison editorials, more E-E-A-T pages"
+    "Next priorities: more blog posts, glossary expansion, comparison editorials, more E-E-A-T pages",
+    "Run 9 completed: +20 blog posts (167 total) + 20 glossary terms (88 total)"
   ]
 }

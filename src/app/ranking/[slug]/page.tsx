@@ -326,10 +326,37 @@ export default async function RankingPage({ params }: Props) {
 
   const data = await getIndicatorForAllCountries(config.id);
 
-  // Find related rankings
-  const related = Object.entries(SLUG_MAP)
-    .filter(([s]) => s !== slug)
-    .slice(0, 8);
+  // Find related rankings — semantically grouped
+  const RELATED_GROUPS: Record<string, string[]> = {
+    'gdp': ['gdp-per-capita', 'gdp-ppp', 'gdp-per-capita-ppp', 'gdp-growth', 'gni', 'gni-per-capita', 'population'],
+    'gdp-per-capita': ['gdp', 'gdp-per-capita-ppp', 'gni-per-capita', 'gdp-growth', 'gini-index', 'poverty-rate'],
+    'gdp-ppp': ['gdp', 'gdp-per-capita-ppp', 'gdp-growth', 'population'],
+    'gdp-per-capita-ppp': ['gdp-per-capita', 'gdp-ppp', 'gni-per-capita', 'gini-index'],
+    'gdp-growth': ['gdp', 'inflation-rate', 'unemployment-rate', 'trade-openness', 'fdi-inflows'],
+    'population': ['population-growth', 'fertility-rate', 'life-expectancy', 'urban-population', 'population-over-65', 'population-under-15', 'net-migration'],
+    'population-growth': ['population', 'fertility-rate', 'net-migration', 'urban-population'],
+    'inflation-rate': ['gdp-growth', 'unemployment-rate', 'current-account', 'government-debt'],
+    'unemployment-rate': ['youth-unemployment', 'inflation-rate', 'gdp-growth', 'gini-index', 'poverty-rate'],
+    'government-debt': ['tax-revenue', 'current-account', 'gdp', 'inflation-rate'],
+    'life-expectancy': ['infant-mortality', 'health-spending', 'fertility-rate', 'population', 'suicide-rate'],
+    'fertility-rate': ['population-growth', 'life-expectancy', 'population-under-15', 'population-over-65'],
+    'co2-emissions': ['renewable-energy', 'forest-area', 'trade-openness', 'gdp-per-capita'],
+    'military-spending': ['gdp', 'government-debt', 'health-spending', 'education-spending'],
+    'health-spending': ['life-expectancy', 'infant-mortality', 'education-spending', 'military-spending'],
+    'education-spending': ['health-spending', 'rd-spending', 'internet-users', 'youth-unemployment'],
+    'gini-index': ['poverty-rate', 'gdp-per-capita', 'unemployment-rate', 'education-spending'],
+  };
+  const relatedSlugs = RELATED_GROUPS[slug] || [];
+  const related = relatedSlugs
+    .filter(s => SLUG_MAP[s])
+    .map(s => [s, SLUG_MAP[s]] as [string, typeof SLUG_MAP[string]]);
+  // Fill up to 8 with other rankings if needed
+  if (related.length < 8) {
+    const remaining = Object.entries(SLUG_MAP)
+      .filter(([s]) => s !== slug && !relatedSlugs.includes(s))
+      .slice(0, 8 - related.length);
+    related.push(...remaining);
+  }
 
   const top = data[0];
   const bottom = data[data.length - 1];
@@ -601,6 +628,16 @@ export default async function RankingPage({ params }: Props) {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* Cross-links to overview pages */}
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Link href="/world-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">World Economy →</Link>
+          <Link href="/us-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">US Economy →</Link>
+          <Link href="/china-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">China Economy →</Link>
+          <Link href="/india-economy" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">India Economy →</Link>
+          <Link href="/gdp-by-country" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">GDP by Country →</Link>
+          <Link href="/world-population" className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-gray-50 transition text-[#475569]">World Population →</Link>
         </div>
 
         {/* Related blog articles — cross-link for SEO */}

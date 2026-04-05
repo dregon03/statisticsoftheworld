@@ -96,6 +96,7 @@ export default function RootLayout({
                   name: 'Statistics of the World',
                   url: 'https://statisticsoftheworld.com',
                   description: 'Free global statistics platform aggregating data from IMF, World Bank, WHO, FRED, and United Nations for 218 countries.',
+                  logo: 'https://statisticsoftheworld.com/favicon.ico',
                   sameAs: [
                     'https://x.com/sotwdata',
                     'https://bsky.app/profile/sotwdata.bsky.social',
@@ -105,6 +106,19 @@ export default function RootLayout({
                     email: 'statisticsoftheworldcontact@gmail.com',
                     contactType: 'customer service',
                   },
+                },
+                {
+                  '@type': 'SiteNavigationElement',
+                  name: ['Countries', 'Rankings', 'Compare', 'Markets', 'Calendar', 'Blog', 'API'],
+                  url: [
+                    'https://statisticsoftheworld.com/countries',
+                    'https://statisticsoftheworld.com/ranking/gdp',
+                    'https://statisticsoftheworld.com/compare',
+                    'https://statisticsoftheworld.com/markets',
+                    'https://statisticsoftheworld.com/calendar',
+                    'https://statisticsoftheworld.com/blog',
+                    'https://statisticsoftheworld.com/api-docs',
+                  ],
                 },
               ],
             }),

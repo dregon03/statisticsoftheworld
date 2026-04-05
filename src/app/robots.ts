@@ -6,6 +6,14 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
+        disallow: [
+          '/dashboard/',
+          '/pricing/success',
+          '/api/',
+          '/markets-test',
+          '/live',
+          '/vision',
+        ],
       },
       // AI crawlers — explicitly allowed for full indexing
       {

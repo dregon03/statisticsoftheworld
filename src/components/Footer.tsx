@@ -74,21 +74,25 @@ export default function Footer() {
             <p>Data from IMF, World Bank, FRED, UN COMTRADE, ForexFactory, Finnhub, Polymarket, and Alpha Vantage.</p>
             <p className="mt-1 text-white/25">Statistics of the World &copy; {new Date().getFullYear()}</p>
           </div>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
             <Link href="/countries" className="hover:text-white transition">Countries</Link>
             <Link href="/indicators" className="hover:text-white transition">Indicators</Link>
             <Link href="/compare" className="hover:text-white transition">Compare</Link>
+            <Link href="/ranking/gdp" className="hover:text-white transition">GDP Rankings</Link>
+            <Link href="/world-economy" className="hover:text-white transition">World Economy</Link>
+            <Link href="/us-economy" className="hover:text-white transition">US Economy</Link>
+            <Link href="/gdp-by-country" className="hover:text-white transition">GDP by Country</Link>
+            <Link href="/world-population" className="hover:text-white transition">World Population</Link>
             <Link href="/map" className="hover:text-white transition">Map</Link>
-            <Link href="/scatter" className="hover:text-white transition">Scatter</Link>
-            <Link href="/regions" className="hover:text-white transition">Regions</Link>
             <Link href="/calendar" className="hover:text-white transition">Calendar</Link>
-            <Link href="/credit-ratings" className="hover:text-white transition">Ratings</Link>
             <Link href="/markets" className="hover:text-white transition">Markets</Link>
-            <Link href="/markets/commodities" className="hover:text-white transition">Commodities</Link>
+            <Link href="/blog" className="hover:text-white transition">Blog</Link>
+            <Link href="/credit-ratings" className="hover:text-white transition">Ratings</Link>
             <Link href="/predictions" className="hover:text-white transition">Predictions</Link>
-            <Link href="/pricing" className="hover:text-white transition">Pricing</Link>
+            <Link href="/embed" className="hover:text-white transition">Embed</Link>
             <Link href="/api-docs" className="hover:text-white transition">API</Link>
-            <Link href="/ai" className="hover:text-white transition">AI</Link>
+            <Link href="/about" className="hover:text-white transition">About</Link>
+            <Link href="/pricing" className="hover:text-white transition">Pricing</Link>
             <Link href="/terms" className="hover:text-white transition">Terms</Link>
             <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
             <Link href="/contact" className="hover:text-white transition">Contact</Link>

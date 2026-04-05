@@ -563,6 +563,128 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
     related: ['current-account-balance', 'trade-balance', 'exchange-rate'],
     category: 'Trade',
   },
+
+  // ── ROUND 3: 20 MORE TERMS ──────────────────────
+  {
+    slug: 'austerity', term: 'Austerity',
+    definition: 'Government policy of reducing budget deficits through spending cuts, tax increases, or both, typically during or after a fiscal crisis.',
+    explanation: 'Austerity measures are controversial. Proponents argue they restore fiscal credibility and reduce debt; critics argue they deepen recessions by cutting demand when the economy is already weak. Greece, Spain, Portugal, and the UK implemented austerity after the 2008 crisis with mixed results.',
+    related: ['fiscal-policy', 'debt-to-gdp-ratio', 'recession'], category: 'Fiscal',
+  },
+  {
+    slug: 'capital-flight', term: 'Capital Flight',
+    definition: 'Rapid outflow of financial assets from a country, typically triggered by political instability, currency devaluation fears, or loss of investor confidence.',
+    explanation: 'Capital flight can trigger or worsen currency crises — as money leaves, the currency falls, which triggers more flight. Argentina, Turkey, and Russia have experienced severe capital flight episodes. Controls on capital outflows can slow flight but signal panic to markets.',
+    related: ['exchange-rate', 'current-account-balance', 'inflation-rate'], category: 'Finance',
+  },
+  {
+    slug: 'commodity-trap', term: 'Commodity Trap (Resource Curse)',
+    definition: 'The paradox where countries rich in natural resources often have slower economic growth, more corruption, and weaker institutions than resource-poor countries.',
+    explanation: 'Also called the "resource curse" — resource wealth can crowd out manufacturing (Dutch Disease), fund patronage and corruption, reduce incentives for institutional reform, and create volatility as commodity prices swing. Nigeria, Venezuela, and many African oil states illustrate the trap. Norway and Botswana are notable exceptions.',
+    related: ['dutch-disease', 'gdp-growth-rate', 'corruption-by-country'], category: 'Development',
+  },
+  {
+    slug: 'contagion', term: 'Financial Contagion',
+    definition: 'The spread of a financial crisis from one country or market to others, through trade links, investor sentiment, or shared vulnerabilities.',
+    explanation: 'The 1997 Asian Financial Crisis spread from Thailand to Indonesia, South Korea, and Malaysia in weeks. The 2008 crisis spread from US subprime mortgages to global banking. Contagion occurs through trade channels (one country\'s recession reduces demand for another\'s exports), financial channels (shared creditors pull money from all similar markets), and sentiment (investors flee all emerging markets regardless of fundamentals).',
+    related: ['recession', 'capital-flight', 'exchange-rate'], category: 'Finance',
+  },
+  {
+    slug: 'deflation', term: 'Deflation',
+    definition: 'A sustained decrease in the general price level — the opposite of inflation. Prices fall, often accompanied by falling wages and economic stagnation.',
+    explanation: 'Japan experienced deflation from the late 1990s to 2010s, creating a "lost decades" of stagnant growth. Deflation is dangerous because consumers delay purchases (expecting lower prices tomorrow), debtors face rising real debt burdens, and monetary policy hits the "zero lower bound" (can\'t cut rates below zero). Central banks fear deflation more than moderate inflation.',
+    related: ['inflation-rate', 'central-bank', 'monetary-policy'], category: 'Economy',
+  },
+  {
+    slug: 'emerging-market', term: 'Emerging Market',
+    definition: 'A country transitioning from low-income to middle-income status, with developing institutions, growing financial markets, and rapid economic change.',
+    explanation: 'The term was coined by IFC economist Antoine van Agtmael in 1981. Major emerging markets include China, India, Brazil, Mexico, Indonesia, and Turkey. They offer higher growth potential but greater risk than developed markets — currency volatility, political instability, and weaker institutions. MSCI maintains the most widely used EM index.',
+    related: ['gdp-growth-rate', 'foreign-direct-investment', 'middle-income-trap'], category: 'Development',
+  },
+  {
+    slug: 'fiscal-cliff', term: 'Fiscal Cliff',
+    definition: 'A sudden, sharp reduction in government spending or increase in taxation that could tip an economy into recession, typically caused by expiring legislation.',
+    explanation: 'The term gained prominence during the US fiscal crisis of late 2012, when simultaneous spending cuts and tax increases threatened to contract the economy. More broadly, it describes any abrupt fiscal tightening — scheduled subsidy removals, debt ceiling crises, or post-stimulus austerity can all create fiscal cliffs.',
+    related: ['fiscal-policy', 'austerity', 'recession'], category: 'Fiscal',
+  },
+  {
+    slug: 'soft-landing', term: 'Soft Landing',
+    definition: 'An economic scenario where a central bank raises interest rates enough to slow growth and reduce inflation without triggering a recession.',
+    explanation: 'Soft landings are historically rare — most hiking cycles end in recession. The Federal Reserve attempted a soft landing in 2023-2024 after raising rates from 0% to 5.5% to combat post-pandemic inflation. Success depends on precise calibration: tighten too much and you cause recession; too little and inflation persists.',
+    related: ['central-bank', 'interest-rate', 'inflation-rate', 'recession'], category: 'Economy',
+  },
+  {
+    slug: 'twin-deficits', term: 'Twin Deficits',
+    definition: 'When a country runs both a fiscal deficit (government spending exceeds revenue) and a current account deficit (imports exceed exports) simultaneously.',
+    explanation: 'The United States is the classic twin-deficit economy — the government borrows heavily (fiscal deficit) while the country imports far more than it exports (current account deficit). The twin deficits are linked through national accounting: when government saves less, the country must borrow from abroad. Twin deficits are sustainable for reserve currency issuers but dangerous for emerging markets.',
+    related: ['fiscal-policy', 'current-account-balance', 'trade-deficit'], category: 'Economy',
+  },
+  {
+    slug: 'debt-trap-diplomacy', term: 'Debt-Trap Diplomacy',
+    definition: 'The allegation that a creditor country extends excessive loans to developing nations to gain strategic leverage when borrowers cannot repay.',
+    explanation: 'The term is primarily associated with Chinese Belt and Road Initiative lending. Critics point to Sri Lanka\'s Hambantota Port (leased to China for 99 years after default) and debt distress in several African countries. China disputes the characterization, arguing it fills financing gaps that Western institutions won\'t. The debate reflects broader US-China geopolitical competition.',
+    related: ['external-debt-by-country', 'foreign-direct-investment'], category: 'Geopolitics',
+  },
+  {
+    slug: 'petrodollar', term: 'Petrodollar',
+    definition: 'US dollars earned through oil exports, particularly by OPEC nations. The petrodollar system refers to the global practice of pricing and trading oil in US dollars.',
+    explanation: 'Since the 1970s Saudi-US agreement, oil has been priced and traded globally in US dollars. This creates permanent demand for dollars, supporting reserve currency status. Saudi Arabia, UAE, Kuwait, and other exporters accumulate petrodollar surpluses that are recycled into US Treasury bonds and global investments. Challenges to this system (China buying oil in yuan) are closely watched.',
+    related: ['reserve-currency', 'exchange-rate', 'sovereign-wealth-fund'], category: 'Finance',
+  },
+  {
+    slug: 'demographic-transition', term: 'Demographic Transition',
+    definition: 'The shift from high birth rates and death rates (pre-industrial) to low birth rates and death rates (post-industrial), with rapid population growth during the transition.',
+    explanation: 'Every country undergoes this transition as it develops. Europe completed it over 150 years; East Asia did it in 50. Sub-Saharan Africa is in the middle. The transition creates a "demographic dividend" (falling dependency ratio) followed by aging challenges. Understanding where a country is in the transition is crucial for economic forecasting.',
+    related: ['fertility-rate', 'life-expectancy', 'population-growth-rate'], category: 'Demographics',
+  },
+  {
+    slug: 'misery-index', term: 'Misery Index',
+    definition: 'The sum of a country\'s unemployment rate and inflation rate — a simple measure of economic distress felt by ordinary citizens.',
+    explanation: 'Invented by economist Arthur Okun and popularized during the 1970s stagflation. A misery index above 20 indicates severe economic distress. Venezuela, Argentina, and Turkey have had some of the world\'s highest misery indices. The US peaked at 21.9 in 1980. Low misery indices (under 10) indicate comfortable economic conditions.',
+    related: ['inflation-rate', 'unemployment-rate', 'stagflation'], category: 'Economy',
+  },
+  {
+    slug: 'basket-of-goods', term: 'Basket of Goods',
+    definition: 'A fixed set of consumer products and services used to calculate the Consumer Price Index (CPI) and measure inflation.',
+    explanation: 'Statistical agencies survey prices of hundreds of items — food, housing, energy, transportation, clothing, healthcare, education — weighted by how much a typical household spends on each category. The basket is updated periodically to reflect changing consumption patterns (e.g., streaming services replacing cable TV). Different baskets can produce different inflation rates.',
+    related: ['consumer-price-index', 'inflation-rate', 'purchasing-power-parity'], category: 'Economy',
+  },
+  {
+    slug: 'structural-adjustment', term: 'Structural Adjustment Program (SAP)',
+    definition: 'Economic reforms — typically including privatization, deregulation, trade liberalization, and fiscal austerity — required by the IMF or World Bank as conditions for lending.',
+    explanation: 'SAPs were widely imposed on developing countries in the 1980s-90s, particularly in Africa and Latin America. They remain highly controversial: proponents say they correct unsustainable policies; critics argue they impose pain on the poor and override national sovereignty. Modern IMF programs use less prescriptive language but similar conditionality.',
+    related: ['austerity', 'debt-to-gdp-ratio', 'poverty-rate'], category: 'Development',
+  },
+  {
+    slug: 'currency-peg', term: 'Currency Peg (Fixed Exchange Rate)',
+    definition: 'A monetary policy where a country fixes its exchange rate to another currency (usually the US dollar or euro), rather than allowing it to float freely.',
+    explanation: 'Gulf states (Saudi Arabia, UAE, Qatar) peg to the dollar, providing stability for oil-denominated trade. Hong Kong maintains a dollar peg. Pegs provide predictability but remove monetary policy flexibility — the country must follow the anchor country\'s interest rate policy. Pegs can collapse spectacularly when economic conditions diverge (the Argentine peso board collapse in 2001).',
+    related: ['exchange-rate', 'central-bank', 'dollarization'], category: 'Fiscal',
+  },
+  {
+    slug: 'value-added-tax', term: 'Value-Added Tax (VAT)',
+    definition: 'A consumption tax levied at each stage of production on the value added to goods and services, ultimately borne by the end consumer.',
+    explanation: 'VAT is the most common form of consumption tax globally — over 160 countries use it. Rates range from 5% (Japan, Canada) to 27% (Hungary, the EU\'s highest). The US is the only major economy without a national VAT/GST. VAT is efficient (hard to evade compared to income tax) but regressive (takes a higher share of income from the poor). It typically generates 20-30% of government revenue.',
+    related: ['tax-revenue-by-country', 'fiscal-policy'], category: 'Fiscal',
+  },
+  {
+    slug: 'special-economic-zone', term: 'Special Economic Zone (SEZ)',
+    definition: 'A geographic area within a country that operates under different economic regulations — typically lower taxes, lighter regulation, and streamlined customs — to attract foreign investment.',
+    explanation: 'China\'s Shenzhen SEZ, established in 1980, is the most famous success story — transforming a fishing village into a $400B tech metropolis. SEZs now exist in over 140 countries with 5,000+ zones worldwide. They work best when they create genuine comparative advantage (infrastructure, skills) rather than just tax giveaways. Ethiopia, Vietnam, and Bangladesh have used SEZs to jumpstart manufacturing.',
+    related: ['foreign-direct-investment', 'nearshoring', 'gdp-growth-rate'], category: 'Trade',
+  },
+  {
+    slug: 'green-bond', term: 'Green Bond',
+    definition: 'A fixed-income financial instrument specifically earmarked to fund climate and environmental projects — renewable energy, energy efficiency, clean transportation, and sustainable infrastructure.',
+    explanation: 'The green bond market has grown from $3 billion in 2012 to over $500 billion annually. The EU, World Bank, and major corporations are leading issuers. Green bonds typically offer similar returns to conventional bonds but attract ESG-focused investors. Certification standards (Climate Bonds Initiative, EU Green Bond Standard) prevent "greenwashing." Sovereign green bonds have been issued by France, Germany, and the UK.',
+    related: ['renewable-energy-by-country', 'co2-emissions-by-country', 'sovereign-wealth-fund'], category: 'Finance',
+  },
+  {
+    slug: 'gig-economy', term: 'Gig Economy',
+    definition: 'A labor market characterized by short-term, flexible, freelance, or independent contractor work rather than traditional permanent employment.',
+    explanation: 'Platform companies like Uber, DoorDash, Upwork, and Fiverr have expanded the gig economy in developed countries. In developing countries, informal work has always dominated — the formal gig economy is layered on top. The gig economy offers flexibility but typically lacks benefits, job security, and career progression. Regulatory responses vary: the EU is pushing for platform worker protections, while the US remains more laissez-faire.',
+    related: ['unemployment-rate', 'labor-force-participation'], category: 'Labor',
+  },
 ];
 
 export function getGlossaryTerm(slug: string): GlossaryTerm | undefined {

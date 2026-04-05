@@ -205,6 +205,34 @@ const EDITORIAL: Record<string, string[]> = {
     'Nordic countries, New Zealand, and Switzerland score highest, reflecting institutional strength built over centuries. The lowest-scoring countries are typically conflict-affected or authoritarian states where the rule of law has broken down.',
     'Rule of law is the single strongest institutional predictor of long-term economic development. Countries with strong rule of law attract more investment, have more productive economies, and experience less corruption. The World Bank research shows that a one-standard-deviation improvement in rule of law is associated with a 300% increase in per capita income in the long run.',
   ],
+  'air-freight': [
+    'Air freight volume measures the total weight of cargo transported by air in million ton-kilometers. While air freight accounts for less than 1% of global trade by volume, it represents over 35% by value — reflecting the high-value, time-sensitive nature of goods that travel by air: electronics, pharmaceuticals, perishable foods, and e-commerce shipments.',
+    'The United States, China, and the UAE (driven by Dubai\'s role as a global logistics hub) handle the most air freight. The sector is dominated by dedicated cargo carriers (FedEx, UPS, DHL) and the belly cargo capacity of passenger airlines. COVID-19 temporarily boosted air freight demand as supply chains shifted from sea to air for speed.',
+  ],
+  'gni': [
+    'Gross National Income (GNI) measures the total income earned by a country\'s residents, regardless of where that income is generated. Unlike GDP, which counts economic activity within borders, GNI includes income earned abroad by citizens and excludes income earned domestically by foreigners. The data comes from the World Bank.',
+    'For most countries, GNI and GDP are similar. But for countries with large overseas worker populations (Philippines, Mexico — remittances boost GNI above GDP) or countries hosting many multinational headquarters (Ireland, Luxembourg — profits flow out, so GDP exceeds GNI), the difference is significant. Ireland\'s GDP is roughly 60% higher than its GNI due to multinational profit shifting.',
+  ],
+  'gni-per-capita': [
+    'GNI per capita divides gross national income by population, providing a per-person income measure. The World Bank uses GNI per capita as the primary criterion for classifying countries into income groups: low-income (below $1,145), lower-middle ($1,146–$4,515), upper-middle ($4,516–$14,005), and high-income (above $14,005).',
+    'These income classifications determine eligibility for concessional lending from the World Bank and other development institutions. When a country crosses the high-income threshold — as South Korea, Chile, and several Gulf states have done — it "graduates" from development assistance eligibility.',
+  ],
+  'youth-dependency-ratio': [
+    'The youth dependency ratio measures the number of people aged 0–14 relative to the working-age population (15–64). A ratio of 50% means there are 50 dependents for every 100 working-age adults. High ratios indicate large youth populations that require education and healthcare investment; low ratios indicate aging societies.',
+    'Sub-Saharan Africa has the highest ratios globally, often exceeding 80%, reflecting high fertility rates. Japan and South Korea have the lowest at roughly 20%, reflecting decades of low fertility. The "demographic dividend" occurs when the ratio falls rapidly — fewer dependents per worker means more resources for investment and consumption.',
+  ],
+  'rule-of-law-percentile': [
+    'The Rule of Law Percentile Rank indicates a country\'s position relative to all other countries, on a scale from 0 (weakest) to 100 (strongest). It is derived from the World Bank Worldwide Governance Indicators and aggregates dozens of data sources including surveys, expert assessments, and NGO reports.',
+    'Nordic countries and New Zealand consistently score above 95th percentile. Countries below the 10th percentile are typically conflict-affected states with collapsed governance. The percentile format makes it easier to compare across countries than the raw governance score.',
+  ],
+  'imports': [
+    'Total imports of goods and services in current USD measures the value of all products and services a country purchases from abroad. Import volumes reflect domestic demand, exchange rates, and trade policy. The data comes from the World Bank using national accounts and balance of payments data.',
+    'The United States is the world\'s largest importer at over $3.5 trillion annually, followed by China, Germany, and Japan. Import composition reveals economic structure: developed countries import more manufactured goods and services, while developing countries import more capital equipment and intermediate goods for their manufacturing sectors.',
+  ],
+  'household-consumption': [
+    'Household final consumption expenditure as a share of GDP measures what portion of economic output is consumed by households — spending on food, housing, transportation, healthcare, education, and other goods and services. The data comes from the World Bank using national accounts methodology.',
+    'The United States has one of the highest household consumption shares at roughly 68% of GDP, reflecting its consumer-driven economy. China\'s household consumption share is only about 38% — unusually low even for a developing country — reflecting high savings rates, investment-led growth, and relatively weak social safety nets that discourage spending.',
+  ],
 };
 
 // Slug → Indicator ID mapping for SEO-friendly URLs

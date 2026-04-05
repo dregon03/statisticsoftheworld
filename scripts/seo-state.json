@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T13:24:00Z",
-  "totalRuns": 7,
+  "lastRun": "2026-04-05T13:36:00Z",
+  "totalRuns": 8,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -20,7 +20,8 @@
       "fertility-rate", "health-spending", "corruption", "poverty-rate", "homicide-rate",
       "education-spending", "trade", "internet-users", "renewable-energy", "gini-index", "tourism",
       "fdi", "remittances", "youth-unemployment", "urban-population", "gdp-ppp",
-      "birth-rate", "death-rate", "population-density", "tax-revenue", "external-debt"
+      "birth-rate", "death-rate", "population-density", "tax-revenue", "external-debt",
+      "electricity-access", "forest-coverage", "government-spending", "savings-rate", "investment-rate"
     ],
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
@@ -30,15 +31,10 @@
   },
   "pendingWork": {
     "countryEconomyPages": [],
-    "byCountryPages": [
-      "electricity-access-by-country", "forest-coverage-by-country",
-      "government-spending-by-country", "savings-rate-by-country",
-      "investment-rate-by-country"
-    ],
+    "byCountryPages": [],
     "contentImprovements": [
       "add-breadcrumblist-schema-to-all-new-pages",
       "add-visible-last-updated-dates-everywhere",
-      "create-methodology-page",
       "create-data-sources-page",
       "expand-homepage-editorial-to-1000-words",
       "add-internal-links-from-blog-posts-to-landing-pages",
@@ -84,6 +80,11 @@
     "Run 6 completed: added FDI, remittances, youth unemployment, urban population, GDP PPP by-country pages (27 total by-country pages)",
     "Run 7 completed: final 5 country pages (Kuwait, Oman, Sri Lanka, Myanmar, Cambodia = 60 total) + 5 by-country pages (birth rate, death rate, density, tax revenue, external debt = 32 total)",
     "ALL pending country economy pages now complete — 60 country pages covering every major/mid-size economy",
-    "Next priorities: remaining by-country pages, content improvements (methodology, E-E-A-T), blog posts"
+    "Next priorities: remaining by-country pages, content improvements (methodology, E-E-A-T), blog posts",
+    "Run 8 completed: final 5 by-country pages (37 total) + methodology page for E-E-A-T",
+    "ALL pending by-country pages now complete — 37 indicator landing pages live",
+    "ALL pending country economy pages complete — 60 country pages live",
+    "Methodology page adds critical E-E-A-T trust signal — explains data sources, processing, limitations",
+    "Next priorities: more blog posts, glossary expansion, comparison editorials, more E-E-A-T pages"
   ]
 }

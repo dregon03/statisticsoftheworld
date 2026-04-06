@@ -13,6 +13,10 @@ export default function robots(): MetadataRoute.Robots {
           '/markets-test',
           '/live',
           '/vision',
+          '/indicator/',
+          '/chart/',
+          '/scatter/',
+          '/heatmap/',
         ],
       },
       // AI crawlers — explicitly allowed for full indexing

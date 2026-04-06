@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { INDICATORS, formatValue } from '@/lib/data';
+import { formatValue } from '@/lib/data';
 import Flag from '@/app/Flag';
 import ExportButton from '@/components/ExportButton';
 import Sparkline from '@/components/Sparkline';

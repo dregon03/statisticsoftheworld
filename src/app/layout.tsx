@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import AskSOTW from '@/components/AskSOTW';
+import LazyAskSOTW from '@/components/LazyAskSOTW';
 
 const GA_MEASUREMENT_ID = 'G-HT0C0WQXM5';
 
@@ -125,7 +125,7 @@ export default function RootLayout({
           }}
         />
         {children}
-        <AskSOTW />
+        <LazyAskSOTW />
       </body>
     </html>
   );

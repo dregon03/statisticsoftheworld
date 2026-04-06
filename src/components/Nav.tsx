@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import SearchModal from './SearchModal';
+import dynamic from 'next/dynamic';
+
+const SearchModal = dynamic(() => import('./SearchModal'), {
+  ssr: false,
+  loading: () => null,
+});
 
 const NAV_ITEMS = [
   { href: '/', label: 'Home' },
@@ -34,7 +39,7 @@ export default function Nav() {
       <header className="sticky top-0 bg-[#0d1b2a]/[.97] backdrop-blur z-50">
         <div className="max-w-[1200px] mx-auto px-4 h-[52px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/icon-192.png" alt="SOTW" width={26} height={26} className="rounded" />
+            <img src="/icon-192.png" alt="SOTW" width={26} height={26} className="rounded" loading="eager" fetchPriority="high" />
             <span className="font-bold text-[16px] text-white tracking-tight">Statistics of the World</span>
           </Link>
           <nav className="flex items-center gap-0.5">

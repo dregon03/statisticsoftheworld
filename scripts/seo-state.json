@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T14:48:00Z",
-  "totalRuns": 13,
+  "lastRun": "2026-04-05T15:00:00Z",
+  "totalRuns": 14,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -25,9 +25,9 @@
     ],
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
-    "blogPostCount": 207,
+    "blogPostCount": 227,
     "glossaryTermCount": 108,
-    "comparisonEditorialCount": 117
+    "comparisonEditorialCount": 136
   },
   "pendingWork": {
     "countryEconomyPages": [],
@@ -87,6 +87,7 @@
     "Run 10 completed: +15 comparison editorials (117 total)",
     "Run 11 completed: expanded homepage editorial (400+ words macro overview with internal links) + 20 more blog posts (187 total)",
     "Run 12 completed: data-sources page (E-E-A-T) + 20 more glossary terms (108 total)",
-    "Run 13 completed: +20 blog posts (207 total) + expanded blog template cross-links (8→14 links to landing pages)"
+    "Run 13 completed: +20 blog posts (207 total) + expanded blog template cross-links (8→14 links to landing pages)",
+    "Run 14 completed: +20 blog posts (227 total) + 19 comparison editorials (136 total)"
   ]
 }

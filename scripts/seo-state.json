@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T15:24:00Z",
-  "totalRuns": 16,
+  "lastRun": "2026-04-05T15:36:00Z",
+  "totalRuns": 17,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -26,8 +26,8 @@
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
     "blogPostCount": 247,
-    "glossaryTermCount": 128,
-    "comparisonEditorialCount": 136
+    "glossaryTermCount": 148,
+    "comparisonEditorialCount": 154
   },
   "pendingWork": {
     "countryEconomyPages": [],
@@ -89,6 +89,7 @@
     "Run 13 completed: +20 blog posts (207 total) + expanded blog template cross-links (8→14 links to landing pages)",
     "Run 14 completed: +20 blog posts (227 total) + 19 comparison editorials (136 total)",
     "Run 15 completed: economic calendar guide page + 20 glossary terms (128 total)",
-    "Run 16 completed: +20 blog posts (247 total) — health, education, environment topics expanding topical coverage"
+    "Run 16 completed: +20 blog posts (247 total) — health, education, environment topics expanding topical coverage",
+    "Run 17 completed: +18 comparison editorials (154 total) + 20 glossary terms (148 total)"
   ]
 }

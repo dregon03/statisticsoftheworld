@@ -7,6 +7,7 @@ import Flag from '../../Flag';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { getCleanCountryIndicatorUrl } from '@/lib/country-slugs';
+import RankingExport from '@/components/RankingExport';
 
 // Expert editorial content for top ranking pages — what FedPay does well
 const EDITORIAL: Record<string, string[]> = {
@@ -582,6 +583,13 @@ export default async function RankingPage({ params }: Props) {
             </tbody>
           </table>
         </div>
+
+        {/* Data download */}
+        <RankingExport
+          title={config.title}
+          indicatorLabel={ind.label}
+          data={data.map(d => ({ country: d.country, value: d.value, year: d.year }))}
+        />
 
         {/* Expert editorial content — the FedPay pattern */}
         {EDITORIAL[slug] && (

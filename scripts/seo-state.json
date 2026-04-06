@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T14:24:00Z",
-  "totalRuns": 11,
+  "lastRun": "2026-04-05T14:36:00Z",
+  "totalRuns": 12,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -26,7 +26,7 @@
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
     "blogPostCount": 187,
-    "glossaryTermCount": 88,
+    "glossaryTermCount": 108,
     "comparisonEditorialCount": 117
   },
   "pendingWork": {
@@ -35,10 +35,9 @@
     "contentImprovements": [
       "add-breadcrumblist-schema-to-all-new-pages",
       "add-visible-last-updated-dates-everywhere",
-      "create-data-sources-page",
       "add-internal-links-from-blog-posts-to-landing-pages",
       "add-comparison-links-from-country-economy-pages",
-      "add-20-more-glossary-terms-round-2",
+      "add-20-more-glossary-terms-round-3",
       "add-20-more-blog-posts-round-3",
       "add-20-more-comparison-editorials",
       "create-year-in-review-2025-page",
@@ -87,6 +86,7 @@
     "Next priorities: more blog posts, glossary expansion, comparison editorials, more E-E-A-T pages",
     "Run 9 completed: +20 blog posts (167 total) + 20 glossary terms (88 total)",
     "Run 10 completed: +15 comparison editorials (117 total)",
-    "Run 11 completed: expanded homepage editorial (400+ words macro overview with internal links) + 20 more blog posts (187 total)"
+    "Run 11 completed: expanded homepage editorial (400+ words macro overview with internal links) + 20 more blog posts (187 total)",
+    "Run 12 completed: data-sources page (E-E-A-T) + 20 more glossary terms (108 total)"
   ]
 }

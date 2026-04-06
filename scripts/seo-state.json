@@ -1,6 +1,6 @@
 {
-  "lastRun": "2026-04-05T15:00:00Z",
-  "totalRuns": 14,
+  "lastRun": "2026-04-05T15:12:00Z",
+  "totalRuns": 15,
   "completedWork": {
     "countryEconomyPages": [
       "us", "china", "india", "japan", "germany", "uk", "france", "brazil", "canada", "russia",
@@ -26,7 +26,7 @@
     "groupPages": ["brics", "g7", "g20", "eu", "asean"],
     "superlativePages": ["richest", "poorest", "safest", "most-populous", "largest-economies"],
     "blogPostCount": 227,
-    "glossaryTermCount": 108,
+    "glossaryTermCount": 128,
     "comparisonEditorialCount": 136
   },
   "pendingWork": {
@@ -36,11 +36,10 @@
       "add-breadcrumblist-schema-to-all-new-pages",
       "add-visible-last-updated-dates-everywhere",
       "add-comparison-links-from-country-economy-pages",
-      "add-20-more-glossary-terms-round-3",
+      "add-20-more-glossary-terms-round-4",
       "add-20-more-blog-posts-round-4",
       "add-20-more-comparison-editorials",
       "create-year-in-review-2025-page",
-      "create-economic-calendar-seo-page",
       "add-table-of-contents-to-long-pages",
       "add-author-schema-for-eeat",
       "create-about-team-page-for-eeat"
@@ -88,6 +87,7 @@
     "Run 11 completed: expanded homepage editorial (400+ words macro overview with internal links) + 20 more blog posts (187 total)",
     "Run 12 completed: data-sources page (E-E-A-T) + 20 more glossary terms (108 total)",
     "Run 13 completed: +20 blog posts (207 total) + expanded blog template cross-links (8→14 links to landing pages)",
-    "Run 14 completed: +20 blog posts (227 total) + 19 comparison editorials (136 total)"
+    "Run 14 completed: +20 blog posts (227 total) + 19 comparison editorials (136 total)",
+    "Run 15 completed: economic calendar guide page + 20 glossary terms (128 total)"
   ]
 }

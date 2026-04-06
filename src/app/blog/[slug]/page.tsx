@@ -14,15 +14,36 @@ export async function generateStaticParams() {
   return BLOG_POSTS.map(p => ({ slug: p.slug }));
 }
 
+// High-value indicators that get real search volume — only these blog posts should be indexed
+const INDEXABLE_INDICATORS = new Set([
+  'IMF.NGDPD', 'IMF.NGDP_RPCH', 'IMF.NGDPDPC', 'IMF.PPPGDP', 'IMF.PPPPC', 'IMF.PPPSH',
+  'IMF.PCPIPCH', 'IMF.LUR', 'IMF.GGXWDG_NGDP', 'IMF.BCA_NGDPD', 'IMF.NI_GDP', 'IMF.NGS_GDP',
+  'SP.POP.TOTL', 'SP.POP.GROW', 'SP.DYN.LE00.IN', 'SP.DYN.LE00.FE.IN', 'SP.DYN.LE00.MA.IN',
+  'SP.DYN.TFRT.IN', 'SP.URB.TOTL.IN.ZS', 'SP.POP.65UP.TO.ZS', 'SP.POP.0014.TO.ZS',
+  'EN.ATM.CO2E.PC', 'EG.FEC.RNEW.ZS', 'SH.XPD.CHEX.GD.ZS', 'SH.DYN.MORT',
+  'VC.IHR.PSRC.P5', 'SI.POV.GINI', 'SI.POV.DDAY', 'MS.MIL.XPND.GD.ZS',
+  'SE.XPD.TOTL.GD.ZS', 'SL.UEM.1524.ZS', 'SL.TLF.CACT.FE.ZS',
+  'NE.TRD.GNFS.ZS', 'BX.KLT.DINV.WD.GD.ZS', 'NY.GDP.TOTL.RT.ZS',
+  'GC.TAX.TOTL.GD.ZS', 'CC.EST', 'RL.EST', 'ST.INT.ARVL',
+  'IT.NET.USER.ZS', 'SM.POP.NETM', 'EN.POP.DNST', 'AG.LND.FRST.ZS',
+  'NY.GNP.PCAP.CD', 'NY.GNP.MKTP.CD', 'NV.IND.TOTL.ZS', 'NV.SRV.TOTL.ZS', 'NV.AGR.TOTL.ZS',
+  'SP.DYN.CBRT.IN', 'SP.DYN.CDRT.IN', 'SL.GDP.PCAP.EM.KD',
+  'SH.MED.PHYS.ZS', 'SH.STA.MMRT', 'SE.ADT.LITR.ZS', 'SH.STA.SUIC.P5',
+]);
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getBlogPost(slug);
   if (!post) return { title: 'Not Found' };
 
+  // Noindex blog posts for niche indicators — concentrates authority on high-value pages
+  const shouldIndex = INDEXABLE_INDICATORS.has(post.indicatorId);
+
   return {
     title: `${post.title} (2026)`,
     description: post.description,
     alternates: { canonical: `https://statisticsoftheworld.com/blog/${slug}` },
+    ...(shouldIndex ? {} : { robots: { index: false, follow: true } }),
     openGraph: {
       title: `${post.title} (2026)`,
       description: post.description,

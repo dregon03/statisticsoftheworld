@@ -319,6 +319,29 @@ export default async function CountryPage({ params }: Props) {
 
         {/* Similar Economies — internal linking mesh */}
         <SimilarCountries countryId={id} region={country.region} incomeLevel={country.incomeLevel} />
+
+        {/* Cross-links to landing pages — helps Google discover new pages from already-indexed country profiles */}
+        <div className="mt-10 border-t border-[#d5dce6] pt-8">
+          <h2 className="text-[16px] font-semibold mb-3 text-[#0d1b2a]">Explore Global Data</h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: '/gdp-by-country', label: 'GDP by Country' },
+              { href: '/gdp-per-capita-by-country', label: 'GDP per Capita' },
+              { href: '/inflation-by-country', label: 'Inflation Rates' },
+              { href: '/unemployment-by-country', label: 'Unemployment' },
+              { href: '/population-by-country', label: 'Population' },
+              { href: '/life-expectancy-by-country', label: 'Life Expectancy' },
+              { href: '/debt-by-country', label: 'Government Debt' },
+              { href: '/largest-economies', label: 'Largest Economies' },
+              { href: '/richest-countries', label: 'Richest Countries' },
+              { href: '/world-economy', label: 'World Economy' },
+              { href: '/g7-economy', label: 'G7' },
+              { href: '/brics-economy', label: 'BRICS' },
+            ].map(l => (
+              <Link key={l.href} href={l.href} className="text-[13px] px-3 py-1.5 border border-[#d5dce6] rounded-lg hover:bg-[#f8f9fb] text-[#475569] hover:text-[#0d1b2a] transition">{l.label} →</Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       <Footer />

@@ -230,13 +230,19 @@ export default async function BlogPostPage({ params }: Props) {
           <h2 className="text-[16px] font-semibold mb-3">Explore More Data</h2>
           <div className="flex flex-wrap gap-2">
             {[
-              { href: '/ranking/gdp', label: 'GDP Rankings' },
-              { href: '/ranking/population', label: 'Population Rankings' },
-              { href: '/ranking/inflation-rate', label: 'Inflation Rankings' },
-              { href: '/ranking/gdp-per-capita', label: 'GDP per Capita' },
-              { href: '/ranking/life-expectancy', label: 'Life Expectancy' },
-              { href: '/compare/united-states-vs-china', label: 'US vs China' },
-              { href: '/compare/china-vs-india', label: 'China vs India' },
+              { href: '/largest-economies', label: 'Largest Economies' },
+              { href: '/richest-countries', label: 'Richest Countries' },
+              { href: '/gdp-by-country', label: 'GDP by Country' },
+              { href: '/gdp-per-capita-by-country', label: 'GDP per Capita' },
+              { href: '/inflation-by-country', label: 'Inflation' },
+              { href: '/population-by-country', label: 'Population' },
+              { href: '/unemployment-by-country', label: 'Unemployment' },
+              { href: '/life-expectancy-by-country', label: 'Life Expectancy' },
+              { href: '/g7-economy', label: 'G7' },
+              { href: '/brics-economy', label: 'BRICS' },
+              { href: '/us-economy', label: 'US Economy' },
+              { href: '/china-economy', label: 'China Economy' },
+              { href: '/world-economy', label: 'World Economy' },
               { href: '/countries', label: 'All Countries' },
             ].map(l => (
               <Link key={l.href} href={l.href} className="px-3 py-1.5 bg-[#f1f5f9] border border-[#d5dce6] rounded-lg text-[12px] text-[#475569] hover:text-[#0d1b2a] transition">

@@ -171,6 +171,28 @@ export default async function Home() {
           </div>
         </div>
 
+        {/* Deep editorial for SEO authority */}
+        <div className="grid md:grid-cols-2 gap-8 mb-10">
+          <div className="space-y-4">
+            <h3 className="text-[18px] font-semibold text-[#0d1b2a]">The Global Economy in 2026</h3>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              The <Link href="/world-economy" className="text-[#0066cc] hover:underline">world economy</Link> in 2026 is worth over $110 trillion in nominal GDP. The <Link href="/us-economy" className="text-[#0066cc] hover:underline">United States</Link> remains the largest economy at $29+ trillion, followed by <Link href="/china-economy" className="text-[#0066cc] hover:underline">China</Link> ($19+ trillion) and <Link href="/germany-economy" className="text-[#0066cc] hover:underline">Germany</Link>. In <Link href="/gdp-ppp-by-country" className="text-[#0066cc] hover:underline">purchasing power parity</Link> terms, China&apos;s economy is substantially larger than America&apos;s, and <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link> ranks third — ahead of <Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link>. The <Link href="/g7-economy" className="text-[#0066cc] hover:underline">G7</Link> accounts for roughly 43% of global GDP, while <Link href="/brics-economy" className="text-[#0066cc] hover:underline">BRICS</Link> represents about 35%.
+            </p>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              Global <Link href="/inflation-by-country" className="text-[#0066cc] hover:underline">inflation</Link> has moderated from the 2022-2023 peaks but remains above target in many countries. Central banks including the Federal Reserve, ECB, and Bank of England have raised interest rates to multi-decade highs. <Link href="/unemployment-by-country" className="text-[#0066cc] hover:underline">Unemployment</Link> varies enormously — from under 2% in East Asian economies to over 30% in <Link href="/south-africa-economy" className="text-[#0066cc] hover:underline">South Africa</Link>. Government <Link href="/debt-by-country" className="text-[#0066cc] hover:underline">debt</Link> has risen to historically high levels following pandemic-era stimulus spending.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-[18px] font-semibold text-[#0d1b2a]">Key Economic Trends</h3>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              Several structural trends are reshaping the global economy: the US-China technology rivalry, supply chain diversification (nearshoring to <Link href="/mexico-economy" className="text-[#0066cc] hover:underline">Mexico</Link>, <Link href="/vietnam-economy" className="text-[#0066cc] hover:underline">Vietnam</Link>, and <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link>), the energy transition toward <Link href="/renewable-energy-by-country" className="text-[#0066cc] hover:underline">renewables</Link>, demographic divergence between aging advanced economies and young emerging markets, and the rise of artificial intelligence as a productivity driver.
+            </p>
+            <p className="text-[15px] text-[#374151] leading-[1.8]">
+              The <Link href="/richest-countries" className="text-[#0066cc] hover:underline">richest countries</Link> (GDP per capita above $50,000) are concentrated in North America, Western Europe, and East Asia. The <Link href="/poorest-countries" className="text-[#0066cc] hover:underline">poorest</Link> are predominantly in sub-Saharan Africa, where rapid <Link href="/population-by-country" className="text-[#0066cc] hover:underline">population growth</Link> outpaces economic development. <Link href="/gini-index-by-country" className="text-[#0066cc] hover:underline">Income inequality</Link> remains one of the defining challenges — both between and within countries. For deeper analysis, explore our <Link href="/methodology" className="text-[#0066cc] hover:underline">methodology</Link> page.
+            </p>
+          </div>
+        </div>
+
         {/* Quick links to top ranking pages */}
         <div className="mb-10">
           <h3 className="text-[18px] font-semibold text-[#0d1b2a] mb-4">Popular Rankings</h3>

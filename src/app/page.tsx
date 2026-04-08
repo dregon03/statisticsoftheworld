@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Statistics of the World — GDP, Population & Economic Data for 218 Countries (2026)',
   description: 'Compare GDP, population, inflation, unemployment, and 440+ economic indicators for 218 countries. Interactive charts, historical data from IMF & World Bank. Free API.',
   alternates: {
-    canonical: 'https://statisticsoftheworld.com',
+    canonical: 'https://statisticsoftheworld.com/',
   },
   openGraph: {
     title: 'Statistics of the World — Every Country, Every Indicator',

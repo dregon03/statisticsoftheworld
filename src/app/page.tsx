@@ -7,8 +7,8 @@ import HeroTabs from '@/components/HeroTabs';
 import HomeTable from '@/components/HomeTable';
 
 export const metadata: Metadata = {
-  title: 'Statistics of the World — GDP, Population & Economic Data for 218 Countries (2026)',
-  description: 'Compare GDP, population, inflation, unemployment, and 440+ economic indicators for 218 countries. Interactive charts, historical data from IMF & World Bank. Free API.',
+  title: 'Statistics of the World — Global Statistics, World Data & Country Indicators (2026)',
+  description: 'World statistics and global data for 218 countries. Compare GDP, population, inflation, and 440+ country statistics with interactive charts. Free data from IMF, World Bank & WHO.',
   alternates: {
     canonical: 'https://statisticsoftheworld.com/',
   },

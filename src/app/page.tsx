@@ -76,6 +76,7 @@ export default async function Home() {
         name: 'Statistics of the World — Global Economic Data',
         description: 'Compare GDP, population, inflation, and 440+ indicators for 218 countries.',
         url: 'https://statisticsoftheworld.com',
+        dateModified: new Date().toISOString().split('T')[0],
       },
       {
         '@type': 'Dataset',
@@ -148,7 +149,10 @@ export default async function Home() {
 
       {/* SEO content section — crawlable text for Google */}
       <section className="max-w-[1100px] mx-auto px-6 py-12">
-        <h2 className="text-[24px] font-bold text-[#0d1b2a] mb-6">Global Economic Data — Free Access to 440+ Indicators</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-[24px] font-bold text-[#0d1b2a]">Global Economic Data — Free Access to 440+ Indicators</h2>
+          <span className="text-[13px] text-[#64748b] whitespace-nowrap">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+        </div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-10">
           <div className="space-y-4">

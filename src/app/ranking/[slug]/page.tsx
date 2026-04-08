@@ -439,6 +439,7 @@ export default async function RankingPage({ params }: Props) {
         },
         provider: { '@type': 'Organization', name: 'Statistics of the World', url: 'https://statisticsoftheworld.com' },
         isAccessibleForFree: true,
+        dateModified: new Date().toISOString().split('T')[0],
         distribution: {
           '@type': 'DataDownload',
           encodingFormat: 'application/json',

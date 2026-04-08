@@ -101,6 +101,7 @@ export default async function CountryPage({ params }: Props) {
         '@type': 'Country',
         name: country.name,
         url: `https://statisticsoftheworld.com${getCleanCountryUrl(id)}`,
+        dateModified: new Date().toISOString().split('T')[0],
         ...(country.capitalCity && { containsPlace: { '@type': 'City', name: country.capitalCity } }),
         additionalProperty: [
           ...(gdp ? [{ '@type': 'PropertyValue', name: 'GDP (USD Billions)', value: gdp.value, unitCode: 'USD' }] : []),

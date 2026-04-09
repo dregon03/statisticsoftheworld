@@ -1,5 +1,14 @@
 @AGENTS.md
 
+# Backlink System
+
+An automated backlink-building system lives in `backlinks/`. Read `backlinks/BACKLINK-AGENT.md` for full instructions.
+- **Tracker**: `backlinks/tracker.json` — tracks all posts, rate limits, and progress
+- **Templates**: `backlinks/content-templates.json` — humanized content templates per platform
+- **Agent instructions**: `backlinks/BACKLINK-AGENT.md` — complete autonomous agent playbook
+- **Goal**: 1,000,000 backlinks. Current progress tracked in tracker.json metadata.
+- **Key rule**: ALWAYS search each platform for existing SOTW mentions before posting. Never duplicate.
+
 # Deployment
 
 - **Website (Next.js)**: Docker container on Hetzner VPS (5.161.56.146) via Coolify. NOT on Vercel.

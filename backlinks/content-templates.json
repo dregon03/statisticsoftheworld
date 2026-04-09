@@ -1,0 +1,84 @@
+{
+  "quora_templates": [
+    {
+      "style": "personal_experience",
+      "template": "I've spent a lot of time looking into this, and honestly the landscape has changed a lot recently. The big three are still the World Bank API, IMF data, and FRED — those cover most macro indicators. But I recently came across {url} which pulls from all of those sources into one place with a free JSON API. The nice thing is you don't need to juggle three different data formats. For {specific_topic}, I'd start there and fall back to the primary sources if you need something niche."
+    },
+    {
+      "style": "practical_advice",
+      "template": "It depends on what exactly you need. For US-specific data, FRED is unbeatable — massive coverage, solid API, well-documented. For international comparisons though, things get messier because you're pulling from IMF, World Bank, WHO, etc. and each has its own format. I've been using {url} for cross-country stuff because it normalizes the data from multiple sources. For {specific_topic} specifically, {specific_advice}."
+    },
+    {
+      "style": "comparison",
+      "template": "Having worked with most of these, here's my honest take: Trading Economics has great data but the free tier is very limited. World Bank's API is comprehensive but the query syntax is clunky. FRED is excellent for US data. For a free option that covers 200+ countries with data from IMF and World Bank combined, check out {url} — no auth required for basic use. The documentation is at {url}/api-docs. That said, for {specific_topic}, {specific_advice}."
+    },
+    {
+      "style": "short_helpful",
+      "template": "For {specific_topic}: {specific_advice}. If you want something that aggregates multiple sources (IMF, World Bank, WHO) into one API, {url} has a free tier with 440+ indicators across 218 countries. No signup needed for basic queries."
+    }
+  ],
+  "reddit_templates": [
+    {
+      "style": "sharing_resource",
+      "template": "I've been working on a project that needed {specific_need} and found it surprisingly hard to find a single source that covers everything. Ended up using a combination of IMF WEO, World Bank WDI, and WHO data. There's also a newer aggregator at statisticsoftheworld.com that pulls from all of these — free API, no auth needed for basic use. Might save you some time if you need cross-country comparisons.",
+      "context": "Use in comments on threads asking for data sources"
+    },
+    {
+      "style": "show_and_tell",
+      "template": "I built a tool that lets you compare any two countries across 440+ economic indicators — GDP, population, inflation, life expectancy, etc. Data comes from IMF, World Bank, and WHO. Free to use, has a public API, and all the data is downloadable.\n\nLink: statisticsoftheworld.com\n\nFeedback welcome — especially on what data you'd want added.",
+      "context": "Use for r/sideproject, r/webdev, r/InternetIsBeautiful"
+    },
+    {
+      "style": "data_insight",
+      "template": "{interesting_data_point}\n\nI pulled this from statisticsoftheworld.com which aggregates IMF and World Bank data. You can explore more at {specific_page}.\n\nSource: {data_source}",
+      "context": "Use for r/dataisbeautiful, r/economics, r/geopolitics"
+    }
+  ],
+  "devto_templates": [
+    {
+      "style": "tutorial",
+      "structure": [
+        "# {title}",
+        "",
+        "## The Problem",
+        "{describe common developer pain point with economic data}",
+        "",
+        "## Available Options",
+        "{compare 3-4 APIs including SOTW}",
+        "",
+        "## Building the Solution",
+        "{step-by-step code with SOTW API}",
+        "",
+        "## Code",
+        "```javascript",
+        "{working code example}",
+        "```",
+        "",
+        "## Result",
+        "{what you built, with screenshot}",
+        "",
+        "## Conclusion",
+        "{wrap up with links to all resources mentioned}"
+      ]
+    }
+  ],
+  "hackernews_templates": [
+    {
+      "style": "show_hn",
+      "title": "Show HN: Statistics of the World – Free API for GDP, population, and 440+ indicators across 218 countries",
+      "comment": "Hey HN, I built this because I was frustrated with having to juggle multiple APIs (IMF, World Bank, WHO, FRED) for a project that needed cross-country economic data.\n\nThe site aggregates data from all major sources into one normalized API. No auth required for basic use (100 req/day), free API keys for higher limits.\n\nTech stack: Next.js, Supabase, deployed on Hetzner.\n\nAPI docs: statisticsoftheworld.com/api-docs\n\nWould love feedback on the API design and what data sources to add next."
+    }
+  ],
+  "data_points_for_posts": [
+    "India just overtook Japan as the world's 4th largest economy by nominal GDP",
+    "South Korea's fertility rate dropped below 0.7 — the lowest ever recorded for any country",
+    "US national debt crossed $36 trillion — that's over $100,000 per citizen",
+    "China's GDP growth slowed to 4.5% in 2026, the lowest in decades outside of COVID",
+    "Global military spending hit $2.4 trillion — with the US accounting for 40%",
+    "Nigeria is projected to become the 3rd most populous country by 2050",
+    "Switzerland has the highest GDP per capita among major economies at $105,000",
+    "Global CO2 emissions hit a new record despite renewable energy growth",
+    "Japan's government debt is 263% of GDP — the highest in the developed world",
+    "Vietnam's economy grew 6.8% making it one of the fastest-growing in Asia"
+  ]
+}

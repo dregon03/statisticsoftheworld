@@ -1,0 +1,310 @@
+{
+  "metadata": {
+    "target": 1000000,
+    "created": "2026-04-08",
+    "last_run": "2026-04-09",
+    "total_backlinks": 3,
+    "total_platforms": 1,
+    "status": "active"
+  },
+  "platforms": {
+    "quora": {
+      "type": "qa",
+      "authority": "high",
+      "link_type": "nofollow",
+      "max_per_day": 3,
+      "max_per_week": 10,
+      "cooldown_hours": 8,
+      "rules": [
+        "Answer must be genuinely helpful — at least 3 sentences of real value before any link",
+        "Never post the same answer twice",
+        "Link must be contextually relevant — not forced",
+        "Use personal account, not brand account",
+        "Vary anchor text — don't always use 'statisticsoftheworld.com'",
+        "Space out answers — never more than 3 per day",
+        "Check if SOTW has already been mentioned on that question before posting"
+      ],
+      "posts": [
+        {
+          "date": "2026-04-09",
+          "url": "https://www.quora.com/What-are-the-best-web-APIs-for-macroeconomic-data/answer/John-Brun-Smith",
+          "type": "answer",
+          "status": "posted",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Comprehensive answer comparing FRED, World Bank, IMF, OECD APIs with SOTW as aggregator"
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://www.quora.com/What-is-the-best-platform-website-to-see-live-economic-data-about-countries/answer/John-Brun-Smith",
+          "type": "answer",
+          "status": "posted",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "First answer on unanswered question (8 followers). Compared Trading Economics, World Bank, FRED with SOTW"
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://www.quora.com/What-are-some-of-the-best-online-sources-for-raw-economic-data/answer/John-Brun-Smith",
+          "type": "answer",
+          "status": "posted",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Detailed answer with primary sources + aggregators section. 40 followers on question"
+        }
+      ]
+    },
+    "reddit": {
+      "type": "social",
+      "authority": "high",
+      "link_type": "nofollow",
+      "max_per_day": 2,
+      "max_per_week": 7,
+      "cooldown_hours": 12,
+      "rules": [
+        "Follow each subreddit's self-promotion rules (typically <10% self-promo)",
+        "Build karma with non-promotional comments first",
+        "Never use link posts to SOTW directly — always text posts or comments",
+        "Be a genuine community member, not a spammer",
+        "Check subreddit rules before posting",
+        "Use different subreddits each day",
+        "Search subreddit first to ensure no prior SOTW mention exists",
+        "If SOTW was already posted in that subreddit, skip it"
+      ],
+      "target_subreddits": [
+        "r/datasets", "r/dataisbeautiful", "r/economics", "r/datascience",
+        "r/opendata", "r/statistics", "r/webdev", "r/sideproject",
+        "r/startups", "r/InternetIsBeautiful", "r/coolwebsites",
+        "r/macroeconomics", "r/geopolitics", "r/worldnews",
+        "r/financialindependence", "r/investing", "r/personalfinance",
+        "r/programming", "r/api", "r/javascript", "r/nextjs",
+        "r/SaaS", "r/indiehackers", "r/coolgithubprojects"
+      ],
+      "posts": []
+    },
+    "github": {
+      "type": "code",
+      "authority": "very_high",
+      "link_type": "dofollow",
+      "max_per_day": 2,
+      "max_per_week": 5,
+      "cooldown_hours": 24,
+      "rules": [
+        "Only submit to repos that accept contributions",
+        "Follow each repo's CONTRIBUTING.md exactly",
+        "One PR per repo — never submit duplicates",
+        "Check if SOTW is already listed before submitting",
+        "Use descriptive commit messages",
+        "Be responsive to maintainer feedback"
+      ],
+      "target_repos": [
+        "public-apis/public-apis",
+        "marcelscruz/public-apis",
+        "toddmotto/public-apis",
+        "n0shake/Public-APIs",
+        "awesomedata/awesome-public-datasets",
+        "jdorfman/awesome-json-datasets",
+        "caesar0301/awesome-public-datasets",
+        "unitedstates/APIs",
+        "dariubs/awesome-statistics",
+        "SNStatComp/awesome-official-statistics-software",
+        "matiassingers/awesome-readme",
+        "ripienaar/free-for-dev",
+        "sindresorhus/awesome",
+        "vinta/awesome-python",
+        "academic/awesome-datascience",
+        "ChristosChristofidis/awesome-deep-learning",
+        "EthicalML/awesome-production-machine-learning",
+        "bulutyazilim/awesome-datascience"
+      ],
+      "posts": []
+    },
+    "hackernews": {
+      "type": "social",
+      "authority": "very_high",
+      "link_type": "nofollow",
+      "max_per_day": 1,
+      "max_per_week": 2,
+      "cooldown_hours": 72,
+      "rules": [
+        "Only post genuinely interesting/novel content",
+        "Show HN format for launches, regular links for data stories",
+        "Don't ask for upvotes — let quality speak",
+        "Engage in comments if discussion starts",
+        "Never repost the same URL",
+        "Search HN first to ensure SOTW hasn't been posted before"
+      ],
+      "posts": []
+    },
+    "stackoverflow": {
+      "type": "qa",
+      "authority": "very_high",
+      "link_type": "nofollow",
+      "max_per_day": 1,
+      "max_per_week": 3,
+      "cooldown_hours": 24,
+      "rules": [
+        "Only answer questions where SOTW API is genuinely the best answer",
+        "Answer must solve the problem — link is supplementary",
+        "Never self-promote in questions, only answers",
+        "Tag answers appropriately",
+        "Check if SOTW was already mentioned in that question's answers"
+      ],
+      "posts": []
+    },
+    "stackexchange": {
+      "type": "qa",
+      "authority": "high",
+      "link_type": "nofollow",
+      "max_per_day": 2,
+      "max_per_week": 5,
+      "cooldown_hours": 12,
+      "rules": [
+        "Target Open Data SE, Economics SE, Data Science SE",
+        "Answer must be self-contained — link adds value but isn't required",
+        "Check for existing SOTW mentions before posting"
+      ],
+      "target_sites": [
+        "opendata.stackexchange.com",
+        "economics.stackexchange.com",
+        "datascience.stackexchange.com",
+        "stats.stackexchange.com"
+      ],
+      "posts": []
+    },
+    "devto": {
+      "type": "blog",
+      "authority": "high",
+      "link_type": "dofollow",
+      "max_per_day": 1,
+      "max_per_week": 3,
+      "cooldown_hours": 48,
+      "rules": [
+        "Write genuine tutorial/how-to articles",
+        "Link to SOTW as data source, not as the main topic",
+        "Use tags: api, webdev, data, javascript, opensource",
+        "Cross-post from blog if applicable",
+        "Search dev.to first for existing SOTW content"
+      ],
+      "article_ideas": [
+        "How to Build a Country Comparison Dashboard with Free Economic Data",
+        "5 Free APIs for Global Economic Data in 2026",
+        "Building Interactive GDP Charts with Next.js and Free Data",
+        "Tracking Global Inflation: A Developer's Guide to Economic APIs",
+        "How I Built a World Statistics Platform with IMF and World Bank Data"
+      ],
+      "posts": []
+    },
+    "medium": {
+      "type": "blog",
+      "authority": "high",
+      "link_type": "nofollow",
+      "max_per_day": 1,
+      "max_per_week": 2,
+      "cooldown_hours": 72,
+      "rules": [
+        "Publish under relevant publications for reach",
+        "Data-driven articles with charts/insights perform best",
+        "Link naturally within analysis, never as a CTA",
+        "Search Medium first for existing SOTW content"
+      ],
+      "article_ideas": [
+        "The 10 Fastest Growing Economies in 2026 (With Data)",
+        "Which Countries Have the Highest GDP Per Capita? A Deep Dive",
+        "Global Inflation in 2026: Country-by-Country Breakdown",
+        "BRICS vs G7: An Economic Comparison Using Real Data"
+      ],
+      "posts": []
+    },
+    "producthunt": {
+      "type": "directory",
+      "authority": "very_high",
+      "link_type": "dofollow",
+      "max_per_day": 1,
+      "max_per_week": 1,
+      "cooldown_hours": 168,
+      "rules": [
+        "One-time launch — prepare thoroughly",
+        "Need a maker account",
+        "Best to launch on Tuesday-Thursday",
+        "Prepare tagline, description, screenshots",
+        "Only launch once — check PH for existing SOTW listing first"
+      ],
+      "posts": []
+    },
+    "directories": {
+      "type": "directory",
+      "authority": "medium",
+      "link_type": "dofollow",
+      "max_per_day": 5,
+      "max_per_week": 20,
+      "cooldown_hours": 4,
+      "rules": [
+        "Submit to API directories, startup directories, tool directories",
+        "Fill out all fields completely",
+        "Use consistent branding",
+        "Check each directory for existing SOTW listing before submitting"
+      ],
+      "target_directories": [
+        "rapidapi.com",
+        "apilist.fun",
+        "api.guru",
+        "any-api.com",
+        "apilayer.com",
+        "betalist.com",
+        "startupstash.com",
+        "saashub.com",
+        "alternativeto.net",
+        "tooldir.com",
+        "microlaunch.net",
+        "launchingnext.com",
+        "startupranking.com",
+        "crunchbase.com",
+        "f6s.com",
+        "angellist.com",
+        "g2.com",
+        "capterra.com"
+      ],
+      "posts": []
+    },
+    "forums": {
+      "type": "forum",
+      "authority": "medium",
+      "link_type": "mixed",
+      "max_per_day": 3,
+      "max_per_week": 10,
+      "cooldown_hours": 8,
+      "rules": [
+        "Be a genuine participant — answer questions, share insights",
+        "Only link when contextually relevant",
+        "Different forums have different cultures — adapt tone",
+        "Search each forum for existing SOTW mentions before posting"
+      ],
+      "target_forums": [
+        "indie hackers (indiehackers.com)",
+        "lobste.rs",
+        "tildes.net",
+        "econjobrumors.com",
+        "bogleheads.org",
+        "early-retirement.org",
+        "mrmoneymustache.com/forum"
+      ],
+      "posts": []
+    },
+    "wikipedia": {
+      "type": "reference",
+      "authority": "supreme",
+      "link_type": "nofollow",
+      "max_per_day": 1,
+      "max_per_week": 1,
+      "cooldown_hours": 168,
+      "rules": [
+        "EXTREME CAUTION — Wikipedia editors will revert self-promotional edits",
+        "Only add as external link/reference if genuinely useful as a source",
+        "Must meet Wikipedia's reliable source guidelines",
+        "Do not edit pages about competing sites",
+        "Only add to pages where SOTW provides data not available elsewhere",
+        "Check talk page for source discussions before editing",
+        "Verify no existing SOTW links on the target page"
+      ],
+      "posts": []
+    }
+  }
+}

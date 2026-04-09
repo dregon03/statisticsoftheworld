@@ -3,8 +3,8 @@
     "target": 1000000,
     "created": "2026-04-08",
     "last_run": "2026-04-09",
-    "total_backlinks": 3,
-    "total_platforms": 1,
+    "total_backlinks": 5,
+    "total_platforms": 2,
     "status": "active"
   },
   "platforms": {
@@ -114,7 +114,24 @@
         "EthicalML/awesome-production-machine-learning",
         "bulutyazilim/awesome-datascience"
       ],
-      "posts": []
+      "posts": [
+        {
+          "date": "2026-04-09",
+          "url": "https://github.com/public-api-lists/public-api-lists/pull/395",
+          "type": "pr",
+          "status": "pending_review",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Added to Finance section of public-api-lists (actively maintained)"
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://github.com/awesomedata/apd-core/pull/377",
+          "type": "pr",
+          "status": "pending_review",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Added to Economics category of awesome-public-datasets (very active, merged PRs 8 days ago)"
+        }
+      ]
     },
     "hackernews": {
       "type": "social",

@@ -250,6 +250,8 @@ export async function getSitemapUrls(id: number): Promise<MetadataRoute.Sitemap>
       priority: 0.8,
     })),
     { url: `${BASE_URL}/blog/how-to-get-economic-data-api`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.85 },
+    { url: `${BASE_URL}/blog/global-defense-spending-2026-record`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.85 },
+    { url: `${BASE_URL}/blog/liberation-day-tariffs-one-year-later`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.85 },
   );
 
   // 3. Ranking pages

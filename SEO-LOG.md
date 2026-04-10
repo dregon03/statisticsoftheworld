@@ -59,8 +59,11 @@ Single source of truth for all SEO work. Check this before doing anything to avo
 - [x] Dynamic metadata with country data
 
 ### Blog (src/lib/blog-posts.ts)
-- [x] 247 blog posts
+- [x] 247 programmatic blog posts
 - [x] Thin posts marked noindex
+- [x] Editorial: "How to Get Economic Data via API" (src/app/blog/how-to-get-economic-data-api/)
+- [x] Editorial: "Global Defense Spending Hits Record $2.7 Trillion" (src/app/blog/global-defense-spending-2026-record/) — targeting "global defense spending 2026", "military spending by country 2026" (added 2026-04-10)
+- [x] Editorial: "One Year After Liberation Day: What Trump's Tariffs Did" (src/app/blog/liberation-day-tariffs-one-year-later/) — targeting "Liberation Day tariffs", "Trump tariffs 2026 impact" (added 2026-04-10)
 
 ### Economy Landing Pages
 - [x] 50+ country economy pages (us-economy, china-economy, etc.)

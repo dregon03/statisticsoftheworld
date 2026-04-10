@@ -9,6 +9,17 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async redirects() {
+    return [
+      // www → non-www redirect (fixes GSC 404 for http://www.statisticsoftheworld.com/)
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.statisticsoftheworld.com' }],
+        destination: 'https://statisticsoftheworld.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

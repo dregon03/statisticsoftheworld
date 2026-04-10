@@ -158,7 +158,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // noindex pages with no data or very thin data — saves crawl budget
   if (years === 0) {
-    return { title: 'Not Found', robots: { index: false, follow: false } };
+    const seoLabel = SEO_LABELS[ind.id] || ind.label;
+    const countryName = id === 'WLD' ? 'Global' : country.name;
+    return {
+      title: `${countryName} ${seoLabel} — No Data Available | Statistics of the World`,
+      robots: { index: false, follow: true },
+    };
   }
 
   const seoLabel = SEO_LABELS[ind.id] || ind.label;
@@ -215,8 +220,34 @@ export default async function IndicatorDetailPage({ params }: Props) {
 
   const validHistory = history.filter(d => d.value !== null);
 
-  // 404 if this country has no data for this indicator
-  if (validHistory.length === 0) notFound();
+  // Show a "no data" page instead of 404 — keeps users on the site and avoids
+  // Google crawl errors for valid country/indicator combos that lack data
+  if (validHistory.length === 0) {
+    const seoLabel = SEO_LABELS[indicatorId] || ind.label;
+    const countryName = id === 'WLD' ? 'Global' : country.name;
+    return (
+      <main className="min-h-screen">
+        <Nav />
+        <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+          <Flag iso2={country.iso2} name={country.name} size={48} />
+          <h1 className="text-2xl font-bold mt-4 mb-2">{countryName} — {seoLabel}</h1>
+          <p className="text-gray-500 mb-8">
+            No data is currently available for {seoLabel.toLowerCase()} in {countryName}.
+            This indicator may not be tracked for this country by the IMF or World Bank.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href={`${getCleanCountryUrl(id)}`} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              View {countryName} Profile
+            </Link>
+            <Link href="/indicators" className="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+              Browse All Indicators
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   const globalRank = allCountries.findIndex(c => c.countryId === id) + 1;
   const totalCountries = allCountries.length;

@@ -3,7 +3,7 @@
     "target": 1000000,
     "created": "2026-04-08",
     "last_run": "2026-04-09",
-    "total_backlinks": 5,
+    "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active"
   },
@@ -130,6 +130,30 @@
           "status": "pending_review",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Added to Economics category of awesome-public-datasets (very active, merged PRs 8 days ago)"
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://github.com/brandonhimpfen/awesome-apis/pull/17",
+          "type": "pr",
+          "status": "pending_review",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Added to Open Data section of awesome-apis"
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://github.com/n0shake/Public-APIs/pull/721",
+          "type": "pr",
+          "status": "pending_review",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Added to Finance section of Public-APIs (23K stars)"
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://github.com/marcelscruz/public-apis/pull/833",
+          "type": "pr",
+          "status": "pending_review",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Fixed merge conflict on existing PR. Finance section (8.7K stars)"
         }
       ]
     },

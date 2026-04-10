@@ -6,12 +6,12 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'GDP by Country 2026 — Ranked List of All 218 Economies',
-  description: 'GDP by country in 2026: complete ranking of 218 countries by nominal GDP in US dollars. From the United States ($29T+) to Tuvalu. Source: IMF World Economic Outlook.',
+  title: 'GDP by Country 2026 — All 218 Economies Ranked by Nominal GDP',
+  description: 'GDP by country 2026: US leads at $29T+, China second at $18T+, India third. All 218 countries ranked by nominal GDP in USD. Updated April 2026. Source: IMF World Economic Outlook.',
   alternates: { canonical: 'https://statisticsoftheworld.com/gdp-by-country' },
   openGraph: {
-    title: 'GDP by Country 2026 — Complete World Rankings',
-    description: 'All 218 countries ranked by GDP (nominal USD). Source: IMF World Economic Outlook.',
+    title: 'GDP by Country 2026 — All 218 Economies Ranked',
+    description: 'Complete ranking of all 218 countries by nominal GDP (USD). US leads at $29T+. Source: IMF World Economic Outlook.',
     siteName: 'Statistics of the World',
   },
 };
@@ -49,6 +49,15 @@ export default async function GdpByCountryPage() {
           { '@type': 'Question', name: `Which country has the highest GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `${gdpData[0]?.country} has the highest GDP at ${formatValue(gdpData[0]?.value, 'currency')} in ${year}, followed by ${gdpData[1]?.country} (${formatValue(gdpData[1]?.value, 'currency')}) and ${gdpData[2]?.country} (${formatValue(gdpData[2]?.value, 'currency')}). Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: `What is the total world GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The total world GDP in ${year} is approximately $${(worldGdp / 1e12).toFixed(0)} trillion in nominal US dollars. The top 10 economies account for roughly two-thirds of this total. Source: IMF.` } },
           { '@type': 'Question', name: 'What does GDP measure?', acceptedAnswer: { '@type': 'Answer', text: 'GDP (Gross Domestic Product) measures the total monetary value of all goods and services produced within a country\'s borders in a given year. Nominal GDP is expressed in current US dollars, making it useful for comparing economic size across countries.' } },
+          { '@type': 'Question', name: `How have US tariffs affected global GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The sweeping tariffs introduced by the US in April 2025 — including 145%+ rates on Chinese goods — have reshuffled global trade flows and introduced significant uncertainty into GDP forecasts for ${year}. The IMF revised global growth projections downward following the tariff announcements. Countries heavily dependent on US export markets face slower GDP growth, while some manufacturing-oriented emerging markets in Southeast Asia have benefited from supply chain diversion.` } },
+        ],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'GDP Rankings', item: 'https://statisticsoftheworld.com/ranking/gdp' },
+          { '@type': 'ListItem', position: 3, name: 'GDP by Country', item: 'https://statisticsoftheworld.com/gdp-by-country' },
         ],
       },
     ],
@@ -80,6 +89,12 @@ export default async function GdpByCountryPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             When comparing GDP across countries, keep in mind that nominal figures in US dollars are affected by exchange rate movements. A country&apos;s GDP can shrink in dollar terms even while its domestic economy grows, simply because its currency weakened against the dollar. For a fairer comparison of living standards, use <Link href="/ranking/gdp-per-capita" className="text-[#0066cc] hover:underline">GDP per capita</Link> or <Link href="/ranking/gdp-ppp" className="text-[#0066cc] hover:underline">GDP adjusted for purchasing power parity (PPP)</Link>.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The {year} rankings reflect a period of significant realignment. India has overtaken Japan to become the world&apos;s third-largest economy — a milestone that reflects sustained growth above 6% annually. The US-China gap has widened: sweeping US tariffs on Chinese goods (145%+ on many categories, introduced in April 2025) have weighed on China&apos;s export-driven economy and suppressed yuan appreciation, keeping China&apos;s nominal dollar GDP lower than purchasing-power measures suggest. Meanwhile, dollar strength relative to European currencies has compressed euro-zone GDP in dollar terms — Germany, France, and the UK all appear smaller on this ranking than their domestic economic performance implies.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The IMF&apos;s World Economic Outlook — the source for this data — is published twice yearly (April and October). These figures represent the April {year} projections. For the fastest-growing economies by percentage, see the <Link href="/ranking/gdp-growth" className="text-[#0066cc] hover:underline">GDP growth rate ranking</Link>. For per-person wealth comparisons, see <Link href="/gdp-per-capita-by-country" className="text-[#0066cc] hover:underline">GDP per capita by country</Link> or the <Link href="/gdp-ppp-by-country" className="text-[#0066cc] hover:underline">PPP-adjusted rankings</Link>.
           </p>
         </div>
 
@@ -119,15 +134,15 @@ export default async function GdpByCountryPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {[
               { href: '/ranking/gdp', label: 'GDP (Full List)' },
-              { href: '/ranking/gdp-per-capita', label: 'GDP per Capita' },
-              { href: '/ranking/gdp-ppp', label: 'GDP (PPP)' },
+              { href: '/gdp-per-capita-by-country', label: 'GDP per Capita' },
+              { href: '/gdp-ppp-by-country', label: 'GDP (PPP)' },
               { href: '/ranking/gdp-growth', label: 'GDP Growth' },
               { href: '/ranking/population', label: 'Population' },
               { href: '/world-economy', label: 'World Economy' },
               { href: '/us-economy', label: 'US Economy' },
               { href: '/china-economy', label: 'China Economy' },
               { href: '/india-economy', label: 'India Economy' },
-              { href: '/ranking/inflation-rate', label: 'Inflation Rates' },
+              { href: '/inflation-by-country', label: 'Inflation by Country' },
               { href: '/ranking/unemployment-rate', label: 'Unemployment' },
               { href: '/countries', label: 'All 218 Countries' },
             ].map(l => (

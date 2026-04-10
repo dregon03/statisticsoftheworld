@@ -5,12 +5,12 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'US Economy 2026 — GDP, Growth, Inflation, Unemployment & Key Data',
-  description: 'The United States economy in 2026: GDP, real growth rate, inflation, unemployment, government debt, trade balance, and 440+ indicators. Data from IMF World Economic Outlook & World Bank.',
+  title: 'US Economy 2026 — GDP, Tariff Impact, Inflation & Key Data',
+  description: 'US economy 2026: world\'s largest at $29T+ GDP, tariff-driven inflation, 2.1% growth. One year after Liberation Day tariffs — what changed? IMF & World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/us-economy' },
   openGraph: {
-    title: 'US Economy 2026 — GDP, Growth, Inflation & Key Statistics',
-    description: 'Comprehensive overview of the United States economy with live data from IMF & World Bank.',
+    title: 'US Economy 2026 — GDP, Tariff Impact & Key Statistics',
+    description: 'The US economy one year after Liberation Day tariffs: GDP, inflation, trade, and labor market data from IMF & World Bank.',
     siteName: 'Statistics of the World',
   },
 };
@@ -55,6 +55,15 @@ export default async function USEconomyPage() {
           { '@type': 'Question', name: `What is the US unemployment rate in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The US unemployment rate in ${year} is ${formatValue(unemployment?.value, 'percent', 1)}. The US labor market has ${(unemployment?.value || 0) < 5 ? 'remained relatively tight' : 'shown signs of softening'}. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: 'What is the US national debt?', acceptedAnswer: { '@type': 'Answer', text: `US government debt stands at ${formatValue(debt?.value, 'percent', 1)} of GDP in ${year}. Federal debt has increased significantly since 2020 due to pandemic-era fiscal stimulus. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: 'Is the US the largest economy in the world?', acceptedAnswer: { '@type': 'Answer', text: `Yes, the United States is the world's largest economy by nominal GDP at ${formatValue(gdp?.value, 'currency')} in ${year}. China is second. In purchasing power parity (PPP) terms, China's economy is larger. Source: IMF.` } },
+          { '@type': 'Question', name: `What is the impact of tariffs on the US economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The tariffs announced in April 2025 — including 145%+ levies on Chinese goods and baseline 10% tariffs on imports from most countries — have had a mixed economic impact. US manufacturing has seen some re-shoring activity, but consumers face higher prices on imported goods, contributing to above-target inflation. The Federal Reserve has had to balance tariff-driven price pressures against slowing growth. The IMF estimates the tariff shock reduced US growth by roughly 0.3–0.5 percentage points in 2025–2026. Source: IMF World Economic Outlook.` } },
+        ],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'United States', item: 'https://statisticsoftheworld.com/country/united-states' },
+          { '@type': 'ListItem', position: 3, name: 'US Economy', item: 'https://statisticsoftheworld.com/us-economy' },
         ],
       },
     ],
@@ -106,6 +115,9 @@ export default async function USEconomyPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Real GDP growth in {year} is {formatValue(gdpGrowth?.value, 'percent', 1)}, reflecting the US economy&apos;s resilience despite elevated interest rates. The Federal Reserve has been navigating a delicate balance between controlling inflation — which peaked at 9.1% in June 2022 — and avoiding a recession. The labor market has remained historically tight, with unemployment at {formatValue(unemployment?.value, 'percent', 1)}, though some sectors have seen layoffs. Government debt at {formatValue(debt?.value, 'percent', 1)} of GDP remains elevated following pandemic-era spending.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The defining policy shift of {year} for the US economy is the sweeping tariff regime that took effect in April 2025. The &quot;Liberation Day&quot; tariffs imposed a 10% baseline tariff on imports from most trading partners and 145%+ on Chinese goods — the most aggressive US trade intervention in nearly a century. One year on, the results are mixed: some domestic manufacturing has expanded (steel, aluminum, semiconductors), but consumers face meaningfully higher prices on electronics, clothing, and consumer goods. Tariff-driven inflation has kept the Federal Reserve cautious about rate cuts, even as growth moderates. The US trade deficit — historically persistent — has narrowed slightly as imports fell, but at the cost of retaliatory tariffs from China, the EU, and Canada on US agricultural exports. For a detailed assessment, see: <Link href="/blog/liberation-day-tariffs-one-year-later" className="text-[#0066cc] hover:underline">One Year After Liberation Day: What Trump&apos;s Tariffs Did</Link>.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             The US economy&apos;s competitive advantages include world-leading universities, deep capital markets, a culture of entrepreneurship, and dominance in artificial intelligence and advanced technology. Challenges include rising income inequality, an aging infrastructure (despite recent legislation), high healthcare costs (the US spends more per capita on healthcare than any other country), and a persistent trade deficit. The US GDP per capita of {formatValue(gdpPerCapita?.value, 'currency')} is among the highest for large economies, though it masks significant regional variation.

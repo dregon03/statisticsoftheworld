@@ -2,15 +2,29 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
-## Current Status (2026-04-09)
+## Current Status (2026-04-10)
 
-- **Google indexed pages**: 1,360
-- **GSC impressions (3mo)**: 33,200
+- **Google indexed pages**: ~1,360 (GSC check needed; sitemap at 5,691 URLs)
+- **GSC impressions (3mo)**: 33,200 (as of 2026-04-09)
 - **GSC clicks (3mo)**: 11
 - **Avg position**: 11.9
 - **Homepage**: Indexed (canonical fix applied 2026-04-08)
 - **Sitemap**: 5,691 URLs submitted via /sitemap/0.xml
-- **Domain age**: ~10 days
+- **Domain age**: ~11 days
+
+### Keyword Rankings (2026-04-10 web search)
+- `statistics of the world country data 2026` → **~#4** ✅
+- `inflation by country 2026 ranking` → **#6 and #9** (two URLs ranking!) ✅
+- `GDP by country 2026` → Not ranking (dominated by Worldometer, Wikipedia)
+- `world statistics country comparison tool` → Not ranking
+
+### Competitor Notes
+- Worldometer dominates GDP queries (DA90+)
+- Trading Economics owns real-time data space
+- Our World in Data has long-form narrative advantage
+- SOTW advantage: breadth (440+ indicators), comparison tool, free API
+
+## Current Status (2026-04-09)
 
 ---
 
@@ -69,6 +83,9 @@ Single source of truth for all SEO work. Check this before doing anything to avo
 - [x] 50+ country economy pages (us-economy, china-economy, etc.)
 - [x] Group pages (g7, g20, brics, eu, asean)
 - [x] Metric pages (gdp-by-country, inflation-by-country, etc.)
+- [x] us-economy: BreadcrumbList schema added; new editorial paragraph on Liberation Day tariffs + trade war impact (2026-04-10)
+- [x] china-economy: BreadcrumbList schema added; new editorial paragraph on US-China tariff war (145%+ rates, stimulus response, export redirection, deflation risk); new FAQ on tariff impact (2026-04-10)
+- [x] gdp-by-country: BreadcrumbList schema added; improved meta description with specific figures; 2 new editorial paragraphs (India overtaking Japan, tariff impact on dollar-denominated rankings, IMF data sourcing note); new tariff FAQ; improved related links (2026-04-10)
 
 ### Glossary
 - [x] 148 glossary terms

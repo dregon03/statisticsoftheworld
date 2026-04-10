@@ -5,12 +5,12 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'China Economy 2026 — GDP, Growth, Population & Key Data',
-  description: 'The Chinese economy in 2026: GDP, real growth rate, inflation, unemployment, trade surplus, and 440+ indicators. Data from IMF World Economic Outlook & World Bank.',
+  title: 'China Economy 2026 — GDP, Growth, Tariff Impact & Key Data',
+  description: 'China economy 2026: GDP, growth rate, impact of US tariffs (145%+), trade surplus, population decline, and 440+ indicators. IMF & World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/china-economy' },
   openGraph: {
-    title: 'China Economy 2026 — GDP, Growth & Key Statistics',
-    description: 'Comprehensive overview of China\'s economy with live data from IMF & World Bank.',
+    title: 'China Economy 2026 — GDP, Growth & US Tariff Impact',
+    description: 'China\'s economy in 2026: how US tariffs, property crisis, and demographic decline are reshaping the world\'s second-largest economy.',
     siteName: 'Statistics of the World',
   },
 };
@@ -52,6 +52,15 @@ export default async function ChinaEconomyPage() {
           { '@type': 'Question', name: `What is China's GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `China's GDP in ${year} is approximately ${formatValue(gdp?.value, 'currency')} in nominal terms, making it the world's second-largest economy after the United States. China accounts for roughly ${chinaShare}% of global GDP. In purchasing power parity (PPP) terms, China's economy is the largest in the world. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: `What is China's GDP growth rate?`, acceptedAnswer: { '@type': 'Answer', text: `China's real GDP growth rate in ${year} is ${formatValue(gdpGrowth?.value, 'percent', 1)}. Growth has slowed from the double-digit rates of 2000-2010 as the economy matures and transitions from investment-led to consumption-driven growth. Source: IMF.` } },
           { '@type': 'Question', name: `What is China's population in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `China's population in ${year} is approximately ${formatValue(pop?.value, 'number')}. China's population began declining in 2022 for the first time since the 1960s, and India has surpassed China as the world's most populous country. Source: World Bank.` } },
+          { '@type': 'Question', name: `How are US tariffs affecting China's economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The US tariffs announced in April 2025 — reaching 145% on many Chinese goods — are a major headwind for China's export-dependent economy. China responded with 125%+ retaliatory tariffs on US imports. The net effect has been a sharp reduction in bilateral trade, with China redirecting exports to ASEAN, the Middle East, and Africa. The tariff shock has added deflationary pressure to China's domestic economy and complicated Beijing's goal of 5% annual growth. Source: IMF, trade data.` } },
+        ],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'China', item: 'https://statisticsoftheworld.com/country/china' },
+          { '@type': 'ListItem', position: 3, name: 'China Economy', item: 'https://statisticsoftheworld.com/china-economy' },
         ],
       },
     ],
@@ -101,6 +110,9 @@ export default async function ChinaEconomyPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Growth has moderated from the double-digit rates of the 2000s to around {formatValue(gdpGrowth?.value, 'percent', 1)} as the economy matures. China faces structural headwinds: a declining population (the first major economy to face this since Japan), a property sector crisis (the Evergrande collapse exposed overbuilding), high youth unemployment, and growing tension with the United States over trade and technology. The government&apos;s response has emphasized technological self-sufficiency — &quot;Made in China 2025&quot; targets leadership in semiconductors, AI, electric vehicles, and renewable energy.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The most consequential development for China&apos;s economy in {year} is the US-China trade war escalation. Following the &quot;Liberation Day&quot; tariff announcement in April 2025, the US applied effective tariff rates of 145% or more on a broad range of Chinese goods — the highest since the Smoot-Hawley era. China retaliated with tariffs of 125%+ on US imports and restricted exports of rare earth minerals critical to US technology supply chains. The result has been a sharp contraction in direct US-China trade. Beijing has responded with fiscal stimulus targeting domestic consumption and infrastructure, while Chinese manufacturers have accelerated factory investments in Vietnam, Mexico, and Malaysia to reach US markets via third countries. The full economic impact of this realignment will take years to quantify, but near-term forecasts show it adding deflationary pressure domestically — China&apos;s CPI has remained near zero — while slowing overall GDP growth. For more on tariff dynamics, see our analysis: <Link href="/blog/liberation-day-tariffs-one-year-later" className="text-[#0066cc] hover:underline">One Year After Liberation Day: What Trump&apos;s Tariffs Did</Link>.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             China&apos;s GDP per capita of {formatValue(gdpPerCapita?.value, 'currency')} remains well below developed-country levels, classifying it as an upper-middle-income country. The question of whether China can escape the &quot;middle-income trap&quot; — where countries stagnate after reaching moderate prosperity — is one of the defining economic questions of the 2020s. China&apos;s demographic profile (aging rapidly, shrinking workforce) mirrors Japan&apos;s situation in the 1990s, raising concerns about a prolonged period of slower growth.

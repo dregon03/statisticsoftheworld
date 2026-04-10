@@ -306,13 +306,24 @@ export default async function IndicatorDetailPage({ params }: Props) {
     : indicatorId.startsWith('UN.') ? 'UN'
     : 'World Bank WDI';
 
+  // Build Dataset description — Google requires 50–5000 chars
+  let datasetDesc = `Historical ${seoLabel.toLowerCase()} data for ${country.name}, covering ${validHistory.length} years from ${validHistory[0]?.year} to ${validHistory[validHistory.length - 1]?.year}. ${latestVal ? `Latest value: ${latestValueStr} (${latestVal.year}).` : ''} ${globalRank > 0 ? `Ranked #${globalRank} out of ${totalCountries} countries globally.` : ''} Source: ${sourceName}. Free to access via API at statisticsoftheworld.com.`;
+  // Pad short descriptions to meet Google's 50-char minimum
+  if (datasetDesc.length < 50) {
+    datasetDesc += ` This dataset tracks ${seoLabel.toLowerCase()} over time for ${country.name}, sourced from ${sourceName}.`;
+  }
+  // Truncate overly long descriptions to stay under 5000 chars
+  if (datasetDesc.length > 5000) {
+    datasetDesc = datasetDesc.slice(0, 4997) + '...';
+  }
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Dataset',
         name: `${country.name} ${seoLabel} — Historical Data`,
-        description: `Historical ${seoLabel.toLowerCase()} data for ${country.name}, covering ${validHistory.length} years from ${validHistory[0]?.year} to ${validHistory[validHistory.length - 1]?.year}. ${latestVal ? `Latest value: ${latestValueStr} (${latestVal.year}).` : ''} ${globalRank > 0 ? `Ranked #${globalRank} out of ${totalCountries} countries globally.` : ''} Source: ${sourceName}. Free to access via API at statisticsoftheworld.com.`,
+        description: datasetDesc,
         url: `https://statisticsoftheworld.com${getCleanCountryIndicatorUrl(id, indicatorId)}`,
         identifier: indicatorId,
         license: 'https://creativecommons.org/licenses/by/4.0/',

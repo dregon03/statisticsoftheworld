@@ -127,7 +127,7 @@ export default async function IndicatorPage({ params }: Props) {
       {
         '@type': 'Dataset',
         name: `${ind.label} — Global Data for ${data.length} Countries`,
-        description: `${ind.label} data for ${data.length} countries as of ${year}. ${top ? `Highest: ${top.country} (${fmtTop}). Lowest: ${bottom?.country} (${fmtBottom}).` : ''} Source: ${source}.`,
+        description: `${ind.label} data for ${data.length} countries as of ${year}. ${top ? `Highest: ${top.country} (${fmtTop}). Lowest: ${bottom?.country} (${fmtBottom}).` : ''} Compare all countries with interactive charts, historical trends, and downloadable data. Source: ${source}.`,
         url: `https://statisticsoftheworld.com/indicator/${slug}`,
         identifier: match.id,
         license: 'https://creativecommons.org/licenses/by/4.0/',

@@ -449,7 +449,7 @@ export default async function RankingPage({ params }: Props) {
       {
         '@type': 'Dataset',
         name: `${config.title} — ${year} Rankings`,
-        description: `${config.description} Covers ${data.length} countries. Source: ${ind.source === 'imf' ? 'IMF World Economic Outlook' : ind.id.startsWith('WHO.') ? 'WHO Global Health Observatory' : 'World Bank World Development Indicators'}.`,
+        description: `${config.description} Covers ${data.length} countries with historical trends and interactive charts. ${top ? `#1: ${top.country} (${fmtTop}). #${data.length}: ${bottom?.country} (${fmtBottom}).` : ''} Source: ${ind.source === 'imf' ? 'IMF World Economic Outlook' : ind.id.startsWith('WHO.') ? 'WHO Global Health Observatory' : 'World Bank World Development Indicators'}. Updated ${year}.`,
         url: `https://statisticsoftheworld.com/ranking/${slug}`,
         identifier: config.id,
         license: 'https://creativecommons.org/licenses/by/4.0/',

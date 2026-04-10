@@ -295,19 +295,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!config) return { title: 'Not Found' };
 
   const ind = INDICATORS.find(i => i.id === config.id);
-  const source = config.id.startsWith('IMF.') ? 'IMF World Economic Outlook'
-    : config.id.startsWith('WHO.') ? 'WHO Global Health Observatory'
+  const source = config.id.startsWith('IMF.') ? 'IMF'
+    : config.id.startsWith('WHO.') ? 'WHO'
     : 'World Bank';
 
+  // Fetch actual data to build compelling titles with real numbers
+  const data = await getIndicatorForAllCountries(config.id);
+  const top = data[0]; // #1 ranked country
+  const second = data[1];
+  const count = data.length;
+
+  let topStr = '';
+  let secondStr = '';
+  if (top && ind) {
+    topStr = `${top.countryName}: ${formatValue(top.value, ind.format, ind.decimals)}`;
+    if (second) secondStr = `${second.countryName}: ${formatValue(second.value, ind.format, ind.decimals)}`;
+  }
+
+  // Dynamic title: include #1 country for curiosity/specificity
+  const title = topStr
+    ? `${config.title} 2026 — #1 ${top.countryName} | Full Ranking`
+    : `${config.title} 2026 — Full Ranking of ${count} Countries`;
+
+  // Dynamic description: lead with specific data, end with value prop
+  const description = topStr
+    ? `${topStr}. ${secondStr ? secondStr + '. ' : ''}See where every country ranks — ${count} countries compared with charts, trends & data from ${source}. Updated April 2026.`
+    : `${config.description} ${count} countries ranked with interactive charts. Source: ${source}. Updated 2026.`;
+
   return {
-    title: `${config.title} (2026) — Ranked List of 218 Countries`,
-    description: `${config.description} Ranked list of 218 countries with interactive charts and historical trends. Data from ${source}. Updated 2026.`,
+    title,
+    description,
     alternates: {
       canonical: `https://statisticsoftheworld.com/ranking/${slug}`,
     },
     openGraph: {
-      title: `${config.title} (2026) — Ranked List of 218 Countries`,
-      description: `${config.description} Compare 218 countries. Source: ${source}.`,
+      title,
+      description,
       siteName: 'Statistics of the World',
     },
   };

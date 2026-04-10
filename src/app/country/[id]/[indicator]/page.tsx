@@ -168,18 +168,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const seoLabel = SEO_LABELS[ind.id] || ind.label;
   const countryName = id === 'WLD' ? 'Global' : country.name;
-  const title = getSeoTitle(country, ind, valueStr, latestYear);
+
+  // Fetch global ranking for richer metadata
+  const allCountries = await getIndicatorForAllCountries(indicatorId);
+  const globalRank = allCountries.findIndex(c => c.countryId === id) + 1;
+  const totalCountries = allCountries.length;
+
+  // Title with value + rank when available
+  const rankSuffix = globalRank > 0 ? ` — Ranked #${globalRank} of ${totalCountries}` : '';
+  const title = `${countryName} ${seoLabel}: ${valueStr} (${latestYear})${rankSuffix}`;
+
+  // Description that leads with the hook, adds trend context
+  const firstVal = validData[0];
+  const trendStr = firstVal && latest && firstVal.value !== null && latest.value !== null
+    ? (latest.value > firstVal.value ? 'up' : latest.value < firstVal.value ? 'down' : 'unchanged')
+    : null;
+  const trendClause = trendStr && firstVal ? `, ${trendStr} from ${formatValue(firstVal.value, ind.format, ind.decimals)} in ${firstVal.year}` : '';
+
+  const description = globalRank > 0
+    ? `${countryName}'s ${seoLabel.toLowerCase()} is ${valueStr} (${latestYear}), ranking #${globalRank} of ${totalCountries} countries${trendClause}. ${years}yr history with charts & comparisons.`
+    : `${countryName}'s ${seoLabel.toLowerCase()} is ${valueStr} in ${latestYear}${trendClause}. ${years} years of data with charts, rankings & country comparisons.`;
 
   return {
     title,
-    description: `${countryName}'s ${seoLabel.toLowerCase()} is ${valueStr} in ${latestYear}. ${years} years of historical data (${firstYear}–${latestYear}) with charts, rankings, and country comparisons. Source: ${source}.`,
+    description,
     alternates: {
       canonical: `https://statisticsoftheworld.com${getCleanCountryIndicatorUrl(id, indicatorId)}`,
     },
     ...(years < 3 ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title,
-      description: `${years} years of data with interactive charts. Compare across 218 countries.`,
+      description,
       siteName: 'Statistics of the World',
     },
   };

@@ -2,10 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-09",
+    "last_run": "2026-04-10",
     "total_backlinks": 8,
     "total_platforms": 2,
-    "status": "active"
+    "status": "active",
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). 12 drafts ready to post (4 from Apr 9, 8 from Apr 10). GitHub weekly limit hit — resume next week with 5 new repos queued."
   },
   "platforms": {
     "quora": {
@@ -48,6 +49,30 @@
           "status": "posted",
           "sotw_url": "https://statisticsoftheworld.com",
           "notes": "Detailed answer with primary sources + aggregators section. 40 followers on question"
+        },
+        {
+          "date": "2026-04-10",
+          "url": "https://www.quora.com/What-is-the-best-free-API-for-economic-data",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comparison of FRED, World Bank, IMF, Trading Economics, SOTW. File: quora-2026-04-10-best-free-api.md. Verify no SOTW mention in existing answers before posting."
+        },
+        {
+          "date": "2026-04-10",
+          "url": "https://www.quora.com/What-are-some-good-sites-to-find-world-statistics",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: tiered breakdown of primary sources vs aggregators. File: quora-2026-04-10-good-sites-world-statistics.md"
+        },
+        {
+          "date": "2026-04-10",
+          "url": "https://www.quora.com/Where-can-I-find-international-economic-data",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: international data sources with practical guidance. File: quora-2026-04-10-international-economic-data.md"
         }
       ]
     },
@@ -77,7 +102,48 @@
         "r/programming", "r/api", "r/javascript", "r/nextjs",
         "r/SaaS", "r/indiehackers", "r/coolgithubprojects"
       ],
-      "posts": []
+      "posts": [
+        {
+          "date": "2026-04-09",
+          "url": "https://www.reddit.com/r/datasets/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: sharing free dataset/API. File: reddit-datasets-2026-04-09.md. Search r/datasets for SOTW before posting."
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://www.reddit.com/r/economics/",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: comment on relevant economics thread. File: reddit-economics-2026-04-09.md. Find a thread about GDP/rankings first."
+        },
+        {
+          "date": "2026-04-09",
+          "url": "https://www.reddit.com/r/SideProject/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: full sideproject showcase post. File: reddit-sideproject-2026-04-09.md. Search r/SideProject for SOTW before posting."
+        },
+        {
+          "date": "2026-04-10",
+          "url": "https://www.reddit.com/r/opendata/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: sharing aggregated API for open data community. File: reddit-opendata-2026-04-10.md. Search r/opendata for SOTW before posting."
+        },
+        {
+          "date": "2026-04-10",
+          "url": "https://www.reddit.com/r/api/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: Show r/api post about SOTW API design. File: reddit-api-2026-04-10.md. Search r/api for SOTW before posting."
+        }
+      ]
     },
     "github": {
       "type": "code",
@@ -112,7 +178,19 @@
         "academic/awesome-datascience",
         "ChristosChristofidis/awesome-deep-learning",
         "EthicalML/awesome-production-machine-learning",
-        "bulutyazilim/awesome-datascience"
+        "bulutyazilim/awesome-datascience",
+        "antontarasenko/awesome-economics",
+        "brandonhimpfen/awesome-economics",
+        "niyumard/awesome-economics",
+        "erikgahner/awesome-statistics",
+        "datasets/awesome-data"
+      ],
+      "next_week_priority": [
+        "antontarasenko/awesome-economics — Data section, format: [Name](URL) - description. PRs accepted. High priority.",
+        "brandonhimpfen/awesome-economics — Economic Data Sources section, alphabetical format. High priority.",
+        "niyumard/awesome-economics — Data & Insight section. Medium priority.",
+        "erikgahner/awesome-statistics — 2000+ active links, check format carefully. Medium priority.",
+        "datasets/awesome-data — economic-data.md file specifically. Medium priority."
       ],
       "posts": [
         {
@@ -172,7 +250,16 @@
         "Never repost the same URL",
         "Search HN first to ensure SOTW hasn't been posted before"
       ],
-      "posts": []
+      "posts": [
+        {
+          "date": "2026-04-09",
+          "url": "https://news.ycombinator.com/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: Show HN post, title and first comment ready. File: hackernews-show-2026-04-09.md. Search hn.algolia.com for 'statisticsoftheworld' before posting. Can post any day — cooldown 72h after posting."
+        }
+      ]
     },
     "stackoverflow": {
       "type": "qa",
@@ -208,7 +295,24 @@
         "datascience.stackexchange.com",
         "stats.stackexchange.com"
       ],
-      "posts": []
+      "posts": [
+        {
+          "date": "2026-04-10",
+          "url": "https://opendata.stackexchange.com/questions/tagged/economics",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comprehensive answer on economic data APIs. File: stackexchange-opendata-2026-04-10.md. Find specific unanswered question — see instructions in file."
+        },
+        {
+          "date": "2026-04-10",
+          "url": "https://economics.stackexchange.com/questions/tagged/data",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: data sources answer for empirical economics. File: stackexchange-economics-2026-04-10.md. Find specific unanswered question — see instructions in file."
+        }
+      ]
     },
     "devto": {
       "type": "blog",
@@ -231,7 +335,16 @@
         "Tracking Global Inflation: A Developer's Guide to Economic APIs",
         "How I Built a World Statistics Platform with IMF and World Bank Data"
       ],
-      "posts": []
+      "posts": [
+        {
+          "date": "2026-04-10",
+          "url": "https://dev.to/",
+          "type": "article",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: '5 Free APIs for Global Economic Data in 2026' — full article with code examples. File: devto-2026-04-10-economic-data-apis.md. Search dev.to for 'statisticsoftheworld' before publishing. Tags: api, webdev, data, javascript, opensource."
+        }
+      ]
     },
     "medium": {
       "type": "blog",
@@ -303,6 +416,13 @@
         "g2.com",
         "capterra.com"
       ],
+      "submission_notes": {
+        "tagline": "Free API for GDP, population & 440+ economic indicators across 218 countries",
+        "description": "Statistics of the World aggregates data from the IMF, World Bank, WHO, FRED, and UN into a single normalized API. Compare any countries across 440+ indicators including GDP, inflation, unemployment, population, life expectancy, and more. Free to use — 100 requests/day without auth, free API key for 1,000/day.",
+        "category": "Data / APIs / Economics",
+        "url": "https://statisticsoftheworld.com",
+        "api_url": "https://statisticsoftheworld.com/api-docs"
+      },
       "posts": []
     },
     "forums": {
@@ -325,7 +445,8 @@
         "econjobrumors.com",
         "bogleheads.org",
         "early-retirement.org",
-        "mrmoneymustache.com/forum"
+        "mrmoneymustache.com/forum",
+        "discuss.okfn.org (open knowledge forum — active thread on economic APIs)"
       ],
       "posts": []
     },

@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-10",
+    "last_run": "2026-04-11",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). 12 drafts ready to post (4 from Apr 9, 8 from Apr 10). GitHub weekly limit hit — resume next week with 5 new repos queued."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). 19 total drafts ready to post. GitHub weekly limit resets Apr 14 — 3 new repos queued (antontarasenko/awesome-economics, niyumard/awesome-economics, erikgahner/awesome-statistics). Apr 11 run: 3 Quora + 2 Reddit + 1 Medium drafted. Duplicate-checked all targets."
   },
   "platforms": {
     "quora": {
@@ -73,6 +73,30 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com",
           "notes": "Draft: international data sources with practical guidance. File: quora-2026-04-10-international-economic-data.md"
+        },
+        {
+          "date": "2026-04-11",
+          "url": "https://www.quora.com/Where-can-I-get-the-monthly-GDP-data-for-any-country",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/ranking/gdp",
+          "notes": "Draft: honest answer on monthly GDP rarity, quarterly sources, IMF/WB/SOTW. File: quora-2026-04-11-monthly-gdp-data.md. Duplicate-checked: no SOTW in search results."
+        },
+        {
+          "date": "2026-04-11",
+          "url": "https://www.quora.com/What-are-the-good-web-sites-for-financial-economic-data",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: primary sources vs aggregators breakdown. File: quora-2026-04-11-financial-economic-websites.md. Duplicate-checked: no SOTW in search results."
+        },
+        {
+          "date": "2026-04-11",
+          "url": "https://www.quora.com/Other-than-the-IMF-World-Bank-OECD-The-Economist-and-governments-are-there-any-great-sites-PDFs-or-databases-with-trustable-world-economic-data-and-relevant-comparisons",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: academic DBs + aggregators breakdown, SOTW in aggregators section. File: quora-2026-04-11-trustable-world-data.md. Duplicate-checked: no SOTW in search results."
         }
       ]
     },
@@ -142,6 +166,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: Show r/api post about SOTW API design. File: reddit-api-2026-04-10.md. Search r/api for SOTW before posting."
+        },
+        {
+          "date": "2026-04-11",
+          "url": "https://www.reddit.com/r/dataisbeautiful/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/ranking/gdp",
+          "notes": "Draft: [OC] post on India overtaking Japan — GDP top 10 shift over 20 years. Needs visualization before posting. File: reddit-dataisbeautiful-2026-04-11.md. Search r/dataisbeautiful for SOTW before posting."
+        },
+        {
+          "date": "2026-04-11",
+          "url": "https://www.reddit.com/r/macroeconomics/",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on data sources thread. Find a relevant active thread first. File: reddit-macroeconomics-2026-04-11.md. Search r/macroeconomics for SOTW before posting."
         }
       ]
     },
@@ -186,11 +226,11 @@
         "datasets/awesome-data"
       ],
       "next_week_priority": [
-        "antontarasenko/awesome-economics — Data section, format: [Name](URL) - description. PRs accepted. High priority.",
-        "brandonhimpfen/awesome-economics — Economic Data Sources section, alphabetical format. High priority.",
-        "niyumard/awesome-economics — Data & Insight section. Medium priority.",
-        "erikgahner/awesome-statistics — 2000+ active links, check format carefully. Medium priority.",
-        "datasets/awesome-data — economic-data.md file specifically. Medium priority."
+        "antontarasenko/awesome-economics — Data section, format: [Name](URL) - description. SOTW-free confirmed 2026-04-11. PR draft ready: github-pr-antontarasenko-awesome-economics-2026-04-14.md. HIGH PRIORITY.",
+        "niyumard/awesome-economics — Data & Insight section. SOTW-free confirmed 2026-04-11. PR draft ready: github-pr-niyumard-awesome-economics-2026-04-14.md. HIGH PRIORITY.",
+        "erikgahner/awesome-statistics — 2000+ links, check CONTRIBUTING.md carefully. SOTW-free confirmed 2026-04-11. PR draft ready: github-pr-erikgahner-awesome-statistics-2026-04-14.md. MEDIUM PRIORITY.",
+        "brandonhimpfen/awesome-economics — Economic Data Sources section, alphabetical format. Not yet checked. MEDIUM PRIORITY.",
+        "datasets/awesome-data — economic-data.md file specifically. Not yet checked. MEDIUM PRIORITY."
       ],
       "posts": [
         {
@@ -362,10 +402,18 @@
       "article_ideas": [
         "The 10 Fastest Growing Economies in 2026 (With Data)",
         "Which Countries Have the Highest GDP Per Capita? A Deep Dive",
-        "Global Inflation in 2026: Country-by-Country Breakdown",
-        "BRICS vs G7: An Economic Comparison Using Real Data"
+        "Global Inflation in 2026: Country-by-Country Breakdown"
       ],
-      "posts": []
+      "posts": [
+        {
+          "date": "2026-04-11",
+          "url": "https://medium.com/",
+          "type": "article",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: 'BRICS vs G7: An Economic Comparison Using Real Data (2026)' — data-driven article with G7/BRICS GDP, per-capita, inflation, debt breakdown. File: medium-2026-04-11-brics-vs-g7.md. Search medium.com for 'statisticsoftheworld' before publishing. Submit to Towards Data Science or The Startup."
+        }
+      ]
     },
     "producthunt": {
       "type": "directory",

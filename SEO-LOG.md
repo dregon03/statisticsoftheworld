@@ -2,6 +2,30 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-11)
+
+- **Google indexed pages**: ~1,360 (GSC not accessible this session; Day 30 milestone April 18 — expect acceleration)
+- **GSC impressions (3mo)**: Not checked this session
+- **Avg position**: 11.9 (last check)
+- **Inflation by country**: Ranking at positions **#8 and #9** (slight slip from #6/#9 — likely fluctuation)
+- **GDP by country**: Still not in top 10 — domain authority is the bottleneck
+- **Domain age**: ~12 days
+
+### Keyword Rankings (2026-04-11 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world country data 2026` → **Not visible** (dropped from ~#4 — domain trust fluctuation)
+- `inflation by country 2026 ranking` → **#8 and #9** (two URLs ranking) ✅
+- `GDP by country 2026` → Not ranking (dominated by Worldometer, Wikipedia, StatisticsTimes)
+- `richest countries world 2026 GDP per capita` → Not ranking (CEOWorld #1, UnionCitizenship #2)
+- `world statistics country comparison tool` → Not ranking
+
+### Pages Optimized (2026-04-11)
+- **inflation-by-country**: BreadcrumbList schema added; new editorial paragraph on 2026 tariff-driven inflation dynamics (US pass-through, China deflation, India trade deal, Turkey/Argentina structural pressures); new FAQ on tariff-inflation link
+- **richest-countries**: BreadcrumbList schema added; new editorial paragraph on dollar-strength effect on European GDP per capita rankings, Guyana trajectory; updated FAQ with 2026-accurate data (Monaco/Liechtenstein top, US ~$85K-$93K); new FAQ on fastest-rising GDP per capita
+- **india-economy**: BreadcrumbList schema added; meta description updated (7.4% growth, #3 economy); new editorial paragraph on India overtaking Japan (#3 milestone), US-India Feb 2026 trade deal (25%→18% tariffs), Goldman Sachs upgrade; new FAQ on trade deal impact
+
+---
+
 ## Current Status (2026-04-10)
 
 - **Google indexed pages**: ~1,360 (GSC check needed; sitemap at 5,691 URLs)
@@ -86,6 +110,9 @@ Single source of truth for all SEO work. Check this before doing anything to avo
 - [x] us-economy: BreadcrumbList schema added; new editorial paragraph on Liberation Day tariffs + trade war impact (2026-04-10)
 - [x] china-economy: BreadcrumbList schema added; new editorial paragraph on US-China tariff war (145%+ rates, stimulus response, export redirection, deflation risk); new FAQ on tariff impact (2026-04-10)
 - [x] gdp-by-country: BreadcrumbList schema added; improved meta description with specific figures; 2 new editorial paragraphs (India overtaking Japan, tariff impact on dollar-denominated rankings, IMF data sourcing note); new tariff FAQ; improved related links (2026-04-10)
+- [x] inflation-by-country: BreadcrumbList schema added; new editorial section "2026 Inflation Drivers"; US tariff pass-through, China deflation, India trade deal context; new tariff FAQ (2026-04-11)
+- [x] richest-countries: BreadcrumbList schema added; new editorial paragraph on dollar-strength distortions + Guyana trajectory; updated FAQs with accurate 2026 top-tier data; new "fastest-rising" FAQ (2026-04-11)
+- [x] india-economy: BreadcrumbList schema added; meta description updated (7.4%, #3 economy); new editorial paragraph on Japan overtake + US-India trade deal (25%→18%); new FAQ on trade deal impact (2026-04-11)
 
 ### Glossary
 - [x] 148 glossary terms

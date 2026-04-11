@@ -5,8 +5,8 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'India Economy 2026 — GDP, Growth, Population & Key Data',
-  description: 'The Indian economy in 2026: GDP, real growth rate, inflation, unemployment, population, and 440+ indicators. Data from IMF World Economic Outlook & World Bank.',
+  title: 'India Economy 2026 — World\'s 3rd Largest, GDP Growth 7.4%',
+  description: 'India\'s economy in 2026: now the world\'s 3rd largest at ~$4 trillion, growing 7.4%, and benefiting from a new US-India trade deal. IMF & World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/india-economy' },
   openGraph: {
     title: 'India Economy 2026 — GDP, Growth & Key Statistics',
@@ -52,9 +52,18 @@ export default async function IndiaEconomyPage() {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: `What is India's GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `India's GDP in ${year} is approximately ${formatValue(gdp?.value, 'currency')} in nominal terms, making it the world's #${indiaRank} largest economy. India accounts for ${indiaShare}% of global GDP. Source: IMF World Economic Outlook.` } },
-          { '@type': 'Question', name: `What is India's GDP growth rate?`, acceptedAnswer: { '@type': 'Answer', text: `India's real GDP growth rate in ${year} is ${formatValue(gdpGrowth?.value, 'percent', 1)}, making it one of the fastest-growing major economies in the world. India has consistently outpaced the global average growth rate. Source: IMF.` } },
-          { '@type': 'Question', name: `Is India the most populous country?`, acceptedAnswer: { '@type': 'Answer', text: `Yes, India surpassed China as the world's most populous country in 2023. India's population in ${year} is approximately ${formatValue(pop?.value, 'number')}, with a median age under 30. Source: World Bank / UN Population Division.` } },
+          { '@type': 'Question', name: `What is India's GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `India's GDP in ${year} is approximately ${formatValue(gdp?.value, 'currency')} in nominal terms, making it the world's #${indiaRank} largest economy, having overtaken Japan. India accounts for ${indiaShare}% of global GDP and is the fastest-growing major economy. Source: IMF World Economic Outlook.` } },
+          { '@type': 'Question', name: `What is India's GDP growth rate in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `India's real GDP growth rate in fiscal year ${year} is estimated at 7.4%, one of the fastest among major economies globally. The December 2025 quarter saw 7.8% growth. The OECD projects India as the world's fastest-growing large economy through 2027. Source: IMF, OECD, CNBC.` } },
+          { '@type': 'Question', name: `Is India the most populous country?`, acceptedAnswer: { '@type': 'Answer', text: `Yes, India surpassed China as the world's most populous country in 2023. India's population in ${year} is approximately ${formatValue(pop?.value, 'number')}, with a median age under 30 — a demographic dividend that supports long-run economic growth. Source: World Bank / UN Population Division.` } },
+          { '@type': 'Question', name: `How has the US-India trade deal affected India's economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `In February 2026, the US and India announced a trade deal reducing "reciprocal" tariffs on Indian exports from 25% to 18%, broadly in line with other Asian economies. Goldman Sachs raised its India 2026 GDP forecast following the agreement. The deal has supported the Indian rupee and provided an incremental growth boost estimated at 0.2 percentage points of GDP. India's limited US export exposure (roughly 4% of GDP) had already contained tariff damage compared to China, and the deal removes a significant source of uncertainty. Source: Goldman Sachs, CNBC.` } },
+        ],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'India', item: 'https://statisticsoftheworld.com/country/india' },
+          { '@type': 'ListItem', position: 3, name: 'India Economy', item: 'https://statisticsoftheworld.com/india-economy' },
         ],
       },
     ],
@@ -107,6 +116,9 @@ export default async function IndiaEconomyPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             India&apos;s GDP per capita of {formatValue(gdpPerCapita?.value, 'currency')} remains low by global standards, reflecting the enormous development gap that persists despite decades of growth. Infrastructure development (roads, ports, railways, digital payments like UPI) has accelerated under recent policy initiatives, and India&apos;s digital economy has leapfrogged traditional stages of development — India processes more digital payments annually than any other country. Government debt at {formatValue(debt?.value, 'percent', 1)} of GDP is manageable by emerging market standards, and inflation at {formatValue(inflation?.value, 'percent', 1)} is within the Reserve Bank of India&apos;s target range.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            Two milestones define India&apos;s economic story in {year}. First, India has officially overtaken <Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link> to become the world&apos;s third-largest economy by nominal GDP — a landmark reflecting sustained growth averaging above 7% annually and a GDP approaching $4 trillion. Five years ago India ranked fifth. Second, India secured a landmark trade deal with the United States in February 2026, reducing &quot;reciprocal&quot; tariffs on Indian exports from 25% to 18%, broadly in line with other Asian economies. Goldman Sachs raised its India 2026 GDP forecast after the deal, and the rupee has been among the more stable emerging market currencies during the global tariff upheaval. India&apos;s resilience stems partly from its domestic demand-driven structure: exports to the US represent roughly 4% of GDP, limiting tariff exposure compared to China&apos;s far higher trade dependence. See the <Link href="/gdp-by-country" className="text-[#0066cc] hover:underline">GDP by country ranking</Link> to see where India stands globally.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Data sourced from the <a href="https://www.imf.org/en/Publications/WEO" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">IMF World Economic Outlook</a> and <a href="https://data.worldbank.org" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">World Bank</a>.

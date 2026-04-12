@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 //
 const TARIFF_RATES: Record<string, { rate: number; headline: number; notes: string; category: string }> = {
   // --- CHINA: Layered duties survive SCOTUS ---
-  CHN: { rate: 30, headline: 10, notes: 'Section 122 (10%) + Section 301 tariffs (7.5-25% on ~$370B of goods, from 2018-2024) + Section 232 (steel/aluminum 50%). Nov 2025 deal reduced reciprocal to 10% but SCOTUS voided IEEPA entirely. Effective rate ~30% due to layered Section 301 (Penn Wharton, PIIE). Highest among major partners.', category: 'max' },
+  CHN: { rate: 34, headline: 10, notes: 'ETR 33.9% (Penn Wharton, Jan 2026). Section 122 (10%) + Section 301 (7.5-25% on ~$370B of goods) + Section 232 (steel/aluminum 50%, semiconductors 50%). Nov 2025 deal reduced fentanyl tariff to 10%. Rate was 37.4% in Oct 2025, fell to 33.9% by Jan 2026. Highest among major partners.', category: 'max' },
 
   // --- USMCA PARTNERS: Largely shielded ---
   CAN: { rate: 5, headline: 10, notes: 'Section 122 (10%) applies to non-USMCA goods only. ~85% of Canadian imports claim USMCA duty-free (Penn Wharton, Jan 2026). Energy/potash at 10%. Lumber subject to separate duties. SCOTUS ruling removed the 25-35% IEEPA tariffs, leaving only Section 122 + USMCA framework.', category: 'low' },
@@ -66,7 +66,7 @@ const TARIFF_RATES: Record<string, { rate: number; headline: number; notes: stri
   BRA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Agricultural trade (Yale Budget Lab).', category: 'baseline' },
   AUS: { rate: 10, headline: 10, notes: '10% baseline. Steel/aluminum at 50% Section 232 but small share of total trade (Yale Budget Lab).', category: 'baseline' },
   SGP: { rate: 10, headline: 10, notes: '10% baseline. Re-export hub. Subject to Section 301 investigation (Mar 2026) (Yale Budget Lab).', category: 'baseline' },
-  CHE: { rate: 10, headline: 10, notes: '10% baseline. Pharma may face up to 100% under new Section 232 pharma tariffs (Apr 2 2026). Subject to Section 301 investigation (Yale Budget Lab).', category: 'baseline' },
+  CHE: { rate: 12, headline: 10, notes: '15% framework agreement on select goods (Section 232 authority, survived SCOTUS). 10% Section 122 on other goods. Pharma may face up to 100% under new Section 232 pharma tariffs (Apr 2 2026). Blended ~12% (Avalara, Grant Thornton).', category: 'baseline' },
   NOR: { rate: 10, headline: 10, notes: '10% baseline. Subject to Section 301 investigation (Mar 2026) (Yale Budget Lab).', category: 'baseline' },
   NZL: { rate: 10, headline: 10, notes: '10% baseline. Small trade volume (Yale Budget Lab).', category: 'baseline' },
   ZAF: { rate: 10, headline: 10, notes: '10% baseline. AGOA benefits under review (Yale Budget Lab).', category: 'baseline' },

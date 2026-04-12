@@ -45,7 +45,7 @@ const TARIFF_RATES: Record<string, { rate: number; headline: number; notes: stri
   // --- SECTION 232 HEAVY COUNTRIES (autos = 25%) ---
   DEU: { rate: 15, headline: 10, notes: 'Section 122 (10%) + Section 232 autos (25%). Auto is Germany\'s largest US export — blended ETR ~15%. SCOTUS voided the EU framework deal (15% IEEPA rate), replacing with Section 122 baseline (Penn Wharton, White & Case).', category: 'medium' },
   JPN: { rate: 15, headline: 10, notes: 'Section 122 (10%) + Section 232 autos (25%). Auto is Japan\'s top US export. The Aug 2025 framework deal (15%) was negotiated under IEEPA and voided by SCOTUS. Current rate is Section 122 + 232 (Penn Wharton, Lenzo).', category: 'medium' },
-  KOR: { rate: 25, headline: 10, notes: 'Section 122 (10%) + Section 232 autos (25%). Korean legislature failed to ratify trade deal — rate went to 25% on Jan 26 2026. SCOTUS voided the IEEPA component but 232 auto tariffs remain (Congress.gov, Federal Register).', category: 'high' },
+  KOR: { rate: 15, headline: 10, notes: 'Section 122 (10%) on non-FTA goods + Section 232 autos at 15% (reduced from 25% under Nov 2025 US-Korea deal). Steel/aluminum/copper at 50%. KORUS FTA provides 0% on many goods. Blended ETR ~15% (tariffstool.com, S&P Global, Green Worldwide).', category: 'medium' },
   TUR: { rate: 14, headline: 10, notes: 'Section 122 (10%) + Section 232 steel/aluminum (50%). Steel is major Turkish export — blended ~14% (Yale Budget Lab).', category: 'medium' },
 
   // --- POST-SCOTUS: Most countries default to 10% Section 122 ---

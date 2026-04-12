@@ -2,6 +2,37 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-12)
+
+- **Google indexed pages**: ~1,360 (GSC not accessible this session; Day 30 milestone April 18 — acceleration expected)
+- **GSC impressions (3mo)**: Not checked this session
+- **Avg position**: 11.9 (last check)
+- **Inflation by country**: Holding at **#8 and #9** — stable vs. April 11 (no regression)
+- **GDP by country**: Still not in top 10 — domain authority remains bottleneck
+- **Domain age**: ~13 days
+
+### Keyword Rankings (2026-04-12 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **Not visible** (Worldometer, StatisticsTimes dominate)
+- `inflation by country 2026 ranking` → **#8 and #9** (stable) ✅
+- `GDP by country 2026` → Not ranking (Worldometer #1, Wikipedia #2, StatisticsTimes #3)
+- `world statistics country comparison tool` → Not ranking (worlddata.info, GlobalEdge, CIA, IndexMundi)
+- `country comparison tool GDP 2026` → Not ranking
+- `world economic data comparison 2026` → Not ranking
+
+### Competitor Notes (2026-04-12)
+- GDP by country: positions 8-10 (ClearTax, WorldEconomics, WorldCountryData) beatable with more DA
+- Inflation: positions 4-6 (TradingEconomics×2, Statista) — TradingEconomics has real-time advantage; Statista paywalled
+- Comparison tool: institutional sites dominate (CIA, UN, OECD) — need education/research backlinks
+- Unemployment: WorldPopReview, TradingEconomics, Statista, CountryEconomy occupy top spots — editorial gap on our page was large, now fixed
+
+### Pages Optimized (2026-04-12)
+- **unemployment-by-country**: Added openGraph metadata; added BreadcrumbList schema; improved meta description with specific data points (South Africa 32%+, US below 4%); added new editorial paragraph on 2026 labor market dynamics (tariff-driven manufacturing shifts, structural unemployment in Southern Africa, tight labor in US/Japan/Gulf); added FAQ on tariff impact on employment; added "Related Rankings" h2; expanded related links (GDP by country, GDP per capita added)
+- **gdp-per-capita-by-country**: Added openGraph metadata; added BreadcrumbList schema; improved meta description (top economies $100K+, US $85K+); added new editorial paragraph on 2026 dollar-strength distortions, Guyana oil boom, India rise; added FAQ on fastest-growing GDP per capita (Guyana) and dollar-strength effects; added "Related Data" h2; expanded related links (richest-countries, GDP PPP, GDP growth added)
+- **inflation-by-country**: Sharpened meta description with specific data points (Venezuela 600%+, global avg 8.7%, US above target, China deflation); added new FAQ on lowest-inflation countries in 2026 (China deflation, Japan/Switzerland anchors); added unemployment-by-country and GDP-by-country links to related section
+
+---
+
 ## Current Status (2026-04-11)
 
 - **Google indexed pages**: ~1,360 (GSC not accessible this session; Day 30 milestone April 18 — expect acceleration)

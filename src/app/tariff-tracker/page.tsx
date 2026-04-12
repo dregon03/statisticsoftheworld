@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getIndicatorForAllCountries, getAllIndicatorsForCountry, getHistoricalData, formatValue, getCountries } from '@/lib/data';
 import { getCleanCountryUrl } from '@/lib/country-slugs';
+import { supabase } from '@/lib/supabase';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
@@ -98,6 +99,22 @@ const CATEGORY_COLORS: Record<CategoryColor, string> = {
 export default async function TariffTrackerPage() {
   const countries = await getCountries();
 
+  // Fetch tariff rates from Supabase (auto-updated by ETL script)
+  const { data: dbTariffs } = await supabase
+    .from('sotw_tariff_rates')
+    .select('*')
+    .order('effective_rate', { ascending: false });
+
+  // Fallback to hardcoded if DB is empty
+  const tariffSource = dbTariffs && dbTariffs.length > 0
+    ? Object.fromEntries(dbTariffs.map(r => [r.country_id, {
+        rate: Number(r.effective_rate),
+        headline: Number(r.headline_rate),
+        notes: r.notes,
+        category: r.category,
+      }]))
+    : TARIFF_RATES;
+
   // Fetch key economic indicators for tariffed countries
   const [gdpGrowthData, inflationData, tradeData] = await Promise.all([
     getIndicatorForAllCountries('IMF.NGDP_RPCH'),
@@ -111,7 +128,7 @@ export default async function TariffTrackerPage() {
   const countryMap = Object.fromEntries(countries.map(c => [c.id, c]));
 
   // Build rows sorted by effective tariff rate descending
-  const rows = Object.entries(TARIFF_RATES)
+  const rows = Object.entries(tariffSource)
     .map(([id, t]) => ({
       id,
       name: countryMap[id]?.name || id,

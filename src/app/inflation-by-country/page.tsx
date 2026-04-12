@@ -5,16 +5,17 @@ import { getCleanCountryUrl } from '@/lib/country-slugs';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-export const metadata: Metadata = {
-  title: 'Inflation Rate by Country 2026 — Complete Global Rankings',
-  description: 'Inflation rate by country 2026: Venezuela 600%+, global average 8.7%, US above Fed target, China in deflation. All 218 countries ranked by CPI. Source: IMF.',
-  alternates: { canonical: 'https://statisticsoftheworld.com/inflation-by-country' },
-  openGraph: {
-    title: 'Inflation Rate by Country 2026 — World Rankings',
-    description: 'All countries ranked by inflation rate. Source: IMF World Economic Outlook.',
-    siteName: 'Statistics of the World',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getIndicatorForAllCountries('IMF.PCPIPCH');
+  const year = data[0]?.year || '2026';
+  const avg = data.length > 0 ? data.reduce((s, d) => s + (d.value || 0), 0) / data.length : 0;
+  const lowest = data[data.length - 1];
+  return {
+    title: `Inflation Rate by Country ${year} — ${data.length} Countries Ranked`,
+    description: `Inflation by country ${year}: highest is ${data[0]?.country} (${formatValue(data[0]?.value, 'percent', 1)}), lowest is ${lowest?.country} (${formatValue(lowest?.value, 'percent', 1)}). Global avg: ${avg.toFixed(1)}%. ${data.length} countries. Source: IMF.`,
+    alternates: { canonical: 'https://statisticsoftheworld.com/inflation-by-country' },
+  };
+}
 
 export default async function InflationByCountryPage() {
   const inflData = await getIndicatorForAllCountries('IMF.PCPIPCH');
@@ -41,7 +42,6 @@ export default async function InflationByCountryPage() {
           { '@type': 'Question', name: `What is the global average inflation rate in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The global average inflation rate in ${year} is approximately ${avgInfl.toFixed(1)}%, with a median of ${Number(medianInfl).toFixed(1)}%. Advanced economies typically target 2% inflation. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: 'What causes high inflation?', acceptedAnswer: { '@type': 'Answer', text: 'High inflation is typically caused by excessive money supply growth, supply chain disruptions, currency depreciation, fiscal deficits financed by money printing, or demand outstripping supply. Central banks use interest rate policy as the primary tool to control inflation.' } },
           { '@type': 'Question', name: `How have US tariffs affected global inflation in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The sweeping US tariffs introduced in April 2025 — including 145% rates on Chinese goods — have had asymmetric inflation effects. In the US, import prices rose sharply, keeping consumer inflation above the 2% target. In China, the collapse in export demand drove deflation as unsold inventory flooded domestic markets. Countries that negotiated early trade deals with the US, such as India (tariffs reduced to 18% in February 2026), saw more stable inflation outcomes. Structural inflators like Turkey and Argentina face separate pressures from currency depreciation and fiscal deficits. Source: IMF.` } },
-          { '@type': 'Question', name: `Which countries have the lowest inflation in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `In ${year}, the countries with the lowest inflation — and some experiencing outright deflation — include China, which faces deflationary pressure as a result of collapsed export demand following US tariffs. Several advanced economies with strong currency anchors and credible central banks, such as Japan, Switzerland, and parts of the eurozone, maintain inflation near or below 2%. Commodity-importing economies that saw energy prices fall also report below-average inflation. Afghanistan has had among the world's lowest (and negative) inflation due to economic contraction. Source: IMF World Economic Outlook.` } },
         ],
       },
       {
@@ -141,8 +141,7 @@ export default async function InflationByCountryPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {[
               { href: '/ranking/inflation-rate', label: 'Inflation Rankings' },
-              { href: '/unemployment-by-country', label: 'Unemployment by Country' },
-              { href: '/gdp-by-country', label: 'GDP by Country' },
+              { href: '/ranking/unemployment-rate', label: 'Unemployment' },
               { href: '/ranking/gdp-growth', label: 'GDP Growth' },
               { href: '/ranking/government-debt', label: 'Government Debt' },
               { href: '/ranking/current-account', label: 'Current Account' },

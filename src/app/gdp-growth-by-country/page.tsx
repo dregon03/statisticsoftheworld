@@ -5,11 +5,17 @@ import { getCleanCountryUrl } from '@/lib/country-slugs';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-export const metadata: Metadata = {
-  title: 'GDP Growth Rate by Country 2026 — Fastest & Slowest Economies',
-  description: 'Real GDP growth rate by country in 2026: all countries ranked from fastest to slowest growing economies. Source: IMF World Economic Outlook.',
-  alternates: { canonical: 'https://statisticsoftheworld.com/gdp-growth-by-country' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getIndicatorForAllCountries('IMF.NGDP_RPCH');
+  const year = data[0]?.year || '2026';
+  const avg = data.length > 0 ? data.reduce((s, d) => s + (d.value || 0), 0) / data.length : 0;
+  const slowest = data[data.length - 1];
+  return {
+    title: `GDP Growth by Country ${year} — Fastest & Slowest Economies`,
+    description: `GDP growth for ${data.length} countries in ${year}. Fastest: ${data[0]?.country} (${formatValue(data[0]?.value, 'percent', 1)}). Slowest: ${slowest?.country} (${formatValue(slowest?.value, 'percent', 1)}). World avg: ${avg.toFixed(1)}%. Source: IMF.`,
+    alternates: { canonical: 'https://statisticsoftheworld.com/gdp-growth-by-country' },
+  };
+}
 
 export default async function GdpGrowthByCountryPage() {
   const data = await getIndicatorForAllCountries('IMF.NGDP_RPCH');

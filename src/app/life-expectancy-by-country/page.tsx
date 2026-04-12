@@ -5,11 +5,17 @@ import { getCleanCountryUrl } from '@/lib/country-slugs';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-export const metadata: Metadata = {
-  title: 'Life Expectancy by Country 2026 — Complete Global Rankings',
-  description: 'Life expectancy by country in 2026: all countries ranked from highest to lowest. From Japan (84+ years) to sub-Saharan Africa. Source: World Bank.',
-  alternates: { canonical: 'https://statisticsoftheworld.com/life-expectancy-by-country' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getIndicatorForAllCountries('SP.DYN.LE00.IN');
+  const year = data[0]?.year || '2024';
+  const avg = data.length > 0 ? data.reduce((s, d) => s + (d.value || 0), 0) / data.length : 0;
+  const lowest = data[data.length - 1];
+  return {
+    title: `Life Expectancy by Country ${year} — #1 ${data[0]?.country} (${Number(data[0]?.value).toFixed(1)} yrs)`,
+    description: `Life expectancy for ${data.length} countries. Highest: ${data[0]?.country} (${Number(data[0]?.value).toFixed(1)} yrs). Lowest: ${lowest?.country} (${Number(lowest?.value).toFixed(1)} yrs). World avg: ${avg.toFixed(1)} years. Source: World Bank.`,
+    alternates: { canonical: 'https://statisticsoftheworld.com/life-expectancy-by-country' },
+  };
+}
 
 export default async function LifeExpectancyByCountryPage() {
   const data = await getIndicatorForAllCountries('SP.DYN.LE00.IN');

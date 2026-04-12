@@ -5,16 +5,16 @@ import { getCleanCountryUrl } from '@/lib/country-slugs';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-export const metadata: Metadata = {
-  title: 'Population by Country 2026 — All Countries Ranked',
-  description: 'Population by country in 2026: complete list of all countries ranked by population. From India and China to the smallest microstates. Source: World Bank.',
-  alternates: { canonical: 'https://statisticsoftheworld.com/population-by-country' },
-  openGraph: {
-    title: 'Population by Country 2026 — World Rankings',
-    description: 'All countries ranked by population size in 2026. Source: World Bank.',
-    siteName: 'Statistics of the World',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getIndicatorForAllCountries('SP.POP.TOTL');
+  const year = data[0]?.year || '2026';
+  const totalPop = data.reduce((s, d) => s + (d.value || 0), 0);
+  return {
+    title: `Population by Country ${year} — ${data.length} Countries Ranked`,
+    description: `World population: ${(totalPop / 1e9).toFixed(2)}B across ${data.length} countries. #1 ${data[0]?.country} (${formatValue(data[0]?.value, 'number')}), #2 ${data[1]?.country} (${formatValue(data[1]?.value, 'number')}), #3 ${data[2]?.country}. Source: World Bank.`,
+    alternates: { canonical: 'https://statisticsoftheworld.com/population-by-country' },
+  };
+}
 
 export default async function PopulationByCountryPage() {
   const data = await getIndicatorForAllCountries('SP.POP.TOTL');

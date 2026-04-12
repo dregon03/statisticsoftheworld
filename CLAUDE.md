@@ -8,6 +8,7 @@ An automated backlink-building system lives in `backlinks/`. Read `backlinks/BAC
 - **Agent instructions**: `backlinks/BACKLINK-AGENT.md` — complete autonomous agent playbook
 - **Goal**: 1,000,000 backlinks. Current progress tracked in tracker.json metadata.
 - **Key rule**: ALWAYS search each platform for existing SOTW mentions before posting. Never duplicate.
+- **CRITICAL**: After ANY backlink session, update BOTH `backlinks/tracker.json` (commit it) AND `memory/project_sotw_backlinks.md` in the Claude memory system. Prior sessions lost state by not doing this.
 
 # Deployment
 

@@ -16,47 +16,65 @@ export const metadata: Metadata = {
   },
 };
 
-// Effective tariff rates as of April 2026
-// "Headline" = statutory/announced rate. "Effective" = actual rate paid after exemptions, USMCA, FTAs.
-// Sources: Yale Budget Lab, Penn Wharton, Tax Foundation, USTR, bilateral deal announcements.
-// US average effective tariff: 11.0% (highest since 1943). Section 122 baseline: 10%, expires Jul 24 2026.
+// Effective tariff rates (ETR) as of April 2026
+// ETR = actual duties collected / import value. Accounts for exemptions (USMCA, FTAs, product exclusions).
+// Sources cited per country. US overall average ETR: 11.0% (Yale Budget Lab, Apr 2 2026).
+// Section 122 baseline: 10% on all imports, expires Jul 24 2026.
 const TARIFF_RATES: Record<string, { rate: number; headline: number; notes: string; category: string }> = {
-  CHN: { rate: 34, headline: 34, notes: 'Highest ETR. Nov 2025 deal reduced reciprocal tariffs from 125% to 10%, but layered Section 301 + fentanyl + Section 232 duties bring effective rate to ~34%.', category: 'max' },
-  KHM: { rate: 49, headline: 49, notes: 'Among highest headline rates. Transshipment concerns from China. Small trade volume.', category: 'max' },
-  VNM: { rate: 46, headline: 46, notes: 'High headline rate. China+1 diversification initially boosted Vietnam, but tariffs followed.', category: 'max' },
-  LKA: { rate: 44, headline: 44, notes: 'High headline rate, very small trade volume with US.', category: 'max' },
-  MMR: { rate: 44, headline: 44, notes: 'High headline rate. Minimal enforcement due to sanctions.', category: 'max' },
-  BGD: { rate: 37, headline: 37, notes: 'Garment industry heavily affected. Major RMG exporter.', category: 'high' },
-  THA: { rate: 36, headline: 36, notes: 'Manufacturing hub. Electronics and auto parts affected.', category: 'high' },
-  RUS: { rate: 35, headline: 35, notes: 'Elevated due to sanctions-adjacent policy. Minimal bilateral trade.', category: 'high' },
-  TWN: { rate: 15, headline: 15, notes: 'Reduced from 20% to 15% in Jan 2026 bilateral deal. Semiconductor exemptions.', category: 'baseline' },
-  IDN: { rate: 32, headline: 32, notes: 'Nickel and manufacturing. High headline rate.', category: 'high' },
-  PAK: { rate: 29, headline: 29, notes: 'Textile sector affected. Small overall trade volume.', category: 'high' },
-  KOR: { rate: 25, headline: 25, notes: 'Auto sector tariffs 25% under Section 232. Other goods at baseline.', category: 'high' },
-  MYS: { rate: 24, headline: 24, notes: 'Electronics supply chain. Semiconductor-related exemptions under discussion.', category: 'high' },
-  IND: { rate: 18, headline: 18, notes: 'Negotiated down from 25% to 18% in Feb 2026 bilateral deal. Market access concessions.', category: 'medium' },
-  PHL: { rate: 17, headline: 17, notes: 'BPO/services sector less affected. Goods trade at moderate rate.', category: 'medium' },
-  DEU: { rate: 15, headline: 15, notes: 'EU baseline 10% Section 122 + auto tariff 25% (Section 232). Blended ~15%.', category: 'baseline' },
-  FRA: { rate: 12, headline: 10, notes: 'EU baseline. Wine/luxury goods face 10% Section 122. Lower auto exposure than Germany.', category: 'baseline' },
-  ITA: { rate: 12, headline: 10, notes: 'EU baseline. Fashion, food exports at 10%.', category: 'baseline' },
-  GBR: { rate: 10, headline: 10, notes: '10% Section 122 baseline. UK-US mini-deal under negotiation.', category: 'baseline' },
-  JPN: { rate: 14, headline: 10, notes: '10% baseline + 25% auto tariff (Section 232). Auto is major export — blended ~14%.', category: 'baseline' },
-  CAN: { rate: 5, headline: 25, notes: 'Headline 25% (35% some goods), but ~85% of imports use USMCA duty-free. Effective rate ~5%. Energy at 10%.', category: 'low' },
-  MEX: { rate: 5, headline: 25, notes: 'Headline 25%, but ~85% USMCA-compliant and exempt. Effective rate ~5%.', category: 'low' },
-  BRA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Agricultural trade flows both ways.', category: 'baseline' },
-  AUS: { rate: 10, headline: 10, notes: '10% baseline. AUKUS ally. Steel/aluminum at 25% (Section 232).', category: 'baseline' },
-  ISR: { rate: 8, headline: 10, notes: 'US-Israel FTA provides significant exemptions. Effective rate below baseline.', category: 'low' },
-  SAU: { rate: 3, headline: 10, notes: 'Energy imports largely exempt from tariffs. Effective rate very low.', category: 'low' },
-  SGP: { rate: 10, headline: 10, notes: '10% baseline. Re-export hub — many goods transshipped, not consumed.', category: 'baseline' },
-  CHE: { rate: 10, headline: 10, notes: '10% baseline. Pharma sector may face up to 100% under new Section 232 pharma tariffs.', category: 'baseline' },
-  NOR: { rate: 10, headline: 10, notes: '10% baseline. Energy/fish exports.', category: 'baseline' },
-  NZL: { rate: 10, headline: 10, notes: '10% baseline. Small trade volume.', category: 'baseline' },
-  ZAF: { rate: 10, headline: 10, notes: '10% baseline. AGOA status under review — could change.', category: 'baseline' },
-  NGA: { rate: 3, headline: 10, notes: 'Oil imports largely exempt. Effective rate very low.', category: 'low' },
-  TUR: { rate: 14, headline: 10, notes: '10% baseline + steel/aluminum 50% (Section 232). Blended ~14%.', category: 'baseline' },
-  ARG: { rate: 10, headline: 10, notes: '10% baseline. Agricultural exports.', category: 'baseline' },
-  COL: { rate: 10, headline: 10, notes: '10% baseline.', category: 'baseline' },
-  EGY: { rate: 10, headline: 10, notes: '10% baseline.', category: 'baseline' },
+  // --- VERIFIED FROM PENN WHARTON (Jan 2026 ETR data) & YALE BUDGET LAB ---
+  CHN: { rate: 33.9, headline: 30, notes: 'ETR 33.9% (Penn Wharton, Jan 2026). Nov 2025 US-China deal cut reciprocal tariffs from 125%→10%, but Section 301 (7.5-25%), fentanyl surcharge, and Section 232 (steel/aluminum 50%) remain layered on top. Highest ETR of any major partner.', category: 'max' },
+  CAN: { rate: 4.8, headline: 25, notes: 'Headline 25-35%, but 85% of imports claim USMCA duty-free status (Penn Wharton, Jan 2026). Energy/potash at 10%. Effective ETR ~4.8%. USMCA exemption rate surged from ~50% to 85% as importers aggressively reclassified goods.', category: 'low' },
+  MEX: { rate: 4.8, headline: 25, notes: 'Headline 25%, but ~85% USMCA-exempt (Penn Wharton, Jan 2026). Similar dynamic to Canada — importers restructured supply chains to qualify. Auto sector heavily uses USMCA rules of origin.', category: 'low' },
+
+  // --- PENN WHARTON / AVALARA REPORTED RATES ---
+  DEU: { rate: 15, headline: 10, notes: 'EU: 10% Section 122 baseline + 25% auto tariff (Section 232). Auto is Germany\'s largest US export — blended ETR ~15% (Penn Wharton). Avalara confirms EU averages ~15% with wide product variation.', category: 'medium' },
+  JPN: { rate: 15, headline: 10, notes: '10% Section 122 + 25% auto tariff (Section 232). Auto is Japan\'s largest US export category — blended ETR ~15% (Penn Wharton). Post-SCOTUS ruling, baseline dropped from reciprocal to Section 122.', category: 'medium' },
+  IND: { rate: 18, headline: 18, notes: 'Feb 2026 bilateral deal reduced rate from 25%→18% (White House announcement, Feb 2 2026). India gave market access concessions in tech/agriculture. Penn Wharton confirms 18%.', category: 'medium' },
+
+  // --- SOUTHEAST ASIA: TAX FOUNDATION / SIDLEY AUSTIN (Oct 2025 data + SCOTUS adjustment) ---
+  // Note: SCOTUS ruling replaced reciprocal tariffs with 10% Section 122. These countries previously had
+  // higher reciprocal rates. Current rates = 10% Section 122 + any pre-existing Section 301/232 duties.
+  // Tax Foundation reported 19-20% for SE Asia in Oct 2025 pre-SCOTUS.
+  VNM: { rate: 20, headline: 20, notes: 'ETR ~20% (Tax Foundation, Oct 2025). 10% Section 122 baseline + pre-existing Section 301 duties on specific goods. Subject to new Section 301 investigation launched Mar 2026.', category: 'high' },
+  THA: { rate: 19, headline: 19, notes: 'ETR ~19% (Tax Foundation, Oct 2025). 10% Section 122 + product-specific duties. Manufacturing hub for electronics/auto parts.', category: 'medium' },
+  IDN: { rate: 19, headline: 19, notes: 'ETR ~19% (Tax Foundation, Oct 2025). Nickel processing and manufacturing. Subject to new Section 301 investigation (Mar 2026).', category: 'medium' },
+  KHM: { rate: 19, headline: 19, notes: 'ETR ~19% (Tax Foundation, Oct 2025). Garment sector. Transshipment concerns from China under investigation.', category: 'medium' },
+  BGD: { rate: 20, headline: 20, notes: 'ETR ~20% (Tax Foundation, Oct 2025). World\'s 2nd-largest garment exporter. Ready-made garments face above-baseline rates.', category: 'high' },
+  MYS: { rate: 19, headline: 19, notes: 'ETR ~19% (Tax Foundation, Oct 2025). Electronics/semiconductor supply chain. Subject to Section 301 investigation (Mar 2026).', category: 'medium' },
+  PHL: { rate: 19, headline: 19, notes: 'ETR ~19% (Tax Foundation, Oct 2025). BPO/services less affected than goods trade.', category: 'medium' },
+
+  // --- BILATERAL DEALS (White House announcements) ---
+  TWN: { rate: 15, headline: 15, notes: 'Reduced from 20%→15% in Jan 15, 2026 bilateral deal (White House announcement). Semiconductor industry exemptions. Subject to Section 301 investigation (Mar 2026).', category: 'medium' },
+  KOR: { rate: 25, headline: 25, notes: '25% on autos under Section 232 (major Korean export). 10% Section 122 on other goods. Blended rate ~25% due to heavy auto weighting (Avalara). Section 301 investigation pending.', category: 'high' },
+
+  // --- HIGHEST ETR COUNTRIES (Avalara / Penn Wharton Jan 2026) ---
+  MMR: { rate: 46.9, headline: 47, notes: 'Highest ETR globally at 46.9% (Penn Wharton, Jan 2026). Sanctions-related. Minimal trade volume.', category: 'max' },
+  LKA: { rate: 37, headline: 37, notes: 'High ETR (Avalara, 2026). Small trade volume with US. Garment sector affected.', category: 'high' },
+  PAK: { rate: 29, headline: 29, notes: 'Textile sector faces above-baseline rates (Avalara, 2026). Small overall US trade volume.', category: 'high' },
+  RUS: { rate: 35, headline: 35, notes: 'Elevated due to sanctions-adjacent policy (column 2 tariff rates). Minimal bilateral trade since 2022.', category: 'high' },
+
+  // --- SECTION 122 BASELINE COUNTRIES (10%) ---
+  // Post-SCOTUS, most countries without specific bilateral deals or Section 232/301 exposure
+  // default to 10% Section 122 (Yale Budget Lab, Apr 2 2026).
+  FRA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Lower auto exposure than Germany/Japan — no significant Section 232 impact. Wine/luxury goods at baseline (Yale Budget Lab).', category: 'baseline' },
+  ITA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Fashion, machinery, food at baseline rate (Yale Budget Lab).', category: 'baseline' },
+  GBR: { rate: 10, headline: 10, notes: '10% Section 122 baseline. UK-US trade deal under negotiation (Yale Budget Lab).', category: 'baseline' },
+  BRA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Agricultural trade flows both ways (Yale Budget Lab).', category: 'baseline' },
+  AUS: { rate: 10, headline: 10, notes: '10% baseline. AUKUS ally. Steel/aluminum at 50% under Section 232 but small share of trade (Yale Budget Lab).', category: 'baseline' },
+  SGP: { rate: 10, headline: 10, notes: '10% baseline. Major re-export hub. Subject to Section 301 investigation (Mar 2026) (Yale Budget Lab).', category: 'baseline' },
+  CHE: { rate: 10, headline: 10, notes: '10% baseline. Pharma sector may face up to 100% under new Section 232 pharma tariffs announced Apr 2 2026 (Yale Budget Lab).', category: 'baseline' },
+  NOR: { rate: 10, headline: 10, notes: '10% baseline. Subject to Section 301 investigation (Mar 2026) (Yale Budget Lab).', category: 'baseline' },
+  NZL: { rate: 10, headline: 10, notes: '10% baseline. Small trade volume (Yale Budget Lab).', category: 'baseline' },
+  ZAF: { rate: 10, headline: 10, notes: '10% baseline. AGOA benefits under review — could change (Yale Budget Lab).', category: 'baseline' },
+  TUR: { rate: 14, headline: 10, notes: '10% baseline + steel/aluminum at 50% (Section 232). Steel is significant Turkish export — blended ~14% (Yale Budget Lab, Avalara).', category: 'medium' },
+  ARG: { rate: 10, headline: 10, notes: '10% baseline. Agricultural exports (Yale Budget Lab).', category: 'baseline' },
+  COL: { rate: 10, headline: 10, notes: '10% baseline (Yale Budget Lab).', category: 'baseline' },
+  EGY: { rate: 10, headline: 10, notes: '10% baseline (Yale Budget Lab).', category: 'baseline' },
+
+  // --- LOW ETR (FTA/energy exemptions) ---
+  ISR: { rate: 8, headline: 10, notes: 'US-Israel FTA provides significant duty exemptions on qualifying goods. Effective rate below 10% baseline (Avalara).', category: 'low' },
+  SAU: { rate: 3, headline: 10, notes: 'Energy imports (vast majority of Saudi exports to US) largely exempt from tariffs. Effective rate very low (Avalara, Penn Wharton).', category: 'low' },
+  NGA: { rate: 3, headline: 10, notes: 'Oil imports (>90% of Nigerian exports to US) exempt. Effective rate very low (Avalara, Penn Wharton).', category: 'low' },
 };
 
 type CategoryColor = 'max' | 'high' | 'medium' | 'baseline' | 'low';
@@ -127,8 +145,8 @@ export default async function TariffTrackerPage() {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: 'What are the current US tariff rates by country?', acceptedAnswer: { '@type': 'Answer', text: `As of April 2026, US tariff rates range from 15% (Section 122 baseline for most countries) to 145% (China). The average across major trading partners is approximately ${avgTariff.toFixed(0)}%. Following the Supreme Court ruling in February 2026 that struck down IEEPA tariffs, the administration replaced them with a 15% baseline under Section 122, with higher rates maintained for China and select countries through other authorities.` } },
-          { '@type': 'Question', name: 'Which country faces the highest US tariffs?', acceptedAnswer: { '@type': 'Answer', text: `China faces the highest US tariff rate at 145%, comprising 125% "reciprocal" tariffs plus a 20% fentanyl-related surcharge. This is followed by Cambodia (49%), Vietnam (46%), Sri Lanka (44%), and Myanmar (44%). These rates have dramatically reshaped global supply chains, with many manufacturers relocating from China to India, Mexico, and other countries with lower tariff exposure.` } },
+          { '@type': 'Question', name: 'What are the current US tariff rates by country?', acceptedAnswer: { '@type': 'Answer', text: `As of April 2026, the US average effective tariff rate is 11.0%, the highest since 1943 (Yale Budget Lab). Rates range from ~3% (energy exporters like Saudi Arabia) to 46.9% (Myanmar). The 10% Section 122 baseline applies to most countries, with higher rates for China (33.9%), Southeast Asia (19-20%), and countries with Section 232 exposure (steel/aluminum/autos). Canada and Mexico face headline rates of 25-35% but effective rates of only ~5% because 85% of imports qualify for USMCA duty-free treatment (Penn Wharton).` } },
+          { '@type': 'Question', name: 'Which country faces the highest US tariffs?', acceptedAnswer: { '@type': 'Answer', text: `Myanmar has the highest effective tariff rate (ETR) at 46.9%, though with minimal trade volume. Among major trading partners, China faces the highest ETR at 33.9% (Penn Wharton, January 2026). This is down from peak rates of over 100% — a November 2025 US-China deal reduced the reciprocal tariff from 125% to 10%, but layered Section 301, fentanyl, and Section 232 duties keep the blended rate high. South Korea faces ~25% due to heavy auto sector tariff exposure under Section 232.` } },
           { '@type': 'Question', name: 'How have tariffs affected global GDP growth?', acceptedAnswer: { '@type': 'Answer', text: 'The IMF estimates the 2025-2026 tariff escalation reduced global GDP growth by 0.3-0.5 percentage points. China has been the most affected large economy, with growth slowing from 5.2% in 2023 to approximately 4.2% in 2026. Southeast Asian economies initially benefited from supply chain diversion but now face their own elevated tariff rates. India negotiated a bilateral deal reducing its tariff to 18%, helping maintain growth above 6%.' } },
           { '@type': 'Question', name: 'What happened with the Supreme Court tariff ruling?', acceptedAnswer: { '@type': 'Answer', text: 'On February 20, 2026, the Supreme Court ruled 6-3 in Learning Resources v. Trump that the use of IEEPA (International Emergency Economic Powers Act) to impose tariffs was unlawful. The court found that tariff authority falls outside IEEPA\'s scope. The administration responded by replacing IEEPA tariffs with a 15% baseline tariff under Section 122, which allows temporary import surcharges of up to 15% for 150 days to address balance-of-payments issues.' } },
         ],

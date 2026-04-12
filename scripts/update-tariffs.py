@@ -18,10 +18,15 @@ import datetime
 import requests
 from typing import Optional
 
-SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://seyrycaldytfjvvkqopu.supabase.co')
-SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', '')
-OPENROUTER_KEY = os.environ.get('OPENROUTER_KEY', '')
+OPENROUTER_KEY = os.environ.get('OPENROUTER_API_KEY', os.environ.get('OPENROUTER_KEY', ''))
 MODEL = 'mistralai/mistral-small-3.1-24b-instruct'
+
+# Database connection (direct PostgreSQL — more reliable than REST API for writes)
+DB_HOST = os.environ.get('SUPABASE_DB_HOST', 'aws-1-ca-central-1.pooler.supabase.com')
+DB_PORT = os.environ.get('SUPABASE_DB_PORT', '6543')
+DB_USER = os.environ.get('SUPABASE_DB_USER', 'postgres.seyrycaldytfjvvkqopu')
+DB_PASS = os.environ.get('SUPABASE_DB_PASSWORD', '')
+DB_NAME = os.environ.get('SUPABASE_DB_NAME', 'postgres')
 
 TARIFF_SOURCES = [
     'https://www.tradecomplianceresourcehub.com/2026/04/08/trump-2-0-tariff-tracker/',
@@ -41,17 +46,25 @@ def log(msg: str):
     print(f"[{datetime.datetime.utcnow().isoformat()}] {msg}")
 
 
-def get_current_rates() -> dict:
-    """Fetch current tariff rates from Supabase."""
-    resp = requests.get(
-        f"{SUPABASE_URL}/rest/v1/sotw_tariff_rates?select=*",
-        headers={
-            'apikey': SUPABASE_KEY,
-            'Authorization': f'Bearer {SUPABASE_KEY}',
-        }
+def get_db_connection():
+    """Get PostgreSQL connection."""
+    import psycopg2
+    return psycopg2.connect(
+        host=DB_HOST, port=DB_PORT, user=DB_USER,
+        password=DB_PASS, dbname=DB_NAME, sslmode='require',
     )
-    resp.raise_for_status()
-    return {r['country_id']: r for r in resp.json()}
+
+
+def get_current_rates() -> dict:
+    """Fetch current tariff rates from database."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT country_id, effective_rate, headline_rate, notes, category, legal_authorities, source_url, change_log FROM sotw_tariff_rates")
+    cols = ['country_id', 'effective_rate', 'headline_rate', 'notes', 'category', 'legal_authorities', 'source_url', 'change_log']
+    rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+    cur.close()
+    conn.close()
+    return {r['country_id']: r for r in rows}
 
 
 def search_tariff_news() -> str:
@@ -178,7 +191,10 @@ If there are no confirmed changes, respond with: []"""
 
 
 def apply_changes(changes: list, current_rates: dict):
-    """Apply verified changes to Supabase."""
+    """Apply verified changes to database."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+
     for change in changes:
         cid = change['country_id']
         new_rate = change['new_rate']
@@ -204,10 +220,11 @@ def apply_changes(changes: list, current_rates: dict):
             'source': source,
         }
 
-        # Update existing change_log
         existing_log = old_entry.get('change_log', [])
         if isinstance(existing_log, str):
             existing_log = json.loads(existing_log)
+        if existing_log is None:
+            existing_log = []
         existing_log.append(change_entry)
 
         # Determine new category
@@ -222,49 +239,35 @@ def apply_changes(changes: list, current_rates: dict):
         else:
             category = 'low'
 
-        # Update notes
         new_notes = f"{reason} (updated {datetime.date.today().isoformat()}). Previous rate: {old_rate}%. Source: {source}"
 
-        resp = requests.patch(
-            f"{SUPABASE_URL}/rest/v1/sotw_tariff_rates?country_id=eq.{cid}",
-            headers={
-                'apikey': SUPABASE_KEY,
-                'Authorization': f'Bearer {SUPABASE_KEY}',
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal',
-            },
-            json={
-                'effective_rate': new_rate,
-                'notes': new_notes,
-                'category': category,
-                'last_changed': datetime.datetime.utcnow().isoformat(),
-                'last_verified': datetime.datetime.utcnow().isoformat(),
-                'change_log': json.dumps(existing_log),
-                'source_url': source,
-            }
-        )
-
-        if resp.ok:
+        try:
+            cur.execute("""
+                UPDATE sotw_tariff_rates SET
+                    effective_rate = %s, notes = %s, category = %s,
+                    last_changed = NOW(), last_verified = NOW(),
+                    change_log = %s::jsonb, source_url = %s
+                WHERE country_id = %s
+            """, (new_rate, new_notes, category, json.dumps(existing_log), source, cid))
             log(f"  UPDATED: {cid} {old_rate}% → {new_rate}% ({reason})")
-        else:
-            log(f"  ERROR updating {cid}: {resp.status_code} {resp.text[:200]}")
+        except Exception as e:
+            log(f"  ERROR updating {cid}: {e}")
+
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 def update_verified_timestamp(current_rates: dict):
     """Mark all rates as verified (even if unchanged)."""
-    resp = requests.patch(
-        f"{SUPABASE_URL}/rest/v1/sotw_tariff_rates",
-        headers={
-            'apikey': SUPABASE_KEY,
-            'Authorization': f'Bearer {SUPABASE_KEY}',
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal',
-        },
-        params={'country_id': 'neq.NONE'},  # match all
-        json={'last_verified': datetime.datetime.utcnow().isoformat()},
-    )
-    if resp.ok:
-        log(f"Marked {len(current_rates)} rates as verified.")
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE sotw_tariff_rates SET last_verified = NOW()")
+    conn.commit()
+    affected = cur.rowcount
+    cur.close()
+    conn.close()
+    log(f"Marked {affected} rates as verified.")
 
 
 def main():

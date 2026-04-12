@@ -154,10 +154,11 @@ export default async function TariffTrackerPage() {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: 'What are the current US tariff rates by country?', acceptedAnswer: { '@type': 'Answer', text: `As of April 2026, the US average effective tariff rate is 11.0%, the highest since 1943 (Yale Budget Lab). Rates range from ~3% (energy exporters like Saudi Arabia) to 46.9% (Myanmar). The 10% Section 122 baseline applies to most countries, with higher rates for China (33.9%), Southeast Asia (19-20%), and countries with Section 232 exposure (steel/aluminum/autos). Canada and Mexico face headline rates of 25-35% but effective rates of only ~5% because 85% of imports qualify for USMCA duty-free treatment (Penn Wharton).` } },
-          { '@type': 'Question', name: 'Which country faces the highest US tariffs?', acceptedAnswer: { '@type': 'Answer', text: `Myanmar has the highest effective tariff rate (ETR) at 46.9%, though with minimal trade volume. Among major trading partners, China faces the highest ETR at 33.9% (Penn Wharton, January 2026). This is down from peak rates of over 100% — a November 2025 US-China deal reduced the reciprocal tariff from 125% to 10%, but layered Section 301, fentanyl, and Section 232 duties keep the blended rate high. South Korea faces ~25% due to heavy auto sector tariff exposure under Section 232.` } },
-          { '@type': 'Question', name: 'How have tariffs affected global GDP growth?', acceptedAnswer: { '@type': 'Answer', text: 'The IMF estimates the 2025-2026 tariff escalation reduced global GDP growth by 0.3-0.5 percentage points. China has been the most affected large economy, with growth slowing from 5.2% in 2023 to approximately 4.2% in 2026. Southeast Asian economies initially benefited from supply chain diversion but now face their own elevated tariff rates. India negotiated a bilateral deal reducing its tariff to 18%, helping maintain growth above 6%.' } },
-          { '@type': 'Question', name: 'What happened with the Supreme Court tariff ruling?', acceptedAnswer: { '@type': 'Answer', text: 'On February 20, 2026, the Supreme Court ruled 6-3 in Learning Resources v. Trump that the use of IEEPA (International Emergency Economic Powers Act) to impose tariffs was unlawful. The court found that tariff authority falls outside IEEPA\'s scope. The administration responded by replacing IEEPA tariffs with a 15% baseline tariff under Section 122, which allows temporary import surcharges of up to 15% for 150 days to address balance-of-payments issues.' } },
+          { '@type': 'Question', name: 'What are the current US tariff rates by country in April 2026?', acceptedAnswer: { '@type': 'Answer', text: `As of April 2026, the US average effective tariff rate is 11.0%, the highest since 1943 (Yale Budget Lab). After SCOTUS struck down all IEEPA tariffs in February 2026, most countries face a uniform 10% Section 122 surcharge — but with 1,655 product exemptions (critical minerals, energy, select agriculture, electronics, pharma, aerospace). China is the outlier at ~30% due to layered Section 301 duties that survived SCOTUS. Canada and Mexico effectively pay ~5% because 85% of imports use USMCA duty-free status. Countries with major steel/auto exports (Germany, Japan, Korea) face blended rates of 15-25% due to Section 232 tariffs. The Section 122 surcharge expires July 24, 2026. Sources: Yale Budget Lab, Penn Wharton Budget Model.` } },
+          { '@type': 'Question', name: 'Which country faces the highest US tariffs?', acceptedAnswer: { '@type': 'Answer', text: `Among major trading partners, China faces the highest effective tariff rate at ~30% (Penn Wharton). This is down from a peak of 164% in April 2025. The rate reflects 10% Section 122 + Section 301 tariffs (7.5-25% on ~$370B of goods dating from 2018-2024) + Section 232 (steel/aluminum 50%). Russia and Myanmar face ~35% due to Column 2 (non-MFN) statutory rates. South Korea faces ~25% due to Section 232 auto tariffs after failing to ratify its trade deal. Most other countries face the 10% baseline with significant product exemptions.` } },
+          { '@type': 'Question', name: 'What products are exempt from the 10% Section 122 tariff?', acceptedAnswer: { '@type': 'Answer', text: 'The Section 122 proclamation includes 1,655 product exemptions in Annex II. Key exempt categories include: critical minerals, energy and energy products, select agricultural products, certain pharmaceuticals and ingredients, specified electronics, certain vehicles and auto parts already subject to Section 232, aerospace products, metals used in currency/bullion, and natural resources not produced in sufficient US quantities. Additionally, USMCA-compliant goods from Canada/Mexico and CAFTA-DR qualifying textile/apparel from Central America are exempt. Products already subject to Section 232 tariffs are also excluded from the surcharge to avoid double-stacking. Source: Global Trade Alert, GingerControl, White & Case.' } },
+          { '@type': 'Question', name: 'What happened with the Supreme Court tariff ruling?', acceptedAnswer: { '@type': 'Answer', text: 'On February 20, 2026, the Supreme Court ruled 6-3 in Learning Resources v. Trump that IEEPA cannot be used to impose tariffs. This voided ALL "Liberation Day" reciprocal tariffs and ALL bilateral deals negotiated under IEEPA (India 18%, Taiwan 15%, Japan/EU 15%). The administration replaced them with a 10% Section 122 surcharge under the Trade Act of 1974, effective February 24, expiring July 24, 2026 (150-day limit). Section 232 tariffs (steel, aluminum, autos, pharma) and Section 301 tariffs (China) were unaffected because they use different legal authorities. Sources: White & Case, Global Trade Alert, PIIE.' } },
+          { '@type': 'Question', name: 'How have tariffs affected global GDP growth?', acceptedAnswer: { '@type': 'Answer', text: 'The IMF estimates the 2025-2026 tariff escalation reduced global GDP growth by 0.3-0.5 percentage points. The SCOTUS ruling partially reversed this — dropping most countries from 20-50% reciprocal rates to a 10% baseline significantly reduced trade friction. However, uncertainty persists because Section 122 expires July 24 2026 and Section 301 investigations launched in March 2026 could reimpose country-specific rates. China remains most affected. The US effective tariff rate of 11% is its highest since 1943 but far below the 23% peak reached in mid-2025.' } },
         ],
       },
       {
@@ -249,8 +250,37 @@ export default async function TariffTrackerPage() {
           </div>
         </div>
 
+        {/* Tariff structure explainer */}
+        <div className="max-w-[800px] space-y-4 mb-10">
+          <h2 className="text-[22px] font-bold text-[#0d1b2a]">Current Tariff Structure (Post-SCOTUS)</h2>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            After the Supreme Court voided all IEEPA tariffs on February 20, 2026, the US tariff regime simplified dramatically. Four legal authorities now determine what importers actually pay:
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="border border-[#d5dce6] rounded-xl p-4">
+              <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">Section 122 — 10% Global Surcharge</div>
+              <div className="text-[13px] text-[#64748b]">Applies to all imports. Expires Jul 24, 2026. Has <strong>1,655 product exemptions</strong> including critical minerals, energy, select agriculture, electronics, pharma, aerospace. USMCA and CAFTA-DR goods exempt.</div>
+            </div>
+            <div className="border border-[#d5dce6] rounded-xl p-4">
+              <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">Section 232 — Sector Tariffs</div>
+              <div className="text-[13px] text-[#64748b]">Steel &amp; aluminum: <strong>50%</strong>. Copper: <strong>25-50%</strong>. Automobiles &amp; parts: <strong>25%</strong>. Pharma (patented): <strong>up to 100%</strong> (phasing in). Lumber: <strong>10%+</strong>. Applies regardless of country (except UK reduced rates on steel/aluminum).</div>
+            </div>
+            <div className="border border-[#d5dce6] rounded-xl p-4">
+              <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">Section 301 — China Only</div>
+              <div className="text-[13px] text-[#64748b]">7.5-25% on ~$370B of Chinese goods (dating from 2018-2024 trade war). Semiconductors: <strong>50%</strong>. These survived SCOTUS. New Section 301 investigations launched Mar 2026 targeting 16 countries.</div>
+            </div>
+            <div className="border border-[#d5dce6] rounded-xl p-4">
+              <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">USMCA — Duty Free</div>
+              <div className="text-[13px] text-[#64748b]">~85% of Canada/Mexico imports qualify for <strong>0% duty</strong> under USMCA rules of origin. Coverage surged from ~50% to 85% as importers reclassified goods. CAFTA-DR textiles also exempt.</div>
+            </div>
+          </div>
+          <p className="text-[13px] text-[#94a3b8]">
+            Sources: <a href="https://www.whitecase.com/insight-alert/trump-administration-imposes-10-section-122-tariff-plan-replace-ieepa-tariffs" className="hover:underline" target="_blank" rel="noopener">White &amp; Case</a> · <a href="https://globaltradealert.org/blog/s122-exemption-structure-explained" className="hover:underline" target="_blank" rel="noopener">Global Trade Alert</a> · <a href="https://gingercontrol.com/blog/section-122-tariffs-explained" className="hover:underline" target="_blank" rel="noopener">GingerControl</a> · <a href="https://budgetlab.yale.edu/research/state-us-tariffs-april-2-2026" className="hover:underline" target="_blank" rel="noopener">Yale Budget Lab</a> · <a href="https://budgetmodel.wharton.upenn.edu/p/2026-03-16-effective-tariff-rates-and-revenues-updated-march-16-2026/" className="hover:underline" target="_blank" rel="noopener">Penn Wharton</a>
+          </p>
+        </div>
+
         {/* Main data table */}
-        <h2 className="text-[22px] font-bold text-[#0d1b2a] mb-4">Tariff Rates &amp; Economic Impact by Country</h2>
+        <h2 className="text-[22px] font-bold text-[#0d1b2a] mb-4">Effective Tariff Rates &amp; Economic Impact by Country</h2>
         <div className="border border-[#d5dce6] rounded-xl overflow-hidden mb-10">
           <div className="overflow-x-auto">
             <table className="w-full">

@@ -6,6 +6,9 @@ import { supabase } from '@/lib/supabase';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
+// Revalidate every 24 hours so DB changes from the ETL script show up within a day
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: 'US Tariff Impact Tracker 2026 — Economic Effects by Country',
   description: 'Track the economic impact of US tariffs on 218 countries. GDP growth, inflation, trade balance, and currency changes since April 2025 Liberation Day tariffs. Updated with live IMF & World Bank data.',

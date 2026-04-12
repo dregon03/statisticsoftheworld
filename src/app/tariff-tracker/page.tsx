@@ -62,7 +62,7 @@ const TARIFF_RATES: Record<string, { rate: number; headline: number; notes: stri
   PHL: { rate: 10, headline: 10, notes: 'SCOTUS voided reciprocal rate. Now 10% Section 122. BPO/services sector unaffected by goods tariffs (Global Trade Alert).', category: 'baseline' },
   FRA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. EU framework deal (15%) voided by SCOTUS. Lower auto exposure than Germany — mostly at baseline (Yale Budget Lab).', category: 'baseline' },
   ITA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Fashion, machinery, food exports (Yale Budget Lab).', category: 'baseline' },
-  GBR: { rate: 10, headline: 10, notes: '10% Section 122 baseline. UK-US mini-deal was under IEEPA negotiation — now moot. Reverts to baseline (Yale Budget Lab).', category: 'baseline' },
+  GBR: { rate: 12, headline: 10, notes: '10% Section 122 baseline + UK-specific Section 232 rates: steel/aluminum 25% (reduced from 50%), auto parts 10%. UK gets preferential metal rates via Executive Order 14309 (Jun 2025). Blended ~12% (Trade Compliance Resource Hub).', category: 'baseline' },
   BRA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Agricultural trade (Yale Budget Lab).', category: 'baseline' },
   AUS: { rate: 10, headline: 10, notes: '10% baseline. Steel/aluminum at 50% Section 232 but small share of total trade (Yale Budget Lab).', category: 'baseline' },
   SGP: { rate: 10, headline: 10, notes: '10% baseline. Re-export hub. Subject to Section 301 investigation (Mar 2026) (Yale Budget Lab).', category: 'baseline' },
@@ -263,11 +263,11 @@ export default async function TariffTrackerPage() {
             </div>
             <div className="border border-[#d5dce6] rounded-xl p-4">
               <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">Section 232 — Sector Tariffs</div>
-              <div className="text-[13px] text-[#64748b]">Steel &amp; aluminum: <strong>50%</strong>. Copper: <strong>25-50%</strong>. Automobiles &amp; parts: <strong>25%</strong>. Pharma (patented): <strong>up to 100%</strong> (phasing in). Lumber: <strong>10%+</strong>. Applies regardless of country (except UK reduced rates on steel/aluminum).</div>
+              <div className="text-[13px] text-[#64748b]">Steel: <strong>50%</strong> (25% UK). Aluminum: <strong>50%</strong> (25% UK, 200% Russia). Copper: <strong>25-50%</strong>. Autos: <strong>25%</strong> (15% for EU/Japan/Korea). Auto parts: <strong>25%</strong> (10% UK). Lumber: <strong>10%</strong>. Pharma (patented): <strong>up to 100%</strong> (phasing in 120-180 days from Apr 2). Rates restructured Apr 6, 2026 — now apply to full customs value.</div>
             </div>
             <div className="border border-[#d5dce6] rounded-xl p-4">
-              <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">Section 301 — China Only</div>
-              <div className="text-[13px] text-[#64748b]">7.5-25% on ~$370B of Chinese goods (dating from 2018-2024 trade war). Semiconductors: <strong>50%</strong>. These survived SCOTUS. New Section 301 investigations launched Mar 2026 targeting 16 countries.</div>
+              <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">Section 301 — China + Pending</div>
+              <div className="text-[13px] text-[#64748b]">China: 7.5-25% on ~$370B of goods. Semiconductors: <strong>50%</strong>. Maritime cranes: <strong>100%</strong> (delayed to Nov 2026). New Section 301 investigations (Mar 2026) targeting <strong>16 countries</strong> for excess capacity and forced labor — could reimpose country-specific rates after Jul 2026.</div>
             </div>
             <div className="border border-[#d5dce6] rounded-xl p-4">
               <div className="text-[14px] font-bold text-[#0d1b2a] mb-1">USMCA — Duty Free</div>
@@ -275,8 +275,22 @@ export default async function TariffTrackerPage() {
             </div>
           </div>
           <p className="text-[13px] text-[#94a3b8]">
-            Sources: <a href="https://www.whitecase.com/insight-alert/trump-administration-imposes-10-section-122-tariff-plan-replace-ieepa-tariffs" className="hover:underline" target="_blank" rel="noopener">White &amp; Case</a> · <a href="https://globaltradealert.org/blog/s122-exemption-structure-explained" className="hover:underline" target="_blank" rel="noopener">Global Trade Alert</a> · <a href="https://gingercontrol.com/blog/section-122-tariffs-explained" className="hover:underline" target="_blank" rel="noopener">GingerControl</a> · <a href="https://budgetlab.yale.edu/research/state-us-tariffs-april-2-2026" className="hover:underline" target="_blank" rel="noopener">Yale Budget Lab</a> · <a href="https://budgetmodel.wharton.upenn.edu/p/2026-03-16-effective-tariff-rates-and-revenues-updated-march-16-2026/" className="hover:underline" target="_blank" rel="noopener">Penn Wharton</a>
+            Sources: <a href="https://www.tradecomplianceresourcehub.com/2026/04/08/trump-2-0-tariff-tracker/" className="hover:underline" target="_blank" rel="noopener">Trade Compliance Resource Hub</a> · <a href="https://budgetlab.yale.edu/research/state-us-tariffs-april-2-2026" className="hover:underline" target="_blank" rel="noopener">Yale Budget Lab</a> · <a href="https://budgetmodel.wharton.upenn.edu/p/2026-03-16-effective-tariff-rates-and-revenues-updated-march-16-2026/" className="hover:underline" target="_blank" rel="noopener">Penn Wharton</a> · <a href="https://www.whitecase.com/insight-alert/trump-administration-imposes-10-section-122-tariff-plan-replace-ieepa-tariffs" className="hover:underline" target="_blank" rel="noopener">White &amp; Case</a> · <a href="https://globaltradealert.org/blog/s122-exemption-structure-explained" className="hover:underline" target="_blank" rel="noopener">Global Trade Alert</a>
           </p>
+        </div>
+
+        {/* Upcoming risks */}
+        <div className="max-w-[800px] mb-10 border border-orange-200 bg-orange-50 rounded-xl p-5">
+          <h3 className="text-[16px] font-bold text-orange-800 mb-2">Upcoming Tariff Risks</h3>
+          <ul className="text-[14px] text-[#374151] space-y-1.5 list-disc pl-5">
+            <li><strong>Jul 24, 2026:</strong> Section 122 (10% baseline) expires. Must be renewed by Congress or rates drop to pre-Section 122 levels.</li>
+            <li><strong>Section 301 investigations (Mar 2026):</strong> Excess capacity investigation targeting China, EU, Singapore, Switzerland, Norway, Indonesia, Malaysia, Cambodia, Thailand, Korea, Vietnam, Taiwan, Bangladesh, Mexico, Japan, India. Could reimpose country-specific rates.</li>
+            <li><strong>Forced labor investigation (Mar 2026):</strong> Targeting 60+ countries. Rates TBD.</li>
+            <li><strong>Pharma tariffs:</strong> 100% on patented imports phasing in — large companies in ~120 days (Aug 2026), smaller in 180 days (Oct 2026).</li>
+            <li><strong>Nov 10, 2026:</strong> Chinese maritime equipment tariffs (100% on cranes, chassis) take effect.</li>
+            <li><strong>Semiconductor investigation:</strong> Section 232 investigation on integrated circuits initiated Apr 1, 2026. Threatened rate: 100%.</li>
+          </ul>
+          <p className="text-[12px] text-[#94a3b8] mt-2">Source: <a href="https://www.tradecomplianceresourcehub.com/2026/04/08/trump-2-0-tariff-tracker/" className="hover:underline" target="_blank" rel="noopener">Trade Compliance Resource Hub (Apr 8, 2026)</a></p>
         </div>
 
         {/* Main data table */}

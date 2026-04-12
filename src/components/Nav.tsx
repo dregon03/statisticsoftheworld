@@ -16,6 +16,19 @@ const NAV_ITEMS = [
   { href: '/calendar', label: 'Calendar' },
   { href: '/predictions', label: 'Predictions' },
   { href: '/ai', label: 'AI' },
+  { href: '/special', label: 'Special', dropdown: [
+    { href: '/tariff-tracker', label: 'Tariff Impact Tracker' },
+    { href: '/snapshot/2026', label: '2026 Economic Snapshot' },
+    { href: '/credit-ratings', label: 'Credit Ratings' },
+    { href: '/world-economy', label: 'World Economy' },
+    { href: '/forecasts', label: 'Forecasts' },
+    { href: '/richest-countries', label: 'Richest Countries' },
+    { href: '/poorest-countries', label: 'Poorest Countries' },
+    { href: '/safest-countries', label: 'Safest Countries' },
+    { href: '/largest-economies', label: 'Largest Economies' },
+    { href: '/g7-economy', label: 'G7 Economy' },
+    { href: '/brics-economy', label: 'BRICS Economy' },
+  ]},
 ];
 
 export default function Nav() {
@@ -46,7 +59,42 @@ export default function Nav() {
             {NAV_ITEMS.map(item => {
               const isActive = item.href === '/'
                 ? pathname === '/'
-                : pathname.startsWith(item.href);
+                : item.dropdown
+                  ? item.dropdown.some(d => pathname.startsWith(d.href))
+                  : pathname.startsWith(item.href);
+
+              if (item.dropdown) {
+                return (
+                  <div key={item.href} className="relative group">
+                    <button
+                      className={`px-3 py-1.5 text-[14px] rounded-lg transition flex items-center gap-1 ${
+                        isActive
+                          ? 'text-white font-semibold bg-white/10'
+                          : 'text-white/60 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      {item.label}
+                      <svg className="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    <div className="absolute top-full right-0 mt-1 w-56 bg-[#0d1b2a] border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-1.5 z-50">
+                      {item.dropdown.map(sub => (
+                        <Link
+                          key={sub.href}
+                          href={sub.href}
+                          className={`block px-4 py-2 text-[13px] transition ${
+                            pathname === sub.href
+                              ? 'text-white bg-white/10'
+                              : 'text-white/60 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={item.href}

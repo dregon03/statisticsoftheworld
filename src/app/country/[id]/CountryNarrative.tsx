@@ -1,38 +1,17 @@
-'use client';
+import { supabase } from '@/lib/supabase';
 
-import { useState, useEffect } from 'react';
+export default async function CountryNarrative({ countryId }: { countryId: string }) {
+  const { data } = await supabase
+    .from('sotw_country_narratives')
+    .select('narrative')
+    .eq('country_id', countryId)
+    .single();
 
-export default function CountryNarrative({ countryId }: { countryId: string }) {
-  const [narrative, setNarrative] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/narrative?id=${encodeURIComponent(countryId)}`)
-      .then(r => r.json())
-      .then(data => {
-        setNarrative(data.narrative || '');
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [countryId]);
-
-  if (loading) {
-    return (
-      <div className="mb-8 border border-gray-100 rounded-xl p-5 animate-pulse">
-        <div className="h-3 bg-gray-100 rounded w-full mb-2" />
-        <div className="h-3 bg-gray-100 rounded w-11/12 mb-2" />
-        <div className="h-3 bg-gray-100 rounded w-10/12 mb-4" />
-        <div className="h-3 bg-gray-100 rounded w-full mb-2" />
-        <div className="h-3 bg-gray-100 rounded w-9/12" />
-      </div>
-    );
-  }
-
-  if (!narrative) return null;
+  if (!data?.narrative) return null;
 
   return (
     <div className="mb-8 border border-gray-100 rounded-xl p-5">
-      <p className="text-[14px] text-[#444] leading-relaxed">{narrative}</p>
+      <p className="text-[14px] text-[#444] leading-relaxed">{data.narrative}</p>
     </div>
   );
 }

@@ -16,53 +16,56 @@ export const metadata: Metadata = {
   },
 };
 
-// Tariff rates as of April 2026 (post-Supreme Court ruling, Section 122 replacement)
-// Sources: USTR, executive orders, bilateral negotiations
-const TARIFF_RATES: Record<string, { rate: number; notes: string; category: string }> = {
-  CHN: { rate: 145, notes: 'Highest rate globally. Includes 125% "reciprocal" + 20% fentanyl-related surcharge.', category: 'max' },
-  TWN: { rate: 32, notes: 'Semiconductor supply chain concerns.', category: 'high' },
-  VNM: { rate: 46, notes: 'Major beneficiary of China+1 diversification, now tariffed.', category: 'high' },
-  THA: { rate: 36, notes: 'Manufacturing hub facing elevated tariffs.', category: 'high' },
-  IDN: { rate: 32, notes: 'Nickel and manufacturing tariffs.', category: 'high' },
-  KHM: { rate: 49, notes: 'Among highest rates, transshipment concerns.', category: 'max' },
-  BGD: { rate: 37, notes: 'Garment industry heavily affected.', category: 'high' },
-  IND: { rate: 18, notes: 'Negotiated down from 26% in Feb 2026 bilateral deal.', category: 'medium' },
-  JPN: { rate: 15, notes: 'Section 122 baseline rate post-Supreme Court ruling.', category: 'baseline' },
-  DEU: { rate: 15, notes: 'EU-wide baseline. Auto tariff 25% under Section 232.', category: 'baseline' },
-  FRA: { rate: 15, notes: 'EU-wide baseline.', category: 'baseline' },
-  ITA: { rate: 15, notes: 'EU-wide baseline.', category: 'baseline' },
-  GBR: { rate: 15, notes: 'Baseline. UK-US mini-deal under negotiation.', category: 'baseline' },
-  KOR: { rate: 25, notes: 'Auto sector tariffs 25% under Section 232.', category: 'high' },
-  CAN: { rate: 15, notes: 'USMCA partner. Some goods exempt. Retaliated with matching tariffs.', category: 'baseline' },
-  MEX: { rate: 15, notes: 'USMCA partner. Some goods exempt. Retaliated with matching tariffs.', category: 'baseline' },
-  BRA: { rate: 15, notes: 'Baseline rate.', category: 'baseline' },
-  AUS: { rate: 15, notes: 'Baseline. AUKUS ally, exemptions under discussion.', category: 'baseline' },
-  ISR: { rate: 15, notes: 'Baseline. US-Israel FTA provides some exemptions.', category: 'baseline' },
-  SAU: { rate: 15, notes: 'Baseline. Energy imports largely exempt.', category: 'baseline' },
-  RUS: { rate: 35, notes: 'Elevated due to sanctions-adjacent policy. Minimal trade.', category: 'high' },
-  MYS: { rate: 24, notes: 'Electronics supply chain.', category: 'high' },
-  PHL: { rate: 17, notes: 'BPO sector less affected than goods trade.', category: 'medium' },
-  PAK: { rate: 29, notes: 'Textile sector affected.', category: 'high' },
-  LKA: { rate: 44, notes: 'High rate, small trade volume.', category: 'max' },
-  MMR: { rate: 44, notes: 'High rate, minimal enforcement due to sanctions.', category: 'max' },
-  SGP: { rate: 15, notes: 'Baseline. Major re-export hub, minimal impact.', category: 'baseline' },
-  CHE: { rate: 15, notes: 'Baseline.', category: 'baseline' },
-  NOR: { rate: 15, notes: 'Baseline.', category: 'baseline' },
-  NZL: { rate: 15, notes: 'Baseline.', category: 'baseline' },
-  ZAF: { rate: 15, notes: 'AGOA status under review.', category: 'baseline' },
-  NGA: { rate: 15, notes: 'Baseline. Oil imports largely exempt.', category: 'baseline' },
-  TUR: { rate: 15, notes: 'Baseline. Steel/aluminum tariffs 25% under Section 232.', category: 'baseline' },
-  ARG: { rate: 15, notes: 'Baseline.', category: 'baseline' },
-  COL: { rate: 15, notes: 'Baseline.', category: 'baseline' },
-  EGY: { rate: 15, notes: 'Baseline.', category: 'baseline' },
+// Effective tariff rates as of April 2026
+// "Headline" = statutory/announced rate. "Effective" = actual rate paid after exemptions, USMCA, FTAs.
+// Sources: Yale Budget Lab, Penn Wharton, Tax Foundation, USTR, bilateral deal announcements.
+// US average effective tariff: 11.0% (highest since 1943). Section 122 baseline: 10%, expires Jul 24 2026.
+const TARIFF_RATES: Record<string, { rate: number; headline: number; notes: string; category: string }> = {
+  CHN: { rate: 34, headline: 34, notes: 'Highest ETR. Nov 2025 deal reduced reciprocal tariffs from 125% to 10%, but layered Section 301 + fentanyl + Section 232 duties bring effective rate to ~34%.', category: 'max' },
+  KHM: { rate: 49, headline: 49, notes: 'Among highest headline rates. Transshipment concerns from China. Small trade volume.', category: 'max' },
+  VNM: { rate: 46, headline: 46, notes: 'High headline rate. China+1 diversification initially boosted Vietnam, but tariffs followed.', category: 'max' },
+  LKA: { rate: 44, headline: 44, notes: 'High headline rate, very small trade volume with US.', category: 'max' },
+  MMR: { rate: 44, headline: 44, notes: 'High headline rate. Minimal enforcement due to sanctions.', category: 'max' },
+  BGD: { rate: 37, headline: 37, notes: 'Garment industry heavily affected. Major RMG exporter.', category: 'high' },
+  THA: { rate: 36, headline: 36, notes: 'Manufacturing hub. Electronics and auto parts affected.', category: 'high' },
+  RUS: { rate: 35, headline: 35, notes: 'Elevated due to sanctions-adjacent policy. Minimal bilateral trade.', category: 'high' },
+  TWN: { rate: 15, headline: 15, notes: 'Reduced from 20% to 15% in Jan 2026 bilateral deal. Semiconductor exemptions.', category: 'baseline' },
+  IDN: { rate: 32, headline: 32, notes: 'Nickel and manufacturing. High headline rate.', category: 'high' },
+  PAK: { rate: 29, headline: 29, notes: 'Textile sector affected. Small overall trade volume.', category: 'high' },
+  KOR: { rate: 25, headline: 25, notes: 'Auto sector tariffs 25% under Section 232. Other goods at baseline.', category: 'high' },
+  MYS: { rate: 24, headline: 24, notes: 'Electronics supply chain. Semiconductor-related exemptions under discussion.', category: 'high' },
+  IND: { rate: 18, headline: 18, notes: 'Negotiated down from 25% to 18% in Feb 2026 bilateral deal. Market access concessions.', category: 'medium' },
+  PHL: { rate: 17, headline: 17, notes: 'BPO/services sector less affected. Goods trade at moderate rate.', category: 'medium' },
+  DEU: { rate: 15, headline: 15, notes: 'EU baseline 10% Section 122 + auto tariff 25% (Section 232). Blended ~15%.', category: 'baseline' },
+  FRA: { rate: 12, headline: 10, notes: 'EU baseline. Wine/luxury goods face 10% Section 122. Lower auto exposure than Germany.', category: 'baseline' },
+  ITA: { rate: 12, headline: 10, notes: 'EU baseline. Fashion, food exports at 10%.', category: 'baseline' },
+  GBR: { rate: 10, headline: 10, notes: '10% Section 122 baseline. UK-US mini-deal under negotiation.', category: 'baseline' },
+  JPN: { rate: 14, headline: 10, notes: '10% baseline + 25% auto tariff (Section 232). Auto is major export — blended ~14%.', category: 'baseline' },
+  CAN: { rate: 5, headline: 25, notes: 'Headline 25% (35% some goods), but ~85% of imports use USMCA duty-free. Effective rate ~5%. Energy at 10%.', category: 'low' },
+  MEX: { rate: 5, headline: 25, notes: 'Headline 25%, but ~85% USMCA-compliant and exempt. Effective rate ~5%.', category: 'low' },
+  BRA: { rate: 10, headline: 10, notes: '10% Section 122 baseline. Agricultural trade flows both ways.', category: 'baseline' },
+  AUS: { rate: 10, headline: 10, notes: '10% baseline. AUKUS ally. Steel/aluminum at 25% (Section 232).', category: 'baseline' },
+  ISR: { rate: 8, headline: 10, notes: 'US-Israel FTA provides significant exemptions. Effective rate below baseline.', category: 'low' },
+  SAU: { rate: 3, headline: 10, notes: 'Energy imports largely exempt from tariffs. Effective rate very low.', category: 'low' },
+  SGP: { rate: 10, headline: 10, notes: '10% baseline. Re-export hub — many goods transshipped, not consumed.', category: 'baseline' },
+  CHE: { rate: 10, headline: 10, notes: '10% baseline. Pharma sector may face up to 100% under new Section 232 pharma tariffs.', category: 'baseline' },
+  NOR: { rate: 10, headline: 10, notes: '10% baseline. Energy/fish exports.', category: 'baseline' },
+  NZL: { rate: 10, headline: 10, notes: '10% baseline. Small trade volume.', category: 'baseline' },
+  ZAF: { rate: 10, headline: 10, notes: '10% baseline. AGOA status under review — could change.', category: 'baseline' },
+  NGA: { rate: 3, headline: 10, notes: 'Oil imports largely exempt. Effective rate very low.', category: 'low' },
+  TUR: { rate: 14, headline: 10, notes: '10% baseline + steel/aluminum 50% (Section 232). Blended ~14%.', category: 'baseline' },
+  ARG: { rate: 10, headline: 10, notes: '10% baseline. Agricultural exports.', category: 'baseline' },
+  COL: { rate: 10, headline: 10, notes: '10% baseline.', category: 'baseline' },
+  EGY: { rate: 10, headline: 10, notes: '10% baseline.', category: 'baseline' },
 };
 
-type CategoryColor = 'max' | 'high' | 'medium' | 'baseline';
+type CategoryColor = 'max' | 'high' | 'medium' | 'baseline' | 'low';
 const CATEGORY_COLORS: Record<CategoryColor, string> = {
   max: 'bg-red-100 text-red-800 border-red-200',
   high: 'bg-orange-100 text-orange-800 border-orange-200',
   medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   baseline: 'bg-gray-100 text-gray-700 border-gray-200',
+  low: 'bg-green-100 text-green-800 border-green-200',
 };
 
 export default async function TariffTrackerPage() {
@@ -80,13 +83,14 @@ export default async function TariffTrackerPage() {
   const tradeMap = Object.fromEntries(tradeData.map(d => [d.countryId, d]));
   const countryMap = Object.fromEntries(countries.map(c => [c.id, c]));
 
-  // Build rows sorted by tariff rate descending
+  // Build rows sorted by effective tariff rate descending
   const rows = Object.entries(TARIFF_RATES)
     .map(([id, t]) => ({
       id,
       name: countryMap[id]?.name || id,
       iso2: countryMap[id]?.iso2 || '',
       rate: t.rate,
+      headline: t.headline,
       notes: t.notes,
       category: t.category as CategoryColor,
       gdpGrowth: gdpMap[id]?.value,
@@ -167,9 +171,9 @@ export default async function TariffTrackerPage() {
             <div className="text-[13px] text-[#94a3b8]">{maxRate.name}</div>
           </div>
           <div className="bg-white border border-[#d5dce6] rounded-xl p-5">
-            <div className="text-[13px] text-[#94a3b8] mb-1">Baseline Rate</div>
-            <div className="text-[22px] font-bold text-[#0d1b2a]">15%</div>
-            <div className="text-[13px] text-[#94a3b8]">Section 122</div>
+            <div className="text-[13px] text-[#94a3b8] mb-1">Section 122 Baseline</div>
+            <div className="text-[22px] font-bold text-[#0d1b2a]">10%</div>
+            <div className="text-[13px] text-[#94a3b8]">Expires Jul 24, 2026</div>
           </div>
           <div className="bg-white border border-[#d5dce6] rounded-xl p-5">
             <div className="text-[13px] text-[#94a3b8] mb-1">Avg. Tariff Rate</div>
@@ -196,8 +200,16 @@ export default async function TariffTrackerPage() {
               <div>Retaliatory tariffs from China (125% on US goods), EU (targeted tariffs on US agriculture, bourbon, motorcycles), Canada (matching 25% on US goods).</div>
             </div>
             <div className="flex gap-3">
+              <div className="text-[13px] text-[#94a3b8] w-24 shrink-0 pt-0.5">Nov 2025</div>
+              <div><strong>US-China deal</strong> — reciprocal tariffs reduced from 125% to 10% on each other&apos;s goods (other layered tariffs remain). Extended through Nov 2026.</div>
+            </div>
+            <div className="flex gap-3">
+              <div className="text-[13px] text-[#94a3b8] w-24 shrink-0 pt-0.5">Jan 2026</div>
+              <div><strong>US-Taiwan deal</strong> — Taiwan&apos;s reciprocal tariff reduced from 20% to 15%. Semiconductor exemptions.</div>
+            </div>
+            <div className="flex gap-3">
               <div className="text-[13px] text-[#94a3b8] w-24 shrink-0 pt-0.5">Feb 2026</div>
-              <div><strong>Supreme Court ruling</strong> — <em>Learning Resources v. Trump</em>: IEEPA tariffs struck down 6-3. Administration replaces with 15% baseline under Section 122.</div>
+              <div><strong>Supreme Court ruling</strong> — <em>Learning Resources v. Trump</em>: IEEPA tariffs struck down 6-3. Administration replaces with 10% baseline under Section 122 (expires Jul 24, 2026).</div>
             </div>
             <div className="flex gap-3">
               <div className="text-[13px] text-[#94a3b8] w-24 shrink-0 pt-0.5">Feb 2026</div>
@@ -205,7 +217,7 @@ export default async function TariffTrackerPage() {
             </div>
             <div className="flex gap-3">
               <div className="text-[13px] text-[#94a3b8] w-24 shrink-0 pt-0.5">Apr 2026</div>
-              <div>One year on: global supply chains restructured, US inflation above Fed target, China growth slowed, Southeast Asia facing elevated tariff rates after initial diversification boom.</div>
+              <div>One year on: US effective tariff rate at 11% (highest since 1943). USMCA shields ~85% of Canada/Mexico trade. New Section 232 tariffs on pharma (up to 100%). Section 122 baseline expires Jul 24.</div>
             </div>
           </div>
         </div>
@@ -220,7 +232,7 @@ export default async function TariffTrackerPage() {
                 <tr className="text-left text-[13px] text-[#94a3b8] border-b border-[#d5dce6] bg-[#f8f9fb]">
                   <th scope="col" className="px-4 py-2.5 w-12">#</th>
                   <th scope="col" className="px-4 py-2.5">Country</th>
-                  <th scope="col" className="px-4 py-2.5 text-right">US Tariff</th>
+                  <th scope="col" className="px-4 py-2.5 text-right">Effective Rate</th>
                   <th scope="col" className="px-4 py-2.5 text-right">GDP Growth</th>
                   <th scope="col" className="px-4 py-2.5 text-right">Inflation</th>
                   <th scope="col" className="px-4 py-2.5 text-right">Trade (% GDP)</th>
@@ -267,13 +279,13 @@ export default async function TariffTrackerPage() {
         <div className="max-w-[800px] space-y-4 mb-10">
           <h2 className="text-[22px] font-bold text-[#0d1b2a]">Key Findings</h2>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
-            The US tariff regime that began with &quot;Liberation Day&quot; on April 2, 2025 represents the most significant shift in US trade policy since the Smoot-Hawley Tariff Act of 1930. One year on, the data reveals clear winners and losers. China faces effective tariffs of 145% on most goods, accelerating the &quot;China+1&quot; supply chain diversification that was already underway — but the intended beneficiaries (Vietnam, Cambodia, Bangladesh) now face their own elevated tariffs of 37-49%, diminishing the arbitrage. India emerged as the clearest winner, negotiating its tariff down to 18% in a February 2026 bilateral deal.
+            The US tariff regime that began with &quot;Liberation Day&quot; on April 2, 2025 represents the most significant shift in US trade policy since Smoot-Hawley. One year on, the picture is more nuanced than the initial shock suggested. The US average effective tariff rate stands at 11.0% — the highest since 1943, but far below the headline rates announced in April 2025. The gap between headline and effective rates is the story: Canada and Mexico face announced tariffs of 25-35%, but ~85% of their exports enter duty-free under USMCA, producing effective rates of just ~5%. China&apos;s effective rate of ~34% is the highest of any major partner, but well below the initial 145% — a November 2025 deal reduced the reciprocal tariff from 125% to 10%, though layered Section 301 and fentanyl duties keep the blended rate high.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
-            The February 2026 Supreme Court ruling in <em>Learning Resources v. Trump</em> fundamentally changed the legal landscape. By striking down the use of IEEPA for tariffs, the court forced the administration to fall back on Section 122, which limits tariffs to 15% for 150 days. This creates rolling legal uncertainty — the 15% baseline must be renewed or replaced with congressional action. For businesses, this means tariff rates could change every 150 days, complicating long-term investment decisions.
+            The February 2026 Supreme Court ruling in <em>Learning Resources v. Trump</em> fundamentally changed the legal landscape. By striking down the use of IEEPA for tariffs, the court forced the administration to fall back on Section 122 of the Trade Act of 1974, which limits import surcharges to 10% for 150 days. This creates rolling legal uncertainty — the current 10% baseline expires on July 24, 2026 and must be renewed or replaced with congressional action. Meanwhile, Section 232 tariffs (steel 50%, aluminum 50%, autos 25%, pharma up to 100%) remain legally distinct and unaffected by the ruling.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
-            The macroeconomic effects are asymmetric. US inflation remains above the Fed&apos;s 2% target, partly driven by higher import costs. China has experienced deflationary pressure as export demand collapsed and unsold inventory flooded domestic markets. Countries with high trade-to-GDP ratios (Singapore, Vietnam, Malaysia) are most exposed to tariff shocks. The IMF estimates the tariff escalation reduced global GDP growth by 0.3-0.5 percentage points relative to the no-tariff baseline.
+            The macroeconomic effects are asymmetric. US inflation remains above the Fed&apos;s 2% target, partly driven by higher import costs. China has experienced deflationary pressure as export demand shifted. Countries with high trade-to-GDP ratios (Singapore, Vietnam, Malaysia) are most exposed to tariff shocks. India emerged as a relative winner, negotiating its rate down to 18% in exchange for market access concessions. The biggest surprise is USMCA&apos;s resilience — the free trade agreement has proven far more durable than initial rhetoric suggested, with importers aggressively leveraging rules of origin to maintain duty-free access. The IMF estimates the tariff escalation reduced global GDP growth by 0.3-0.5 percentage points relative to baseline.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             All economic data on this page is sourced from the <a href="https://www.imf.org/en/Publications/WEO" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">IMF World Economic Outlook</a>, the <a href="https://data.worldbank.org" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">World Bank</a>, and the <a href="https://ustr.gov" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">Office of the US Trade Representative</a>. Tariff rates reflect the post-Supreme Court legal framework as of April 2026.

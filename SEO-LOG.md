@@ -2,6 +2,41 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-13)
+
+- **Google indexed pages**: ~1,360 (Day 30 milestone April 18 — crawl acceleration expected)
+- **GSC impressions (3mo)**: Not checked this session
+- **Avg position**: ~11.9 (unchanged; breakout expected post-Day 30)
+- **Unemployment by country**: **#4 and #7** — jumped from #8/#9 (April 12 editorial paying off) ✅
+- **Inflation by country**: **#7 and #8** — slight improvement from #8/#9 ✅
+- **GDP by country**: Still not in top 10 — domain authority bottleneck
+- **Domain age**: ~14 days
+
+### Keyword Rankings (2026-04-13 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `inflation by country 2026 ranking` → **#7 and #8** (improvement) ✅
+- `unemployment rate by country 2026 ranking` → **#4 and #7** (new high — editorial paying off) ✅
+- `statistics of the world 2026` → Not visible (Worldometer, StatisticsTimes dominate)
+- `GDP by country 2026` → Not ranking (Worldometer #1, Wikipedia #2, StatisticsTimes #3)
+- `richest countries in the world 2026 GDP per capita` → Not ranking (CEOWorld #1, UnionCitizenship #2)
+- `GDP growth rate by country 2026` → Not ranking (Worldometer #1, VisualCapitalist #2, WorldBank #3)
+- `world statistics country comparison tool 2026` → Not ranking
+- `world economic data by country 2026` → Not ranking
+
+### Competitor Notes (2026-04-13)
+- Unemployment: SOTW now at #4/#7 — positions 1-3 held by WorldPopReview, WorldEconomics, economy.com (Moody's)
+- Inflation: SOTW at #7/#8 — TradingEconomics×2, VisualCapitalist, WorldCountryData hold top 6
+- GDP growth: WorldPopReview (#5), voronoiapp (#9) are beatable; but page needs DA support to crack top 10
+- Trade: tariff context is a strong editorial angle — no competitor has deep 2026 tariff analysis on trade openness page
+- Richest countries: CEOWorld, UnionCitizenship, Worldometer, WorldPopReview hard to displace without more backlinks
+
+### Pages Optimized (2026-04-13)
+- **gdp-growth-by-country**: Added OpenGraph metadata; added BreadcrumbList JSON-LD schema; improved title (added "Ranked"); added 2026-specific editorial paragraph on Liberation Day tariffs, India (6.1%) momentum, Guyana (23%+) oil boom, EU slowdown; added 2 new FAQs (tariff impact on growth, fastest emerging markets); expanded related links section with h2 heading
+- **trade-by-country**: Added OpenGraph metadata; added BreadcrumbList JSON-LD schema; improved title and meta description to reference tariffs; expanded editorial to 3 paragraphs (added 2026 tariff/Liberation Day paragraph — friend-shoring, USMCA exemptions, Vietnam exposure, WTO trade volume slowdown); added 4 FAQs (most trade-open, what openness measures, tariff exposure, friend-shoring); expanded related links (added GDP growth, China, India, US, World Economy)
+- **population-by-country**: Added OpenGraph metadata; added BreadcrumbList JSON-LD schema; improved title (added "by Population" suffix for clarity)
+
+---
+
 ## Current Status (2026-04-12)
 
 - **Google indexed pages**: ~1,360 (GSC not accessible this session; Day 30 milestone April 18 — acceleration expected)

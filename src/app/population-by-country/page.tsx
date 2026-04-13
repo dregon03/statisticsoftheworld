@@ -10,9 +10,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const year = data[0]?.year || '2026';
   const totalPop = data.reduce((s, d) => s + (d.value || 0), 0);
   return {
-    title: `Population by Country ${year} — ${data.length} Countries Ranked`,
-    description: `World population: ${(totalPop / 1e9).toFixed(2)}B across ${data.length} countries. #1 ${data[0]?.country} (${formatValue(data[0]?.value, 'number')}), #2 ${data[1]?.country} (${formatValue(data[1]?.value, 'number')}), #3 ${data[2]?.country}. Source: World Bank.`,
+    title: `Population by Country ${year} — ${data.length} Countries Ranked by Population`,
+    description: `World population: ${(totalPop / 1e9).toFixed(2)}B across ${data.length} countries in ${year}. #1 ${data[0]?.country} (${formatValue(data[0]?.value, 'number')}), #2 ${data[1]?.country}, #3 ${data[2]?.country}. Source: World Bank.`,
     alternates: { canonical: 'https://statisticsoftheworld.com/population-by-country' },
+    openGraph: {
+      title: `Population by Country ${year} — ${data.length} Countries Ranked`,
+      description: `World total: ${(totalPop / 1e9).toFixed(2)} billion. India is the most populous nation, overtaking China in 2023. Complete rankings for ${data.length} countries. Source: World Bank.`,
+      url: 'https://statisticsoftheworld.com/population-by-country',
+      siteName: 'Statistics of the World',
+      type: 'website',
+    },
   };
 }
 
@@ -22,6 +29,14 @@ export default async function PopulationByCountryPage() {
   const totalPop = data.reduce((s, d) => s + (d.value || 0), 0);
 
   const jsonLd = { '@context': 'https://schema.org', '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+        { '@type': 'ListItem', position: 2, name: 'Population Rankings', item: 'https://statisticsoftheworld.com/ranking/population' },
+        { '@type': 'ListItem', position: 3, name: `Population by Country ${year}`, item: 'https://statisticsoftheworld.com/population-by-country' },
+      ],
+    },
     { '@type': 'Dataset', name: `Population by Country ${year}`, description: `Population for ${data.length} countries. World total: ${(totalPop / 1e9).toFixed(2)} billion. Source: World Bank.`, url: 'https://statisticsoftheworld.com/population-by-country', creator: { '@type': 'Organization', name: 'World Bank', url: 'https://www.worldbank.org' }, license: 'https://creativecommons.org/licenses/by/4.0/', dateModified: new Date().toISOString().split('T')[0] },
     { '@type': 'FAQPage', mainEntity: [
       { '@type': 'Question', name: 'What is the most populous country in the world?', acceptedAnswer: { '@type': 'Answer', text: `India is the most populous country with approximately ${data[0]?.value ? (Number(data[0].value) / 1e9).toFixed(2) : '1.44'} billion people, having overtaken China in 2023. Together, India and China account for over 35% of the world\'s population.` } },

@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-11",
+    "last_run": "2026-04-14",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). 19 total drafts ready to post. GitHub weekly limit resets Apr 14 — 3 new repos queued (antontarasenko/awesome-economics, niyumard/awesome-economics, erikgahner/awesome-statistics). Apr 11 run: 3 Quora + 2 Reddit + 1 Medium drafted. Duplicate-checked all targets."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 14 run: 4 new GitHub PR drafts ready to submit (antontarasenko/awesome-economics, niyumard/awesome-economics, erikgahner/awesome-statistics, brandonhimpfen/awesome-economics) — all verified SOTW-free. 6 new content drafts: r/datascience, r/statistics, r/InternetIsBeautiful, quora-country-comparison, stats.stackexchange.com, Indie Hackers. Total drafts ready to post: 29+. PENDING: Tom must fork repos and submit the 4 GitHub PRs using the SUBMIT.md files in backlinks/drafts/."
   },
   "platforms": {
     "quora": {
@@ -97,6 +97,14 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/compare",
           "notes": "Draft: academic DBs + aggregators breakdown, SOTW in aggregators section. File: quora-2026-04-11-trustable-world-data.md. Duplicate-checked: no SOTW in search results."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://www.quora.com/What-are-the-best-websites-to-compare-countries-economically",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: comparison of country comparison tools — SOTW, Our World in Data, World Bank, Trading Economics. Also has backup target questions listed. File: quora-2026-04-14-country-comparison-tools.md. Duplicate-check before posting."
         }
       ]
     },
@@ -182,6 +190,30 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: comment on data sources thread. Find a relevant active thread first. File: reddit-macroeconomics-2026-04-11.md. Search r/macroeconomics for SOTW before posting."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://www.reddit.com/r/datascience/",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on thread asking about free economic/macro datasets. Has standalone post variant too. File: reddit-datascience-2026-04-14.md. Search r/datascience for SOTW before posting."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://www.reddit.com/r/InternetIsBeautiful/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: link post showcasing the country comparison tool. Three title variants included. File: reddit-internetisbeautiful-2026-04-14.md. Search r/InternetIsBeautiful for SOTW before posting."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://www.reddit.com/r/statistics/",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on cross-country data sources thread. Has standalone post variant. File: reddit-statistics-2026-04-14.md. Search r/statistics for SOTW before posting."
         }
       ]
     },
@@ -226,11 +258,11 @@
         "datasets/awesome-data"
       ],
       "next_week_priority": [
-        "antontarasenko/awesome-economics — Data section, format: [Name](URL) - description. SOTW-free confirmed 2026-04-11. PR draft ready: github-pr-antontarasenko-awesome-economics-2026-04-14.md. HIGH PRIORITY.",
-        "niyumard/awesome-economics — Data & Insight section. SOTW-free confirmed 2026-04-11. PR draft ready: github-pr-niyumard-awesome-economics-2026-04-14.md. HIGH PRIORITY.",
-        "erikgahner/awesome-statistics — 2000+ links, check CONTRIBUTING.md carefully. SOTW-free confirmed 2026-04-11. PR draft ready: github-pr-erikgahner-awesome-statistics-2026-04-14.md. MEDIUM PRIORITY.",
-        "brandonhimpfen/awesome-economics — Economic Data Sources section, alphabetical format. Not yet checked. MEDIUM PRIORITY.",
-        "datasets/awesome-data — economic-data.md file specifically. Not yet checked. MEDIUM PRIORITY."
+        "datasets/awesome-data — economic-data.md file specifically. Not yet checked for SOTW. MEDIUM PRIORITY.",
+        "lavie/Awesome-APIs — general API list, Economics section. Not yet checked. MEDIUM PRIORITY.",
+        "whizkydee/Awesome-APIs — similar to lavie. Not yet checked. MEDIUM PRIORITY.",
+        "academic/awesome-datascience — data sources section. Not yet checked. MEDIUM PRIORITY.",
+        "ripienaar/free-for-dev — free API section. Not yet checked. HIGH PRIORITY (huge reach)."
       ],
       "posts": [
         {
@@ -272,6 +304,38 @@
           "status": "pending_review",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Fixed merge conflict on existing PR. Finance section (8.7K stars)"
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://github.com/antontarasenko/awesome-economics",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-14 (grep). Draft: Data > Datasets section, after OFFSTATS entry. Format: * [Name](URL) - desc. Branch: default. Submit file: github-pr-antontarasenko-awesome-economics-SUBMIT.md. Exact patch ready."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://github.com/niyumard/awesome-economics",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-14 (grep). Draft: Global > Datasets section, after Measuring Worth entry. Format: * [Name](URL) - desc. Branch: master. Submit file: github-pr-niyumard-awesome-economics-SUBMIT.md. Exact patch ready."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://github.com/erikgahner/awesome-statistics",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-14 (grep). Draft: Datasets section, after Awesome Public Datasets. Format: - [Name](URL) (no description — matches repo style). Branch: master. Submit file: github-pr-erikgahner-awesome-statistics-SUBMIT.md. Exact patch ready."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://github.com/brandonhimpfen/awesome-economics",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-14 (grep). Draft: Economic Data Sources section, after Open Economic Data. Format: - [Name](URL) – desc. (em dash). Branch: main. Submit file: github-pr-brandonhimpfen-awesome-economics-SUBMIT.md. Follow CONTRIBUTING.md — alphabetical, short descriptions."
         }
       ]
     },
@@ -351,6 +415,14 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com",
           "notes": "Draft: data sources answer for empirical economics. File: stackexchange-economics-2026-04-10.md. Find specific unanswered question — see instructions in file."
+        },
+        {
+          "date": "2026-04-14",
+          "url": "https://stats.stackexchange.com/questions/tagged/data",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comprehensive answer on cross-country economic data sources for statisticians. Covers FRED, WB WDI, IMF WEO, Penn World Table, OECD, SOTW. File: stackexchange-stats-2026-04-14.md. Find specific question about cross-country panel data or economic indicator sources."
         }
       ]
     },
@@ -496,7 +568,16 @@
         "mrmoneymustache.com/forum",
         "discuss.okfn.org (open knowledge forum — active thread on economic APIs)"
       ],
-      "posts": []
+      "posts": [
+        {
+          "date": "2026-04-14",
+          "url": "https://www.indiehackers.com/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: product page creation OR comment on relevant IH thread. Has both options. File: indiehackers-2026-04-14.md. Search IH for 'statisticsoftheworld' before posting."
+        }
+      ]
     },
     "wikipedia": {
       "type": "reference",

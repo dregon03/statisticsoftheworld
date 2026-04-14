@@ -5,17 +5,16 @@ import { getCleanCountryUrl } from '@/lib/country-slugs';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const data = await getIndicatorForAllCountries('IMF.PCPIPCH');
-  const year = data[0]?.year || '2026';
-  const avg = data.length > 0 ? data.reduce((s, d) => s + (d.value || 0), 0) / data.length : 0;
-  const lowest = data[data.length - 1];
-  return {
-    title: `Inflation Rate by Country ${year} — ${data.length} Countries Ranked`,
-    description: `Inflation by country ${year}: highest is ${data[0]?.country} (${formatValue(data[0]?.value, 'percent', 1)}), lowest is ${lowest?.country} (${formatValue(lowest?.value, 'percent', 1)}). Global avg: ${avg.toFixed(1)}%. ${data.length} countries. Source: IMF.`,
-    alternates: { canonical: 'https://statisticsoftheworld.com/inflation-by-country' },
-  };
-}
+export const metadata: Metadata = {
+  title: 'Inflation Rate by Country 2026 — Complete Global Rankings',
+  description: 'Inflation rate by country 2026: all 218 countries ranked by CPI — from deflation to hyperinflation. Includes global average, regional trends, and links to country-level data. Source: IMF World Economic Outlook.',
+  alternates: { canonical: 'https://statisticsoftheworld.com/inflation-by-country' },
+  openGraph: {
+    title: 'Inflation Rate by Country 2026 — World Rankings',
+    description: 'All countries ranked by inflation rate. Source: IMF World Economic Outlook.',
+    siteName: 'Statistics of the World',
+  },
+};
 
 export default async function InflationByCountryPage() {
   const inflData = await getIndicatorForAllCountries('IMF.PCPIPCH');
@@ -41,15 +40,6 @@ export default async function InflationByCountryPage() {
           { '@type': 'Question', name: `Which country has the highest inflation in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `${inflData[0]?.country} has the highest inflation rate at ${formatValue(inflData[0]?.value, 'percent', 1)} in ${year}. Countries with very high inflation typically face currency crises, fiscal deficits, or political instability. Source: IMF.` } },
           { '@type': 'Question', name: `What is the global average inflation rate in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The global average inflation rate in ${year} is approximately ${avgInfl.toFixed(1)}%, with a median of ${Number(medianInfl).toFixed(1)}%. Advanced economies typically target 2% inflation. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: 'What causes high inflation?', acceptedAnswer: { '@type': 'Answer', text: 'High inflation is typically caused by excessive money supply growth, supply chain disruptions, currency depreciation, fiscal deficits financed by money printing, or demand outstripping supply. Central banks use interest rate policy as the primary tool to control inflation.' } },
-          { '@type': 'Question', name: `How have US tariffs affected global inflation in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The sweeping US tariffs introduced in April 2025 — including 145% rates on Chinese goods — have had asymmetric inflation effects. In the US, import prices rose sharply, keeping consumer inflation above the 2% target. In China, the collapse in export demand drove deflation as unsold inventory flooded domestic markets. Countries that negotiated early trade deals with the US, such as India (tariffs reduced to 18% in February 2026), saw more stable inflation outcomes. Structural inflators like Turkey and Argentina face separate pressures from currency depreciation and fiscal deficits. Source: IMF.` } },
-        ],
-      },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
-          { '@type': 'ListItem', position: 2, name: 'Inflation Rankings', item: 'https://statisticsoftheworld.com/ranking/inflation-rate' },
-          { '@type': 'ListItem', position: 3, name: 'Inflation by Country', item: 'https://statisticsoftheworld.com/inflation-by-country' },
         ],
       },
     ],
@@ -97,9 +87,8 @@ export default async function InflationByCountryPage() {
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             The variation across countries is enormous. Advanced economies with credible central banks typically maintain inflation near their 2% targets, while many emerging markets face double-digit inflation driven by currency depreciation, fiscal deficits, or structural supply constraints. At the extreme end, countries experiencing hyperinflation or currency crises can see prices double in months. The <Link href="/ranking/inflation-rate" className="text-[#0066cc] hover:underline">full inflation ranking</Link> shows every country from highest to lowest.
           </p>
-          <h2 className="text-[20px] font-bold text-[#0d1b2a] mt-2">{year} Inflation Drivers: Trade Wars and Diverging Central Banks</h2>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
-            The {year} inflation picture has been shaped by two conflicting forces: continued monetary tightening bringing advanced economy inflation back toward target, and trade-war-driven cost pressures threatening to reignite price growth. The sweeping US tariffs introduced in April 2025 — including 145% rates on Chinese goods and broad &quot;reciprocal&quot; tariffs on other trade partners — created supply chain disruptions that feed directly into consumer prices. In the US, import costs rose sharply, keeping inflation above the Federal Reserve&apos;s 2% target longer than expected. In China, the opposite dynamic is playing out: export demand collapsed, driving deflation as excess inventory flooded domestic markets. Countries that secured early trade deals with the US — notably India, which negotiated tariff cuts from 25% to 18% in February 2026 — have seen more stable inflation outcomes as their currencies held up better against the dollar. Meanwhile, structural inflators like Turkey, Argentina, and several sub-Saharan economies continue to face inflation above 20%, driven by currency depreciation and fiscal deficits rather than external trade shocks. See <Link href="/gdp-by-country" className="text-[#0066cc] hover:underline">GDP by country</Link> for the economic context behind these inflation differences.
+            Regionally, G7 economies have largely converged near their 2% targets following the aggressive tightening cycles of 2022–2024. The US Federal Reserve and European Central Bank both raised rates to multi-decade highs to break the post-pandemic inflation surge, and headline CPI in most advanced economies has since returned to or near target. Emerging markets present a more varied picture: countries with strong institutions and formal inflation-targeting frameworks — Chile, Brazil, Mexico, India — have broadly returned to single-digit rates, while those facing currency instability or fiscal pressure continue to run elevated inflation. Food inflation deserves particular attention in low-income countries, where food accounts for 40–60% of household spending; even moderate global food price shocks translate into acute cost-of-living crises. For analysts and investors, <Link href="/ranking/inflation-rate" className="text-[#0066cc] hover:underline">country-level CPI data</Link> serves as an early indicator of currency risk, central bank policy direction, and real purchasing power trends.
           </p>
         </div>
 

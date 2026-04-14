@@ -2,6 +2,21 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-14)
+
+- **Google indexed pages**: ~1,360 (as of 2026-04-09; Day 30 milestone April 18 — crawl acceleration expected)
+- **Confirmed rankings**: `/inflation-by-country` (~pos 6–8), `/unemployment-by-country` (~pos 4 & 7), `/us-economy` (~pos 4 for "US economy statistics 2026 GDP growth")
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged 2026-04-10; dev.to article published 2026-04-09)
+- **GitHub PR updates**: apd-core MERGED; awesome-apis CLOSED; marcelscruz #833 needs README.md fix
+- **Domain age**: ~17 days
+
+### Pages Optimized (2026-04-14)
+- **gdp-by-country**: Added 3rd editorial paragraph (India #4, tariff effects on dollar rankings, growth leaders); improved meta description with specific data points
+- **inflation-by-country**: Added regional breakdown paragraph (G7 convergence, food inflation in low-income countries, policy implications); improved meta description
+- **us-economy**: Added tariff/trade policy paragraph (Liberation Day impact, current account, import costs); added BreadcrumbList schema
+
+---
+
 ## Current Status (2026-04-13)
 
 - **Google indexed pages**: ~1,360 (Day 30 milestone April 18 — crawl acceleration expected)
@@ -180,6 +195,11 @@ Single source of truth for all SEO work. Check this before doing anything to avo
 - [x] richest-countries: BreadcrumbList schema added; new editorial paragraph on dollar-strength distortions + Guyana trajectory; updated FAQs with accurate 2026 top-tier data; new "fastest-rising" FAQ (2026-04-11)
 - [x] india-economy: BreadcrumbList schema added; meta description updated (7.4%, #3 economy); new editorial paragraph on Japan overtake + US-India trade deal (25%→18%); new FAQ on trade deal impact (2026-04-11)
 
+### 2026-04-14 Optimizations
+- [x] `gdp-by-country`: Added 3rd editorial paragraph (India #4, tariff effects, growth leaders); improved meta description
+- [x] `inflation-by-country`: Added 3rd editorial paragraph (G7 convergence, regional breakdown, food inflation); improved meta description
+- [x] `us-economy`: Added 4th editorial paragraph (2026 tariff/trade policy context, current account); added BreadcrumbList to JSON-LD
+
 ### Glossary
 - [x] 148 glossary terms
 
@@ -226,13 +246,13 @@ Single source of truth for all SEO work. Check this before doing anything to avo
 | Date | Repo | PR # | Stars | Status |
 |------|------|------|-------|--------|
 | ~2026-04-05 | public-apis/public-apis | #5771 | 420K | Open (repo dead, won't merge) |
-| ~2026-04-07 | marcelscruz/public-apis | #833 | 8.7K | Open (conflict fixed 2026-04-09) |
+| ~2026-04-07 | marcelscruz/public-apis | #833 | 8.7K | Open — **needs fix**: move to README.md not /db folder |
 | ~2026-04-07 | awesomedata/apd-core | #373 | 65K | Open |
 | ~2026-04-07 | awesomedata/awesome-public-datasets | #505 | 65K | Open |
-| 2026-04-09 | public-api-lists/public-api-lists | #395 | 14K | CI approved, ready for merge |
-| 2026-04-09 | awesomedata/apd-core | #377 | 65K | Pending review |
-| 2026-04-09 | brandonhimpfen/awesome-apis | #17 | 580 | Pending review |
-| 2026-04-09 | n0shake/Public-APIs | #721 | 23K | Pending review |
+| 2026-04-09 | public-api-lists/public-api-lists | #395 | 14K | Open — CI passed, awaiting maintainer |
+| 2026-04-09 | awesomedata/apd-core | #377 | 65K | **MERGED 2026-04-10** ✓ (dofollow backlink earned) |
+| 2026-04-09 | brandonhimpfen/awesome-apis | #17 | 580 | **CLOSED** — labeled "self-promotion", "age: under 3 months" — do not resubmit |
+| 2026-04-09 | n0shake/Public-APIs | #721 | 23K | Open — no reviews yet |
 
 ### Hacker News
 | Date | Type | Status |

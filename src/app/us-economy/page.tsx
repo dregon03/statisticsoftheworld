@@ -39,6 +39,14 @@ export default async function USEconomyPage() {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'United States', item: 'https://statisticsoftheworld.com/country/united-states' },
+          { '@type': 'ListItem', position: 3, name: 'US Economy', item: 'https://statisticsoftheworld.com/us-economy' },
+        ],
+      },
+      {
         '@type': 'Article',
         headline: `United States Economy ${year} — GDP, Growth & Key Statistics`,
         description: `The US economy in ${year}: ${formatValue(gdp?.value, 'currency')} GDP, ${formatValue(gdpGrowth?.value, 'percent', 1)} growth, ${formatValue(inflation?.value, 'percent', 1)} inflation.`,
@@ -121,6 +129,9 @@ export default async function USEconomyPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             The US economy&apos;s competitive advantages include world-leading universities, deep capital markets, a culture of entrepreneurship, and dominance in artificial intelligence and advanced technology. Challenges include rising income inequality, an aging infrastructure (despite recent legislation), high healthcare costs (the US spends more per capita on healthcare than any other country), and a persistent trade deficit. The US GDP per capita of {formatValue(gdpPerCapita?.value, 'currency')} is among the highest for large economies, though it masks significant regional variation.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The defining economic policy development of 2025–2026 is the significant expansion of US trade tariffs. The administration imposed broad tariff increases on imports from China, the European Union, and numerous other trading partners — representing the most sweeping shift in US trade policy in decades. The IMF projects these tariffs will modestly reduce US real GDP growth while adding near-term inflationary pressure, as import costs pass through to consumer prices. The current account balance ({formatValue(currentAccount?.value, 'percent', 1)} of GDP) is closely watched as the tariff regime reshapes import volumes and tests the resilience of US export markets. Business investment in manufacturing has been pulled forward by tariff uncertainty, creating volatility in quarterly GDP data that obscures the underlying growth trend.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             All economic data on this page is sourced from the <a href="https://www.imf.org/en/Publications/WEO" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">IMF World Economic Outlook</a> and the <a href="https://data.worldbank.org" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">World Bank World Development Indicators</a>. The IMF publishes updated projections biannually in April and October; World Bank data is updated annually.

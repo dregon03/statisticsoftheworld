@@ -69,7 +69,7 @@ export default function ApiDocsPage() {
             <tbody>
               <tr className="border-t border-[#d5dce6]">
                 <td className="py-2 text-[#64748b]">Anonymous</td>
-                <td className="py-2">100 req/day</td>
+                <td className="py-2">1,000 req/day</td>
                 <td className="py-2">Free</td>
                 <td className="py-2 text-[#64748b]">None (IP-based)</td>
               </tr>

@@ -11,10 +11,10 @@ const PLANS = [
     price: '$0',
     period: 'forever',
     description: 'For students and researchers exploring data.',
-    rateLimit: '100 req/day',
+    rateLimit: '1,000 req/day',
     features: [
       'No API key needed',
-      '100 requests per day (per IP)',
+      '1,000 requests per day (per IP)',
       'All endpoints (read-only)',
       '490+ indicators, 218 countries',
       'JSON responses',
@@ -367,7 +367,7 @@ export default function PricingPage() {
             <tbody className="text-[15px]">
               {[
                 ['Monthly price', 'Free', 'Free', '$49', '$500', 'Custom'],
-                ['Daily requests', '100', '1,000', '50,000', '500,000', 'Unlimited'],
+                ['Daily requests', '1,000', '1,000', '50,000', '500,000', 'Unlimited'],
                 ['API key required', 'No', 'Yes (free)', 'Yes', 'Yes', 'Yes'],
                 ['All endpoints', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes'],
                 ['Historical data (20+ years)', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes'],

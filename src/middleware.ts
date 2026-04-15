@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Rate limits per tier
 const TIER_LIMITS: Record<string, number> = {
-  anonymous: 100,       // No key, per IP
+  anonymous: 1000,      // No key, per IP
   free: 1000,           // Free API key
   pro: 50000,           // $49/mo
   business: 500000,     // $500/mo
@@ -144,7 +144,7 @@ export async function middleware(request: NextRequest) {
         error: 'Rate limit exceeded',
         tier: 'anonymous',
         limit: TIER_LIMITS.anonymous,
-        message: `Free tier: ${TIER_LIMITS.anonymous} requests/day without an API key. Get a free key for ${TIER_LIMITS.free.toLocaleString()} req/day at statisticsoftheworld.com/pricing`,
+        message: `Free tier: ${TIER_LIMITS.anonymous.toLocaleString()} requests/day. Need more? Upgrade at statisticsoftheworld.com/pricing`,
         resetAt: new Date(resetAt).toISOString(),
       },
       {

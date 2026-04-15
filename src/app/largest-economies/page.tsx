@@ -6,13 +6,15 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Largest Economies in the World 2026 — GDP Rankings',
-  description: 'The largest economies in the world ranked by nominal GDP in 2026. From the US ($29T+) and China ($19T+) to the top 50 biggest economies. Source: IMF World Economic Outlook.',
+  title: 'Largest Economies in the World 2026 — Top 50 GDP Rankings',
+  description: 'The 50 largest economies in the world by nominal GDP in 2026. US leads at $29T+, China at $19T+, India now #4 surpassing Japan. Full rankings, GDP share, and tariff impact analysis. Source: IMF.',
   alternates: { canonical: 'https://statisticsoftheworld.com/largest-economies' },
   openGraph: {
-    title: 'Largest Economies in the World 2026',
-    description: 'Top 50 biggest economies ranked by GDP. Source: IMF.',
+    title: 'Largest Economies in the World 2026 — Top 50 GDP Rankings',
+    description: 'US $29T+, China $19T+, India now #4. The 50 biggest economies ranked by nominal GDP with world share. Source: IMF World Economic Outlook.',
     siteName: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com/largest-economies',
+    type: 'website',
   },
 };
 
@@ -22,11 +24,20 @@ export default async function LargestEconomiesPage() {
   const totalGdp = data.reduce((s, d) => s + (d.value || 0), 0);
 
   const jsonLd = { '@context': 'https://schema.org', '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+        { '@type': 'ListItem', position: 2, name: 'GDP by Country', item: 'https://statisticsoftheworld.com/gdp-by-country' },
+        { '@type': 'ListItem', position: 3, name: 'Largest Economies', item: 'https://statisticsoftheworld.com/largest-economies' },
+      ],
+    },
     { '@type': 'Dataset', name: `Largest Economies ${year}`, description: `Countries ranked by nominal GDP. World total: ${formatValue(totalGdp, 'currency')}. Source: IMF.`, url: 'https://statisticsoftheworld.com/largest-economies', creator: { '@type': 'Organization', name: 'IMF' }, license: 'https://creativecommons.org/licenses/by/4.0/', dateModified: new Date().toISOString().split('T')[0] },
     { '@type': 'FAQPage', mainEntity: [
-      { '@type': 'Question', name: 'What is the largest economy in the world?', acceptedAnswer: { '@type': 'Answer', text: `The United States is the world's largest economy by nominal GDP at ${formatValue(data[0]?.value, 'currency')} in ${year}. China is second, followed by Germany, Japan, and India. The US and China together account for over 40% of global GDP. Source: IMF.` } },
-      { '@type': 'Question', name: 'Is China bigger than the US economy?', acceptedAnswer: { '@type': 'Answer', text: 'In nominal (dollar) terms, the US economy is larger. However, in purchasing power parity (PPP) terms — which adjusts for price differences — China\'s economy is substantially larger, exceeding $40 trillion vs about $30 trillion for the US. PPP better reflects domestic purchasing power.' } },
-      { '@type': 'Question', name: 'What are the fastest-growing large economies?', acceptedAnswer: { '@type': 'Answer', text: 'Among the world\'s 20 largest economies, India is typically the fastest-growing at 6-7% annually. Indonesia (5%), Vietnam (6-7%), and the Philippines (5-6%) are also growing rapidly. Advanced economies typically grow at 1-3%.' } },
+      { '@type': 'Question', name: 'What is the largest economy in the world?', acceptedAnswer: { '@type': 'Answer', text: `The United States is the world's largest economy by nominal GDP at ${formatValue(data[0]?.value, 'currency')} in ${year}. China is second, followed by Germany, Japan, and India (which surpassed Japan in 2025). The US and China together account for over 40% of global GDP. Source: IMF.` } },
+      { '@type': 'Question', name: 'Is China bigger than the US economy?', acceptedAnswer: { '@type': 'Answer', text: 'In nominal (dollar) terms, the US economy is larger. However, in purchasing power parity (PPP) terms — which adjusts for price differences — China\'s economy is substantially larger, exceeding $35 trillion vs about $30 trillion for the US. PPP better reflects domestic purchasing power, while nominal GDP reflects international purchasing power and global market weight.' } },
+      { '@type': 'Question', name: 'What are the fastest-growing large economies?', acceptedAnswer: { '@type': 'Answer', text: 'Among the world\'s 20 largest economies, India is the fastest-growing at 6–6.5% annually in 2026, supported by strong domestic consumption and a favorable trade deal with the US. Indonesia (5%), Vietnam (5.6%), and the Philippines (5.7%) are also growing rapidly. Advanced economies (US, Germany, Japan) are growing at 0.8–2.1%.' } },
+      { '@type': 'Question', name: 'How are 2026 tariffs affecting the largest economies?', acceptedAnswer: { '@type': 'Answer', text: 'The US Liberation Day tariffs and retaliatory Chinese measures have created divergent effects. Germany and Japan — heavily export-dependent — are growing near zero at 0.9% and 0.8% respectively. China faces headwinds from 145%+ tariffs on US-bound exports, depressing manufacturing output. India, with a partial US tariff exemption (reduced from 25% to 18% in a bilateral deal), continues growing strongly. The US itself faces higher consumer prices from import tariffs, with inflation holding above the 2% target.' } },
     ]},
   ]};
 
@@ -65,6 +76,7 @@ export default async function LargestEconomiesPage() {
           <p className="text-[15px] text-[#374151] leading-[1.8]">The global economy is heavily concentrated: the <Link href="/us-economy" className="text-[#0066cc] hover:underline">United States</Link> and <Link href="/china-economy" className="text-[#0066cc] hover:underline">China</Link> together account for over 40% of world GDP, and the top 10 economies produce roughly two-thirds of all global output. This concentration has deepened over the past two decades as the US economy grew through technology-led productivity gains and China industrialized at an unprecedented pace. <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link>, now the fourth or fifth largest economy, has emerged as the fastest-growing major economy.</p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">The rankings shift when measured by purchasing power parity (PPP) instead of nominal dollars. China&apos;s economy is substantially larger than America&apos;s in PPP terms, and India ranks third — ahead of <Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link> and <Link href="/germany-economy" className="text-[#0066cc] hover:underline">Germany</Link>. PPP matters because domestic purchasing power in large developing economies is much greater than their dollar-denominated GDP suggests. The <Link href="/g7-economy" className="text-[#0066cc] hover:underline">G7</Link> countries account for roughly 43% of global GDP, while <Link href="/brics-economy" className="text-[#0066cc] hover:underline">BRICS</Link> represents about 35%.</p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">Economic size does not equal prosperity. <Link href="/richest-countries" className="text-[#0066cc] hover:underline">GDP per capita</Link> provides a better measure of individual wealth — China has the second-largest economy but ranks around 70th in per capita terms. Similarly, <Link href="/nigeria-economy" className="text-[#0066cc] hover:underline">Nigeria</Link> has a large total GDP but very low per capita income. The relationship between economic size and quality of life depends heavily on <Link href="/ranking/gini-index" className="text-[#0066cc] hover:underline">inequality</Link>, governance, <Link href="/health-spending-by-country" className="text-[#0066cc] hover:underline">healthcare</Link>, and education investments.</p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">The 2026 US tariff escalation has reshuffled near-term rankings. Dollar-denominated GDP figures are sensitive to exchange rates — and the dollar&apos;s strength since Liberation Day has mechanically reduced the dollar value of European and Japanese economies. Germany&apos;s nominal GDP has been pushed down partly by euro depreciation against the dollar, even as its underlying economic performance holds steady in local currency terms. This currency effect is worth watching: a 10% shift in the EUR/USD rate can move Germany&apos;s dollar-GDP ranking by tens of billions without any real change in output. <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link>, meanwhile, now firmly holds the #4 spot after overtaking <Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link> — a structural shift that reflects decades of faster growth rather than any currency effect. At its current trajectory, India is on course to become the world&apos;s third-largest economy by 2030.</p>
         </div>
 
         <div className="mb-10">

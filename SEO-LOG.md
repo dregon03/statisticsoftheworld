@@ -2,6 +2,31 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-15)
+
+- **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone was April 18 — check GSC post-April 18 for index jump)
+- **BREAKTHROUGH**: `/world-population` now ranking ~#3 for "statistics of the world 2026" — first non-branded, non-ranking page to break into SERPs
+- **Confirmed rankings**: `/inflation-by-country` (~#7–8), `/unemployment-by-country` (~#4 & #9), `/world-population` (~#3 for "statistics of the world 2026")
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged 2026-04-10; dev.to article published 2026-04-09)
+- **Domain age**: ~36 days
+
+### Keyword Rankings (2026-04-15 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **~#3** (/world-population) — **new breakthrough** ✅
+- `inflation by country 2026 ranking` → **#7 and #8** (two URLs — stable) ✅
+- `unemployment rate by country 2026 ranking` → **#4 and #9** (two URLs) ✅
+- `GDP by country 2026` → Not ranking (Worldometer #1/#2, Wikipedia #3, StatisticsTimes #4)
+- `GDP growth rate by country 2026 ranking` → Not ranking (Worldometer, StatisticsTimes, WorldPopReview)
+- `world statistics country comparison tool 2026` → Not ranking (worlddata.info, WorldCountryData, UN)
+- `world economic data by country 2026 free` → Not ranking (WorldPopReview, WorldBank, TradingEconomics)
+
+### Pages Optimized (2026-04-15)
+- **world-population**: Added BreadcrumbList JSON-LD; improved meta description (India #1 callout); improved OpenGraph (added url, type, richer description); added 4th FAQ on Sub-Saharan Africa population growth; added 4th editorial paragraph (Africa growth trajectory, Korea/Japan decline, demographic divergence shaping economic trends)
+- **world-economy**: Added BreadcrumbList JSON-LD; improved meta description ($123T figure, 3.1% growth); improved OpenGraph (added url, type, specific numbers); added 5 FAQs including "How fast is world economy growing in 2026?" and "How are US tariffs affecting global economy?"; added 4th editorial paragraph on Liberation Day tariffs impact (Germany/Japan stagnation, India exemption, supply chain fragmentation)
+- **largest-economies**: Added BreadcrumbList JSON-LD; improved meta description (India #4 milestone, tariff context); improved OpenGraph; enhanced 3 existing FAQs with 2026-specific data; added 4th FAQ on tariff impact; added 4th editorial paragraph on dollar-strength effects on rankings, India structural #4 position, 2030 trajectory
+
+---
+
 ## Current Status (2026-04-14)
 
 - **Google indexed pages**: ~1,360 (as of 2026-04-09; Day 30 milestone April 18 — crawl acceleration expected)

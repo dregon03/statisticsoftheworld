@@ -6,13 +6,15 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'World Population 2026 — 8.3 Billion People by Country',
-  description: 'World population in 2026: 8.3+ billion people across 218 countries. Complete population rankings, growth rates, and demographic data. Source: World Bank & UN Population Division.',
+  title: 'World Population 2026 — 8.3 Billion People by Country | Statistics',
+  description: 'World population in 2026: 8.3 billion people across 218 countries. India is now #1 most populous. Complete population rankings, growth rates, and demographic data. Source: World Bank & UN Population Division.',
   alternates: { canonical: 'https://statisticsoftheworld.com/world-population' },
   openGraph: {
-    title: 'World Population 2026 — Population by Country',
-    description: 'All 218 countries ranked by population. Source: World Bank & UN.',
+    title: 'World Population 2026 — 8.3 Billion People by Country',
+    description: 'India surpassed China as #1 most populous country. All 218 countries ranked by population with growth rates. Source: World Bank & UN.',
     siteName: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com/world-population',
+    type: 'website',
   },
 };
 
@@ -34,6 +36,14 @@ export default async function WorldPopulationPage() {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'Population Rankings', item: 'https://statisticsoftheworld.com/ranking/population' },
+          { '@type': 'ListItem', position: 3, name: 'World Population', item: 'https://statisticsoftheworld.com/world-population' },
+        ],
+      },
+      {
         '@type': 'Dataset',
         name: `World Population by Country ${year}`,
         description: `Population data for ${popData.length} countries in ${year}. Total world population: ${(worldPop / 1e9).toFixed(2)} billion. Source: World Bank, UN Population Division.`,
@@ -45,9 +55,10 @@ export default async function WorldPopulationPage() {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: `What is the world population in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The world population in ${year} is approximately ${(worldPop / 1e9).toFixed(2)} billion people. India is the most populous country, followed by China. Source: World Bank / UN Population Division.` } },
-          { '@type': 'Question', name: 'Which country has the largest population?', acceptedAnswer: { '@type': 'Answer', text: `${popData[0]?.country} has the largest population at ${formatValue(popData[0]?.value, 'number')} in ${year}, followed by ${popData[1]?.country} (${formatValue(popData[1]?.value, 'number')}). India surpassed China as the most populous country in 2023.` } },
-          { '@type': 'Question', name: 'Is world population still growing?', acceptedAnswer: { '@type': 'Answer', text: `Yes, but at a slowing rate. World population growth has decelerated from over 2% in the 1960s to about ${avgGrowth.toFixed(1)}% today. Several countries, including Japan, South Korea, and China, now have declining populations. Global population is projected to peak around 10.4 billion in the 2080s.` } },
+          { '@type': 'Question', name: `What is the world population in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The world population in ${year} is approximately ${(worldPop / 1e9).toFixed(2)} billion people. India is the most populous country with 1.45 billion people, followed by China at 1.41 billion. Source: World Bank / UN Population Division.` } },
+          { '@type': 'Question', name: 'Which country has the largest population?', acceptedAnswer: { '@type': 'Answer', text: `${popData[0]?.country} has the largest population at ${formatValue(popData[0]?.value, 'number')} in ${year}, followed by ${popData[1]?.country} (${formatValue(popData[1]?.value, 'number')}). India surpassed China as the most populous country in 2023, a historic demographic milestone.` } },
+          { '@type': 'Question', name: 'Is world population still growing?', acceptedAnswer: { '@type': 'Answer', text: `Yes, but at a slowing rate. World population growth has decelerated from over 2% in the 1960s to about ${avgGrowth.toFixed(1)}% today. Several countries — including Japan, South Korea, China, and much of Eastern Europe — now have shrinking populations. Global population is projected to peak around 10.4 billion in the 2080s before slowly declining.` } },
+          { '@type': 'Question', name: 'Which region is driving world population growth?', acceptedAnswer: { '@type': 'Answer', text: 'Sub-Saharan Africa is the primary engine of global population growth. The region has fertility rates well above the global average and is projected to account for more than half of world population growth through 2050. By contrast, Europe, East Asia, and parts of Latin America are experiencing population stagnation or decline, driven by fertility rates below the 2.1 replacement level.' } },
         ],
       },
     ],
@@ -97,6 +108,9 @@ export default async function WorldPopulationPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Population data is critical for economic analysis because it determines labor force size, consumer market potential, and dependency ratios. Countries experiencing rapid population decline (Japan, South Korea, much of Eastern Europe) face challenges including shrinking workforces and rising pension costs. Countries with growing populations (India, Nigeria, Ethiopia) have the potential for a &quot;demographic dividend&quot; — if they can productively employ their youth. All data sourced from the <a href="https://data.worldbank.org" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">World Bank</a> and <a href="https://population.un.org" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">UN Population Division</a>.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The most consequential demographic story of 2026 is the divergence between Sub-Saharan Africa and the rest of the world. Africa&apos;s population is growing at roughly 2.5% per year — five times the global average — and Nigeria alone is projected to surpass the United States in population by mid-century. Meanwhile, South Korea posts the world&apos;s lowest fertility rate (below 0.8), Japan&apos;s population has been shrinking since 2010, and China&apos;s workforce is contracting for the first time in modern history. These trends are shaping everything from immigration policy in Europe to <Link href="/military-spending-by-country" className="text-[#0066cc] hover:underline">defense spending</Link> priorities, <Link href="/health-spending-by-country" className="text-[#0066cc] hover:underline">healthcare system</Link> capacity, and long-run <Link href="/gdp-growth-by-country" className="text-[#0066cc] hover:underline">economic growth</Link> trajectories.
           </p>
         </div>
 

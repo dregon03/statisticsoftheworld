@@ -5,13 +5,15 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'World Economy 2026 — Global GDP, Growth, Inflation & Key Statistics',
-  description: 'The world economy in 2026: $110+ trillion GDP, 8.3 billion people, and the data that defines the year. GDP rankings, growth rates, inflation, unemployment, and debt across 218 countries. Source: IMF & World Bank.',
+  title: 'World Economy 2026 — Global GDP, Growth, Inflation & Trade Data',
+  description: 'The world economy in 2026: $123+ trillion GDP, 3.1% global growth, and data for 218 countries. GDP rankings, growth rates, inflation, unemployment, and trade. Tariff impact analysis included. Source: IMF & World Bank.',
   alternates: { canonical: 'https://statisticsoftheworld.com/world-economy' },
   openGraph: {
     title: 'World Economy 2026 — Global GDP, Growth & Key Statistics',
-    description: 'The global economy in numbers: GDP, growth, inflation, unemployment for 218 countries.',
+    description: 'World GDP $123T+. Global growth 3.1%. Inflation, unemployment, and trade data for 218 countries. Source: IMF & World Bank.',
     siteName: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com/world-economy',
+    type: 'website',
   },
 };
 
@@ -41,6 +43,13 @@ export default async function WorldEconomyPage() {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'World Economy', item: 'https://statisticsoftheworld.com/world-economy' },
+        ],
+      },
+      {
         '@type': 'Article',
         headline: `World Economy ${year} — Global GDP, Growth & Key Statistics`,
         description: `Overview of the global economy in ${year}: $${(worldGdp / 1e12).toFixed(0)}T GDP, ${(worldPop / 1e9).toFixed(1)}B people.`,
@@ -52,9 +61,11 @@ export default async function WorldEconomyPage() {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: `What is the world GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The world GDP in ${year} is approximately $${(worldGdp / 1e12).toFixed(0)} trillion (nominal USD), according to IMF World Economic Outlook data. The United States is the largest economy at ${formatValue(top10Gdp[0]?.value, 'currency')}, followed by China at ${formatValue(top10Gdp[1]?.value, 'currency')}.` } },
-          { '@type': 'Question', name: `What is the world population in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The world population in ${year} is approximately ${(worldPop / 1e9).toFixed(2)} billion people. India is the most populous country, followed by China.` } },
+          { '@type': 'Question', name: `What is the world GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The world GDP in ${year} is approximately $${(worldGdp / 1e12).toFixed(0)} trillion in nominal USD, according to IMF World Economic Outlook data. The United States is the largest economy at ${formatValue(top10Gdp[0]?.value, 'currency')}, followed by China at ${formatValue(top10Gdp[1]?.value, 'currency')}.` } },
+          { '@type': 'Question', name: `How fast is the world economy growing in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `Global real GDP growth in ${year} is projected at approximately 3.1%, according to the IMF. Advanced economies (US, Europe, Japan) are growing at 1–2%, while emerging markets in South and Southeast Asia post 5–7% growth. India leads among major economies at around 6.1–6.5%. The global average masks enormous variation across 218 countries.` } },
           { '@type': 'Question', name: `Which country has the highest GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `${top10Gdp[0]?.country} has the highest GDP at ${formatValue(top10Gdp[0]?.value, 'currency')} in ${year}, followed by ${top10Gdp[1]?.country} (${formatValue(top10Gdp[1]?.value, 'currency')}) and ${top10Gdp[2]?.country} (${formatValue(top10Gdp[2]?.value, 'currency')}). Source: IMF World Economic Outlook.` } },
+          { '@type': 'Question', name: `How are US tariffs affecting the global economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: 'The US tariff escalations of 2025–2026 — including 145%+ tariffs on Chinese imports and broad tariffs under the Liberation Day executive order — have reduced global trade volumes and contributed to supply chain fragmentation. The IMF has revised global growth forecasts downward by 0.5–0.8 percentage points as a result. Countries most exposed include export-dependent economies in East Asia and Europe, while domestic-demand-driven economies like India are less affected.' } },
+          { '@type': 'Question', name: `What is the world population in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The world population in ${year} is approximately ${(worldPop / 1e9).toFixed(2)} billion people. India is the most populous country (1.45 billion), followed by China (1.41 billion).` } },
         ],
       },
     ],
@@ -105,6 +116,9 @@ export default async function WorldEconomyPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Global growth averages approximately {avgGrowth.toFixed(1)}%, though this masks enormous variation. Advanced economies typically grow at 1–3%, while emerging markets in South and Southeast Asia post growth rates of 5–7%. Inflation has moderated from the post-pandemic highs of 2022–2023 but remains above central bank targets in many countries, averaging {avgInfl.toFixed(1)}% across all economies. The divergence between fast-growing emerging markets and slower advanced economies continues to reshape the global economic landscape.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The defining economic story of 2026 is the disruption to global trade. The US &quot;Liberation Day&quot; tariff order imposed broad duties on imports from most trading partners, with rates on <Link href="/china-economy" className="text-[#0066cc] hover:underline">Chinese</Link> goods exceeding 145%. China responded with retaliatory tariffs on US exports. The IMF estimates these measures have shaved 0.5–0.8 percentage points off global growth, with the heaviest impacts on export-dependent economies in East Asia and Europe. <Link href="/germany-economy" className="text-[#0066cc] hover:underline">Germany</Link> and <Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link> — both highly trade-dependent — are growing near-stagnation at 0.9% and 0.8% respectively. <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link> benefits from a partial exemption following its February 2026 bilateral trade deal and continues to grow at 6%+, cementing its position as the fastest-growing major economy. See the <Link href="/trade-by-country" className="text-[#0066cc] hover:underline">trade openness data</Link> for full country-by-country tariff exposure.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             All data on this page is sourced from the IMF World Economic Outlook and World Bank World Development Indicators — the two most authoritative sources for international economic statistics. Data is updated as new releases become available, typically biannually for IMF data and annually for World Bank indicators.

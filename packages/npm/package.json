@@ -1,0 +1,54 @@
+{
+  "name": "statisticsoftheworld",
+  "version": "1.0.0",
+  "description": "Official SDK for Statistics of the World — free API for 490+ global economic indicators, 218 countries, 20+ years of history.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "statistics",
+    "economics",
+    "gdp",
+    "population",
+    "world-bank",
+    "imf",
+    "country-data",
+    "api",
+    "global-data",
+    "indicators",
+    "economic-data",
+    "free-api",
+    "world-data",
+    "inflation",
+    "unemployment"
+  ],
+  "author": "Statistics of the World <api@statisticsoftheworld.com>",
+  "license": "MIT",
+  "homepage": "https://statisticsoftheworld.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dregon03/statisticsoftheworld"
+  },
+  "bugs": {
+    "url": "https://github.com/dregon03/statisticsoftheworld/issues"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}

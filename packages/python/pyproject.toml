@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "statisticsoftheworld"
+version = "1.0.0"
+description = "Official Python SDK for Statistics of the World — free API for 490+ global economic indicators, 218 countries, 20+ years of history."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Statistics of the World", email = "api@statisticsoftheworld.com"},
+]
+keywords = [
+    "statistics", "economics", "gdp", "population", "world-bank", "imf",
+    "country-data", "api", "global-data", "indicators", "economic-data",
+    "free-api", "world-data", "inflation", "unemployment", "data-science",
+    "pandas",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "requests>=2.20.0",
+]
+
+[project.optional-dependencies]
+pandas = ["pandas>=1.0.0"]
+
+[project.urls]
+Homepage = "https://statisticsoftheworld.com"
+Documentation = "https://statisticsoftheworld.com/api-docs"
+Repository = "https://github.com/dregon03/statisticsoftheworld"
+Issues = "https://github.com/dregon03/statisticsoftheworld/issues"
+Pricing = "https://statisticsoftheworld.com/pricing"
+
+[tool.setuptools.packages.find]
+include = ["sotw*"]

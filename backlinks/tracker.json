@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-14",
+    "last_run": "2026-04-16",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 14 run: 4 new GitHub PR drafts ready to submit (antontarasenko/awesome-economics, niyumard/awesome-economics, erikgahner/awesome-statistics, brandonhimpfen/awesome-economics) — all verified SOTW-free. 6 new content drafts: r/datascience, r/statistics, r/InternetIsBeautiful, quora-country-comparison, stats.stackexchange.com, Indie Hackers. Total drafts ready to post: 29+. PENDING: Tom must fork repos and submit the 4 GitHub PRs using the SUBMIT.md files in backlinks/drafts/."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 16 run: 2 new GitHub PR drafts (ripienaar/free-for-dev HIGH PRIORITY, datasets/awesome-data) — both verified SOTW-free. 2 new Quora drafts (best-websites-statistical-data, economic-variables-websites). 2 new Reddit drafts (r/SaaS, r/programming). Total drafts ready to post: 37+. PENDING: Tom must fork repos and submit GitHub PRs using SUBMIT.md files. Prior 4 GitHub PRs (antontarasenko/awesome-economics, niyumard/awesome-economics, erikgahner/awesome-statistics, brandonhimpfen/awesome-economics) still pending_submit."
   },
   "platforms": {
     "quora": {
@@ -105,6 +105,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/compare",
           "notes": "Draft: comparison of country comparison tools — SOTW, Our World in Data, World Bank, Trading Economics. Also has backup target questions listed. File: quora-2026-04-14-country-comparison-tools.md. Duplicate-check before posting."
+        },
+        {
+          "date": "2026-04-16",
+          "url": "https://www.quora.com/What-are-the-best-websites-for-statistical-data",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: broad statistical data sources — Our World in Data, World Bank, FRED, IMF, SOTW (economic/GDP section), Kaggle, Harvard Dataverse. File: quora-2026-04-16-best-websites-statistical-data.md. Duplicate-check before posting."
+        },
+        {
+          "date": "2026-04-16",
+          "url": "https://www.quora.com/Which-website-give-me-data-of-economic-variables",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: economic variables sources — IMF WEO, World Bank WDI, FRED, SOTW API, Trading Economics, Penn World Tables, OECD. SOTW mentioned in both API and interactive sections. File: quora-2026-04-16-economic-variables-websites.md. Duplicate-check before posting."
         }
       ]
     },
@@ -214,6 +230,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: comment on cross-country data sources thread. Has standalone post variant. File: reddit-statistics-2026-04-14.md. Search r/statistics for SOTW before posting."
+        },
+        {
+          "date": "2026-04-16",
+          "url": "https://www.reddit.com/r/SaaS/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: text post showcasing SOTW as SaaS side project, asking for monetization feedback. File: reddit-saas-2026-04-16.md. Search r/SaaS for SOTW before posting."
+        },
+        {
+          "date": "2026-04-16",
+          "url": "https://www.reddit.com/r/programming/",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: Option A (comment on relevant thread) or Option B (standalone post about normalizing IMF/WB/WHO APIs). File: reddit-programming-2026-04-16.md. Search r/programming for SOTW before posting."
         }
       ]
     },
@@ -336,6 +368,22 @@
           "status": "pending_submit",
           "sotw_url": "https://statisticsoftheworld.com",
           "notes": "SOTW-free confirmed 2026-04-14 (grep). Draft: Economic Data Sources section, after Open Economic Data. Format: - [Name](URL) – desc. (em dash). Branch: main. Submit file: github-pr-brandonhimpfen-awesome-economics-SUBMIT.md. Follow CONTRIBUTING.md — alphabetical, short descriptions."
+        },
+        {
+          "date": "2026-04-16",
+          "url": "https://github.com/ripienaar/free-for-dev",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "SOTW-free confirmed 2026-04-16. HIGH PRIORITY — ~90K stars, dofollow. APIs, Data, and ML section. Insert between 'Supportivekoala' and 'Svix'. Format: * [Name](url) - description. Submit file: github-pr-freefordev-SUBMIT.md. Follow PR template exactly — maintainers close PRs without template."
+        },
+        {
+          "date": "2026-04-16",
+          "url": "https://github.com/datasets/awesome-data",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-16. Economics/datasets section. Format: - [Collection Name](url) — verify exact format in live README before submitting. Submit file: github-pr-datasets-awesome-data-SUBMIT.md."
         }
       ]
     },

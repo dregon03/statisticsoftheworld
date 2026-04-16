@@ -5,9 +5,16 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Japan Economy 2026 — GDP, Growth, Deflation & Key Data',
-  description: 'The Japanese economy in 2026: GDP, growth rate, inflation, unemployment, government debt, population decline, and 440+ indicators. IMF & World Bank data.',
+  title: 'Japan Economy 2026 — GDP, Growth, Yen & Key Statistics',
+  description: 'Japan economy 2026: GDP ~$4.3 trillion (world\'s 5th largest after India overtook in 2026), 0.6% growth, aging population, 260%+ debt-to-GDP. IMF & World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/japan-economy' },
+  openGraph: {
+    title: 'Japan Economy 2026 — GDP, Growth & Key Data',
+    description: 'Japan is the world\'s 5th largest economy in 2026 after India\'s overtake. GDP ~$4.3T, population decline, record debt. IMF & World Bank data.',
+    url: 'https://statisticsoftheworld.com/japan-economy',
+    siteName: 'Statistics of the World',
+    type: 'website',
+  },
 };
 
 export default async function JapanEconomyPage() {
@@ -26,6 +33,14 @@ export default async function JapanEconomyPage() {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'Japan', item: 'https://statisticsoftheworld.com/country/japan' },
+          { '@type': 'ListItem', position: 3, name: 'Japan Economy', item: 'https://statisticsoftheworld.com/japan-economy' },
+        ],
+      },
+      {
         '@type': 'Article',
         headline: `Japan Economy ${year} — GDP, Growth & Key Statistics`,
         dateModified: new Date().toISOString().split('T')[0],
@@ -34,8 +49,11 @@ export default async function JapanEconomyPage() {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: `What is Japan's GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `Japan's GDP in ${year} is approximately ${formatValue(gdp?.value, 'currency')}, making it the world's fourth-largest economy. Source: IMF World Economic Outlook.` } },
-          { '@type': 'Question', name: `What is Japan's government debt?`, acceptedAnswer: { '@type': 'Answer', text: `Japan's government debt is ${formatValue(debt?.value, 'percent', 1)} of GDP in ${year} — the highest debt-to-GDP ratio in the developed world. Despite this, Japan borrows at very low interest rates. Source: IMF.` } },
+          { '@type': 'Question', name: `What is Japan's GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `Japan's GDP in ${year} is approximately ${formatValue(gdp?.value, 'currency')}, making it the world's fifth-largest economy. India surpassed Japan in 2026 to claim the fourth position. Source: IMF World Economic Outlook.` } },
+          { '@type': 'Question', name: `Did India overtake Japan in GDP?`, acceptedAnswer: { '@type': 'Answer', text: `Yes. India's nominal GDP crossed $4 trillion in 2026, overtaking Japan to become the world's fourth-largest economy. Japan, at approximately ${formatValue(gdp?.value, 'currency')}, now ranks fifth. India's overtake reflects 6%+ annual real growth versus Japan's 0.5–1% range, compounded by yen weakness which reduces Japan's dollar-denominated GDP. Source: IMF.` } },
+          { '@type': 'Question', name: `What is Japan's government debt in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `Japan's government debt is approximately ${formatValue(debt?.value, 'percent', 1)} of GDP in ${year} — the highest debt-to-GDP ratio in the developed world. Despite this, Japan finances it almost entirely domestically at near-zero interest rates, enabled by massive household savings and Bank of Japan bond purchases. Source: IMF.` } },
+          { '@type': 'Question', name: `Why has the Japanese yen weakened?`, acceptedAnswer: { '@type': 'Answer', text: `The yen has depreciated significantly since 2022 because the Bank of Japan maintained ultra-low interest rates while the US Federal Reserve raised rates aggressively. The interest rate differential made yen assets less attractive to global investors. A weaker yen boosts Japanese export earnings and corporate profits but compresses Japan's GDP when measured in US dollars, contributing to Japan falling behind India in nominal rankings. Source: Bank of Japan, IMF.` } },
+          { '@type': 'Question', name: `What is Japan's economic outlook for ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `Japan's economic growth in ${year} is projected at approximately ${formatValue(gdpGrowth?.value, 'percent', 1)}, weighed down by demographic decline, export headwinds from US tariffs on Japanese autos and electronics, and sluggish domestic consumption. The Bank of Japan has cautiously begun normalizing monetary policy after decades of near-zero rates. Long-term structural challenges — a shrinking workforce and the world's oldest major population — constrain Japan's growth ceiling. Source: IMF, Bank of Japan.` } },
         ],
       },
     ],
@@ -52,7 +70,7 @@ export default async function JapanEconomyPage() {
           <span className="text-gray-600">Japan Economy</span>
         </nav>
         <h1 className="text-[32px] font-bold text-[#0d1b2a] mb-2">The Japanese Economy in {year}</h1>
-        <p className="text-[15px] text-[#64748b] mb-6">The world&apos;s fourth-largest economy · Source: IMF & World Bank · Updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+        <p className="text-[15px] text-[#64748b] mb-6">The world&apos;s fifth-largest economy · Source: IMF & World Bank · Updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {[
@@ -75,13 +93,16 @@ export default async function JapanEconomyPage() {
         <div className="max-w-[800px] space-y-4 mb-10">
           <h2 className="text-[22px] font-bold text-[#0d1b2a]">Japan Economic Overview</h2>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
-            Japan is the world&apos;s fourth-largest economy at {formatValue(gdp?.value, 'currency')}, built on automotive manufacturing (Toyota, Honda, Nissan), electronics, robotics, and precision engineering. The Japanese economy experienced its &quot;economic miracle&quot; from 1950 to 1990, growing from post-war devastation to briefly threatening to overtake the United States. However, the burst of Japan&apos;s asset price bubble in 1991 ushered in the &quot;Lost Decades&quot; — a prolonged period of deflation, stagnant growth, and balance sheet repair that continues to shape economic policy today.
+            Japan is the world&apos;s fifth-largest economy at {formatValue(gdp?.value, 'currency')}, having been overtaken by <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link> in 2026 — a historic milestone that ends Japan&apos;s decades-long hold on the fourth position. Japan&apos;s economy is built on automotive manufacturing (Toyota, Honda, Nissan), electronics, robotics, and precision engineering. The Japanese economy experienced its &quot;economic miracle&quot; from 1950 to 1990, growing from post-war devastation to briefly threatening to overtake the United States. The burst of Japan&apos;s asset price bubble in 1991 ushered in the &quot;Lost Decades&quot; — a prolonged period of deflation, stagnant growth, and balance sheet repair that continues to shape economic policy today.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Japan&apos;s defining economic challenge is its demographics: the population has been declining since 2008, and at {formatValue(pop?.value, 'number')}, Japan has the world&apos;s oldest population with a median age above 48. The shrinking workforce puts downward pressure on growth and increases the burden on social security. Government debt at {formatValue(debt?.value, 'percent', 1)} of GDP is the highest in the developed world, yet Japan finances it almost entirely domestically at near-zero interest rates — a unique situation enabled by massive household savings and Bank of Japan bond purchases.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Japan&apos;s GDP per capita of {formatValue(gdpPerCapita?.value, 'currency')} and life expectancy of {lifeExp?.value ? `${Number(lifeExp.value).toFixed(1)} years` : 'among the highest globally'} reflect a high-quality, technologically advanced society. The yen&apos;s significant weakening since 2022 has boosted export competitiveness and corporate profits but reduced purchasing power. Japan remains the world&apos;s largest creditor nation and a leader in automotive technology, with Toyota being the world&apos;s largest automaker.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            India&apos;s overtake of Japan as the world&apos;s fourth-largest economy in 2026 is the result of a decade-long divergence: India growing at 6–7% annually while Japan averaged barely 1%. The yen&apos;s depreciation against the dollar has amplified the gap in nominal terms — Japan&apos;s domestic economy, measured in yen, has grown modestly, but dollar-denominated GDP has shrunk as the yen weakened. The Trump administration&apos;s April 2026 tariffs add further pressure: Japan&apos;s auto exports to the US face elevated duties, and Japanese manufacturers have been slower than South Korean or European rivals to diversify supply chains. The <Link href="/compare/japan-vs-india" className="text-[#0066cc] hover:underline">Japan vs. India comparison</Link> captures this shift in real data — India&apos;s demographic advantage (median age 28 vs. Japan&apos;s 48) means the gap will likely widen further through 2030.
           </p>
         </div>
 
@@ -95,6 +116,7 @@ export default async function JapanEconomyPage() {
               { href: '/compare/japan-vs-south-korea', label: 'Japan vs S. Korea' },
               { href: '/compare/japan-vs-india', label: 'Japan vs India' },
               { href: '/compare/japan-vs-united-kingdom', label: 'Japan vs UK' },
+              { href: '/india-economy', label: 'India Economy →' },
             ].map(l => (
               <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">{l.label} →</Link>
             ))}

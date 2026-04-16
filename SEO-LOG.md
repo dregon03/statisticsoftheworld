@@ -2,6 +2,31 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-16)
+
+- **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone passed — check GSC for index growth)
+- **BREAKTHROUGH**: `/ranking/unemployment-rate` now at **#3** for "unemployment rate by country 2026 ranking" — highest organic position ever achieved
+- **Confirmed rankings**: `/inflation-by-country` (~#7–8), `/unemployment-by-country` (#3 & #9), `/world-population` (~#3 for "statistics of the world 2026")
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~37 days
+
+### Keyword Rankings (2026-04-16 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **~#3** (/world-population) — stable ✅
+- `inflation by country 2026 ranking` → **#7 and #8** (two URLs — stable) ✅
+- `unemployment rate by country 2026 ranking` → **#3 and #9** — **new high at #3!** ✅
+- `GDP by country 2026` → Not ranking (Worldometer #1, Wikipedia #2, StatisticsTimes #3)
+- `GDP growth rate by country 2026 ranking` → Not ranking
+- `world statistics country comparison tool 2026` → Not ranking
+- `country comparison GDP per capita 2026` → Not ranking
+
+### Pages Optimized (2026-04-16)
+- **japan-economy**: Fixed critical factual error (was claiming Japan is "4th largest economy" — India overtook Japan in 2026, Japan is now #5); Added BreadcrumbList JSON-LD; Added OpenGraph metadata (url, type, accurate description); Added 3 new FAQs (India overtake, yen depreciation causes, economic outlook); Added 4th editorial paragraph on India's demographic advantage and tariff exposure; Fixed subtitle and FAQ answer text to say "fifth-largest"
+- **gdp-by-country**: Added BreadcrumbList JSON-LD to JSON-LD graph; Added 2 new targeted FAQs ("Which country is 4th largest in 2026?" — India answer; "How do US tariffs affect GDP rankings?")
+- **compare**: Improved title (added "2026"); Improved meta description (more specific: 440+ indicators, 20+ years, free); Improved OpenGraph (added url, type, richer description); Added BreadcrumbList + FAQPage + WebApplication JSON-LD schemas; Added JSON-LD injection to page output
+
+---
+
 ## Current Status (2026-04-15)
 
 - **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone was April 18 — check GSC post-April 18 for index jump)

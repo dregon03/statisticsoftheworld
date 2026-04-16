@@ -25,6 +25,14 @@ export default async function GdpByCountryPage() {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'GDP Rankings', item: 'https://statisticsoftheworld.com/ranking/gdp' },
+          { '@type': 'ListItem', position: 3, name: `GDP by Country ${year}`, item: 'https://statisticsoftheworld.com/gdp-by-country' },
+        ],
+      },
+      {
         '@type': 'Dataset',
         name: `GDP by Country ${year} — World Rankings`,
         description: `Nominal GDP for ${gdpData.length} countries in ${year}, ranked from largest to smallest. Total world GDP: $${(worldGdp / 1e12).toFixed(0)} trillion. Source: IMF World Economic Outlook.`,
@@ -49,6 +57,8 @@ export default async function GdpByCountryPage() {
           { '@type': 'Question', name: `Which country has the highest GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `${gdpData[0]?.country} has the highest GDP at ${formatValue(gdpData[0]?.value, 'currency')} in ${year}, followed by ${gdpData[1]?.country} (${formatValue(gdpData[1]?.value, 'currency')}) and ${gdpData[2]?.country} (${formatValue(gdpData[2]?.value, 'currency')}). Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: `What is the total world GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The total world GDP in ${year} is approximately $${(worldGdp / 1e12).toFixed(0)} trillion in nominal US dollars. The top 10 economies account for roughly two-thirds of this total. Source: IMF.` } },
           { '@type': 'Question', name: 'What does GDP measure?', acceptedAnswer: { '@type': 'Answer', text: 'GDP (Gross Domestic Product) measures the total monetary value of all goods and services produced within a country\'s borders in a given year. Nominal GDP is expressed in current US dollars, making it useful for comparing economic size across countries.' } },
+          { '@type': 'Question', name: `Which country is the 4th largest economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `India is the world's 4th largest economy in ${year}, having surpassed Japan for the first time. India's nominal GDP crossed $4 trillion, driven by 6%+ annual real growth. Germany ranks 3rd, China 2nd, and the United States remains the world's largest economy. Source: IMF World Economic Outlook.` } },
+          { '@type': 'Question', name: `How do US tariffs affect GDP rankings in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The Trump administration's April 2026 tariff package weakened currencies of export-dependent economies against the dollar, compressing their nominal GDP in USD terms. Countries like Vietnam, South Korea, and Germany saw their dollar-denominated GDP reduced even as domestic economies continued growing. China's GDP growth slowed from ~5% to ~4.2% under the 145% US-China tariff rate. Economies that negotiated exemptions — India, the UK — were relatively insulated. Source: IMF.` } },
         ],
       },
     ],

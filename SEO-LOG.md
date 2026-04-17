@@ -2,6 +2,29 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-17)
+
+- **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone passed April 18 — check GSC for index jump)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#3**, `/unemployment-by-country` at #9; `/ranking/inflation-rate` at **#6** (up from #7), `/inflation-by-country` at #8; `/world-population` at ~#4 for "statistics of the world 2026" (slight drop from #3)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~38 days
+
+### Keyword Rankings (2026-04-17 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **~#4** (/world-population) — slight drop from #3, likely fluctuation
+- `inflation by country 2026 ranking` → **#6 and #8** — small improvement from #7/#8 ✅
+- `unemployment rate by country 2026 ranking` → **#3 and #9** — stable ✅
+- `GDP by country 2026` → Not ranking (Worldometer #1, Wikipedia #2, StatisticsTimes #3, WorldPopReview #4)
+- `GDP growth rate by country 2026 ranking` → Not ranking (Worldometer #1, StatisticsTimes #2, ClearTax #3)
+- `country comparison GDP per capita 2026` → Not ranking (WorldPopReview #1, Worldometer #2, StatisticsTimes #3)
+- `world statistics country comparison tool 2026` → Not ranking (worlddata.info #1, WorldCountryData #2, UN #3)
+
+### Pages Optimized (2026-04-17)
+- **debt-by-country**: Added BreadcrumbList JSON-LD; added OpenGraph url/type; improved meta description (specific figures: Japan 250%+, US 120%+, global avg ~85%); added 4th editorial paragraph on tariff-driven fiscal impacts (US tariff revenue vs. growth cost, Germany defense/green bind, China stimulus widening deficit); added 4th FAQ on tariffs and government debt; added h2 heading to related links; expanded related links grid (added GDP growth, China, Germany, largest-economies)
+- **fdi-by-country**: Full optimization — added OpenGraph (url, type, rich description); added BreadcrumbList JSON-LD; improved meta description (nearshoring winners: India, Vietnam, Mexico); added 3rd editorial paragraph on 2026 tariff-driven FDI reshoring (India record FDI, China -15-20%, USMCA Mexico, UNCTAD data); added 3 new FAQs (tariff effect on FDI, nearshoring winners, why small countries top rankings); added h2 heading; expanded related links (India, Vietnam, Mexico, China, Singapore)
+
+---
+
 ## Current Status (2026-04-16)
 
 - **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone passed — check GSC for index growth)

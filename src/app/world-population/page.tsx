@@ -6,7 +6,7 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'World Population 2026 — 8.3 Billion People by Country | Statistics',
+  title: 'World Population 2026 — 8.3 Billion People by Country | Statistics of the World',
   description: 'World population in 2026: 8.3 billion people across 218 countries. India is now #1 most populous. Complete population rankings, growth rates, and demographic data. Source: World Bank & UN Population Division.',
   alternates: { canonical: 'https://statisticsoftheworld.com/world-population' },
   openGraph: {
@@ -59,6 +59,7 @@ export default async function WorldPopulationPage() {
           { '@type': 'Question', name: 'Which country has the largest population?', acceptedAnswer: { '@type': 'Answer', text: `${popData[0]?.country} has the largest population at ${formatValue(popData[0]?.value, 'number')} in ${year}, followed by ${popData[1]?.country} (${formatValue(popData[1]?.value, 'number')}). India surpassed China as the most populous country in 2023, a historic demographic milestone.` } },
           { '@type': 'Question', name: 'Is world population still growing?', acceptedAnswer: { '@type': 'Answer', text: `Yes, but at a slowing rate. World population growth has decelerated from over 2% in the 1960s to about ${avgGrowth.toFixed(1)}% today. Several countries — including Japan, South Korea, China, and much of Eastern Europe — now have shrinking populations. Global population is projected to peak around 10.4 billion in the 2080s before slowly declining.` } },
           { '@type': 'Question', name: 'Which region is driving world population growth?', acceptedAnswer: { '@type': 'Answer', text: 'Sub-Saharan Africa is the primary engine of global population growth. The region has fertility rates well above the global average and is projected to account for more than half of world population growth through 2050. By contrast, Europe, East Asia, and parts of Latin America are experiencing population stagnation or decline, driven by fertility rates below the 2.1 replacement level.' } },
+          { '@type': 'Question', name: 'Which countries have shrinking populations in 2026?', acceptedAnswer: { '@type': 'Answer', text: "South Korea has the world's lowest total fertility rate at below 0.8 children per woman in 2026 — less than half the 2.1 replacement level. Japan's population has been shrinking since 2010, China's workforce is contracting for the first time in modern history, and Ukraine, Latvia, Lithuania, and Bulgaria are among the fastest-shrinking by percentage. These countries face aging workforces, rising pension costs, and long-run economic stagnation unless offset by productivity gains or immigration. South Korea alone has spent over $200 billion on pro-natalist policies since the 1990s with limited effect. Source: World Bank / UN Population Division." } },
         ],
       },
     ],
@@ -111,6 +112,9 @@ export default async function WorldPopulationPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             The most consequential demographic story of 2026 is the divergence between Sub-Saharan Africa and the rest of the world. Africa&apos;s population is growing at roughly 2.5% per year — five times the global average — and Nigeria alone is projected to surpass the United States in population by mid-century. Meanwhile, South Korea posts the world&apos;s lowest fertility rate (below 0.8), Japan&apos;s population has been shrinking since 2010, and China&apos;s workforce is contracting for the first time in modern history. These trends are shaping everything from immigration policy in Europe to <Link href="/military-spending-by-country" className="text-[#0066cc] hover:underline">defense spending</Link> priorities, <Link href="/health-spending-by-country" className="text-[#0066cc] hover:underline">healthcare system</Link> capacity, and long-run <Link href="/gdp-growth-by-country" className="text-[#0066cc] hover:underline">economic growth</Link> trajectories.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            Governments across the low-fertility world are escalating pro-natalist interventions with mixed results. South Korea has spent over $200 billion since the 1990s on parental leave, childcare subsidies, and cash incentives — yet its fertility rate has continued falling, reaching a record low below 0.8 in 2024–2026. Japan offers similarly generous benefits. Hungary dedicates 5% of GDP to family policy. The evidence is sobering: once a country industrializes and urbanizes past a certain threshold, no policy package has reliably reversed fertility decline. The practical response is increasingly migration — Europe admitted record numbers of migrants in 2025, and labor shortages in Germany, Italy, and Japan are opening political space for immigration reform. This intersection of <Link href="/ranking/net-migration" className="text-[#0066cc] hover:underline">migration</Link>, <Link href="/ranking/fertility-rate" className="text-[#0066cc] hover:underline">fertility</Link>, and economic need is the defining demographic policy challenge of the 2020s.
           </p>
         </div>
 

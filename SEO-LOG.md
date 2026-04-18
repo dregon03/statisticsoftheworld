@@ -2,6 +2,32 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-18)
+
+- **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone hit April 18 — check GSC for index jump)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#5** (slight drop from #3); `/unemployment-by-country` at #9; `/ranking/inflation-rate` at **#6** (stable); `/inflation-by-country` at #8; `/world-population` at **~#6** for "statistics of the world 2026" (dropped from #3–4 ⚠️)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~39 days
+- **CRITICAL FIX**: India GDP rank was wrong on multiple pages — fixed to reflect IMF April 2026 WEO (India #6, not #3 or #4)
+
+### Keyword Rankings (2026-04-18 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **~#6** (/world-population) — drop from #3–4 ⚠️
+- `world statistics country data 2026` → **~#4** (homepage) — stable ✅
+- `inflation by country 2026 ranking` → **#6 and #8** — stable ✅
+- `unemployment rate by country 2026 ranking` → **#5 and #9** — slight drop from #3/#9 ⚠️
+- `GDP by country 2026 ranking` → Not ranking (Worldometer #1, StatisticsTimes #2, Wikipedia #3)
+- `largest economies in the world 2026` → Not ranking (Worldometer #3, StatisticsTimes #4)
+- `country comparison tool GDP 2026` → Not ranking
+- `world population by country statistics 2026` → Not ranking (Worldometer dominates #1/#3)
+
+### Pages Optimized (2026-04-18)
+- **india-economy**: CRITICAL factual fix — title changed from "World's 3rd Largest" to drop rank claim entirely; meta description updated to reflect $4.15T GDP, 6.5% growth (no rank); editorial paragraph 4 completely rewritten to tell accurate IMF April 2026 story: India at #6 due to rupee depreciation (84.6→88.5/dollar) and MoSPI base-year revision, fastest-growing major economy at 6.5%, trade deal context preserved
+- **largest-economies**: CRITICAL factual fix — meta description updated (Germany #3 $5.4T, Japan #4 $4.4T, India #6 $4.15T); OG description updated; FAQ 1 answer updated with correct ranking order and GDP figures plus India rank explanation; editorial p1 updated ("sixth largest" per IMF April 2026); editorial p4 rewritten — explains India slip to #6 via rupee depreciation and base-year revision, removes false "#4 spot" claim
+- **world-population**: Title brand suffix fixed ("| Statistics" → "| Statistics of the World"); added 5th FAQ on shrinking-population countries (South Korea <0.8 TFR, Japan, China workforce contraction, $200B+ pro-natalist spend failing); added 5th editorial paragraph on pro-natalist policy failures in low-fertility countries and migration as the practical response
+
+---
+
 ## Current Status (2026-04-17)
 
 - **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone passed April 18 — check GSC for index jump)

@@ -38,6 +38,7 @@ export default async function LargestEconomiesPage() {
       { '@type': 'Question', name: 'Is China bigger than the US economy?', acceptedAnswer: { '@type': 'Answer', text: 'In nominal (dollar) terms, the US economy is larger. However, in purchasing power parity (PPP) terms — which adjusts for price differences — China\'s economy is substantially larger, exceeding $35 trillion vs about $30 trillion for the US. PPP better reflects domestic purchasing power, while nominal GDP reflects international purchasing power and global market weight.' } },
       { '@type': 'Question', name: 'What are the fastest-growing large economies?', acceptedAnswer: { '@type': 'Answer', text: 'Among the world\'s 20 largest economies, India is the fastest-growing at 6–6.5% annually in 2026, supported by strong domestic consumption and a favorable trade deal with the US. Indonesia (5%), Vietnam (5.6%), and the Philippines (5.7%) are also growing rapidly. Advanced economies (US, Germany, Japan) are growing at 0.8–2.1%.' } },
       { '@type': 'Question', name: 'How are 2026 tariffs affecting the largest economies?', acceptedAnswer: { '@type': 'Answer', text: 'The US Liberation Day tariffs and retaliatory Chinese measures have created divergent effects. Germany and Japan — heavily export-dependent — are growing near zero at 0.9% and 0.8% respectively. China faces headwinds from 145%+ tariffs on US-bound exports, depressing manufacturing output. India, with a partial US tariff exemption (reduced from 25% to 18% in a bilateral deal), continues growing strongly. The US itself faces higher consumer prices from import tariffs, with inflation holding above the 2% target.' } },
+      { '@type': 'Question', name: 'Which country will overtake the US as the world\'s largest economy?', acceptedAnswer: { '@type': 'Answer', text: 'In purchasing power parity (PPP) terms, China already surpassed the United States around 2014 and is currently substantially larger. In nominal dollar terms — the standard international benchmark — most projections suggest China could overtake the US sometime in the 2040s, though US tariffs and China\'s structural slowdown (aging population, property sector deleveraging) have pushed that timeline further out. India is the more dramatic long-run story: growing at 6–7% annually and with a young, expanding workforce, India is projected to become the third-largest economy in nominal dollar terms by the early 2030s and could challenge for second by mid-century. Source: IMF, Goldman Sachs long-run projections.' } },
     ]},
   ]};
 
@@ -79,6 +80,30 @@ export default async function LargestEconomiesPage() {
           <p className="text-[15px] text-[#374151] leading-[1.8]">The 2026 US tariff escalation has reshuffled near-term rankings. Dollar-denominated GDP figures are sensitive to exchange rates — and the dollar&apos;s strength since Liberation Day has mechanically reduced the dollar value of European and Japanese economies. Germany&apos;s nominal GDP has been compressed partly by euro depreciation against the dollar, even as its underlying performance holds steady in local currency terms. This currency effect is worth watching: a 10% shift in EUR/USD can move Germany&apos;s dollar-GDP by tens of billions without any real change in output. <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link>&apos;s ranking illustrates this vividly: despite growing at 6.5%, India slipped to sixth in the IMF&apos;s April 2026 WEO — behind Germany, <Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link>, and the UK — due to rupee depreciation (84.6 → 88.5 per dollar) and a February 2026 statistical base-year revision that lowered India&apos;s nominal GDP estimate by roughly 4%. India&apos;s underlying growth trajectory remains intact and it is projected to become the world&apos;s third-largest economy by the early 2030s.</p>
         </div>
 
+        <div className="max-w-[800px] mb-10">
+          <h2 className="text-[22px] font-bold text-[#0d1b2a] mb-4">Top 10 Largest Economies by GDP (2026)</h2>
+          <p className="text-[15px] text-[#374151] leading-[1.8] mb-4">The following are the ten largest economies in the world by nominal GDP in 2026, per the IMF April 2026 World Economic Outlook. All figures are in current US dollars.</p>
+          <ol className="space-y-2 mb-6">
+            {[
+              { rank: 1, name: 'United States', gdp: '$32.4T', note: 'Technology-led growth; largest economy by a wide margin in nominal terms' },
+              { rank: 2, name: 'China', gdp: '$20.9T', note: 'Second largest; slowing due to property sector headwinds and US tariffs (145% rate)' },
+              { rank: 3, name: 'Germany', gdp: '$5.4T', note: 'Europe\'s largest economy; export-dependent, growing near 0.9% in 2026' },
+              { rank: 4, name: 'Japan', gdp: '$4.4T', note: 'Yen depreciation weighs on dollar-denominated GDP; aging population a long-run drag' },
+              { rank: 5, name: 'United Kingdom', gdp: '$4.26T', note: 'Post-Brexit stability; services-heavy economy, partial tariff insulation' },
+              { rank: 6, name: 'India', gdp: '$4.15T', note: 'Fastest-growing major economy (6.5%); rupee depreciation and MoSPI revision delayed surpassing Japan' },
+              { rank: 7, name: 'France', gdp: '$3.2T', note: 'Eurozone\'s second-largest; industrial policy spending up amid tariff disruption' },
+              { rank: 8, name: 'Italy', gdp: '$2.3T', note: 'Slow growth; high public debt; manufacturing exposed to US tariffs' },
+              { rank: 9, name: 'Brazil', gdp: '$2.2T', note: 'Largest economy in Latin America; commodities and agribusiness resilient' },
+              { rank: 10, name: 'Canada', gdp: '$2.2T', note: 'Resource-rich; USMCA ties provide partial tariff buffer' },
+            ].map(e => (
+              <li key={e.rank} className="flex gap-3 items-start text-[14px] text-[#374151]">
+                <span className="font-bold text-[#0d1b2a] w-6 shrink-0">{e.rank}.</span>
+                <span><span className="font-semibold">{e.name}</span> — {e.gdp} — {e.note}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
         <div className="mb-10">
           <div className="border border-[#d5dce6] rounded-xl overflow-hidden">
             <table className="w-full">
@@ -108,7 +133,7 @@ export default async function LargestEconomiesPage() {
 
         <div className="border-t border-[#d5dce6] pt-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {[{ href: '/richest-countries', label: 'Richest Countries' }, { href: '/gdp-by-country', label: 'GDP by Country' }, { href: '/gdp-growth-by-country', label: 'GDP Growth' }, { href: '/g7-economy', label: 'G7 Economy' }, { href: '/g20-economy', label: 'G20 Economy' }, { href: '/brics-economy', label: 'BRICS Economy' }, { href: '/most-populous-countries', label: 'Most Populous' }, { href: '/world-economy', label: 'World Economy' }].map(l => (
+            {[{ href: '/richest-countries', label: 'Richest Countries' }, { href: '/gdp-by-country', label: 'GDP by Country' }, { href: '/gdp-growth-by-country', label: 'GDP Growth' }, { href: '/g7-economy', label: 'G7 Economy' }, { href: '/g20-economy', label: 'G20 Economy' }, { href: '/brics-economy', label: 'BRICS Economy' }, { href: '/most-populous-countries', label: 'Most Populous' }, { href: '/world-economy', label: 'World Economy' }, { href: '/germany-economy', label: 'Germany Economy' }, { href: '/uk-economy', label: 'UK Economy' }, { href: '/debt-by-country', label: 'Government Debt' }, { href: '/compare', label: 'Compare Countries' }].map(l => (
               <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">{l.label} →</Link>
             ))}
           </div>

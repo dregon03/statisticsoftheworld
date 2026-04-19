@@ -2,6 +2,30 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-19)
+
+- **Google indexed pages**: ~1,360 (post Day-30 milestone — check GSC for index growth)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#3** (recovered); `/unemployment-by-country` at #10; `/ranking/inflation-rate` at **#6** (stable); `/inflation-by-country` at #10; `/world-population` at **#4** for "statistics of the world 2026" (recovering from #6 drop ⚠️)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~40 days
+- **CRITICAL FIX applied**: `gdp-by-country` still had India at #4 (missed April 18 sweep) — now corrected to India #6 per IMF April 2026 WEO
+
+### Keyword Rankings (2026-04-19 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **~#4** (/world-population) — recovering from #6 ✅
+- `inflation by country 2026 ranking` → **#6 and #10** — stable ✅
+- `unemployment rate by country 2026 ranking` → **#3 and #10** — holding #3 ✅
+- `GDP by country 2026 ranking` → Not ranking (Worldometer #1, StatisticsTimes #2, Wikipedia #3, WorldPopReview #4, VoronoiApp #5)
+- `largest economies world 2026 GDP` → Not ranking (StatisticsTimes #1, Worldometer #2, VisualCapitalist #3)
+- `country comparison GDP per capita 2026` → Not ranking (WorldPopReview #1, Worldometer #2)
+- `world statistics country comparison tool 2026` → Not ranking (WorldData.info #1, WorldCountryData #2)
+
+### Pages Optimized (2026-04-19)
+- **gdp-by-country**: CRITICAL factual fix — meta description updated to remove "India now ranks #4, surpassing Japan" (incorrect per IMF April 2026 WEO); OG description updated with accurate rankings (US $32T, China $21T, Germany #3, Japan #4, UK #5, India #6); editorial paragraph 3 completely rewritten — correctly states India is #6 not #4, explains rupee depreciation (84.6→88.5/USD) and MoSPI base-year revision, Japan holds #4; FAQ Q4 changed from "Which country is 4th largest? India" to "What are top 5 largest economies?" with correct US/China/Germany/Japan/UK ranking and India #6 explanation
+- **largest-economies**: Added explicit "Top 10 Largest Economies by GDP (2026)" h2 section with ordered list of #1–#10 (US $32T through Canada $2.2T) with brief notes on each — targets "top 10 largest economies 2026" query directly; added 5th FAQ "Which country will overtake the US as the world's largest economy?" — targets long-tail queries on China/India economic trajectory, PPP vs nominal explanation; expanded related links grid (added Germany Economy, UK Economy, Government Debt, Compare Countries)
+
+---
+
 ## Current Status (2026-04-18)
 
 - **Google indexed pages**: ~1,360 (Day 30 crawl acceleration milestone hit April 18 — check GSC for index jump)

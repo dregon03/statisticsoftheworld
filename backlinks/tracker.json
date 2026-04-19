@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-17",
+    "last_run": "2026-04-19",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 17 run: 3 new CRITICAL/HIGH GitHub PR drafts — public-apis/public-apis (300K stars, MOST IMPORTANT), brandonhimpfen/awesome-finance, hanlulong/awesome-ai-for-economists — all verified SOTW-free. 1 new Quora draft (which-websites-economic-statistics). 1 new Stack Exchange draft (cross-country-data-comparison). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) brandonhimpfen/awesome-finance, (4) hanlulong/awesome-ai-for-economists, (5) datasets/awesome-data. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics. Total drafts: 45+."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 19 run: 1 new HIGH GitHub PR draft — academic/awesome-datascience (28.8K stars, verified SOTW-free). 2 new Quora drafts (macroeconomic-data-sources, historical-macro-indicators). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics. Total drafts: 48+."
   },
   "platforms": {
     "quora": {
@@ -129,6 +129,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com",
           "notes": "Draft: primary sources (IMF, World Bank, OECD, UN) vs aggregators (SOTW, Our World in Data, Trading Economics) + research-grade data (Penn World Tables, Maddison). File: quora-2026-04-17-economic-statistics-websites.md. Statista mentioned in snippet — verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-19",
+          "url": "https://www.quora.com/What-are-the-best-data-sources-for-macroeconomic-information",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: primary sources (IMF, World Bank, FRED, OECD) vs aggregators (SOTW, Our World in Data, Trading Economics) + research-grade (Penn World Tables, Maddison). File: quora-2026-04-19-macroeconomic-data-sources.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-19",
+          "url": "https://www.quora.com/Where-can-I-find-all-historical-macroeconomic-indicators-for-each-country-So-I-can-transfer-them-to-excel-and-make-a-chart",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: World Bank WDI download, IMF WEO Excel, FRED API, SOTW API, Penn World Tables, Maddison. Targets Excel-focused user — mentions SOTW compare tool for no-code use. File: quora-2026-04-19-historical-macro-indicators.md. Verify no SOTW in existing answers before posting."
         }
       ]
     },
@@ -303,9 +319,9 @@
       "next_week_priority": [
         "public-apis/public-apis — Finance section, between SmartAPI and StockData. CRITICAL — 300K stars. SUBMIT.md ready.",
         "ripienaar/free-for-dev — APIs, Data, and ML section. HIGH PRIORITY — 90K stars. SUBMIT.md ready.",
+        "academic/awesome-datascience — Datasets section under Fun. HIGH — 28.8K stars. SUBMIT.md ready.",
         "brandonhimpfen/awesome-finance — Financial Data & APIs section. MEDIUM. SUBMIT.md ready.",
         "hanlulong/awesome-ai-for-economists — Economic Data Sources section. MEDIUM. SUBMIT.md ready.",
-        "academic/awesome-datascience — Datasets section. Not yet checked. MEDIUM PRIORITY.",
         "lavie/Awesome-APIs — Economics section. Not yet checked. MEDIUM PRIORITY.",
         "wilsonfreitas/awesome-quant — Market Data & Data Sources (Python-library focused, check fit). LOW."
       ],
@@ -421,6 +437,14 @@
           "status": "pending_submit",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "SOTW-free confirmed 2026-04-17. Economic Data Sources section. Format: **[Name](url)** — description | [Docs](url) | [Tool](url). Submit file: github-pr-hanlulong-awesome-ai-for-economists-SUBMIT.md."
+        },
+        {
+          "date": "2026-04-19",
+          "url": "https://github.com/academic/awesome-datascience",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-19. HIGH PRIORITY — 28.8K stars, dofollow. Datasets section under Fun. Format: - [Name](url) - desc. Default branch: live. Submit file: github-pr-academic-awesome-datascience-SUBMIT.md."
         }
       ]
     },

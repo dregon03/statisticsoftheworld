@@ -27,6 +27,18 @@ export default async function GdpByCountryPage() {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'WebPage',
+        name: `GDP by Country ${year} — Ranked List of All 218 Economies`,
+        url: 'https://statisticsoftheworld.com/gdp-by-country',
+        description: `Nominal GDP for all ${gdpData.length} countries in ${year}, ranked largest to smallest. Source: IMF World Economic Outlook.`,
+        dateModified: new Date().toISOString().split('T')[0],
+        breadcrumb: { '@type': 'BreadcrumbList', itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'GDP Rankings', item: 'https://statisticsoftheworld.com/ranking/gdp' },
+          { '@type': 'ListItem', position: 3, name: `GDP by Country ${year}`, item: 'https://statisticsoftheworld.com/gdp-by-country' },
+        ]},
+      },
+      {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
@@ -86,9 +98,9 @@ export default async function GdpByCountryPage() {
         </p>
 
         <div className="max-w-[800px] space-y-4 mb-10">
-          <h2 className="text-[22px] font-bold text-[#0d1b2a]">Understanding GDP Rankings</h2>
+          <h2 className="text-[22px] font-bold text-[#0d1b2a]">GDP by Country 2026: Key Rankings</h2>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
-            Gross Domestic Product (GDP) is the primary measure of a country&apos;s economic size. The rankings below show nominal GDP in current US dollars, as reported by the International Monetary Fund (IMF) in the World Economic Outlook. The world economy is worth over ${(worldGdp / 1e12).toFixed(0)} trillion, with the top two economies — {gdpData[0]?.country} and {gdpData[1]?.country} — accounting for over 40% of global output. The concentration is stark: the top 10 economies produce roughly two-thirds of all world GDP.
+            The <strong>United States</strong> has the highest GDP of any country in 2026 at approximately $32 trillion, followed by <strong>China</strong> ($20.9T), <strong>Germany</strong> ($5.4T), <strong>Japan</strong> ($4.4T), and the <strong>United Kingdom</strong> ($4.26T). <strong>India</strong> ranks sixth at $4.15T. The full rankings below show nominal GDP in current US dollars for all {gdpData.length} countries, sourced from the IMF&apos;s April 2026 World Economic Outlook. The world economy totals over ${(worldGdp / 1e12).toFixed(0)} trillion — with the top 10 economies producing roughly two-thirds of all global output.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             When comparing GDP across countries, keep in mind that nominal figures in US dollars are affected by exchange rate movements. A country&apos;s GDP can shrink in dollar terms even while its domestic economy grows, simply because its currency weakened against the dollar. For a fairer comparison of living standards, use <Link href="/ranking/gdp-per-capita" className="text-[#0066cc] hover:underline">GDP per capita</Link> or <Link href="/ranking/gdp-ppp" className="text-[#0066cc] hover:underline">GDP adjusted for purchasing power parity (PPP)</Link>.

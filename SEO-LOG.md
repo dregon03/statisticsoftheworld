@@ -2,6 +2,31 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-20)
+
+- **Google indexed pages**: ~1,360 (steady — no significant change since Day-30 milestone)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#3** (stable); `/unemployment-by-country` at #10; `/ranking/inflation-rate` at **#7** (stable); `/inflation-by-country` at #8; `/world-population` at **#3** for "statistics of the world 2026" (recovered ✅)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~41 days
+
+### Keyword Rankings (2026-04-20 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **#3** (/world-population) — recovered ✅
+- `inflation by country 2026 ranking` → **#7 and #8** — stable ✅
+- `unemployment rate by country 2026 ranking` → **#3 and #10** — holding #3 ✅
+- `GDP by country 2026` → Not ranking (Worldometer #1, Wikipedia #2, StatisticsTimes #3, WorldPopReview #4, ResearchFDI #5)
+- `largest economies world 2026 GDP ranking` → Not ranking (StatisticsTimes #1, Worldometer #2, ClearTax #3, VoronoiApp #4)
+- `world statistics country comparison tool 2026` → Not ranking (worlddata.info #1, WorldCountryData #2)
+- `country comparison GDP per capita 2026` → Not ranking (WorldPopReview #1, Worldometer #2, VisualCapitalist #3)
+- `world economic data by country 2026 free` → Not ranking (WorldBank #1, IMF #3, TradingEconomics #6)
+
+### Pages Optimized (2026-04-20)
+- **us-economy**: Fixed factual error in description ($29T→$32T per IMF April 2026); added OG url/type; removed duplicate BreadcrumbList from JSON-LD @graph (schema fix); replaced repetitive tariff paragraph (P5) with unique editorial on US AI/tech economic leadership — covering OpenAI/Anthropic/DeepMind competitive advantage, IMF 0.5–1.5pp productivity estimate, housing affordability crisis (7× price/income ratio), healthcare spending (17%+ of GDP), federal deficit context
+- **china-economy**: Added OG url/type; updated meta description with specific figures ($20.9T GDP, 4.2% growth, EV/AI pivot); added 5th FAQ on China's AI/tech position in 2026 (DeepSeek-R1 significance, BYD EV dominance, chip export restrictions, Huawei Ascend adaptation); added 5th editorial paragraph on DeepSeek-R1, BYD/CATL EV supply chain dominance, "New Quality Productive Forces" policy pivot, and structural headwinds through 2030
+- **gdp-by-country**: Added WebPage type to JSON-LD @graph (improves schema completeness); sharpened editorial intro from generic "Understanding GDP Rankings" to "GDP by Country 2026: Key Rankings" with explicit top-6 named countries and GDP figures in first paragraph — directly answers the search query intent
+
+---
+
 ## Current Status (2026-04-19)
 
 - **Google indexed pages**: ~1,360 (post Day-30 milestone — check GSC for index growth)

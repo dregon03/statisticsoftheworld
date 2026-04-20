@@ -6,12 +6,14 @@ import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'China Economy 2026 — GDP, Growth, Tariff Impact & Key Data',
-  description: 'China economy 2026: GDP, growth rate, impact of US tariffs (145%+), trade surplus, population decline, and 440+ indicators. IMF & World Bank data.',
+  description: 'China economy 2026: $20.9T GDP, 4.2% growth, 145%+ US tariff impact, deflation risk, and EV / AI technology pivot. IMF & World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/china-economy' },
   openGraph: {
     title: 'China Economy 2026 — GDP, Growth & US Tariff Impact',
-    description: 'China\'s economy in 2026: how US tariffs, property crisis, and demographic decline are reshaping the world\'s second-largest economy.',
+    description: 'China\'s $20.9T economy in 2026: how US tariffs, property crisis, demographic decline, and AI/EV ambitions are reshaping the world\'s second-largest economy.',
     siteName: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com/china-economy',
+    type: 'website',
   },
 };
 
@@ -53,6 +55,7 @@ export default async function ChinaEconomyPage() {
           { '@type': 'Question', name: `What is China's GDP growth rate?`, acceptedAnswer: { '@type': 'Answer', text: `China's real GDP growth rate in ${year} is ${formatValue(gdpGrowth?.value, 'percent', 1)}. Growth has slowed from the double-digit rates of 2000-2010 as the economy matures and transitions from investment-led to consumption-driven growth. Source: IMF.` } },
           { '@type': 'Question', name: `What is China's population in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `China's population in ${year} is approximately ${formatValue(pop?.value, 'number')}. China's population began declining in 2022 for the first time since the 1960s, and India has surpassed China as the world's most populous country. Source: World Bank.` } },
           { '@type': 'Question', name: `How are US tariffs affecting China's economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The US tariffs announced in April 2025 — reaching 145% on many Chinese goods — are a major headwind for China's export-dependent economy. China responded with 125%+ retaliatory tariffs on US imports. The net effect has been a sharp reduction in bilateral trade, with China redirecting exports to ASEAN, the Middle East, and Africa. The tariff shock has added deflationary pressure to China's domestic economy and complicated Beijing's goal of 5% annual growth. Source: IMF, trade data.` } },
+          { '@type': 'Question', name: `What is China's position in AI and technology in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `China is the world's second AI superpower, with state-backed investment in AI, electric vehicles (EVs), and advanced manufacturing forming the core of its industrial strategy. The January 2026 release of DeepSeek-R1 — a frontier reasoning model produced at a fraction of US training costs — demonstrated that Chinese AI research has closed the gap with US labs faster than most analysts expected. In EVs, China's BYD surpassed Tesla in global sales in 2024 and commands over 60% of the Chinese EV market. The government's "New Quality Productive Forces" strategy is directing capital away from real estate and toward AI, robotics, and green energy. While the US has restricted chip exports (H100/A100 bans), Chinese firms have partially adapted via domestically designed Huawei Ascend chips and optimized training methods. Source: CSIS, Bloomberg, Reuters.` } },
         ],
       },
       {
@@ -116,6 +119,9 @@ export default async function ChinaEconomyPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             China&apos;s GDP per capita of {formatValue(gdpPerCapita?.value, 'currency')} remains well below developed-country levels, classifying it as an upper-middle-income country. The question of whether China can escape the &quot;middle-income trap&quot; — where countries stagnate after reaching moderate prosperity — is one of the defining economic questions of the 2020s. China&apos;s demographic profile (aging rapidly, shrinking workforce) mirrors Japan&apos;s situation in the 1990s, raising concerns about a prolonged period of slower growth.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            China&apos;s most consequential economic bet for the next decade is technology. The January 2026 emergence of DeepSeek-R1 — a frontier AI reasoning model trained at dramatically lower cost than comparable US systems — signaled that China&apos;s AI gap with the United States had narrowed faster than anticipated. In electric vehicles, <Link href="/compare/china-vs-united-states" className="text-[#0066cc] hover:underline">China vs US</Link> comparisons increasingly favor China: BYD, CATL, and NIO collectively dominate global EV supply chains, with Chinese manufacturers building factories across Southeast Asia and Latin America to circumvent US tariffs. Beijing&apos;s &quot;New Quality Productive Forces&quot; policy explicitly redirects state capital from real estate and infrastructure toward AI, robotics, advanced semiconductors, and green energy. Whether this pivot can offset the structural drags from an aging population, a property sector still deleveraging (Evergrande, Country Garden), and the US-China technology export restrictions remains the defining question for China&apos;s economic trajectory through 2030.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Data sourced from the <a href="https://www.imf.org/en/Publications/WEO" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">IMF World Economic Outlook</a> and <a href="https://data.worldbank.org" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">World Bank</a>.

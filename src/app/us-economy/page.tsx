@@ -6,12 +6,14 @@ import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'US Economy 2026 — GDP, Tariff Impact, Inflation & Key Data',
-  description: 'US economy 2026: world\'s largest at $29T+ GDP, tariff-driven inflation, 2.1% growth. One year after Liberation Day tariffs — what changed? IMF & World Bank data.',
+  description: 'US economy 2026: world\'s largest at $32T+ GDP, 2.1% growth, above-target inflation. One year after Liberation Day tariffs — what changed? IMF & World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/us-economy' },
   openGraph: {
     title: 'US Economy 2026 — GDP, Tariff Impact & Key Statistics',
-    description: 'The US economy one year after Liberation Day tariffs: GDP, inflation, trade, and labor market data from IMF & World Bank.',
+    description: 'The US economy one year after Liberation Day tariffs: $32T GDP, inflation, trade, and labor market data from IMF & World Bank.',
     siteName: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com/us-economy',
+    type: 'website',
   },
 };
 
@@ -64,14 +66,6 @@ export default async function USEconomyPage() {
           { '@type': 'Question', name: 'What is the US national debt?', acceptedAnswer: { '@type': 'Answer', text: `US government debt stands at ${formatValue(debt?.value, 'percent', 1)} of GDP in ${year}. Federal debt has increased significantly since 2020 due to pandemic-era fiscal stimulus. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: 'Is the US the largest economy in the world?', acceptedAnswer: { '@type': 'Answer', text: `Yes, the United States is the world's largest economy by nominal GDP at ${formatValue(gdp?.value, 'currency')} in ${year}. China is second. In purchasing power parity (PPP) terms, China's economy is larger. Source: IMF.` } },
           { '@type': 'Question', name: `What is the impact of tariffs on the US economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The tariffs announced in April 2025 — including 145%+ levies on Chinese goods and baseline 10% tariffs on imports from most countries — have had a mixed economic impact. US manufacturing has seen some re-shoring activity, but consumers face higher prices on imported goods, contributing to above-target inflation. The Federal Reserve has had to balance tariff-driven price pressures against slowing growth. The IMF estimates the tariff shock reduced US growth by roughly 0.3–0.5 percentage points in 2025–2026. Source: IMF World Economic Outlook.` } },
-        ],
-      },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
-          { '@type': 'ListItem', position: 2, name: 'United States', item: 'https://statisticsoftheworld.com/country/united-states' },
-          { '@type': 'ListItem', position: 3, name: 'US Economy', item: 'https://statisticsoftheworld.com/us-economy' },
         ],
       },
     ],
@@ -131,7 +125,7 @@ export default async function USEconomyPage() {
             The US economy&apos;s competitive advantages include world-leading universities, deep capital markets, a culture of entrepreneurship, and dominance in artificial intelligence and advanced technology. Challenges include rising income inequality, an aging infrastructure (despite recent legislation), high healthcare costs (the US spends more per capita on healthcare than any other country), and a persistent trade deficit. The US GDP per capita of {formatValue(gdpPerCapita?.value, 'currency')} is among the highest for large economies, though it masks significant regional variation.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
-            The defining economic policy development of 2025–2026 is the significant expansion of US trade tariffs. The administration imposed broad tariff increases on imports from China, the European Union, and numerous other trading partners — representing the most sweeping shift in US trade policy in decades. The IMF projects these tariffs will modestly reduce US real GDP growth while adding near-term inflationary pressure, as import costs pass through to consumer prices. The current account balance ({formatValue(currentAccount?.value, 'percent', 1)} of GDP) is closely watched as the tariff regime reshapes import volumes and tests the resilience of US export markets. Business investment in manufacturing has been pulled forward by tariff uncertainty, creating volatility in quarterly GDP data that obscures the underlying growth trend.
+            The US economy&apos;s most durable structural advantage in 2026 is its commanding lead in artificial intelligence. American companies — OpenAI, Anthropic, Google DeepMind, Meta AI — control the frontier models that are increasingly embedded in global productivity. The IMF estimates AI could add 0.5–1.5 percentage points to annual US GDP growth through 2030 via efficiency gains in healthcare, finance, software, and professional services. This technology premium partially offsets the drag from tariff-driven price pressures. Structural challenges remain: US housing affordability is at historic lows (the median home price-to-income ratio exceeds 7× nationally), healthcare costs consume 17%+ of GDP — the highest of any OECD country — and the federal deficit at roughly 6–7% of GDP adds to a debt burden of {formatValue(debt?.value, 'percent', 1)} of GDP. Whether AI productivity gains can sustain growth while these structural costs compound is the central question for the US economy over the next decade.
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             All economic data on this page is sourced from the <a href="https://www.imf.org/en/Publications/WEO" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">IMF World Economic Outlook</a> and the <a href="https://data.worldbank.org" className="text-[#0066cc] hover:underline" target="_blank" rel="noopener">World Bank World Development Indicators</a>. The IMF publishes updated projections biannually in April and October; World Bank data is updated annually.

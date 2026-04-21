@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-20",
+    "last_run": "2026-04-21",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 20 run: 1 new GitHub PR draft (infoculture/awesome-datajournalism, 211 stars, SOTW-free confirmed). 2 new Quora drafts (country-data-api-developers, economic-research-data-sources). 2 new Reddit drafts (r/webdev, r/javascript). 1 new dev.to comment draft. Also confirmed: okhosting/awesome-open-data already lists SOTW (skip), awesomedata/awesome-public-datasets has SOTW in external description (may already be merged). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism. Total drafts: 55+."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 21 run: 3 new Quora drafts (gdp-per-capita-recommend, compare-countries-indices, compare-countries-quality-life). 3 new dev.to comment drafts on API roundup articles. New GitHub repo to check: NajiElKotob/Awesome-Datasets. Confirmed: okhosting/awesome-open-data already lists SOTW (skip), dev.to has no SOTW mentions (confirmed clean). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism. Total drafts: 61+."
   },
   "platforms": {
     "quora": {
@@ -161,6 +161,30 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com",
           "notes": "Draft: tiered breakdown — primary sources (IMF WEO, WB WDI, Penn World Tables, OECD, Maddison) vs aggregators (FRED, SOTW, Our World in Data). Research paper focused. File: quora-2026-04-20-economic-research-data-sources.md. Search Quora for the exact question URL and verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-21",
+          "url": "https://www.quora.com/Can-you-recommend-an-official-and-100-reliable-website-in-which-to-see-the-GDP-per-capita-of-all-countries-and-cities-in-the-world",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/ranking/gdp",
+          "notes": "Draft: honest answer — WB + IMF as primary sources, note city GDP data doesn't exist authoritatively, SOTW for visual exploration of rankings. File: quora-2026-04-21-gdp-per-capita-recommend.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-21",
+          "url": "https://www.quora.com/What-are-some-interesting-indexes-to-compare-countries",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: lesser-known indexes (Social Progress Index, Economic Complexity Index, Press Freedom, Legatum) + SOTW compare tool for raw multi-indicator comparisons. File: quora-2026-04-21-compare-countries-indices.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-21",
+          "url": "https://www.quora.com/How-can-I-compare-countries-in-quality-of-life",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: OECD Better Life Index, Social Progress Index, HDI, World Happiness Report breakdown + SOTW compare tool for underlying raw indicators. File: quora-2026-04-21-compare-countries-quality-life.md. Verify no SOTW in existing answers before posting."
         }
       ]
     },
@@ -346,7 +370,8 @@
         "erikgahner/awesome-statistics",
         "datasets/awesome-data",
         "hanlulong/awesome-ai-for-economists",
-        "wilsonfreitas/awesome-quant"
+        "wilsonfreitas/awesome-quant",
+        "NajiElKotob/Awesome-Datasets"
       ],
       "next_week_priority": [
         "public-apis/public-apis — Finance section, between SmartAPI and StockData. CRITICAL — 300K stars. SUBMIT.md ready.",
@@ -620,6 +645,30 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: comment on 'Country Data API' article (ameh_mathias). Mentions SOTW as a complement for economic indicators (GDP, inflation, etc.). File: devto-comment-country-api-2026-04-20.md. Check article comments for 'statisticsoftheworld' before posting."
+        },
+        {
+          "date": "2026-04-21",
+          "url": "https://dev.to/firstdata/5-free-data-apis-every-ai-developer-should-bookmark-in-2026-38ko",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '5 Free Data APIs Every AI Developer Should Bookmark in 2026'. SOTW confirmed not in search results for dev.to. Adds SOTW as macro/economic data complement. File: devto-comment-5-free-data-apis-2026-04-21.md. Check article comments for 'statisticsoftheworld' before posting."
+        },
+        {
+          "date": "2026-04-21",
+          "url": "https://dev.to/0012303/7-apis-that-give-you-data-worth-thousands-completely-free-2lcp",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '7 APIs That Give You Data Worth Thousands — Completely Free'. Positions SOTW as normalized IMF/WB/WHO data source. File: devto-comment-7-apis-worth-thousands-2026-04-21.md. Check article comments for 'statisticsoftheworld' before posting."
+        },
+        {
+          "date": "2026-04-21",
+          "url": "https://dev.to/wassim/10-free-apis-to-supercharge-your-financial-apps-kf6",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '10 Free APIs to Supercharge Your Financial Apps'. Positions SOTW as macro fundamentals layer for financial apps. File: devto-comment-10-free-apis-financial-2026-04-21.md. Check article comments for 'statisticsoftheworld' before posting."
         }
       ]
     },

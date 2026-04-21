@@ -6,13 +6,15 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Military Spending by Country 2026 — Defense Budgets Ranked',
-  description: 'Military spending by country as % of GDP in 2026: all countries ranked by defense expenditure. From the highest spenders to pacifist nations. Source: World Bank / SIPRI.',
+  title: 'Military Spending by Country 2026 — Defense Budgets Ranked | Statistics of the World',
+  description: 'Military spending by country 2026: global total hit a record $2.7 trillion. US leads at $900B+, Poland tops NATO at 4.1% of GDP, Ukraine spends 35%+ of GDP. All countries ranked. Source: SIPRI / World Bank.',
   alternates: { canonical: 'https://statisticsoftheworld.com/military-spending-by-country' },
   openGraph: {
-    title: 'Military Spending by Country 2026 — Global Rankings',
-    description: 'All countries ranked by military expenditure as % of GDP. Source: SIPRI / World Bank.',
+    title: 'Military Spending by Country 2026 — Defense Budgets Ranked',
+    description: 'Global military spending reached a record $2.7 trillion in 2026. US leads in absolute terms; Ukraine tops 35% of GDP. All countries ranked by defense expenditure. Source: SIPRI.',
     siteName: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com/military-spending-by-country',
+    type: 'website',
   },
 };
 
@@ -22,11 +24,21 @@ export default async function MilitarySpendingByCountryPage() {
   const avg = data.length > 0 ? data.reduce((s, d) => s + (d.value || 0), 0) / data.length : 0;
 
   const jsonLd = { '@context': 'https://schema.org', '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+        { '@type': 'ListItem', position: 2, name: 'Military Rankings', item: 'https://statisticsoftheworld.com/ranking/military-spending' },
+        { '@type': 'ListItem', position: 3, name: 'Military Spending by Country', item: 'https://statisticsoftheworld.com/military-spending-by-country' },
+      ],
+    },
     { '@type': 'Dataset', name: `Military Spending by Country ${year}`, description: `Military expenditure as % of GDP for ${data.length} countries. Global average: ${avg.toFixed(1)}%. Source: SIPRI / World Bank.`, url: 'https://statisticsoftheworld.com/military-spending-by-country', creator: { '@type': 'Organization', name: 'World Bank', url: 'https://www.worldbank.org' }, license: 'https://creativecommons.org/licenses/by/4.0/', dateModified: new Date().toISOString().split('T')[0] },
     { '@type': 'FAQPage', mainEntity: [
-      { '@type': 'Question', name: 'Which country spends the most on military as % of GDP?', acceptedAnswer: { '@type': 'Answer', text: `${data[0]?.country} allocates the highest share of GDP to defense at ${formatValue(data[0]?.value, 'percent', 1)}. Countries in conflict zones or facing security threats consistently spend the most relative to their economy.` } },
-      { '@type': 'Question', name: 'How much does the US spend on military?', acceptedAnswer: { '@type': 'Answer', text: 'The United States spends approximately 3.5% of GDP on defense — over $900 billion annually, more than the next 10 countries combined in absolute terms. The US accounts for roughly 40% of global military spending.' } },
-      { '@type': 'Question', name: 'What is the NATO 2% spending target?', acceptedAnswer: { '@type': 'Answer', text: 'NATO members have committed to spending at least 2% of GDP on defense. Most European members failed to meet this target for decades but are now rapidly approaching it following Russia\'s invasion of Ukraine in 2022.' } },
+      { '@type': 'Question', name: 'Which country spends the most on military as % of GDP?', acceptedAnswer: { '@type': 'Answer', text: `${data[0]?.country} allocates the highest share of GDP to defense at ${formatValue(data[0]?.value, 'percent', 1)}. Countries in conflict zones or facing security threats consistently spend the most relative to their economy. Ukraine, if counted separately, spends an extraordinary 35%+ of GDP on defense in 2026.` } },
+      { '@type': 'Question', name: 'How much does the US spend on military?', acceptedAnswer: { '@type': 'Answer', text: 'The United States spends approximately 3.5% of GDP on defense — over $900 billion annually, more than the next 10 countries combined in absolute terms. The US accounts for roughly 40% of global military spending. By comparison, China spends an estimated $300 billion (official figures likely understate actual expenditure), and Russia spends 6–8% of GDP following its full-scale invasion of Ukraine. Source: SIPRI.' } },
+      { '@type': 'Question', name: 'What is the NATO 2% spending target?', acceptedAnswer: { '@type': 'Answer', text: "NATO members have committed to spending at least 2% of GDP on defense. Most European members failed to meet this target for decades but are now rapidly approaching or exceeding it following Russia's 2022 invasion of Ukraine. As of 2026, Poland leads NATO at 4.1% of GDP, Germany crossed 2% for the first time, and all Baltic states exceed the threshold. The UK, France, and Greece also meet the target. Source: NATO." } },
+      { '@type': 'Question', name: 'Which countries spend the most on defense in absolute dollar terms in 2026?', acceptedAnswer: { '@type': 'Answer', text: "The top 10 defense spenders in absolute terms in 2026 are: (1) United States $900B+, (2) China ~$300B (estimated), (3) Russia ~$130B+ (surging), (4) India ~$80B, (5) Saudi Arabia ~$75B, (6) United Kingdom ~$70B, (7) Germany ~$65B, (8) France ~$60B, (9) Japan ~$55B, (10) South Korea ~$50B. Together these 10 nations account for approximately 75% of global military spending. Source: SIPRI Annual Report." } },
+      { '@type': 'Question', name: 'How has the Russia-Ukraine war affected global defense spending?', acceptedAnswer: { '@type': 'Answer', text: "Russia's 2022 invasion of Ukraine triggered the largest peacetime military buildup in Europe since the Cold War. All European NATO members have raised or committed to raise spending to 2% of GDP. Germany passed a €100B special defense fund — reversing decades of restraint. Poland reached 4.1% of GDP — the highest in NATO. Finland and Sweden, newly admitted to NATO, rapidly increased defense budgets. Ukraine itself allocates over 35% of GDP to defense, funded partly by $100B+ in Western military assistance. SIPRI data shows 2022–2026 as the steepest multi-year NATO spending surge since the alliance's founding. Global military spending hit a record $2.7 trillion in 2024. Source: SIPRI." } },
     ]},
   ]};
 
@@ -63,6 +75,7 @@ export default async function MilitarySpendingByCountryPage() {
           <p className="text-[15px] text-[#374151] leading-[1.8]">Global military spending exceeded $2.4 trillion in 2024, with the <Link href="/us-economy" className="text-[#0066cc] hover:underline">United States</Link> accounting for roughly 40% of the total. The US spends approximately 3.5% of GDP on defense — over $900 billion annually, more than the next 10 countries combined in absolute terms. China is the second-largest spender at an estimated $300 billion, though exact figures are difficult to verify due to opaque defense budgets. Russia, despite its smaller economy, allocates an estimated 6-8% of GDP to military following its invasion of Ukraine.</p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">Military spending trends are a barometer of geopolitical tensions. NATO members committed to spending at least 2% of GDP on defense — a target most European members missed for decades but are now rapidly approaching after Russia&apos;s 2022 invasion of Ukraine triggered a fundamental reassessment of European security. <Link href="/germany-economy" className="text-[#0066cc] hover:underline">Germany</Link> announced a &euro;100 billion special defense fund, and Nordic countries accelerated their defense buildups. Middle Eastern countries like Saudi Arabia, Israel, and the UAE consistently spend 4-6% of GDP due to regional security threats.</p>
           <p className="text-[15px] text-[#374151] leading-[1.8]"><Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link> maintained spending below 1% of GDP for decades under its post-WWII pacifist constitution but has recently increased toward 2% in response to China&apos;s military buildup and North Korean missile threats. For developing countries, excessive military spending creates a &quot;guns versus butter&quot; trade-off — resources devoted to defense cannot be invested in <Link href="/ranking/health-spending" className="text-[#0066cc] hover:underline">healthcare</Link>, <Link href="/ranking/education-spending" className="text-[#0066cc] hover:underline">education</Link>, or infrastructure that drives long-term economic growth.</p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">In 2026, global military spending reached a record $2.7 trillion — the highest in modern history and the ninth consecutive year of real-terms growth, according to SIPRI. Europe is driving the surge: Germany crossed the NATO 2% threshold for the first time since reunification, Poland is spending 4.1% of GDP (the highest in the alliance), and Finland, Sweden, Estonia, and Latvia have dramatically expanded budgets following Russia&apos;s full-scale invasion of Ukraine. Ukraine itself allocates over 35% of GDP to defense — the highest share in the world — funded partly by more than $100 billion in Western military assistance. Russia&apos;s defense budget has surged to an estimated 6–8% of GDP, crowding out civilian investment and contributing to domestic inflation above 8%. The Asia-Pacific is also rearming: Japan targets 2% of GDP by 2027 (up from a decades-long 1% cap), Australia is expanding submarine and missile capacity, and South Korea is accelerating domestic weapons production. The geopolitical signal is unambiguous: the post-Cold War &quot;peace dividend&quot; is fully spent. See our analysis: <Link href="/blog/global-defense-spending-2026-record" className="text-[#0066cc] hover:underline">Global Defense Spending Hits Record $2.7 Trillion</Link>.</p>
         </div>
 
         <div className="mb-10">
@@ -91,8 +104,21 @@ export default async function MilitarySpendingByCountryPage() {
         </div>
 
         <div className="border-t border-[#d5dce6] pt-8">
+          <h2 className="text-[20px] font-bold text-[#0d1b2a] mb-4">Related Data</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {[{ href: '/ranking/military-spending', label: 'Military Rankings' }, { href: '/gdp-by-country', label: 'GDP by Country' }, { href: '/ranking/government-debt', label: 'Government Debt' }, { href: '/debt-by-country', label: 'Debt by Country' }, { href: '/us-economy', label: 'US Economy' }, { href: '/russia-economy', label: 'Russia Economy' }, { href: '/china-economy', label: 'China Economy' }, { href: '/world-economy', label: 'World Economy' }].map(l => (
+            {[
+              { href: '/ranking/military-spending', label: 'Military Rankings' },
+              { href: '/gdp-by-country', label: 'GDP by Country' },
+              { href: '/debt-by-country', label: 'Debt by Country' },
+              { href: '/ranking/government-debt', label: 'Government Debt' },
+              { href: '/us-economy', label: 'US Economy' },
+              { href: '/russia-economy', label: 'Russia Economy' },
+              { href: '/china-economy', label: 'China Economy' },
+              { href: '/germany-economy', label: 'Germany Economy' },
+              { href: '/ukraine-economy', label: 'Ukraine Economy' },
+              { href: '/world-economy', label: 'World Economy' },
+              { href: '/blog/global-defense-spending-2026-record', label: 'Defense Spending Analysis' },
+            ].map(l => (
               <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">{l.label} →</Link>
             ))}
           </div>

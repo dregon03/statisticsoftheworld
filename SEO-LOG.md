@@ -2,6 +2,32 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-21)
+
+- **Google indexed pages**: ~1,360 (stable — no significant change)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#4** (slight drop from #3); `/unemployment-by-country` at #10; `/ranking/inflation-rate` at **#8** (slight drop from #7); `/world-population` — **NOT visible** for "statistics of the world 2026" (regression from #3 ⚠️ — likely algorithmic volatility)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~42 days
+- **New competitor spotted**: `globalstats.info` appearing in "world statistics comparison tool" results — similar positioning to SOTW
+
+### Keyword Rankings (2026-04-21 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **Not visible** (/world-population dropped from #3 ⚠️)
+- `unemployment rate by country 2026 ranking` → **#4 and #10** — slight drop from #3/#10 ⚠️
+- `inflation by country 2026 ranking` → **#8** — slight drop from #7 ⚠️
+- `GDP by country 2026` → Not ranking (Worldometer #1, Wikipedia #2, StatisticsTimes #3, WorldPopReview #4, ResearchFDI #5, IMF #6, VisualCapitalist #7, VoronoiApp #8, Statista #9, ClearTax #10)
+- `largest economies world 2026 GDP ranking` → Not ranking (StatisticsTimes #1, ClearTax #2, Worldometer #3, multiple VisualCapitalist entries)
+- `world statistics country comparison tool 2026` → Not ranking (worlddata.info #1, WorldCountryData #2, compareyourcountry.org #3, UN #4, GlobalStats.info #5 — new)
+- `country comparison GDP per capita 2026` → Not ranking (WorldPopReview #1, Worldometer #2, StatisticsTimes #3)
+- `world economic data by country 2026 free` → Not ranking (WorldBank #1, WorldPopReview #2, IMF #3)
+
+### Pages Optimized (2026-04-21)
+- **gdp-ppp-by-country**: Added brand suffix to title; improved meta description (China $35T+ PPP, India #3 ~$15T); added full OpenGraph (url, type); added BreadcrumbList + WebPage to JSON-LD @graph; added 3 new FAQs (PPP vs. nominal rationale, India PPP 2026 ~$15T, PPP effect on developing vs. developed rankings); added 2 new editorial paragraphs (2026 tariff-PPP divergence, ICP uncertainty ±5–10%, Sub-Saharan Africa underrepresentation, Indonesia/Brazil/Mexico PPP ranking effect); expanded BreadcrumbList UI; added h2 "Related Economic Data" heading; expanded related links from 8 to 12
+- **military-spending-by-country**: Improved meta description ($2.7T record, Poland 4.1%, Ukraine 35%+); added OG url/type; added BreadcrumbList to JSON-LD; expanded existing 3 FAQs with 2026-specific data; added FAQ 4 (top 10 absolute spenders 2026) and FAQ 5 (Russia-Ukraine war impact on global spending, SIPRI record); added 4th editorial paragraph on 2026 SIPRI record $2.7T, European rearmament, Ukraine 35%+ GDP, Russia 6–8% GDP, Asia-Pacific buildup; cross-linked to /blog/global-defense-spending-2026-record; added h2 heading; expanded related links (added Germany, Ukraine, defense blog)
+- **health-spending-by-country**: Improved meta description (US 17%, OECD avg 9%, GLP-1 context, WHO 5%); added OG url/type; added BreadcrumbList to JSON-LD; expanded FAQs 1–2 with numbers; added FAQ 3 (WHO 5% minimum), FAQ 4 (GLP-1 drugs 2026 fiscal impact $700–$1,200/month), FAQ 5 (why US spends more — admin overhead, pharma pricing, procedure costs); added 4th editorial paragraph on GLP-1 revolution and cost implications, aging population structural cost growth, WHO 5% threshold, "how efficiently" vs. "how much" debate; added h2 heading; expanded related links (added Military Spending, Aging Population, Japan Economy)
+
+---
+
 ## Current Status (2026-04-20)
 
 - **Google indexed pages**: ~1,360 (steady — no significant change since Day-30 milestone)

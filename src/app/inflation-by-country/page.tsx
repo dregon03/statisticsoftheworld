@@ -11,8 +11,10 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://statisticsoftheworld.com/inflation-by-country' },
   openGraph: {
     title: 'Inflation Rate by Country 2026 — World Rankings',
-    description: 'All countries ranked by inflation rate. Source: IMF World Economic Outlook.',
+    description: 'All 218 countries ranked by CPI inflation. Venezuela 680%+, global avg ~8.7%, US above target, China in deflation. Source: IMF World Economic Outlook.',
     siteName: 'Statistics of the World',
+    url: 'https://statisticsoftheworld.com/inflation-by-country',
+    type: 'website',
   },
 };
 
@@ -25,6 +27,14 @@ export default async function InflationByCountryPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
+          { '@type': 'ListItem', position: 2, name: 'Inflation Rankings', item: 'https://statisticsoftheworld.com/ranking/inflation-rate' },
+          { '@type': 'ListItem', position: 3, name: `Inflation by Country ${year}`, item: 'https://statisticsoftheworld.com/inflation-by-country' },
+        ],
+      },
       {
         '@type': 'Dataset',
         name: `Inflation Rate by Country ${year}`,
@@ -40,6 +50,8 @@ export default async function InflationByCountryPage() {
           { '@type': 'Question', name: `Which country has the highest inflation in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `${inflData[0]?.country} has the highest inflation rate at ${formatValue(inflData[0]?.value, 'percent', 1)} in ${year}. Countries with very high inflation typically face currency crises, fiscal deficits, or political instability. Source: IMF.` } },
           { '@type': 'Question', name: `What is the global average inflation rate in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The global average inflation rate in ${year} is approximately ${avgInfl.toFixed(1)}%, with a median of ${Number(medianInfl).toFixed(1)}%. Advanced economies typically target 2% inflation. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: 'What causes high inflation?', acceptedAnswer: { '@type': 'Answer', text: 'High inflation is typically caused by excessive money supply growth, supply chain disruptions, currency depreciation, fiscal deficits financed by money printing, or demand outstripping supply. Central banks use interest rate policy as the primary tool to control inflation.' } },
+          { '@type': 'Question', name: `How do 2026 US tariffs affect inflation by country?`, acceptedAnswer: { '@type': 'Answer', text: `The Trump administration's April 2026 tariff escalation is creating divergent inflation effects across countries. In the United States, import tariffs of 10–145% are feeding directly into consumer goods prices — economists estimate the tariff package adds 0.5–1.5 percentage points to US core PCE inflation, complicating the Federal Reserve's path to its 2% target and keeping the Fed in a "higher for longer" posture. For China, the tariffs are deflationary: blocked from its largest export market, Chinese manufacturers are absorbing costs and discounting aggressively in other markets, contributing to China's existing deflationary pressure. Export-dependent economies in Southeast Asia and Europe face currency depreciation (which raises import costs domestically) alongside softening export revenues — a stagflationary squeeze. India, which secured relative tariff exemptions through its February 2026 US trade deal, is largely insulated. Source: IMF World Economic Outlook April 2026.` } },
+          { '@type': 'Question', name: 'Which countries have the lowest inflation in 2026?', acceptedAnswer: { '@type': 'Answer', text: 'The countries with the lowest (or negative) inflation in 2026 include China, which is experiencing mild deflation (-0.1% to 0%) driven by weak domestic demand, overcapacity in manufacturing, and the deflationary effect of tariff-redirected exports flooding other markets. Japan (~2.5%) and Switzerland (~1.8%) maintain very low inflation rates anchored by credible central banks and strong currencies. Within the Gulf, the UAE and Saudi Arabia run near-2% inflation tied to their dollar pegs and energy subsidy systems. Panama and several Central American economies dollarized to the US dollar also maintain low inflation as a structural feature. Source: IMF World Economic Outlook April 2026.' } },
         ],
       },
     ],
@@ -89,6 +101,9 @@ export default async function InflationByCountryPage() {
           </p>
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             Regionally, G7 economies have largely converged near their 2% targets following the aggressive tightening cycles of 2022–2024. The US Federal Reserve and European Central Bank both raised rates to multi-decade highs to break the post-pandemic inflation surge, and headline CPI in most advanced economies has since returned to or near target. Emerging markets present a more varied picture: countries with strong institutions and formal inflation-targeting frameworks — Chile, Brazil, Mexico, India — have broadly returned to single-digit rates, while those facing currency instability or fiscal pressure continue to run elevated inflation. Food inflation deserves particular attention in low-income countries, where food accounts for 40–60% of household spending; even moderate global food price shocks translate into acute cost-of-living crises. For analysts and investors, <Link href="/ranking/inflation-rate" className="text-[#0066cc] hover:underline">country-level CPI data</Link> serves as an early indicator of currency risk, central bank policy direction, and real purchasing power trends.
+          </p>
+          <p className="text-[15px] text-[#374151] leading-[1.8]">
+            The 2026 US tariff escalation is creating one of the most unusual inflation environments in decades: inflationary in the United States, deflationary in China, and stagflationary for many export-dependent economies in between. US import tariffs of 10–145% are flowing through supply chains into consumer prices — import-intensive goods categories (electronics, apparel, household goods) are already showing accelerated price increases. The Federal Reserve faces a genuine dilemma: inflation is above target partly because of supply-side tariff costs that rate hikes cannot easily address without triggering unnecessary labor market damage. China, meanwhile, is exporting deflation: manufacturers blocked from the US market are discounting heavily into Europe, Southeast Asia, and emerging markets, keeping prices suppressed in those destinations even as their own currencies weaken. Turkey, Argentina, and Egypt continue to run double-digit inflation driven by structural fiscal and monetary factors unrelated to global trade. For a full picture of how inflation interacts with <Link href="/ranking/government-debt" className="text-[#0066cc] hover:underline">government debt</Link> and <Link href="/ranking/gdp-growth" className="text-[#0066cc] hover:underline">GDP growth</Link>, see the related indicators.
           </p>
         </div>
 

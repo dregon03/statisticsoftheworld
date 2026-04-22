@@ -2,6 +2,29 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-22)
+
+- **Google indexed pages**: ~1,360 (stable)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#4** (steady); `/unemployment-by-country` at **#9** (slight improvement from #10); `/ranking/inflation-rate` at **#9** (slip from #8 ⚠️); `/inflation-by-country` at **#10** (slip); `/world-population` — **NOT visible** for "statistics of the world 2026" (second consecutive day — algorithmic volatility)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~43 days
+
+### Keyword Rankings (2026-04-22 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `statistics of the world 2026` → **Not visible** (/world-population dropped again ⚠️)
+- `unemployment rate by country 2026 ranking` → **#4 and #9** — slight improvement on second URL ✅
+- `inflation by country 2026 ranking` → **#9 and #10** — slip from #8/#10 ⚠️
+- `GDP by country 2026` → Not ranking (Worldometer #1, StatisticsTimes #2, Wikipedia #3, WorldPopReview #4, ResearchFDI #5, IMF #6, VisualCapitalist #7, Statista #8, VoronoiApp #9, ClearTax #10)
+- `world statistics country comparison tool 2026` → Not ranking (worlddata.info #1, WorldCountryData #2, compareyourcountry.org #3, UN #4, WorldBank #5, TheGlobalEconomy #7, CIA #8, globalstatcompare.com #9, globalstats.info #10)
+- `country comparison GDP per capita 2026` → Not ranking (WorldPopReview #1, Worldometer #2, StatisticsTimes #3, VisualCapitalist #4, Wikipedia #6, OurWorldInData #7, Statista #10)
+
+### Pages Optimized (2026-04-22)
+- **unemployment-by-country**: Added BreadcrumbList JSON-LD (was missing entirely); added OpenGraph metadata (url, type, descriptive text with South Africa/US figures); expanded 2 FAQs with more specific answers; added FAQ 4 on 2026 tariff-unemployment impact (reshoring effects, Vietnam/India winners, China/SE Asia losers, US net modest); added FAQ 5 on lowest unemployment developed economies (Japan ~2.5%, Germany ~3%, S.Korea ~2.8%, US ~3.8%, UK ~4.2%, France ~7.3%); added 3rd editorial paragraph on 2026 tariff-driven manufacturing shift and supply chain reallocation; added h2 to Related Data section; added GDP by Country link to related grid
+- **inflation-by-country**: Added BreadcrumbList JSON-LD (was missing from @graph); improved OpenGraph description (Venezuela 680%+, China deflation specifics); added FAQ 4 on 2026 US tariff-inflation asymmetry (US +0.5–1.5pp core PCE, China deflation, stagflationary squeeze for SE Asia/Europe); added FAQ 5 on lowest inflation 2026 (China deflation, Japan ~2.5%, Switzerland ~1.8%, Gulf/dollar-pegged economies); added 4th editorial paragraph on tariff-inflation mechanism — US consumer goods price pass-through, Fed's dilemma, China discounting into global markets, export economies caught in stagflationary squeeze
+- **ranking/[slug]/page.tsx** (powers /ranking/inflation-rate and /ranking/unemployment-rate): Added 4th editorial paragraph for `inflation-rate` (tariff-inflation asymmetry, US core PCE +0.5–1.5pp, China deflation, India insulated via trade deal); added 4th editorial paragraph for `unemployment-rate` (tariff supply chain reallocation shifting jobs to India/Vietnam/Mexico, AI automation affecting white-collar hiring in advanced economies, Germany/Japan/S.Korea face structural labor shortages not unemployment)
+
+---
+
 ## Current Status (2026-04-21)
 
 - **Google indexed pages**: ~1,360 (stable — no significant change)

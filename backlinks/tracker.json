@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-21",
+    "last_run": "2026-04-22",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 21 run: 3 new Quora drafts (gdp-per-capita-recommend, compare-countries-indices, compare-countries-quality-life). 3 new dev.to comment drafts on API roundup articles. New GitHub repo to check: NajiElKotob/Awesome-Datasets. Confirmed: okhosting/awesome-open-data already lists SOTW (skip), dev.to has no SOTW mentions (confirmed clean). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism. Total drafts: 61+."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 22 run: 3 new Quora drafts (financial-datasets [unanswered], gdp-components-data, public-datasets-research [unanswered]). 2 new dev.to comment drafts (rest-countries-api, free-apis-monetize). 2 new GitHub SUBMIT files (NajiElKotob/Awesome-Datasets, code-econ/awesome-econ). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data, (7) NajiElKotob/Awesome-Datasets [MEDIUM]. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism, code-econ/awesome-econ. Total drafts: 68+."
   },
   "platforms": {
     "quora": {
@@ -185,6 +185,30 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/compare",
           "notes": "Draft: OECD Better Life Index, Social Progress Index, HDI, World Happiness Report breakdown + SOTW compare tool for underlying raw indicators. File: quora-2026-04-21-compare-countries-quality-life.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-22",
+          "url": "https://www.quora.com/unanswered/Where-can-I-find-financial-datasets",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: tiered breakdown — company financials (SEC EDGAR, Alpha Vantage) vs macro/country data (FRED, WB WDI, IMF, SOTW API, Penn World Tables). UNANSWERED question (2 people want answer). File: quora-2026-04-22-financial-datasets.md. Verify still unanswered before posting."
+        },
+        {
+          "date": "2026-04-22",
+          "url": "https://www.quora.com/Where-can-I-find-data-on-various-country-breakdowns-of-GDP-by-consumption-investment-government-spending-and-net-export-components",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/ranking/gdp",
+          "notes": "Draft: World Bank WDI indicator codes for expenditure components, IMF WEO, OECD National Accounts, SOTW for overall GDP rankings. Honest about SOTW not having the component breakdown. File: quora-2026-04-22-gdp-components-data.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-22",
+          "url": "https://www.quora.com/unanswered/What-are-some-interesting-public-datasets-that-can-be-used-for-research-purposes",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: broad dataset roundup — Penn World Tables, Maddison, SOTW, WB WDI, FRED, V-Dem, ACLED, LIS, Global Carbon Project. SOTW in economics section. UNANSWERED question. File: quora-2026-04-22-public-datasets-research.md. Verify still unanswered before posting."
         }
       ]
     },
@@ -371,7 +395,8 @@
         "datasets/awesome-data",
         "hanlulong/awesome-ai-for-economists",
         "wilsonfreitas/awesome-quant",
-        "NajiElKotob/Awesome-Datasets"
+        "NajiElKotob/Awesome-Datasets",
+        "code-econ/awesome-econ"
       ],
       "next_week_priority": [
         "public-apis/public-apis — Finance section, between SmartAPI and StockData. CRITICAL — 300K stars. SUBMIT.md ready.",
@@ -380,7 +405,9 @@
         "brandonhimpfen/awesome-finance — Financial Data & APIs section. MEDIUM. SUBMIT.md ready.",
         "hanlulong/awesome-ai-for-economists — Economic Data Sources section. MEDIUM. SUBMIT.md ready.",
         "lavie/Awesome-APIs — Economics section. Not yet checked. MEDIUM PRIORITY.",
-        "wilsonfreitas/awesome-quant — Market Data & Data Sources (Python-library focused, check fit). LOW."
+        "wilsonfreitas/awesome-quant — Market Data & Data Sources (Python-library focused, check fit). LOW.",
+        "NajiElKotob/Awesome-Datasets — Open Data Platforms section. MEDIUM — ~900 stars. SUBMIT.md ready.",
+        "code-econ/awesome-econ — Propose new Data Sources section. LOW-MEDIUM — ~400 stars. SUBMIT.md ready."
       ],
       "posts": [
         {
@@ -510,6 +537,22 @@
           "status": "pending_submit",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "SOTW-free confirmed 2026-04-20. MEDIUM — 211 stars. Data sources > Specialized databases and APIs section. Format: - [Name](URL) — desc. Insert after Pew Research Center entry. Submit file: github-pr-infoculture-awesome-datajournalism-SUBMIT.md."
+        },
+        {
+          "date": "2026-04-22",
+          "url": "https://github.com/NajiElKotob/Awesome-Datasets",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-22 (WebFetch). ~900 stars. Open Data Platforms section. Format: * [Name](URL) - desc. Submit file: github-pr-NajiElKotob-Awesome-Datasets-SUBMIT.md. No CONTRIBUTING.md found — follow existing format exactly."
+        },
+        {
+          "date": "2026-04-22",
+          "url": "https://github.com/code-econ/awesome-econ",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "SOTW-free confirmed 2026-04-22 (WebFetch — no data sources section at all). ~400 stars. Proposing new Data Sources section with FRED, WB, IMF, SOTW, PWT, OECD. Format: - [Name](URL) brief description. Submit file: github-pr-code-econ-awesome-econ-SUBMIT.md. Early-stage repo, maintainers actively welcoming suggestions."
         }
       ]
     },
@@ -669,6 +712,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: comment on '10 Free APIs to Supercharge Your Financial Apps'. Positions SOTW as macro fundamentals layer for financial apps. File: devto-comment-10-free-apis-financial-2026-04-21.md. Check article comments for 'statisticsoftheworld' before posting."
+        },
+        {
+          "date": "2026-04-22",
+          "url": "https://dev.to/__8ef7243a4f/rest-countries-api-get-population-languages-and-currencies-for-any-country-4fbi",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on REST Countries API article (Mar 2026). Positions SOTW as complement for economic indicators (GDP, inflation, unemployment) that REST Countries doesn't cover. ISO code compatibility noted. File: devto-comment-rest-countries-api-2026-04-22.md. Check article comments for 'statisticsoftheworld' before posting."
+        },
+        {
+          "date": "2026-04-22",
+          "url": "https://dev.to/abhi_mishra/apis-that-you-can-use-for-free-in-your-projects-and-can-monetize-it-3np6",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on 'APIs you can use for free and monetize'. Adds SOTW as free cross-country economic data API, mentions cleaner format vs raw WB API. File: devto-comment-free-apis-monetize-2026-04-22.md. Check article comments for 'statisticsoftheworld' before posting."
         }
       ]
     },

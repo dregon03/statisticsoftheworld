@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-22",
+    "last_run": "2026-04-23",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 22 run: 3 new Quora drafts (financial-datasets [unanswered], gdp-components-data, public-datasets-research [unanswered]). 2 new dev.to comment drafts (rest-countries-api, free-apis-monetize). 2 new GitHub SUBMIT files (NajiElKotob/Awesome-Datasets, code-econ/awesome-econ). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data, (7) NajiElKotob/Awesome-Datasets [MEDIUM]. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism, code-econ/awesome-econ. Total drafts: 68+."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 23 run: 3 new Quora drafts (macroeconomics-layperson, macroeconomic-analysis-indicators, economic-indicators-average-people). 1 new Reddit draft (r/nextjs Show post). 1 new GitHub SUBMIT file (PavelGrigoryevDS/awesome-data-analysis ~1K stars). Research note: okhosting/awesome-open-data already has SOTW listed. PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data, (7) NajiElKotob/Awesome-Datasets. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism, code-econ/awesome-econ, PavelGrigoryevDS/awesome-data-analysis [LOW-MEDIUM]. Total drafts: 74+."
   },
   "platforms": {
     "quora": {
@@ -209,6 +209,30 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com",
           "notes": "Draft: broad dataset roundup — Penn World Tables, Maddison, SOTW, WB WDI, FRED, V-Dem, ACLED, LIS, Global Carbon Project. SOTW in economics section. UNANSWERED question. File: quora-2026-04-22-public-datasets-research.md. Verify still unanswered before posting."
+        },
+        {
+          "date": "2026-04-23",
+          "url": "https://www.quora.com/What-is-a-good-source-for-scientific-data-on-Macroeconomics-for-layperson",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: primary sources (IMF WEO, WB, FRED, OECD) + SOTW and Our World in Data as layperson-friendly aggregators. Practical usage advice. File: quora-2026-04-23-macroeconomics-layperson.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-23",
+          "url": "https://www.quora.com/What-indicators-should-I-use-on-a-macroeconomic-analysis-of-a-country",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: four-area framework (output, prices, labor, fiscal) with specific indicators and sources. SOTW compare tool mentioned for peer benchmarking. File: quora-2026-04-23-macroeconomic-analysis-indicators.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-23",
+          "url": "https://www.quora.com/What-economic-indicators-should-we-really-be-looking-at-to-understand-whether-the-economy-is-doing-well-for-average-people",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: median income, real wages, U-6 unemployment, LFPR, core CPI, life expectancy, Gini — explains why GDP alone is misleading. SOTW compare tool for cross-country view. File: quora-2026-04-23-economic-indicators-average-people.md. Verify no SOTW in existing answers before posting."
         }
       ]
     },
@@ -350,6 +374,14 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: Option A (comment on relevant thread) or Option B ('Show r/javascript' post mentioning Next.js stack). File: reddit-javascript-2026-04-20.md. Search r/javascript for SOTW before posting."
+        },
+        {
+          "date": "2026-04-23",
+          "url": "https://www.reddit.com/r/nextjs/",
+          "type": "post",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: Show r/nextjs post about building SOTW — covers App Router, ISR, Supabase pipeline, country name normalization from IMF/WB/WHO. Technical post, not a promo. File: reddit-nextjs-2026-04-23.md. Search r/nextjs for SOTW before posting."
         }
       ]
     },
@@ -396,7 +428,8 @@
         "hanlulong/awesome-ai-for-economists",
         "wilsonfreitas/awesome-quant",
         "NajiElKotob/Awesome-Datasets",
-        "code-econ/awesome-econ"
+        "code-econ/awesome-econ",
+        "PavelGrigoryevDS/awesome-data-analysis"
       ],
       "next_week_priority": [
         "public-apis/public-apis — Finance section, between SmartAPI and StockData. CRITICAL — 300K stars. SUBMIT.md ready.",
@@ -553,6 +586,14 @@
           "status": "pending_submit",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "SOTW-free confirmed 2026-04-22 (WebFetch — no data sources section at all). ~400 stars. Proposing new Data Sources section with FRED, WB, IMF, SOTW, PWT, OECD. Format: - [Name](URL) brief description. Submit file: github-pr-code-econ-awesome-econ-SUBMIT.md. Early-stage repo, maintainers actively welcoming suggestions."
+        },
+        {
+          "date": "2026-04-23",
+          "url": "https://github.com/PavelGrigoryevDS/awesome-data-analysis",
+          "type": "pr",
+          "status": "pending_submit",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "SOTW-free confirmed 2026-04-23. ~1K stars. Data Sources & Datasets subsection under Skill Development & Career. Format: - [Name](URL) - desc. Default branch: main. Submit file: github-pr-PavelGrigoryevDS-awesome-data-analysis-SUBMIT.md. 3 open PRs suggests maintainer is active."
         }
       ]
     },

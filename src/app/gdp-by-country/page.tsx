@@ -110,6 +110,23 @@ export default async function GdpByCountryPage() {
           </p>
         </div>
 
+        <div className="max-w-[800px] mb-8">
+          <h2 className="text-[20px] font-bold text-[#0d1b2a] mb-2">Top 10 Largest Economies by GDP ({year})</h2>
+          <p className="text-[13px] text-[#64748b] mb-4">Nominal GDP in current US dollars · Source: IMF April {year} World Economic Outlook</p>
+          <ol className="space-y-2">
+            {gdpData.slice(0, 10).map((d, i) => (
+              <li key={d.countryId} className="flex gap-3 items-baseline text-[14px] text-[#374151]">
+                <span className="font-bold text-[#0d1b2a] w-5 shrink-0">{i + 1}.</span>
+                <span>
+                  <Link href={`${getCleanCountryUrl(d.countryId)}/gdp`} className="font-semibold text-[#0066cc] hover:underline">{d.country}</Link>
+                  {' — '}<span className="font-mono">{formatValue(d.value, 'currency')}</span>
+                  <span className="text-[#94a3b8] text-[13px]"> ({((d.value || 0) / worldGdp * 100).toFixed(1)}% of world GDP)</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
         <div className="mb-10">
           <div className="border border-[#d5dce6] rounded-xl overflow-hidden">
             <table className="w-full">

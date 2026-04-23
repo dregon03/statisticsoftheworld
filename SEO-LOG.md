@@ -2,6 +2,31 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-23)
+
+- **Google indexed pages**: ~1,360 (stable)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#3** (improved from #4 ✅); `/ranking/inflation-rate` at **#8**, `/inflation-by-country` at **#10**; homepage at **#4** for "world statistics country data 2026" ✅; `/world-population` — **NOT visible** for "statistics of the world 2026" (3rd consecutive day ⚠️ — algorithmic volatility, not content issue)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~44 days
+
+### Keyword Rankings (2026-04-23 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `world statistics country data 2026` → **#4** (homepage) ✅
+- `unemployment rate by country 2026 ranking` → **#3** (improved from #4) ✅ — WorldPopReview #1, WorldEconomics #2, SOTW #3
+- `inflation by country 2026 ranking` → **#8 and #10** (two URLs) — VisualCapitalist #1, TradingEconomics ×2 #2-3, WorldPopReview #4, WorldCountryData #5, Statista ×3 #6-7/9, SOTW #8/#10
+- `statistics of the world 2026` → **Not visible** (3rd consecutive day — algorithmic, not content)
+- `GDP by country 2026` → Not ranking (Worldometer #1, Wikipedia #2, StatisticsTimes #3, IMF #4, WorldPopReview #5, ResearchFDI #6, Statista #7, ClearTax #8, VoronoiApp #9, VisualCapitalist #10)
+- `GDP per capita by country 2026 ranking` → Not ranking (WorldPopReview #1, Worldometer #2, VisualCapitalist #3, StatisticsTimes #4, Wikipedia #5, Statista #7, WorldCountryData #8, IMF #9, UnionCitizenship #10)
+- `country comparison tool GDP 2026` → Not ranking (Worldometer #1, VisualCapitalist #2, TheGlobalEconomy #3, StatisticsTimes #4, IMF #5)
+- `world economic data country comparison 2026` → Not ranking (Worldometer #1, TradingEconomics #2, VisualCapitalist ×2 #3-4, StatisticsTimes #6, IMF ×2 #7-8)
+
+### Pages Optimized (2026-04-23)
+- **japan-economy**: CRITICAL factual fix — page incorrectly stated Japan is "fifth-largest economy" and "India overtook Japan in 2026" — both wrong per IMF April 2026 WEO; corrected title/OG description to "fourth-largest economy"; subtitle changed to "fourth-largest"; editorial paragraph 1 updated (Japan #4 ahead of UK and India); editorial paragraph 4 completely rewritten (Japan maintains #4, India is #6, gap is $250B due to rupee depreciation and MoSPI revision, India projected to overtake in late 2020s–early 2030s); FAQ 1 updated (Japan #4); FAQ "Did India overtake Japan?" renamed to "Is Japan still ranked above India?" with accurate answer (yes, Japan #4, India #6); yen depreciation FAQ updated to remove incorrect "Japan falling behind India" claim
+- **gdp-per-capita-by-country**: Added OpenGraph metadata (completely missing — title + description); added BreadcrumbList to JSON-LD @graph; added 3 new FAQs: (1) "What is US GDP per capita?" (~$85-93K, top 10-15 globally); (2) "Why do small countries top rankings?" (Luxembourg HQ concentration, Singapore hub, Qatar/Norway resource wealth, large economies dilute per-capita); (3) "Which country has lowest GDP per capita?" (dynamic from data, with context on informal economy and subsistence agriculture); added 2 new editorial paragraphs: (3) 2026 dollar-strength effects on rankings, Guyana oil boom (20%+ growth → rapid per-capita rise), Ireland GNI distortion from multinational profit booking; (4) GDP per capita welfare limits — Qatar migrant workers, China $14.7K vs. PPP reality, India $2.9K nominal vs. expanding middle class, US inequality caveat; added h2 to related links section; expanded related links from 6 to 11 (added richest-countries, GDP growth, largest-economies, inflation-by-country, compare)
+- **gdp-by-country**: Added "Top 10 Largest Economies by GDP (2026)" ordered list (`<ol>`) section positioned between editorial paragraphs and full data table — each entry shows rank, country (linked), nominal GDP, and % of world GDP; targets featured snippet for "top 10 largest economies 2026 GDP" and similar "list" queries
+
+---
+
 ## Current Status (2026-04-22)
 
 - **Google indexed pages**: ~1,360 (stable)

@@ -2,6 +2,40 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-24)
+
+- **Google indexed pages**: ~1,360 (stable — site: operator shows ~7 results but this is unreliable)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#3** ✅ (holding); `/ranking/inflation-rate` at **#8**, `/inflation-by-country` at **#10**; homepage at **#4** for "world statistics country data 2026" ✅; `/world-population` — **NOT visible** for "statistics of the world 2026" (4th consecutive day ⚠️)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~45 days
+
+### Keyword Rankings (2026-04-24 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `world statistics country data 2026` → **#4** (homepage) ✅
+- `unemployment rate by country 2026 ranking` → **#3** (holding) ✅ — WorldPopReview #1, WorldEconomics #2, SOTW #3
+- `inflation by country 2026 ranking` → **#8 and #10** — VisualCapitalist #1, WorldCountryData #2, TradingEconomics ×3 #3-5, WorldPopReview #4, Statista ×2 #6-7, SOTW #8/#10
+- `statistics of the world 2026` → **Not visible** (4th consecutive day — likely algorithmic, not content)
+- `GDP by country 2026` → Not ranking (Worldometer #1, StatisticsTimes #2, Wikipedia #3, IMF #4, WorldPopReview #5, ResearchFDI #6, Statista #7, ClearTax #8, VoronoiApp #9, VisualCapitalist #10)
+- `GDP per capita by country 2026 ranking` → Not ranking (WorldPopReview #1, Worldometer ×2 #2-3, VisualCapitalist #4, StatisticsTimes #5, Wikipedia ×2 #6/#10, Statista #7, IMF #8, WorldCountryData #9)
+- `country comparison tool GDP 2026` → Not ranking (Worldometer #1, VisualCapitalist #2, TheGlobalEconomy #3, StatisticsTimes #4, IMF #5)
+- `world economic data country comparison 2026` → Not ranking (Worldometer #1, StatisticsTimes #2, VisualCapitalist ×3 #3/#5/#10, IMF ×2 #4/#7-8, TradingEconomics #6, Statista #9)
+- `largest economies world 2026 GDP ranking` → Not ranking (Worldometer #1, StatisticsTimes #2, VisualCapitalist ×3, Wikipedia, ClearTax, VoronoiApp, Statista)
+- `GDP growth rate by country 2026 ranking` → Not ranking (Worldometer #1, StatisticsTimes #2, VisualCapitalist ×2 #3/#7, WorldPopReview #4, ClearTax #5, ResearchFDI #6)
+- `germany economy GDP 2026` → Not ranking (Xinhua #1, EU Commission #2, Goldman Sachs #3, KPMG #4, WorldEconomics #5, Euronews #6, Worldometer #7, Wikipedia #8)
+
+### Competitor Notes (2026-04-24)
+- **WorldCountryData.com** rising — #2 for inflation ranking, #3 for world statistics country data. Growing threat tracking 12 indicators across 195 nations.
+- **GlobalStatsLive.com** appeared at #6 for world statistics country data — new real-time dashboard entrant.
+- **VisualCapitalist** now at #1 for inflation (map article), #2 for GDP comparison, multiple #3-10 positions. Infographic/map approach consistently ranks.
+- **BREAKING NEWS captured**: Germany halved its 2026 growth forecast to 0.5% (April 22, 2026) due to Middle East energy shock — incorporated into germany-economy editorial today.
+
+### Pages Optimized (2026-04-24)
+- **germany-economy**: Added OpenGraph metadata; added BreadcrumbList + WebPage to JSON-LD @graph; added 4 new FAQs (Germany's global rank, why forecast cut April 22 news, GDP per capita, US tariff auto sector impact ~€40B exposure); added 4th editorial paragraph on April 22 forecast cut (1%→0.5%), Middle East energy price shock, €500B Sondervermögen debt brake reform, NATO defense spending pivot; added h2 to related links section; expanded related links (added eu-economy, largest-economies, gdp-by-country, gdp-per-capita-by-country, france-economy)
+- **uk-economy**: **CRITICAL factual fix** — page said "sixth-largest economy"; corrected to "fifth-largest" per IMF April 2026 WEO (US #1, China #2, Germany #3, Japan #4, UK #5, India #6, France #7); fixed FAQ JSON-LD answer text; fixed subtitle; added OpenGraph metadata; added BreadcrumbList + WebPage to JSON-LD @graph; added 4 new FAQs (UK #5 rank, GDP per capita ~$61K, 2026 growth 0.6-1.1%/OBR, US tariff insulation via 80%+ services economy); added 4th editorial paragraph on Bank of England rate-cutting cycle, 10% US baseline tariff vs EU/China exposure, OBR 1.1% growth forecast, Labour UK-EU trade reset; added h2 to related links; expanded related links (us-economy, germany-economy, france-economy, debt-by-country, inflation-by-country)
+- **france-economy**: Restructured JSON-LD from bare Article to full @graph (BreadcrumbList + WebPage + Article + FAQPage); added OpenGraph metadata; added 5 FAQs to HTML and JSON-LD (France GDP/rank, high unemployment structural causes, key exports, nuclear energy advantage, US tariff exposure for Airbus/luxury); added 4th editorial paragraph on France's nuclear electricity advantage vs Germany's energy crisis vulnerability, France insulation from Middle East gas price shock, Paris tech unicorn acceleration (€109B AI campus), luxury goods tariff resilience, fiscal deficit/EU Excessive Deficit Procedure pressure; added h2 headings to Compare and Related Data sections; expanded related links (added germany-economy, uk-economy, eu-economy, debt-by-country, trade-by-country, france inflation)
+
+---
+
 ## Current Status (2026-04-23)
 
 - **Google indexed pages**: ~1,360 (stable)

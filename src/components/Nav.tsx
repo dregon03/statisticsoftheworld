@@ -16,6 +16,11 @@ const NAV_ITEMS = [
   { href: '/calendar', label: 'Calendar' },
   { href: '/predictions', label: 'Predictions' },
   { href: '/ai', label: 'AI' },
+  { href: '/api', label: 'API', dropdown: [
+    { href: '/api-docs', label: 'API Docs' },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/dashboard/api', label: 'My API Key' },
+  ]},
   { href: '/special', label: 'Special', dropdown: [
     { href: '/tariff-tracker', label: 'Tariff Impact Tracker' },
     { href: '/snapshot/2026', label: '2026 Economic Snapshot' },

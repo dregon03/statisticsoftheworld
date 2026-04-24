@@ -12,6 +12,57 @@ const TIER_LIMITS: Record<string, number> = {
 
 const WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
 
+// Endpoints that the website itself calls client-side. Gated for external scrapers
+// (no/foreign Referer) but bypass rate limiting for same-origin browser traffic.
+const SAME_ORIGIN_BYPASS_PATHS = [
+  '/api/predictions',
+  '/api/forecasts',
+  '/api/history',
+  '/api/countries',
+  '/api/indicator',
+  '/api/multisource',
+  '/api/regions',
+  '/api/quotes',
+  '/api/calendar',
+  '/api/trending',
+  '/api/correlations',
+  '/api/heatmap',
+  '/api/sparklines',
+  '/api/trade',
+  '/api/monthly',
+  '/api/indicator-context',
+  '/api/fx-chart',
+  '/api/index-chart',
+  '/api/futures-curve',
+  '/api/commodity-chart',
+  '/api/fred-history',
+];
+
+const SOTW_HOSTS = new Set([
+  'statisticsoftheworld.com',
+  'www.statisticsoftheworld.com',
+  'localhost:3000',
+  'localhost:3210',
+]);
+
+function isSameOrigin(request: NextRequest): boolean {
+  const src = request.headers.get('origin') || request.headers.get('referer');
+  if (!src) return false;
+  try {
+    return SOTW_HOSTS.has(new URL(src).host);
+  } catch {
+    return false;
+  }
+}
+
+function shouldRateLimit(pathname: string): boolean {
+  if (pathname.startsWith('/api/v1/')) return true;
+  if (pathname.startsWith('/api/v2/')) return true;
+  return SAME_ORIGIN_BYPASS_PATHS.some(
+    p => pathname === p || pathname.startsWith(p + '/') || pathname.startsWith(p + '?')
+  );
+}
+
 // In-memory counter for anonymous (IP-based) rate limiting
 const ipCounters = new Map<string, { count: number; resetAt: number }>();
 
@@ -31,8 +82,18 @@ function getIpRateLimit(ip: string): { allowed: boolean; remaining: number; rese
 }
 
 export async function middleware(request: NextRequest) {
-  // Only rate-limit /api/v1/ routes
-  if (!request.nextUrl.pathname.startsWith('/api/v1/')) {
+  const pathname = request.nextUrl.pathname;
+
+  if (!shouldRateLimit(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Website's own browser-side fetches skip gating — identified by same-origin Referer/Origin.
+  // Only applies to endpoints the site actually uses; /api/v1 and /api/v2 are always gated.
+  const isBypassCandidate = SAME_ORIGIN_BYPASS_PATHS.some(
+    p => pathname === p || pathname.startsWith(p + '/') || pathname.startsWith(p + '?')
+  );
+  if (isBypassCandidate && isSameOrigin(request)) {
     return NextResponse.next();
   }
 
@@ -86,6 +147,8 @@ export async function middleware(request: NextRequest) {
             tier: keyData.tier,
             limit,
             message: `Your ${keyData.tier} plan allows ${limit.toLocaleString()} requests/day. Upgrade at statisticsoftheworld.com/pricing`,
+            upgrade: 'https://statisticsoftheworld.com/pricing',
+            contact: 'api@statisticsoftheworld.com',
             resetAt: resetAt.toISOString(),
           },
           {
@@ -144,7 +207,10 @@ export async function middleware(request: NextRequest) {
         error: 'Rate limit exceeded',
         tier: 'anonymous',
         limit: TIER_LIMITS.anonymous,
-        message: `Free tier: ${TIER_LIMITS.anonymous.toLocaleString()} requests/day. Need more? Upgrade at statisticsoftheworld.com/pricing`,
+        message: `Free tier: ${TIER_LIMITS.anonymous.toLocaleString()} requests/day per IP. Sign up for a free API key (same limit, usage dashboard) or upgrade for higher limits + commercial use at statisticsoftheworld.com/pricing`,
+        signup: 'https://statisticsoftheworld.com/pricing',
+        upgrade: 'https://statisticsoftheworld.com/pricing',
+        contact: 'api@statisticsoftheworld.com',
         resetAt: new Date(resetAt).toISOString(),
       },
       {
@@ -171,5 +237,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/api/v1/:path*',
+  matcher: '/api/:path*',
 };

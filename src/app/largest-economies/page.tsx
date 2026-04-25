@@ -6,12 +6,12 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Largest Economies in the World 2026 — Top 50 GDP Rankings',
-  description: 'The 50 largest economies in the world by nominal GDP in 2026. US leads at $32T, China $21T, Germany #3 at $5.4T, Japan #4 at $4.4T, India #6 at $4.15T. Rankings, GDP share, tariff analysis. Source: IMF April 2026 WEO.',
+  title: 'Top 50 Largest Economies in the World 2026 — GDP Ranked | Statistics of the World',
+  description: 'Ranked: the 50 largest economies by nominal GDP in 2026. US #1 at $32T, China #2 at $21T, Germany #3 at $5.4T, Japan #4 at $4.4T, India #6 at $4.15T. IMF April 2026 WEO data, tariff impact analysis.',
   alternates: { canonical: 'https://statisticsoftheworld.com/largest-economies' },
   openGraph: {
-    title: 'Largest Economies in the World 2026 — Top 50 GDP Rankings',
-    description: 'US $32T, China $21T, Germany $5.4T, Japan $4.4T, India #6 at $4.15T. The 50 biggest economies ranked by nominal GDP. Source: IMF April 2026 WEO.',
+    title: 'Top 50 Largest Economies in the World 2026 — GDP Ranked',
+    description: 'US #1 at $32T, China #2 at $21T, Germany #3, Japan #4, India #6 at $4.15T. The 50 biggest economies ranked by nominal GDP. Source: IMF April 2026 WEO.',
     siteName: 'Statistics of the World',
     url: 'https://statisticsoftheworld.com/largest-economies',
     type: 'website',
@@ -24,6 +24,13 @@ export default async function LargestEconomiesPage() {
   const totalGdp = data.reduce((s, d) => s + (d.value || 0), 0);
 
   const jsonLd = { '@context': 'https://schema.org', '@graph': [
+    {
+      '@type': 'WebPage',
+      name: `Top 50 Largest Economies in the World ${year} — GDP Ranked`,
+      url: 'https://statisticsoftheworld.com/largest-economies',
+      description: `The 50 largest economies by nominal GDP in ${year}. US #1 at $32T, China #2, Germany #3, Japan #4, UK #5, India #6. Source: IMF April ${year} World Economic Outlook.`,
+      dateModified: new Date().toISOString().split('T')[0],
+    },
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
@@ -132,6 +139,7 @@ export default async function LargestEconomiesPage() {
         </div>
 
         <div className="border-t border-[#d5dce6] pt-8">
+          <h2 className="text-[18px] font-bold text-[#0d1b2a] mb-4">Related Economic Data</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {[{ href: '/richest-countries', label: 'Richest Countries' }, { href: '/gdp-by-country', label: 'GDP by Country' }, { href: '/gdp-growth-by-country', label: 'GDP Growth' }, { href: '/g7-economy', label: 'G7 Economy' }, { href: '/g20-economy', label: 'G20 Economy' }, { href: '/brics-economy', label: 'BRICS Economy' }, { href: '/most-populous-countries', label: 'Most Populous' }, { href: '/world-economy', label: 'World Economy' }, { href: '/germany-economy', label: 'Germany Economy' }, { href: '/uk-economy', label: 'UK Economy' }, { href: '/debt-by-country', label: 'Government Debt' }, { href: '/compare', label: 'Compare Countries' }].map(l => (
               <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">{l.label} →</Link>

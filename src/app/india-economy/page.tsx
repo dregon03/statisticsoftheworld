@@ -5,12 +5,12 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'India Economy 2026 — GDP, Growth & Economic Data | Statistics of the World',
-  description: 'India\'s economy in 2026: $4.15 trillion nominal GDP, 6.5% real growth — fastest among major economies. Covers IMF April 2026 ranking, US-India trade deal, demographic dividend. IMF & World Bank data.',
+  title: 'India Economy 2026 — $4.15T GDP, 6.5% Growth, #6 World | Statistics of the World',
+  description: 'India in 2026: $4.15T nominal GDP, 6.5% growth — fastest-growing major economy. Ranked #6 globally per IMF April 2026 WEO. US-India trade deal, demographic dividend, rupee analysis. IMF & World Bank data.',
   alternates: { canonical: 'https://statisticsoftheworld.com/india-economy' },
   openGraph: {
-    title: 'India Economy 2026 — GDP, Growth & Key Statistics',
-    description: 'India in 2026: $4.15T nominal GDP, 6.5% real growth — fastest-growing major economy. IMF April 2026 ranking, trade deal impact, and demographic dividend analysis.',
+    title: 'India Economy 2026 — $4.15T GDP, #6 World, 6.5% Growth',
+    description: 'India in 2026: $4.15T nominal GDP, 6.5% growth, #6 globally per IMF April 2026 WEO. Fastest-growing major economy. Trade deal, demographic dividend, rupee context.',
     siteName: 'Statistics of the World',
   },
 };
@@ -52,10 +52,11 @@ export default async function IndiaEconomyPage() {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          { '@type': 'Question', name: `What is India's GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `India's GDP in ${year} is approximately ${formatValue(gdp?.value, 'currency')} in nominal terms, making it the world's #${indiaRank} largest economy, having overtaken Japan. India accounts for ${indiaShare}% of global GDP and is the fastest-growing major economy. Source: IMF World Economic Outlook.` } },
+          { '@type': 'Question', name: `What is India's GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `India's GDP in ${year} is approximately ${formatValue(gdp?.value, 'currency')} in nominal terms, ranking #${indiaRank} globally per the IMF April 2026 World Economic Outlook — behind the US, China, Germany, Japan, and the UK. India accounts for ${indiaShare}% of global GDP and is the fastest-growing major economy at 6.5% real growth. India's sixth-place ranking reflects rupee depreciation (84.6 → 88.5 per dollar) and a February 2026 statistical base-year revision by MoSPI; its underlying growth trajectory remains on course for third-largest by the early 2030s. Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: `What is India's GDP growth rate in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `India's real GDP growth rate in fiscal year ${year} is estimated at 7.4%, one of the fastest among major economies globally. The December 2025 quarter saw 7.8% growth. The OECD projects India as the world's fastest-growing large economy through 2027. Source: IMF, OECD, CNBC.` } },
           { '@type': 'Question', name: `Is India the most populous country?`, acceptedAnswer: { '@type': 'Answer', text: `Yes, India surpassed China as the world's most populous country in 2023. India's population in ${year} is approximately ${formatValue(pop?.value, 'number')}, with a median age under 30 — a demographic dividend that supports long-run economic growth. Source: World Bank / UN Population Division.` } },
           { '@type': 'Question', name: `How has the US-India trade deal affected India's economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `In February 2026, the US and India announced a trade deal reducing "reciprocal" tariffs on Indian exports from 25% to 18%, broadly in line with other Asian economies. Goldman Sachs raised its India 2026 GDP forecast following the agreement. The deal has supported the Indian rupee and provided an incremental growth boost estimated at 0.2 percentage points of GDP. India's limited US export exposure (roughly 4% of GDP) had already contained tariff damage compared to China, and the deal removes a significant source of uncertainty. Source: Goldman Sachs, CNBC.` } },
+          { '@type': 'Question', name: `When will India become the world's third-largest economy?`, acceptedAnswer: { '@type': 'Answer', text: `Most major forecasters — including Goldman Sachs, Morgan Stanley, and the IMF — project India will surpass Japan and the United Kingdom to become the world's third-largest economy (by nominal GDP) in the early 2030s, likely between 2031 and 2033. India's 6–7% annual growth, relative to Japan's ~0.8% and the UK's ~1%, means the gap narrows by roughly $200–300 billion per year at current exchange rates. In purchasing power parity terms, India is already the third-largest economy in the world. Source: IMF, Goldman Sachs Global Investment Research.` } },
         ],
       },
       {

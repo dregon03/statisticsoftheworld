@@ -2,6 +2,38 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-25)
+
+- **Google indexed pages**: ~1,360 (stable)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#3** ✅ (holding — WorldPopReview #1, WorldEconomics #2, SOTW #3); `/ranking/inflation-rate` at **#8**, `/inflation-by-country` at **#10**; `/world-population` — **NOT visible** for "statistics of the world 2026" (5th consecutive day ⚠️ — suspected algorithmic filter)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~46 days
+
+### Keyword Rankings (2026-04-25 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `unemployment rate by country 2026 ranking` → **#3** ✅ (WorldPopReview #1, WorldEconomics #2, SOTW #3) — HOLDING
+- `inflation by country 2026 ranking` → **#8 and #10** ✅ — WorldCountryData now **#1** (up from #2), VisualCapitalist #2, TradingEconomics ×2 #3-4, WorldPopReview #5, TradingEconomics #6-7, SOTW #8/#10
+- `statistics of the world 2026` → **Not visible** (5th consecutive day — algorithmic)
+- `world statistics country data 2026` → **Not visible** — OurWorldInData #1, WorldBank #2, WorldCountryData #3, CIA #4, Worlddata #5, WorldMetrics #6, GlobalStats.info #7
+- `GDP by country 2026` → **Not ranking** — Worldometer #1, Wikipedia #2, StatisticsTimes #3, IMF #4, VisualCapitalist #5-6, ResearchFDI, Statista
+- `largest economies world 2026 GDP ranking` → **Not ranking** — StatisticsTimes #1, Worldometer #2, VisualCapitalist ×3, ClearTax, Wikipedia, VoronoiApp, Statista
+- `GDP growth rate by country 2026 ranking` → **Not ranking** — Worldometer #1, ClearTax #2, StatisticsTimes #3, WorldPopReview #4, VisualCapitalist ×3, VoronoiApp, ResearchFDI
+- `country comparison tool GDP 2026` → **Not ranking** — Worldometer #1, VisualCapitalist #2, TheGlobalEconomy #3, WorldPopReview #4, StatisticsTimes #5
+- `india economy GDP 2026 statistics` → **Not ranking** — Wikipedia, PIB India, Worldometer, CNBC, IBEF dominate
+
+### Competitor Notes (2026-04-25)
+- **WorldCountryData** now **#1** for inflation ranking (up from #2 yesterday) — aggressive growth, tracking 12 indicators for 195 nations
+- **VoronoiApp** appearing more frequently (#6-7 for GDP growth, #8 largest economies) — visual format gaining traction
+- **ClearTax** (Indian finance site) at #2 for "GDP growth rate by country" — likely benefiting from India GDP search volume spike
+- India GDP rank discrepancy: StatisticsTimes/VisualCapitalist show India as #4 (surpassing Japan); IMF April 2026 WEO has India #6. Our pages correctly follow IMF data.
+
+### Pages Optimized (2026-04-25)
+- **india-economy**: CRITICAL factual fix — FAQ1 text said "having overtaken Japan" but India is #6 (Japan is #4) per IMF April 2026 WEO; corrected to accurate #${indiaRank} answer explaining India's sixth-place ranking (rupee depreciation + MoSPI base-year revision) while noting fastest-growing major economy status; added 5th FAQ "When will India become the world's third-largest economy?" (early 2030s, Goldman Sachs/IMF projections, India already #3 by PPP); improved title: "India Economy 2026 — $4.15T GDP, 6.5% Growth, #6 World | Statistics of the World" (more click-worthy, specific figures); improved OG title and description with rank and figures explicit
+- **gdp-growth-by-country**: Added `WebPage` type to JSON-LD @graph (schema completeness); added 5th FAQ "What are the top 10 fastest-growing economies in 2026?" with numbered list (Guyana ~23%, India 6.5%, Philippines 5.7%, Vietnam 5.6%, etc.) — directly answers the most-searched query form; added "Top 10 Fastest-Growing Economies (2026)" h2 section with dynamic ordered list from live IMF data, rendered above the full 40-row table — targets featured snippet for "top 10 fastest growing economies 2026" queries; list is fully dynamic (renders actual IMF data, not hardcoded)
+- **largest-economies**: Added `WebPage` type to JSON-LD @graph (schema completeness); added h2 "Related Economic Data" heading to related links section (was missing); improved title to "Top 50 Largest Economies in the World 2026 — GDP Ranked | Statistics of the World" and OG title (adds "Ranked" and "Top 50" — more specific and click-worthy for ranking queries)
+
+---
+
 ## Current Status (2026-04-24)
 
 - **Google indexed pages**: ~1,360 (stable — site: operator shows ~7 results but this is unreliable)

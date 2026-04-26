@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
@@ -50,8 +51,24 @@ export default function ApiDocsPage() {
         <p className="text-[14px] text-[#64748b] mb-2">
           Free REST API for global statistics. JSON responses. No authentication required for basic access.
         </p>
-        <div className="text-[15px] text-[#64748b] mb-8">
+        <div className="text-[15px] text-[#64748b] mb-6">
           Base URL: <code className="bg-[#f4f6f9] px-2 py-0.5 rounded text-[#0d1b2a]">https://statisticsoftheworld.com</code>
+        </div>
+
+        {/* Upgrade banner — shows tier ladder + CTAs at peak intent */}
+        <div className="border border-[#0066cc]/30 bg-[#f0f7ff] rounded-lg px-5 py-4 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="text-[14px] text-[#0d1b2a]">
+            <span className="font-semibold">Building a product?</span>
+            <span className="text-[#64748b]"> Free tier is 1,000 req/day per IP. Pro is 50,000/day with a commercial-use license — same data, no scrape pressure, no surprise 429s.</span>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link href="/pricing" className="px-3 py-1.5 text-[14px] rounded-lg bg-white border border-[#d5dce6] text-[#0d1b2a] hover:bg-[#f4f6f9] transition whitespace-nowrap">
+              Free key
+            </Link>
+            <Link href="/pricing" className="px-3 py-1.5 text-[14px] rounded-lg bg-[#0066cc] text-white hover:bg-[#0055aa] transition whitespace-nowrap">
+              Upgrade · $49/mo &rarr;
+            </Link>
+          </div>
         </div>
 
         {/* Rate limits */}

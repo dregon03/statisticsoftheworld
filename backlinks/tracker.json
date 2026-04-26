@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-24",
+    "last_run": "2026-04-26",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 24 run: 2 new Quora drafts (finance-economics-datasets, cost-of-living-compare-countries). 1 new Stack Overflow answer template. 1 new Dev.to article draft (free-economic-apis comparison). 1 directory submission guide covering 10 platforms (SaaSHub, AlternativeTo, Crunchbase, BetaList, F6S, Microlaunch, StartupStash, Launchingnext, ToolDir, APIList.fun) — SOTW confirmed not listed on any of these. Research: TonnyL/Awesome_APIs (12.9K stars) has no economics/data section — low fit. akfamily/awesome-data (595 stars) is China-focused — low priority. PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data, (7) NajiElKotob/Awesome-Datasets. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism, code-econ/awesome-econ, PavelGrigoryevDS/awesome-data-analysis. Total drafts: 79+. PRIORITY: Tom should start submitting directory listings (see directories-2026-04-24-submission-guide.md) and pending GitHub PRs."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 26 run: 4 new drafts — 2 Quora (best-source-india-economy, large-datasets-free) + 2 Dev.to comments (9-government-apis, 20-free-apis-side-projects). GitHub research: SNStatComp/awesome-official-statistics-software (software/packages only — poor fit), dariubs/awesome-statistics (learning resources only — poor fit), open-risk/awesome-sustainable-finance (ESG-focused — borderline skip), bbalouki/economydb (not a list repo — skip). All confirmed SOTW-free. PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data, (7) NajiElKotob/Awesome-Datasets. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism, code-econ/awesome-econ, PavelGrigoryevDS/awesome-data-analysis. PRIORITY: Tom should start submitting directory listings (see directories-2026-04-24-submission-guide.md) and pending GitHub PRs. Total drafts: 83+."
   },
   "platforms": {
     "quora": {
@@ -249,6 +249,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/compare",
           "notes": "Draft: PPP vs nominal explanation, Numbeo for cost-of-living, OECD Better Life Index for income, LIS for academic use, SOTW compare tool for quick visual multi-country comparison. File: quora-2026-04-24-cost-of-living-compare-countries.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-26",
+          "url": "https://www.quora.com/What-is-the-best-source-to-get-data-on-the-Indian-economy",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com",
+          "notes": "Draft: MOSPI + RBI for official Indian data, IMF WEO + World Bank for cross-country benchmarking, SOTW as aggregator for quick India vs peers comparison. File: quora-2026-04-26-best-source-india-economy.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-26",
+          "url": "https://www.quora.com/Where-can-I-get-large-public-data-sets-for-free",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: broad datasets roundup by category — economics (FRED, WB, IMF, SOTW, PWT), health (WHO, UN WPP, OWID), ML/general (UCI, Kaggle, Harvard Dataverse), social/political (V-Dem, ACLED), trade (UN Comtrade). SOTW in economics section. File: quora-2026-04-26-large-datasets-free.md. Verify no SOTW in existing answers before posting."
         }
       ]
     },
@@ -802,6 +818,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: 'Free Economic Data APIs in 2026: A Practical Comparison for Developers' — compares FRED, World Bank API, IMF WEO, SOTW, OECD with code examples and decision guide. Full tutorial-length article. File: devto-article-free-economic-apis-2026-04-24.md. Tags: api, webdev, data, javascript, opensource. Search dev.to for 'statisticsoftheworld' before publishing."
+        },
+        {
+          "date": "2026-04-26",
+          "url": "https://dev.to/0012303/9-government-apis-you-didnt-know-existed-all-free-most-need-no-api-key-2bl3",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '9 Government APIs You Didn't Know Existed' — positions SOTW as a normalizing layer over multiple government APIs (IMF, World Bank, WHO) so developers don't need to juggle different query syntaxes. Mentions country-name normalization benefit. File: devto-comment-9-government-apis-2026-04-26.md. Check article comments for 'statisticsoftheworld' before posting."
+        },
+        {
+          "date": "2026-04-26",
+          "url": "https://dev.to/balrajola/20-free-apis-to-kickstart-your-side-projects-1f7i",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '20 Free APIs to Kickstart Your Side Projects' — adds SOTW as free economic/country data API, 440+ indicators, 218 countries, no key for 100 req/day. Positions as complement to REST Countries API. File: devto-comment-20-free-apis-side-projects-2026-04-26.md. Check article comments for 'statisticsoftheworld' before posting."
         }
       ]
     },

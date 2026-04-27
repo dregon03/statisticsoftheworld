@@ -39,9 +39,18 @@ export default async function WorldEconomyPage() {
   const top5Infl = inflData.slice(0, 5);
   const top5Debt = debtData.slice(0, 5);
 
+  const gdpPerCapita = worldPop > 0 ? Math.round(worldGdp / worldPop) : 0;
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
+      {
+        '@type': 'WebPage',
+        name: `World Economy ${year} — Global GDP, Growth, Inflation & Trade Data`,
+        url: 'https://statisticsoftheworld.com/world-economy',
+        description: `Overview of the global economy in ${year}: $${(worldGdp / 1e12).toFixed(0)}T GDP, ${avgGrowth.toFixed(1)}% growth, data for 218 countries. Source: IMF & World Bank.`,
+        dateModified: new Date().toISOString().split('T')[0],
+      },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -66,6 +75,7 @@ export default async function WorldEconomyPage() {
           { '@type': 'Question', name: `Which country has the highest GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `${top10Gdp[0]?.country} has the highest GDP at ${formatValue(top10Gdp[0]?.value, 'currency')} in ${year}, followed by ${top10Gdp[1]?.country} (${formatValue(top10Gdp[1]?.value, 'currency')}) and ${top10Gdp[2]?.country} (${formatValue(top10Gdp[2]?.value, 'currency')}). Source: IMF World Economic Outlook.` } },
           { '@type': 'Question', name: `How are US tariffs affecting the global economy in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: 'The US tariff escalations of 2025–2026 — including 145%+ tariffs on Chinese imports and broad tariffs under the Liberation Day executive order — have reduced global trade volumes and contributed to supply chain fragmentation. The IMF has revised global growth forecasts downward by 0.5–0.8 percentage points as a result. Countries most exposed include export-dependent economies in East Asia and Europe, while domestic-demand-driven economies like India are less affected.' } },
           { '@type': 'Question', name: `What is the world population in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The world population in ${year} is approximately ${(worldPop / 1e9).toFixed(2)} billion people. India is the most populous country (1.45 billion), followed by China (1.41 billion).` } },
+          { '@type': 'Question', name: `What is world GDP per capita in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `World GDP per capita in ${year} is approximately $${gdpPerCapita.toLocaleString()} per person, calculated by dividing global GDP of $${(worldGdp / 1e12).toFixed(0)} trillion by the world population of ${(worldPop / 1e9).toFixed(2)} billion. This global average masks extreme inequality: the wealthiest countries (Luxembourg, Norway, Switzerland) exceed $100,000 per capita while the poorest (Burundi, South Sudan, Central African Republic) fall below $500. Among major economies, the United States leads at roughly $85,000–$93,000; Germany is at ~$68,000; China at ~$14,700; and India at ~$2,900. For a fairer cross-country comparison, use GDP per capita adjusted for purchasing power parity (PPP), which accounts for local price differences. Source: IMF, World Bank.` } },
         ],
       },
     ],
@@ -220,6 +230,7 @@ export default async function WorldEconomyPage() {
               { href: '/world-population', label: 'World Population' },
               { href: '/compare/united-states-vs-china', label: 'US vs China' },
               { href: '/compare/china-vs-india', label: 'China vs India' },
+              { href: '/compare', label: 'Compare Countries' },
               { href: '/countries', label: 'All 218 Countries' },
             ].map(l => (
               <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">

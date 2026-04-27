@@ -2,6 +2,38 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-27)
+
+- **Google indexed pages**: ~1,360 (stable)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#4** (⚠️ slipped from #3 — Moody's Analytics at #3 now); `/ranking/inflation-rate` at **#6** ✅ (improved from #8); `/inflation-by-country` at **#10**; `/gdp-by-country` at **#10** for "country comparison tool GDP 2026" ✅ (FIRST TIME in top 10); `/world-population` — **NOT visible** for "statistics of the world 2026" (7th consecutive day ⚠️)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~48 days
+
+### Keyword Rankings (2026-04-27 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `unemployment rate by country 2026 ranking` → **#4** (slipped from #3 ⚠️) — WorldPopReview #1, WorldEconomics #2, Moody's Analytics #3, SOTW #4, TradingEconomics #5
+- `inflation by country 2026 ranking` → **#6** ✅ (improved from #8) — WorldCountryData #1, VisualCapitalist #2, TradingEconomics #3, WorldPopReview #4, TradingEconomics #5, SOTW #6
+- `country comparison tool GDP 2026` → **#10** (/gdp-by-country) ✅ — Worldometer #1, TheGlobalEconomy #2, VisualCapitalist #3, Bamwor #4, StatisticsTimes #5, ClearTax #6, WorldPopReview #7, WorldCountryData #8, IMF #9, SOTW #10
+- `statistics of the world 2026` → **Not visible** (7th consecutive day — algorithmic)
+- `world statistics country data 2026` → **Not ranking** — OurWorldInData #1, WorldBank #2, WorldCountryData #3, CIA #4
+- `GDP by country 2026` → **Not ranking** — Worldometer #1, Wikipedia #2, IMF #3, StatisticsTimes #4, VisualCapitalist #5
+- `GDP growth rate by country 2026 ranking` → **Not ranking** — Worldometer #1, ClearTax #2, StatisticsTimes #3, WorldPopReview #4
+- `largest economies world 2026 GDP ranking` → **Not ranking** — Worldometer #1, StatisticsTimes #2, VisualCapitalist×3, Wikipedia, ClearTax, VoronoiApp
+- `GDP per capita by country 2026 ranking` → **Not ranking** — WorldPopReview #1, Worldometer #2, VisualCapitalist #3, StatisticsTimes #4
+
+### Competitor Notes (2026-04-27)
+- **Moody's Analytics (economy.com)** — entered top 3 for unemployment ranking at **#3**, displacing SOTW. Tier-1 financial brand with very high DA — hard to displace without more backlinks.
+- **Bamwor.com** — new competitor appearing at **#4** for "country comparison GDP 2026" and #10 for "GDP by country 2026". Appears to be a new GDP/PPP ranking aggregator.
+- **WorldCountryData** — now **#1** for inflation ranking (was #2 Apr 25). Fastest-rising direct competitor tracking 12 indicators for 195 nations.
+- **VisualCapitalist** — appearing 3-5 times per query with infographic articles. Cannot compete on infographics; must compete on data depth and schema.
+
+### Pages Optimized (2026-04-27)
+- **gdp-by-country**: Added "Compare Countries by GDP" section with 6 popular comparison pair links (US vs China, Germany vs Japan, China vs India, US vs Germany, UK vs France, /compare tool) — directly targets "country comparison GDP 2026" query where SOTW just hit #10; added 6th FAQ "How can I compare GDP between two countries?" targeting comparison tool queries
+- **world-economy**: Added `WebPage` type to JSON-LD @graph (was missing — schema completeness improvement); computed world GDP per capita ($gdpPerCapita) and added 6th FAQ "What is world GDP per capita in 2026?" with specific per-country context (US $85-93K, Germany $68K, China $14.7K, India $2.9K); added `/compare` main page link to the 27-link "Explore the Data" grid
+- **largest-economies**: Fixed h1 from "Largest Economies in the World (2026)" to "Top 50 Largest Economies in the World 2026" — aligns h1 with title tag for better keyword match; added 6th FAQ "Is India the fourth-largest economy in 2026?" with authoritative IMF April 2026 WEO answer (India is #6, not #4) — addresses widespread SERPs misinformation and targets high-volume India GDP rank queries
+
+---
+
 ## Current Status (2026-04-25)
 
 - **Google indexed pages**: ~1,360 (stable)

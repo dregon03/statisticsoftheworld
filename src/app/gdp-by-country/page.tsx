@@ -73,6 +73,7 @@ export default async function GdpByCountryPage() {
           { '@type': 'Question', name: 'What does GDP measure?', acceptedAnswer: { '@type': 'Answer', text: 'GDP (Gross Domestic Product) measures the total monetary value of all goods and services produced within a country\'s borders in a given year. Nominal GDP is expressed in current US dollars, making it useful for comparing economic size across countries.' } },
           { '@type': 'Question', name: `What are the top 5 largest economies by GDP in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The top 5 largest economies by nominal GDP in ${year} per the IMF April 2026 World Economic Outlook are: United States ($32T), China ($21T), Germany ($5.4T), Japan ($4.4T), and United Kingdom ($4.26T). India ranks sixth at $4.15T — rupee depreciation (84.6 to 88.5 per dollar) and a February 2026 statistical base-year revision by India's MoSPI prevented India from surpassing Japan in dollar terms, despite India growing at 6.5% in real terms.` } },
           { '@type': 'Question', name: `How do US tariffs affect GDP rankings in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The Trump administration's April 2026 tariff package weakened currencies of export-dependent economies against the dollar, compressing their nominal GDP in USD terms. Countries like Vietnam, South Korea, and Germany saw their dollar-denominated GDP reduced even as domestic economies continued growing. China's GDP growth slowed from ~5% to ~4.2% under the 145% US-China tariff rate. Economies that negotiated exemptions — India, the UK — were relatively insulated. Source: IMF.` } },
+          { '@type': 'Question', name: 'How can I compare GDP between two countries?', acceptedAnswer: { '@type': 'Answer', text: 'To compare GDP between two countries, use our free country comparison tool at statisticsoftheworld.com/compare — select any two of the 218 countries and compare across GDP, GDP per capita, growth rate, inflation, unemployment, and 440+ other indicators with historical charts going back 20+ years. For a quick look, the GDP by country ranking table above lets you see both countries\' size at a glance. For living-standard comparisons, use GDP per capita rather than total GDP, and consider PPP-adjusted figures which account for cost-of-living differences.' } },
         ],
       },
     ],
@@ -108,6 +109,25 @@ export default async function GdpByCountryPage() {
           <p className="text-[15px] text-[#374151] leading-[1.8]">
             The IMF&apos;s April 2026 World Economic Outlook produced a notable realignment in the top ranks. Germany holds third place at $5.4 trillion; <Link href="/japan-economy" className="text-[#0066cc] hover:underline">Japan</Link> fourth at $4.4 trillion; the United Kingdom fifth at $4.26 trillion. <Link href="/india-economy" className="text-[#0066cc] hover:underline">India</Link> — widely expected to overtake Japan for fourth — ranks sixth at $4.15 trillion, held back by two factors: the rupee&apos;s depreciation from 84.6 to 88.5 per dollar over the past year, and a February 2026 statistical base-year revision by India&apos;s MoSPI that lowered India&apos;s nominal GDP estimate by roughly 4%. In real terms India is still the world&apos;s fastest-growing major economy at 6.5% and is on track to become the third-largest in dollar terms by the early 2030s. The US tariff escalation of 2025–2026 has further distorted dollar-denominated rankings broadly: currencies of export-dependent economies (South Korea, Vietnam, <Link href="/germany-economy" className="text-[#0066cc] hover:underline">Germany</Link>) weakened against the dollar, compressing their nominal figures even as domestic output held up. The <Link href="/gdp-growth-by-country" className="text-[#0066cc] hover:underline">fastest-growing economies</Link> by real GDP in 2026 include Guyana (oil boom, 23%+), India, and Southeast Asian nations capturing supply chains relocating away from China.
           </p>
+        </div>
+
+        <div className="max-w-[800px] mb-8">
+          <h2 className="text-[20px] font-bold text-[#0d1b2a] mb-3">Compare Countries by GDP</h2>
+          <p className="text-[15px] text-[#374151] leading-[1.8] mb-4">
+            Use our free <Link href="/compare" className="text-[#0066cc] hover:underline">country comparison tool</Link> to compare any two economies head-to-head across GDP, GDP per capita, growth rate, inflation, unemployment, and 440+ additional indicators. The most-compared pairs:
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2">
+            {[
+              { href: '/compare/united-states-vs-china', label: 'US vs China' },
+              { href: '/compare/germany-vs-japan', label: 'Germany vs Japan' },
+              { href: '/compare/china-vs-india', label: 'China vs India' },
+              { href: '/compare/united-states-vs-germany', label: 'US vs Germany' },
+              { href: '/compare/united-kingdom-vs-france', label: 'UK vs France' },
+              { href: '/compare', label: 'Compare any two →' },
+            ].map(l => (
+              <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">{l.label}</Link>
+            ))}
+          </div>
         </div>
 
         <div className="max-w-[800px] mb-8">

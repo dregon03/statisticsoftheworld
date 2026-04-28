@@ -2,11 +2,11 @@
   "metadata": {
     "target": 1000000,
     "created": "2026-04-08",
-    "last_run": "2026-04-27",
+    "last_run": "2026-04-28",
     "total_backlinks": 8,
     "total_platforms": 2,
     "status": "active",
-    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 27 run: 4 new drafts — 1 GitHub PR (awesomelistsio/awesome-economics, Economic Data Sources section, SOTW-free confirmed) + 2 Quora (trading-stocks-economic-data, large-historical-datasets) + 1 Dev.to comment (every-free-public-api-2026). New GitHub repo discovered: awesomelistsio/awesome-economics — different from brandonhimpfen/awesome-economics, 5-entry Economic Data Sources section, S inserts between O (Open Economic Data) and U (UN Data). Researched: ahundt/awesome-economy (notes-based, poor fit — skip), viisar/awesome-datasets (ML tasks only, poor fit — skip). PENDING: Tom must submit GitHub PRs. Priority order: (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data, (7) NajiElKotob/Awesome-Datasets, (8) awesomelistsio/awesome-economics [NEW]. Then: antontarasenko, niyumard, erikgahner, brandonhimpfen/awesome-economics, infoculture/awesome-datajournalism, code-econ/awesome-econ, PavelGrigoryevDS/awesome-data-analysis. PRIORITY: Tom should start submitting directory listings (see directories-2026-04-24-submission-guide.md) and pending GitHub PRs. Total drafts: 87+."
+    "notes": "8 live backlinks (3 Quora + 5 GitHub PRs). Apr 28 run: 7 new drafts — 3 Dev.to comments (0012303's 9-free-apis-didnt-know, 7-financial-apis, 7-realtime-apis) + 2 Quora answers (free-data-public-apis, reliable-api-financial-integration) + 2 Reddit posts (r/geopolitics, r/financialindependence) + 1 Stack Exchange template (opendata.stackexchange.com). Duplicate checks: no SOTW found on Reddit or Quora for any of these targets. No new GitHub repos found today — existing queue still pending. PENDING GitHub PRs (Tom must submit): (1) public-apis/public-apis [300K stars], (2) ripienaar/free-for-dev [90K stars], (3) academic/awesome-datascience [28.8K stars], (4) brandonhimpfen/awesome-finance, (5) hanlulong/awesome-ai-for-economists, (6) datasets/awesome-data, (7) NajiElKotob/Awesome-Datasets, (8) awesomelistsio/awesome-economics, (9) umerhaddii/Awesome-Datasets, and 8+ more. PRIORITY: Tom should start submitting directory listings (directories-2026-04-24-submission-guide.md) and pending GitHub PRs. Total drafts: 99+."
   },
   "platforms": {
     "quora": {
@@ -281,6 +281,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: broad dataset roundup by domain — economics (FRED, WB WDI, IMF WEO, SOTW, Penn World Tables, Maddison), health (WHO, UN WPP, OWID), ML (UCI, Kaggle, Harvard Dataverse), social/political (V-Dem, ACLED), trade (UN Comtrade). SOTW in economics section. Different from the 'Where can I get large public data sets for free' draft. File: quora-2026-04-27-large-historical-datasets.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://www.quora.com/How-do-you-find-a-website-that-gives-free-data-from-public-APIs",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: guide to finding free public API sources — GitHub awesome lists, api.guru, RapidAPI, government portals, plus SOTW for economic/country data. SOTW-free confirmed (not found in search results for this question). File: quora-2026-04-28-free-data-public-apis.md. Verify no SOTW in existing answers before posting."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://www.quora.com/What-is-the-most-reliable-API-for-financial-data-integration",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: tiered breakdown — market prices (Polygon, Alpha Vantage), company fundamentals (SEC EDGAR, FMP), macro/country (FRED, WB API, IMF, SOTW). Honest take on long-term reliability of gov/central bank APIs. SOTW-free confirmed (not found in search results for this question). File: quora-2026-04-28-reliable-api-financial-integration.md. Verify no SOTW in existing answers before posting."
         }
       ]
     },
@@ -430,6 +446,22 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: Show r/nextjs post about building SOTW — covers App Router, ISR, Supabase pipeline, country name normalization from IMF/WB/WHO. Technical post, not a promo. File: reddit-nextjs-2026-04-23.md. Search r/nextjs for SOTW before posting."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://www.reddit.com/r/geopolitics/",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: comment on an active thread about India/China economic rise, G7 vs BRICS, or similar economic comparison topics. Has 3 options: data comparison reply, data source suggestion, or standalone post with IMF data on India vs Japan GDP. File: reddit-geopolitics-2026-04-28.md. Search r/geopolitics for 'statisticsoftheworld' before posting. SOTW confirmed not found in search results for r/geopolitics."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://www.reddit.com/r/financialindependence/",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/compare",
+          "notes": "Draft: comment on threads about retiring abroad, geo-arbitrage, or international investing — positions SOTW compare tool as useful for researching countries for FIRE. Has 3 options. File: reddit-financialindependence-2026-04-28.md. Search r/financialindependence for 'statisticsoftheworld' before posting."
         }
       ]
     },
@@ -754,6 +786,14 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/compare",
           "notes": "Draft: cross-country economic data comparison tools — IMF WEO, WB WDI, OECD, SOTW compare tool and API, Our World in Data, Trading Economics, Penn World Tables, Maddison Project. File: stackexchange-economics-2026-04-17-data-comparison.md. Find specific unanswered question about cross-country data or macro data sources."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://opendata.stackexchange.com/questions/tagged/economics",
+          "type": "answer",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comprehensive template answer for questions about accessing macroeconomic indicators for multiple countries — World Bank WDI API, IMF SDMX, FRED, SOTW API (normalized layer), DBnomics, Penn World Tables bulk download. Tom must find a specific unanswered question on opendata.stackexchange.com. File: stackexchange-opendata-2026-04-28-economic-indicators.md. Account: statisticsoftheworldcontact@gmail.com. Verify no SOTW in existing answers before posting."
         }
       ]
     },
@@ -866,6 +906,30 @@
           "status": "draft",
           "sotw_url": "https://statisticsoftheworld.com/api-docs",
           "notes": "Draft: comment on 'Every Free Public API I Found That Actually Works (2026 Edition)' — adds SOTW as normalized macro/country data layer over IMF+WB+WHO. Highlights country-name normalization benefit. File: devto-comment-every-free-public-api-2026-04-27.md. SOTW confirmed not in web-search snippet (2026-04-27). Check live comment section before posting."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://dev.to/0012303/9-free-apis-you-probably-didnt-know-existed-2444",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '9 Free APIs You Probably Didn't Know Existed' — adds SOTW as normalized IMF/WB/WHO macro API, 440+ indicators, 218 countries, 100 req/day no auth. File: devto-comment-9-free-apis-didnt-know-2026-04-28.md. SOTW not found in search results for this article. Check live comments before posting."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://dev.to/0012303/7-free-apis-for-financial-data-stocks-crypto-forex-no-paid-plan-55b1",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '7 Free APIs for Financial Data (Stocks, Crypto, Forex)' — positions SOTW as macro fundamentals layer (GDP, inflation, debt-to-GDP) alongside market data APIs. Annual/quarterly data — not real-time. File: devto-comment-7-financial-apis-2026-04-28.md. Check live comments for 'statisticsoftheworld' before posting."
+        },
+        {
+          "date": "2026-04-28",
+          "url": "https://dev.to/0012303/7-apis-that-give-you-real-time-data-for-free-no-api-key-required-3j4n",
+          "type": "comment",
+          "status": "draft",
+          "sotw_url": "https://statisticsoftheworld.com/api-docs",
+          "notes": "Draft: comment on '7 APIs That Give You Real-Time Data for Free (No API Key Required)' — highlights SOTW's 100 req/day no-auth pattern, economic/macro data for 218 countries. File: devto-comment-7-realtime-apis-2026-04-28.md. Check live comments for 'statisticsoftheworld' before posting."
         }
       ]
     },

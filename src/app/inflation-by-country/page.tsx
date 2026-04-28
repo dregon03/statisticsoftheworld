@@ -28,6 +28,13 @@ export default async function InflationByCountryPage() {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'WebPage',
+        name: `Inflation Rate by Country ${year} — Complete Global Rankings`,
+        url: 'https://statisticsoftheworld.com/inflation-by-country',
+        description: `Consumer price inflation for ${inflData.length} countries in ${year}. Average: ${avgInfl.toFixed(1)}%. Highest: ${inflData[0]?.country} (${formatValue(inflData[0]?.value, 'percent', 1)}). Source: IMF World Economic Outlook.`,
+        dateModified: new Date().toISOString().split('T')[0],
+      },
+      {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://statisticsoftheworld.com' },
@@ -43,6 +50,17 @@ export default async function InflationByCountryPage() {
         creator: { '@type': 'Organization', name: 'IMF', url: 'https://www.imf.org' },
         license: 'https://creativecommons.org/licenses/by/4.0/',
         dateModified: new Date().toISOString().split('T')[0],
+      },
+      {
+        '@type': 'ItemList',
+        name: `Top 10 Highest Inflation Countries ${year}`,
+        numberOfItems: 10,
+        itemListElement: inflData.slice(0, 10).map((d, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: `${d.country} — ${formatValue(d.value, 'percent', 1)} inflation`,
+          url: `https://statisticsoftheworld.com${getCleanCountryUrl(d.countryId)}/inflation-rate`,
+        })),
       },
       {
         '@type': 'FAQPage',
@@ -107,6 +125,22 @@ export default async function InflationByCountryPage() {
           </p>
         </div>
 
+        <div className="max-w-[800px] mb-10">
+          <h2 className="text-[20px] font-bold text-[#0d1b2a] mb-2">Top 10 Highest Inflation Countries ({year})</h2>
+          <p className="text-[13px] text-[#64748b] mb-4">Consumer price inflation · Source: IMF April {year} World Economic Outlook</p>
+          <ol className="space-y-2 mb-2">
+            {inflData.slice(0, 10).map((d, i) => (
+              <li key={d.countryId} className="flex gap-3 items-baseline text-[14px] text-[#374151]">
+                <span className="font-bold text-[#0d1b2a] w-5 shrink-0">{i + 1}.</span>
+                <span>
+                  <Link href={`${getCleanCountryUrl(d.countryId)}/inflation-rate`} className="font-semibold text-[#0066cc] hover:underline">{d.country}</Link>
+                  {' — '}<span className={`font-mono ${(d.value || 0) > 20 ? 'text-red-600' : ''}`}>{formatValue(d.value, 'percent', 1)}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
         <div className="mb-10">
           <div className="border border-[#d5dce6] rounded-xl overflow-hidden">
             <table className="w-full">
@@ -150,7 +184,11 @@ export default async function InflationByCountryPage() {
               { href: '/ranking/government-debt', label: 'Government Debt' },
               { href: '/ranking/current-account', label: 'Current Account' },
               { href: '/us-economy', label: 'US Economy' },
+              { href: '/china-economy', label: 'China Economy' },
+              { href: '/turkey-economy', label: 'Turkey Economy' },
+              { href: '/argentina-economy', label: 'Argentina Economy' },
               { href: '/world-economy', label: 'World Economy' },
+              { href: '/compare', label: 'Compare Countries' },
               { href: '/countries', label: 'All Countries' },
             ].map(l => (
               <Link key={l.href} href={l.href} className="px-3 py-2 bg-white border border-[#d5dce6] rounded-lg text-[13px] text-[#475569] hover:text-[#0d1b2a] hover:border-[#b0bdd0] transition text-center">

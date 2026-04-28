@@ -2,6 +2,39 @@
 
 Single source of truth for all SEO work. Check this before doing anything to avoid duplicates.
 
+## Current Status (2026-04-28)
+
+- **Google indexed pages**: ~1,360 (stable)
+- **Confirmed rankings**: `/ranking/unemployment-rate` at **#5** (⚠️ slipped from #4 — IMF datamapper now at #4); `/ranking/inflation-rate` at **#8** (stable); `/inflation-by-country` at **#10** (stable); homepage at **#5** for "world statistics country data 2026" ✅ (NEW ranking); `/world-population` — **NOT visible** for "statistics of the world 2026" (8th consecutive day ⚠️); `/gdp-by-country` — NOT visible for "country comparison tool GDP 2026" (dropped from #10 ⚠️ — algorithmic volatility)
+- **Confirmed backlinks earned**: 2 dofollow (awesomedata/apd-core #377 merged; dev.to article)
+- **Domain age**: ~49 days
+
+### Keyword Rankings (2026-04-28 web search)
+- `"statisticsoftheworld.com"` → **#1** (brand) ✅
+- `unemployment rate by country 2026 ranking` → **#5** (⚠️ slipped from #4) — WorldPopReview #1, TradingEconomics #2, WorldEconomics #3, IMF #4, SOTW #5, Moody's #6, TheGlobalEconomy #7, Wikipedia #8
+- `inflation by country 2026 ranking` → **#8 and #10** (stable) — VisualCapitalist #1, WorldCountryData #2, TradingEconomics ×2 #3/#5, WorldPopReview #4, Statista ×2 #6/#7, SOTW #8/#10
+- `world statistics country data 2026` → **#5** (homepage) ✅ NEW — OurWorldInData #1, WorldBank #2, WorldCountryData #3, GeoCountries #4, SOTW #5
+- `statistics of the world 2026` → **Not visible** (8th consecutive day — algorithmic)
+- `country comparison tool GDP 2026` → **Not visible** (dropped from #10 ⚠️ — Worldometer #1, IMF #2, TheGlobalEconomy #3, VisualCapitalist #4, ClearTax #5, StatisticsTimes #6, Bamwor #7)
+- `GDP by country 2026` → **Not ranking** — Worldometer #1, StatisticsTimes #2, IMF #3, Wikipedia #4, VisualCapitalist #5
+- `largest economies world 2026 GDP ranking` → **Not ranking** — StatisticsTimes #1, Worldometer #2, VisualCapitalist ×4 #3/#4/#7/#9
+- `GDP growth rate by country 2026 ranking` → **Not ranking** — Worldometer #1, ClearTax #2, StatisticsTimes #3, VisualCapitalist #4, IMF #5, WorldPopReview #6, VoronoiApp #8
+- `GDP per capita by country 2026 ranking` → **Not ranking** — WorldPopReview #1, Worldometer #2, StatisticsTimes #3, VisualCapitalist #4, Wikipedia #6, UnionCitizenship #8, WorldCountryData #9
+
+### Competitor Notes (2026-04-28)
+- **Bamwor.com** — now appearing at #7 for "country comparison GDP 2026" and #3 for "world economic data country comparison 2026" — rising fast, similar positioning to SOTW
+- **VisualCapitalist** — 4–5 positions per query with infographic content; completely dominant in visual/chart space
+- **WorldCountryData** — #2 inflation, #3 world stats; tracking 12 indicators for 195 nations, direct threat
+- **IMF datamapper** — moved to #4 for unemployment ranking after April 2026 WEO data update; nearly impossible to displace
+- India GDP rank discrepancy continues: most competitors (StatisticsTimes, ClearTax, VisualCapitalist) show India #4 (incorrect per IMF April 2026 WEO). SOTW correctly shows India #6.
+
+### Pages Optimized (2026-04-28)
+- **richest-countries**: Added `WebPage` JSON-LD type (was missing); added `ItemList` JSON-LD for top 10 richest countries; added `url`/`type` to OpenGraph (missing); improved meta description with specific figures (~$154K Luxembourg, ~$85-93K US); added "Top 10 Richest Countries by GDP per Capita" h2 section with dynamic ordered list (above table); added h2 to Related Rankings section; expanded related links from 8 to 12 (added Singapore Economy, Norway Economy, US vs China compare, US vs Germany compare)
+- **inflation-by-country**: Added `WebPage` JSON-LD type (was missing); added `ItemList` JSON-LD for top 10 highest inflation countries; added "Top 10 Highest Inflation Countries" h2 section with dynamic ordered list with red highlighting for extreme inflation (above table); expanded related links from 8 to 12 (added China Economy, Turkey Economy, Argentina Economy, Compare Countries)
+- **gdp-growth-by-country**: Added `ItemList` JSON-LD for the existing "Top 10 Fastest-Growing Economies" dynamic ordered list (HTML section existed since Apr 25 but lacked `ItemList` schema — Google now has structured data to parse the list for featured snippets)
+
+---
+
 ## Current Status (2026-04-27)
 
 - **Google indexed pages**: ~1,360 (stable)

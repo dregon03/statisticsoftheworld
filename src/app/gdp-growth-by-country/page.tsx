@@ -46,6 +46,17 @@ export default async function GdpGrowthByCountryPage() {
       ],
     },
     { '@type': 'Dataset', name: `GDP Growth Rate by Country ${year}`, description: `Real GDP growth rate for ${data.length} countries in ${year}. Global average: ${avg.toFixed(1)}%. Source: IMF World Economic Outlook.`, url: 'https://statisticsoftheworld.com/gdp-growth-by-country', creator: { '@type': 'Organization', name: 'IMF', url: 'https://www.imf.org' }, license: 'https://creativecommons.org/licenses/by/4.0/', dateModified: new Date().toISOString().split('T')[0] },
+    {
+      '@type': 'ItemList',
+      name: `Top 10 Fastest-Growing Economies ${data[0]?.year || '2026'}`,
+      numberOfItems: 10,
+      itemListElement: data.slice(0, 10).map((d, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: `${d.country} — ${formatValue(d.value, 'percent', 1)} GDP growth`,
+        url: `https://statisticsoftheworld.com${getCleanCountryUrl(d.countryId)}/gdp-growth`,
+      })),
+    },
     { '@type': 'FAQPage', mainEntity: [
       { '@type': 'Question', name: `Which country has the fastest GDP growth in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `${data[0]?.country} has the highest real GDP growth rate at ${formatValue(data[0]?.value, 'percent', 1)} in ${year}. Guyana's growth is driven by a massive offshore oil boom — oil production began in 2019 and has transformed one of South America's smallest economies into one of the world's fastest-growing. Source: IMF.` } },
       { '@type': 'Question', name: `What is the global average GDP growth rate in ${year}?`, acceptedAnswer: { '@type': 'Answer', text: `The global average GDP growth rate is approximately ${avg.toFixed(1)}% in ${year}. Advanced economies typically grow at 1–3%, while emerging markets grow at 4–7%. The IMF projects global growth slightly below the 3.2% recorded in 2025, with US tariffs introduced in April 2026 adding downside risk. Source: IMF World Economic Outlook.` } },
